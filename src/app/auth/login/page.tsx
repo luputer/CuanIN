@@ -93,8 +93,8 @@ export default function LoginPage() {
                                     type="email"
                                     placeholder="Masukkan Email Anda"
                                     className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 ${errors.email
-                                            ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                            : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                                        ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                                        : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
                                         }`}
                                     {...register("email")}
                                 />
@@ -115,8 +115,8 @@ export default function LoginPage() {
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Masukkan Password Anda"
                                     className={`w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm outline-none transition-all focus:ring-2 ${errors.password
-                                            ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                            : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                                        ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                                        : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
                                         }`}
                                     {...register("password")}
                                 />
@@ -154,7 +154,7 @@ export default function LoginPage() {
                             <span className="w-full border-t border-gray-200"></span>
                         </div>
                         <span className="relative bg-white px-2 text-xs text-gray-400">
-                            - Atau Login dengan -
+                            Atau Login dengan
                         </span>
                     </div>
 

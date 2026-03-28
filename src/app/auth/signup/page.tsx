@@ -144,13 +144,12 @@ function SignupPageInner() {
                                     type="text"
                                     placeholder="Masukkan Nama Lengkap Anda"
                                     readOnly={fromGoogle && !!googleName}
-                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 ${
-                                        fromGoogle && googleName
+                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 ${fromGoogle && googleName
                                             ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200"
                                             : errors.name
-                                            ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                            : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
-                                    }`}
+                                                ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                                                : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                                        }`}
                                     {...register("name")}
                                 />
                             </div>
@@ -170,13 +169,12 @@ function SignupPageInner() {
                                     type="email"
                                     placeholder="Masukkan Email Aktif"
                                     readOnly={fromGoogle && !!googleEmail}
-                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 ${
-                                        fromGoogle && googleEmail
+                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 ${fromGoogle && googleEmail
                                             ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200"
                                             : errors.email
-                                            ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                            : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
-                                    }`}
+                                                ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                                                : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                                        }`}
                                     {...register("email")}
                                 />
                             </div>
@@ -195,11 +193,10 @@ function SignupPageInner() {
                                 <input
                                     type="tel"
                                     placeholder="Masukkan Nomor HP (contoh: 08123456789)"
-                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 ${
-                                        errors.phone
+                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 ${errors.phone
                                             ? "border-red-400 focus:border-red-400 focus:ring-red-100"
                                             : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
-                                    }`}
+                                        }`}
                                     {...register("phone")}
                                 />
                             </div>
@@ -218,11 +215,10 @@ function SignupPageInner() {
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Buat Password (min. 8 karakter)"
-                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm outline-none transition-all focus:ring-2 ${
-                                        errors.password
+                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm outline-none transition-all focus:ring-2 ${errors.password
                                             ? "border-red-400 focus:border-red-400 focus:ring-red-100"
                                             : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
-                                    }`}
+                                        }`}
                                     {...register("password")}
                                 />
                                 <button
@@ -248,11 +244,10 @@ function SignupPageInner() {
                                 <input
                                     type={showConfirm ? "text" : "password"}
                                     placeholder="Ulangi Password"
-                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm outline-none transition-all focus:ring-2 ${
-                                        errors.confirmPassword
+                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm outline-none transition-all focus:ring-2 ${errors.confirmPassword
                                             ? "border-red-400 focus:border-red-400 focus:ring-red-100"
                                             : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
-                                    }`}
+                                        }`}
                                     {...register("confirmPassword")}
                                 />
                                 <button
@@ -277,8 +272,8 @@ function SignupPageInner() {
                             {isPending
                                 ? "Mendaftar..."
                                 : fromGoogle
-                                ? "Selesaikan Pendaftaran"
-                                : "Daftar"}
+                                    ? "Selesaikan Pendaftaran"
+                                    : "Daftar"}
                         </button>
                     </form>
 
@@ -290,7 +285,7 @@ function SignupPageInner() {
                                     <span className="w-full border-t border-gray-200"></span>
                                 </div>
                                 <span className="relative bg-white px-2 text-xs text-gray-400">
-                                    - Atau Daftar dengan -
+                                    Atau Daftar dengan
                                 </span>
                             </div>
 

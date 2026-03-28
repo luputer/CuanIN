@@ -2,8 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client"
-    output   = "./generated/prisma"
+  provider = "prisma-client"
+  output   = "./generated/prisma"
 }
 
 datasource db {
@@ -183,10 +183,3 @@ model visitor_logs {
     user user @relation(fields: [id_user], references: [id_user])
 }
 
-model mahasiswa {
-    id_mahasiswa   Int    @id @default(autoincrement())
-    nim            String @db.VarChar(40)
-    nama_mahasiswa String @db.VarChar(40)
-    prodi          String @db.VarChar(40)
-    angkatan       Int
-}

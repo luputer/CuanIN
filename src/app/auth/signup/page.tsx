@@ -1,38 +1,51 @@
 "use client";
 
 import Link from "next/link";
-import { Mail, Lock, Phone } from "lucide-react";
+import { Mail, Lock, Phone, User } from "lucide-react";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+// import { api } from "~/trpc/react";
 
-export default function LoginPage() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+export default function SignupPage() {
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        password: "",
+        confirmPassword: "",
+    });
 
-    const router = useRouter();
-    const [loading, setLoading] = useState(false);
-
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-
-        const result = await signIn("credentials", {
-            redirect: false,
-            email,
-            password,
-        });
-
-        if (result?.error) {
-            alert("Login Gagal! Periksa email dan password Anda.");
-            setLoading(false);
-        } else {
-            router.push("/dashboard");
-            router.refresh();
-        }
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // spa  js html css  spa -> build -> bisa jadi cepat karna spa  
+    const router = useRouter();
+    // const register = api.auth.register.useMutation({
+    //     onSuccess: () => {
+    //         alert("Registrasi Berhasil! Silakan Login.");
+    //         router.push("/auth/login");
+    //     },
+    //     onError: (error) => {
+    //         alert(error.message);
+    //     },
+    // });
+
+    const handleSignup = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (formData.password !== formData.confirmPassword) {
+            alert("Password dan Konfirmasi Password tidak sama");
+            return;
+        }
+
+        // register.mutate({
+        //     name: formData.name,
+        //     email: formData.email,
+        //     phone: formData.phone,
+        //     password: formData.password,
+        // });
+    };
 
     return (
         <div className="flex min-h-screen flex-col bg-blue-50 font-sans text-gray-800">
@@ -43,27 +56,44 @@ export default function LoginPage() {
                         CuanIN
                     </Link>
                     <Link
-                        href="/auth/signup"
-                        className="rounded-full bg-linear-to-r from-blue-500 to-indigo-500 px-6 py-2 font-semibold text-white shadow-md transition-transform hover:scale-105"
+                        href="/auth/login"
+                        className="rounded-full bg-blue-500 px-6 py-2 font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-blue-600"
                     >
-                        Sign up
+                        Login
                     </Link>
                 </div>
             </header>
 
             {/* Main Content */}
             <main className="flex flex-1 items-center justify-center pt-24 pb-12 px-4">
-                <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
+                <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
                     <div className="mb-8 text-center">
-                        <h1 className="mb-2 text-3xl font-bold text-blue-600">Login</h1>
+                        <h1 className="mb-2 text-3xl font-bold text-blue-600">Daftar Akun</h1>
                         <p className="text-sm text-gray-500">
-                            Selamat datang kembali!
-                            <br />
-                            Silakan masuk ke akun Anda
+                            Buat akun untuk mengakses fitur platform
                         </p>
                     </div>
 
-                    <form onSubmit={handleLogin} className="space-y-4">
+                    <form onSubmit={handleSignup} className="space-y-5">
+                        {/* Nama Lengkap */}
+                        <div className="space-y-1">
+                            <label className="text-sm font-medium text-blue-500">Nama Lengkap</label>
+                            <div className="relative">
+                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                    <User size={18} />
+                                </div>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    placeholder="Masukkan Nama Lengkap Anda"
+                                    className="w-full rounded-lg border border-blue-200 py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                        </div>
+
                         {/* Email Field */}
                         <div className="space-y-1">
                             <label className="text-sm font-medium text-blue-500">Email</label>
@@ -73,10 +103,30 @@ export default function LoginPage() {
                                 </div>
                                 <input
                                     type="email"
-                                    placeholder="Masukkan Email Anda"
+                                    name="email"
+                                    placeholder="Masukkan Email Aktif"
                                     className="w-full rounded-lg border border-blue-200 py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Nomor HP */}
+                        <div className="space-y-1">
+                            <label className="text-sm font-medium text-blue-500">Nomor HP</label>
+                            <div className="relative">
+                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                    <Phone size={18} />
+                                </div>
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    placeholder="Masukkan Nomor HP"
+                                    className="w-full rounded-lg border border-blue-200 py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                    value={formData.phone}
+                                    onChange={handleChange}
                                     required
                                 />
                             </div>
@@ -93,30 +143,45 @@ export default function LoginPage() {
                                 </div>
                                 <input
                                     type="password"
-                                    placeholder="Masukkan Password Anda"
+                                    name="password"
+                                    placeholder="Buat Password"
                                     className="w-full rounded-lg border border-blue-200 py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    value={formData.password}
+                                    onChange={handleChange}
                                     required
                                 />
                             </div>
-                            <div className="flex justify-end">
-                                <a
-                                    href="#"
-                                    className="text-xs font-medium text-blue-400 hover:text-blue-600"
-                                >
-                                    Lupa Password?
-                                </a>
+                        </div>
+
+                        {/* Confirm Password Field */}
+                        <div className="space-y-1">
+                            <label className="text-sm font-medium text-blue-500">
+                                Konfirmasi Password
+                            </label>
+                            <div className="relative">
+                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                    <Lock size={18} />
+                                </div>
+                                <input
+                                    type="password"
+                                    name="confirmPassword"
+                                    placeholder="Ulangi Password"
+                                    className="w-full rounded-lg border border-blue-200 py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    required
+                                />
                             </div>
                         </div>
 
-                        {/* Login Button */}
+                        {/* Signup Button */}
                         <button
                             type="submit"
-                            disabled={loading}
-                            className="cursor-pointer mt-6 w-full rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 py-2.5 font-bold text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                            // disabled={register.isPending}
+                            className="mt-6 w-full rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 py-2.5 font-bold text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {loading ? "Memproses..." : "Login"}
+                            {/* {register.isPending ? "Mendaftar..." : "Daftar"} */}
+                            Daftar
                         </button>
                     </form>
 
@@ -126,7 +191,7 @@ export default function LoginPage() {
                             <span className="w-full border-t border-gray-200"></span>
                         </div>
                         <span className="relative bg-white px-2 text-xs text-gray-400">
-                            - Atau Login dengan -
+                            - Atau Daftar dengan -
                         </span>
                     </div>
 
@@ -134,7 +199,7 @@ export default function LoginPage() {
                     <button
                         type="button"
                         onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-                        className=" cursor-pointer flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                        className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                     >
                         <svg className="h-5 w-5" viewBox="0 0 24 24">
                             <path
@@ -158,12 +223,12 @@ export default function LoginPage() {
                     </button>
 
                     <div className="mt-6 text-center text-xs text-gray-500">
-                        Belum punya akun?{" "}
+                        Sudah punya akun?{" "}
                         <Link
-                            href="/auth/signup"
+                            href="/auth/login"
                             className="font-medium text-blue-500 hover:underline"
                         >
-                            Daftar Disini
+                            Login Disini
                         </Link>
                     </div>
                 </div>
@@ -194,7 +259,7 @@ export default function LoginPage() {
                         </div>
                     </div>
                     <div className="mt-10 border-t border-blue-800 pt-6 text-center text-xs text-blue-200">
-                        &copy; 2026 CuanIN. All rights reserved.
+                        &copy; 2026 Formate. All rights reserved.
                     </div>
                 </div>
             </footer>

@@ -26,13 +26,13 @@ export const authConfig = {
         authorized({ auth, request: { nextUrl } }) {
             const isLoggedIn = !!auth?.user;
             const isDashboard = nextUrl.pathname.startsWith("/dashboard");
-            const isAuthPage = nextUrl.pathname.startsWith("/auth") || nextUrl.pathname === "/";
+            const isAuthPage = nextUrl.pathname.startsWith("/sign-in") || nextUrl.pathname === "/";
 
             if (isDashboard) {
                 if (isLoggedIn) return true;
                 return false; // Redirect ke login
             } else if (isAuthPage && isLoggedIn) {
-                return Response.redirect(new URL("/dashboard/creator", nextUrl));
+                return Response.redirect(new URL("/dashboard", nextUrl));
             }
             return true;
         },

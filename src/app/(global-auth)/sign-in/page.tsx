@@ -54,7 +54,7 @@ export default function LoginPage() {
                         CuanIN
                     </Link>
                     <Link
-                        href="/auth/signup"
+                        href="/sign-up"
                         className="rounded-full bg-linear-to-r from-blue-500 to-indigo-500 px-6 py-2 font-semibold text-white shadow-md transition-transform hover:scale-105"
                     >
                         Sign up
@@ -142,7 +142,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="cursor-pointer mt-6 w-full rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 py-2.5 font-bold text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="cursor-pointer mt-6 w-full rounded-lg bg-linear-to-r from-blue-500 to-indigo-500 py-2.5 font-bold text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isSubmitting ? "Memproses..." : "Login"}
                         </button>
@@ -161,7 +161,7 @@ export default function LoginPage() {
                     {/* Google Button */}
                     <button
                         type="button"
-                        onClick={() => signIn("google", { callbackUrl: "/dashboard/creator" })}
+                        onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
                         className="cursor-pointer flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                     >
                         <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -175,7 +175,7 @@ export default function LoginPage() {
 
                     <div className="mt-6 text-center text-xs text-gray-500">
                         Belum punya akun?{" "}
-                        <Link href="/auth/signup" className="font-medium text-blue-500 hover:underline">
+                        <Link href="/sign-up" className="font-medium text-blue-500 hover:underline">
                             Daftar Disini
                         </Link>
                     </div>

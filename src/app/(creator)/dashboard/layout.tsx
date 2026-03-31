@@ -15,6 +15,7 @@ import {
     Menu,
     ExternalLink,
 } from "lucide-react";
+import { UserNav } from "~/components/user-nav";
 
 // Komponen kecil: fetch slug catalog user lalu buat link ke /catalog/[slug]
 function CatalogLink() {
@@ -77,7 +78,7 @@ export default function DashboardLayout({
                 {/* Logo */}
                 <div className="h-16 flex items-center px-6 border-b border-slate-100">
                     <Link href="/" className="text-2xl font-bold text-blue-500">
-                        Formate
+                        CuanIN
                     </Link>
                 </div>
 
@@ -124,8 +125,7 @@ export default function DashboardLayout({
                     </div>
 
                     <div className="flex items-center gap-4">
-                        {/* User Profile */}
-                        {/* <UserNav /> */}
+                        <UserNav />
                     </div>
                 </header>
 

@@ -97,7 +97,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     email: user.email ?? "",
                     fromGoogle: "1",
                 });
-                return `/auth/signup?${params.toString()}`;
+                return `/sign-up?${params.toString()}`;
             }
 
             return true;

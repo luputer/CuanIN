@@ -309,7 +309,7 @@ function SignupPageInner() {
 
                             <button
                                 type="button"
-                                onClick={() => signIn("google", { callbackUrl: "/dashboard/creator" })}
+                                onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
                                 className="cursor-pointer flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                             >
                                 <svg className="h-5 w-5" viewBox="0 0 24 24">

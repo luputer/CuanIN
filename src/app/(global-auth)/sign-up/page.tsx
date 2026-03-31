@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { Mail, Lock, Phone, User, Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,9 +36,11 @@ function SignupPageInner() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const googleName = searchParams.get("name") ?? "";
-    const googleEmail = searchParams.get("email") ?? "";
-    const fromGoogle = searchParams.get("fromGoogle") === "1";
+    const { data: session, update: updateSession, status } = useSession();
+
+    const fromGoogle = searchParams.get("fromGoogle") === "1" || !!session?.user;
+    const googleName = searchParams.get("name") ?? session?.user?.name ?? "";
+    const googleEmail = searchParams.get("email") ?? session?.user?.email ?? "";
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
@@ -53,26 +55,42 @@ function SignupPageInner() {
         defaultValues: { name: googleName, email: googleEmail },
     });
 
-    // Pre-fill from Google query params
+    // Handle auto-redirect if already logged in (extra safety layer on top of middleware)
+    useEffect(() => {
+        if (status === "authenticated" && !fromGoogle) {
+            router.push("/dashboard/creator");
+        }
+    }, [status, router, fromGoogle]);
+
+    // Pre-fill fields once session or params are ready
     useEffect(() => {
         if (googleName) setValue("name", googleName);
         if (googleEmail) setValue("email", googleEmail);
     }, [googleName, googleEmail, setValue]);
 
-    // ✅ tRPC mutation — no manual fetch needed
+    // ✅ tRPC mutation
     const registerMutation = api.auth.register.useMutation({
         onSuccess: async (_result, variables) => {
-            // Auto-login after successful registration
-            const loginResult = await signIn("credentials", {
-                redirect: false,
-                email: variables.email,
-                password: variables.password,
-            });
-            if (loginResult?.error) {
-                router.push("/auth/login?registered=1");
-            } else {
+            if (fromGoogle) {
+                // For Google SSO users: Profile completed!
+                // Refresh the session token so it contains the new data (like role, etc.)
+                await updateSession();
+                // Redirect straight to dashboard
                 router.push("/dashboard/creator");
                 router.refresh();
+            } else {
+                // For normal email/pass users: Sign in automatically
+                const loginResult = await signIn("credentials", {
+                    redirect: false,
+                    email: variables.email,
+                    password: variables.password,
+                });
+                if (loginResult?.error) {
+                    router.push("/auth/login?registered=1");
+                } else {
+                    router.push("/dashboard/creator");
+                    router.refresh();
+                }
             }
         },
     });
@@ -145,10 +163,10 @@ function SignupPageInner() {
                                     placeholder="Masukkan Nama Lengkap Anda"
                                     readOnly={fromGoogle && !!googleName}
                                     className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 ${fromGoogle && googleName
-                                            ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200"
-                                            : errors.name
-                                                ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                                : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                                        ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200"
+                                        : errors.name
+                                            ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                                            : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
                                         }`}
                                     {...register("name")}
                                 />
@@ -170,10 +188,10 @@ function SignupPageInner() {
                                     placeholder="Masukkan Email Aktif"
                                     readOnly={fromGoogle && !!googleEmail}
                                     className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 ${fromGoogle && googleEmail
-                                            ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200"
-                                            : errors.email
-                                                ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                                : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                                        ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200"
+                                        : errors.email
+                                            ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                                            : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
                                         }`}
                                     {...register("email")}
                                 />
@@ -194,8 +212,8 @@ function SignupPageInner() {
                                     type="tel"
                                     placeholder="Masukkan Nomor HP (contoh: 08123456789)"
                                     className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 ${errors.phone
-                                            ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                            : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                                        ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                                        : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
                                         }`}
                                     {...register("phone")}
                                 />
@@ -216,8 +234,8 @@ function SignupPageInner() {
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Buat Password (min. 8 karakter)"
                                     className={`w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm outline-none transition-all focus:ring-2 ${errors.password
-                                            ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                            : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                                        ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                                        : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
                                         }`}
                                     {...register("password")}
                                 />
@@ -245,8 +263,8 @@ function SignupPageInner() {
                                     type={showConfirm ? "text" : "password"}
                                     placeholder="Ulangi Password"
                                     className={`w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm outline-none transition-all focus:ring-2 ${errors.confirmPassword
-                                            ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                            : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                                        ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                                        : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
                                         }`}
                                     {...register("confirmPassword")}
                                 />

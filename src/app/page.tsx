@@ -1,10 +1,26 @@
-"use client"
 import React from 'react';
 import { Search, ChevronDown, Eye, Copy, Trash2, Bell, CreditCard, Grid3x3, TrendingUp, Phone, Mail } from 'lucide-react';
-
+import { useSession } from "next-auth/react";
+// import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function FormateLanding() {
+  // const { status } = useSession();
+  // const router = useRouter();
+
+  // useEffect(() => {
+  //   if (status === "authenticated") {
+  //     router.push("/dashboard/creator");
+  //   }
+  // }, [status, router]);
+
+  // if (status === "loading") {
+  //   return (
+  //     <div className="flex min-h-screen items-center justify-center bg-blue-50">
+  //       <div className="text-blue-500 font-bold animate-pulse">Memuat...</div>
+  //     </div>
+  //   );
+  // }
 
 
   const webinars = [
@@ -65,7 +81,7 @@ export default function FormateLanding() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-liner-to-b from-slate-50 to-white">
       {/* Navigation */}
       <nav className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -80,7 +96,7 @@ export default function FormateLanding() {
               <a href="#" className="text-slate-700 hover:text-blue-600 transition-colors">Kontak</a>
             </div>
             <Link
-              href="/auth/login"
+              href="sign-in"
               className="rounded-full bg-linear-to-r from-blue-500 to-indigo-500 px-6 py-2 font-semibold text-white shadow-md transition-transform hover:scale-105"
             >
               Login
@@ -209,7 +225,7 @@ export default function FormateLanding() {
 
           <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
             {/* Card 1: Kustomisasi Form */}
-            <div className="bg-white rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-shadow duration-300 border border-slate-100">
+            <div className="bg-white rounded-4xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300 border border-slate-100">
               <div className="bg-white border border-gray-100 rounded-xl overflow-hidden mb-8 shadow-sm">
                 <div className="p-4 border-b border-gray-100 flex justify-between items-center">
                   <span className="text-xs font-semibold text-gray-700">Kustomisasi Isian Form</span>
@@ -412,7 +428,7 @@ export default function FormateLanding() {
             </div>
 
             {/* Front Card: Daftar Webinar */}
-            <div className="absolute bottom-4 right-0 w-64 h-[280px] bg-white rounded-[2rem] border-4 border-blue-200 shadow-2xl overflow-hidden z-20">
+            <div className="absolute bottom-4 right-0 w-64 h-[280px] bg-white rounded-4xl border-4 border-blue-200 shadow-2xl overflow-hidden z-20">
               <div className="p-5">
                 <h3 className="text-blue-600 font-bold text-md mb-1">Daftar Webinar</h3>
                 <p className="text-[9px] text-gray-400 mb-4">Pantau dan kelola semua webinar yang kamu buat</p>

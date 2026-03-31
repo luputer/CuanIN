@@ -126,6 +126,7 @@ model Catalog {
 }
 
 // Hide dulu databasenya nanti perlu di sesuaikan lagi
+
 // model role {
 //     id_role      Int    @id @default(autoincrement())
 //     nama_role    String @db.VarChar(40)

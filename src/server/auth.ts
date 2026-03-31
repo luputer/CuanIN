@@ -4,14 +4,12 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type Adapter } from "next-auth/adapters";
 import bcrypt from "bcryptjs";
+import { z } from "zod";
 
 import { env } from "~/env";
 import { db } from "~/server/db";
+import { authConfig } from "./auth.config";
 
-/**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
- * object and keep type safety.
- */
 declare module "next-auth" {
     interface Session extends DefaultSession {
         user: {
@@ -19,30 +17,19 @@ declare module "next-auth" {
             role: string;
             status: string;
             statusPayment: string;
+            isProfileComplete: boolean;
         } & DefaultSession["user"];
-    }
-
-    interface User {
-        role: string;
-        status: string;
-        statusPayment: string;
     }
 }
 
-export const {
-    handlers,
-    auth,
-    signIn,
-    signOut,
-} = NextAuth({
+const credentialsSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(1),
+});
+
+export const { handlers, auth, signIn, signOut } = NextAuth({
+    ...authConfig,
     adapter: PrismaAdapter(db) as Adapter,
-    session: {
-        strategy: "jwt",
-        maxAge: 60 * 60 * 24 * 7, // Sesi akan berlaku selama 7 hari (dalam detik)
-    },
-    pages: {
-        signIn: "/auth/login",
-    },
     providers: [
         GoogleProvider({
             clientId: env.GOOGLE_CLIENT_ID,
@@ -56,26 +43,30 @@ export const {
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                if (!credentials?.email || !credentials?.password) {
-                    return null;
-                }
+                const parsed = credentialsSchema.safeParse(credentials);
+                if (!parsed.success) return null;
+
+                const { email, password } = parsed.data;
 
                 const user = await db.user.findUnique({
-                    where: { email: credentials.email as string },
+                    where: { email },
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        image: true,
+                        password: true,
+                        role: true,
+                        status: true,
+                        statusPayment: true,
+                        phoneNumber: true,
+                    },
                 });
 
-                if (!user?.password) {
-                    return null;
-                }
+                if (!user?.password) return null;
 
-                const isPasswordValid = await bcrypt.compare(
-                    credentials.password as string,
-                    user.password
-                );
-
-                if (!isPasswordValid) {
-                    return null;
-                }
+                const isValid = await bcrypt.compare(password, user.password);
+                if (!isValid) return null;
 
                 return {
                     id: user.id,
@@ -85,63 +76,63 @@ export const {
                     role: user.role,
                     status: user.status,
                     statusPayment: user.statusPayment,
+                    isProfileComplete: !!user.phoneNumber,
                 };
             },
         }),
     ],
     callbacks: {
+        ...authConfig.callbacks,
         signIn: async ({ user, account }) => {
-            // Only intercept Google sign-ins
-            if (account?.provider === "google") {
-                // Check if the user has completed their profile (phone number set)
-                const dbUser = await db.user.findUnique({
-                    where: { email: user.email! },
-                    select: { phoneNumber: true },
-                });
+            if (account?.provider !== "google") return true;
 
-                // New Google user (no phone) → redirect to signup to complete profile
-                if (!dbUser?.phoneNumber) {
-                    const params = new URLSearchParams({
-                        name: user.name ?? "",
-                        email: user.email ?? "",
-                        fromGoogle: "1",
-                    });
-                    return `/auth/signup?${params.toString()}`;
-                }
+            const dbUser = await db.user.findUnique({
+                where: { email: user.email! },
+                select: { phoneNumber: true },
+            });
+
+            if (!dbUser?.phoneNumber) {
+                const params = new URLSearchParams({
+                    name: user.name ?? "",
+                    email: user.email ?? "",
+                    fromGoogle: "1",
+                });
+                return `/auth/signup?${params.toString()}`;
             }
+
             return true;
         },
-        jwt: ({ token, user }) => {
+        jwt: async ({ token, user, trigger, session }) => {
             if (user) {
-                token.id = user.id;
-                token.role = user.role;
-                token.status = user.status;
-                token.statusPayment = user.statusPayment;
+                token.sub = user.id ?? "";
+                token.role = (user as any).role;
+                token.status = (user as any).status;
+                token.statusPayment = (user as any).statusPayment;
+                token.isProfileComplete = (user as any).isProfileComplete;
             }
+
+            if (trigger === "update" && token.sub) {
+                const dbUser = await db.user.findUnique({
+                    where: { id: token.sub },
+                    select: {
+                        role: true,
+                        status: true,
+                        statusPayment: true,
+                        phoneNumber: true,
+                    },
+                });
+
+                if (dbUser) {
+                    token.role = dbUser.role;
+                    token.status = dbUser.status;
+                    token.statusPayment = dbUser.statusPayment;
+                    token.isProfileComplete = !!dbUser.phoneNumber;
+                }
+            }
+
             return token;
-        },
-        session: ({ session, token }) => {
-            if (token) {
-                session.user.id = token.id as string;
-                session.user.role = token.role as string;
-                session.user.status = token.status as string;
-                session.user.statusPayment = token.statusPayment as string;
-            }
-            return session;
-        },
-        redirect: ({ url, baseUrl }) => {
-            if (url === "/" || url === baseUrl) {
-                return `${baseUrl}/dashboard/creator`;
-            }
-            if (url.startsWith("/")) return `${baseUrl}${url}`;
-            if (new URL(url).origin === baseUrl) return url;
-            return baseUrl;
         },
     },
 });
 
-/**
- * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
- * In NextAuth v5, `auth()` handles this directly.
- */
 export const getServerAuthSession = () => auth();

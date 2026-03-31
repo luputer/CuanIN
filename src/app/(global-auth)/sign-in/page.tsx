@@ -40,7 +40,7 @@ export default function LoginPage() {
         if (result?.error) {
             setServerError("Email atau password salah. Silakan coba lagi.");
         } else {
-            router.push("/dashboard/creator");
+            router.push("/dashboard");
             router.refresh();
         }
     };
@@ -161,7 +161,7 @@ export default function LoginPage() {
                     {/* Google Button */}
                     <button
                         type="button"
-                        onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+                        onClick={() => signIn("google", { callbackUrl: "/dashboard/creator" })}
                         className="cursor-pointer flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                     >
                         <svg className="h-5 w-5" viewBox="0 0 24 24">

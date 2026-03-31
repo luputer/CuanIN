@@ -1,6 +1,5 @@
 import React from 'react';
 import { Search, ChevronDown, Eye, Copy, Trash2, Bell, CreditCard, Grid3x3, TrendingUp, Phone, Mail } from 'lucide-react';
-import { useSession } from "next-auth/react";
 // import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -10,7 +9,7 @@ export default function FormateLanding() {
 
   // useEffect(() => {
   //   if (status === "authenticated") {
-  //     router.push("/dashboard/creator");
+  //     router.push("/dashboard");
   //   }
   // }, [status, router]);
 

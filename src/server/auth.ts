@@ -20,6 +20,23 @@ declare module "next-auth" {
             isProfileComplete: boolean;
         } & DefaultSession["user"];
     }
+
+    interface User {
+        role: string;
+        status: string;
+        statusPayment: string;
+        isProfileComplete: boolean;
+    }
+}
+
+declare module "next-auth/jwt" {
+    interface JWT {
+        id: string;
+        role: string;
+        status: string;
+        statusPayment: string;
+        isProfileComplete: boolean;
+    }
 }
 
 const credentialsSchema = z.object({
@@ -102,13 +119,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
             return true;
         },
-        jwt: async ({ token, user, trigger, session }) => {
+        jwt: async ({ token, user, trigger }) => {
             if (user) {
+                token.id = user.id ?? "";
                 token.sub = user.id ?? "";
-                token.role = (user as any).role;
-                token.status = (user as any).status;
-                token.statusPayment = (user as any).statusPayment;
-                token.isProfileComplete = (user as any).isProfileComplete;
+                token.role = user.role;
+                token.status = user.status;
+                token.statusPayment = user.statusPayment;
+                token.isProfileComplete = user.isProfileComplete;
             }
 
             if (trigger === "update" && token.sub) {

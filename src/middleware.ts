@@ -5,5 +5,5 @@ export default NextAuth(authConfig).auth;
 
 export const config = {
     // Matched paths for the middleware
-    matcher: ["/dashboard/:path*", "/auth/:path*", "/"],
+    matcher: ["/dashboard/:path*", "/sign-in", "/sign-up", "/"],
 };

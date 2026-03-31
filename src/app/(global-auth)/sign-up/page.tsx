@@ -58,7 +58,7 @@ function SignupPageInner() {
     // Handle auto-redirect if already logged in (extra safety layer on top of middleware)
     useEffect(() => {
         if (status === "authenticated" && !fromGoogle) {
-            router.push("/dashboard/creator");
+            router.push("/dashboard");
         }
     }, [status, router, fromGoogle]);
 
@@ -76,7 +76,7 @@ function SignupPageInner() {
                 // Refresh the session token so it contains the new data (like role, etc.)
                 await updateSession();
                 // Redirect straight to dashboard
-                router.push("/dashboard/creator");
+                router.push("/dashboard");
                 router.refresh();
             } else {
                 // For normal email/pass users: Sign in automatically
@@ -86,9 +86,9 @@ function SignupPageInner() {
                     password: variables.password,
                 });
                 if (loginResult?.error) {
-                    router.push("/auth/login?registered=1");
+                    router.push("/sign-in?registered=1");
                 } else {
-                    router.push("/dashboard/creator");
+                    router.push("/dashboard");
                     router.refresh();
                 }
             }
@@ -116,7 +116,7 @@ function SignupPageInner() {
                         CuanIN
                     </Link>
                     <Link
-                        href="/auth/login"
+                        href="/sign-in"
                         className="rounded-full bg-blue-500 px-6 py-2 font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-blue-600"
                     >
                         Login
@@ -325,7 +325,7 @@ function SignupPageInner() {
 
                     <div className="mt-6 text-center text-xs text-gray-500">
                         Sudah punya akun?{" "}
-                        <Link href="/auth/login" className="font-medium text-blue-500 hover:underline">
+                        <Link href="/sign-in" className="font-medium text-blue-500 hover:underline">
                             Login Disini
                         </Link>
                     </div>

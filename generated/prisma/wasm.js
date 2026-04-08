@@ -270,7 +270,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/luputer/Dokumen/TA/CuanIN/generated/prisma",
+      "value": "C:\\TA\\cuanin\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -279,12 +279,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "windows",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/luputer/Dokumen/TA/CuanIN/prisma/schema.prisma",
+    "sourceFilePath": "C:\\TA\\cuanin\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -298,7 +298,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": true,
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {

@@ -29,7 +29,9 @@ export default function HeaderLandingPage() {
 
                 {/* Button */}
                 <div>
-                    <Button text="Login" />
+                    <Link href="/sign-in">
+                        <Button text="Login" />
+                    </Link>
                 </div>
             </div>
         </header>

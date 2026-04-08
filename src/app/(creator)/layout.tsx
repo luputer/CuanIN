@@ -1,5 +1,6 @@
 import SidebarKreator from "~/components/layout/sidebarkreator";
 import HeaderKreator from "~/components/layout/headerkreator";
+import { UserNav } from "~/components/user-nav";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
@@ -9,6 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             <div className="flex-1">
                 <HeaderKreator />
+                <UserNav />
 
                 <main className="p-6 bg-slate-50 min-h-screen">
                     {children}

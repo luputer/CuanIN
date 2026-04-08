@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import Button from "~/components/ui/buttonlogin";
 import HeaderLandingPage from "~/components/layout/headerlandingpage";
 import StepsSection from "~/components/ui/stepsection";

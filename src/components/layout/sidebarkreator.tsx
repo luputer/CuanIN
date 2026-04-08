@@ -13,7 +13,7 @@ function SidebarItem({
     iconClassName,
     textClassName,
 }: {
-    icon: React.ReactElement<any>;
+    icon: React.ReactElement<{ className?: string }>;
     label: string;
     active?: boolean;
     href: string;
@@ -26,15 +26,12 @@ function SidebarItem({
                 className={`px-4 py-2 rounded-lg cursor-pointer transition
         ${active
                         ? "bg-yellow-200 text-indigo-950 font-semibold text-base border-2 border-indigo-950 shadow-[1px_2px_0px_rgba(30,27,75)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition duration-200 ease-out"
-                        : textClassName || "font-semibold text-base text-indigo-950 hover:bg-slate-200"
+                        : textClassName ?? "font-semibold text-base text-indigo-950 hover:bg-slate-200"
                     }`}
             >
                 <div className="flex items-center gap-3">
                     {React.cloneElement(icon, {
-                        className: `w-5 h-5 ${iconClassName
-                            ? iconClassName
-                            : "text-indigo-950"
-                            }`,
+                        className: `w-5 h-5 ${iconClassName ?? "text-indigo-950"}`,
                     })}
                     {label}
                 </div>

@@ -7,7 +7,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
 model Post {
@@ -126,6 +128,7 @@ model Catalog {
 }
 
 // Hide dulu databasenya nanti perlu di sesuaikan lagi
+
 // model role {
 //     id_role      Int    @id @default(autoincrement())
 //     nama_role    String @db.VarChar(40)

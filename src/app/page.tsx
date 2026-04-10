@@ -8,7 +8,6 @@ import { UsersThree, CreditCard, GridFour, ChartBar } from "phosphor-react";
 import Figure6 from "public/assets/Figure6.png";
 import Figure10 from "public/assets/Figure10.png";
 import Figure11 from "public/assets/Figure11.png";
-import Link from "next/link";
 export default function FormateLanding() {
   // const { status } = useSession();
   // const router = useRouter();

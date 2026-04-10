@@ -2,6 +2,7 @@
 import { CaretDown } from "phosphor-react";
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
+import Image from "next/image";
 
 export default function HeaderKreator() {
     const [open, setOpen] = useState(false);
@@ -23,7 +24,13 @@ export default function HeaderKreator() {
                     >
                         <div className="flex items-center gap-2">
                             {user?.image ? (
-                                <img src={user.image} alt={user.name ?? "User"} className="w-8 h-8 rounded-full object-cover" />
+                                <Image
+                                    src={user.image}
+                                    alt={user.name ?? "User"}
+                                    width={32}
+                                    height={32}
+                                    className="rounded-full object-cover"
+                                />
                             ) : (
                                 <div className="w-8 h-8 p-1 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xs uppercase">
                                     {user?.name?.[0] ?? "U"}

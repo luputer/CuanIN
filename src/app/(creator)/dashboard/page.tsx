@@ -7,8 +7,6 @@ import {
     ChartLineUp,
 } from "phosphor-react";
 import {
-    LineChart,
-    Line,
     XAxis,
     YAxis,
     Tooltip,
@@ -39,7 +37,7 @@ function Card({
 
 
     return (
-        <div className={`${bgColor || "bg-white"} gap-1 rounded-xl border-1 border-indigo-950 shadow-[0px_1px_0px_rgba(30,27,75)] p-4 flex flex-col`}>
+        <div className={`${bgColor ?? "bg-white"} gap-1 rounded-xl border-1 border-indigo-950 shadow-[0px_1px_0px_rgba(30,27,75)] p-4 flex flex-col`}>
 
             {/* ICON */}
             <div className={`mb-3 rounded-full text-2xl ${iconColor}`}>

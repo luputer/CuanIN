@@ -13,25 +13,23 @@ export default function HeaderLandingPage() {
 
                 {/* Menu */}
                 <nav className="hidden gap-10 md:flex">
-                    <Link href="#tentang" className="hover:text-cyan-600">
+                    <a href="#about" className="hover:text-cyan-600">
                         Tentang
-                    </Link>
-                    <Link href="#fitur" className="hover:text-cyan-600">
+                    </a>
+                    <a href="#fitur" className="hover:text-cyan-600">
                         Fitur
-                    </Link>
-                    <Link href="#cara-kerja" className="hover:text-cyan-600">
+                    </a>
+                    <a href="#cara-kerja" className="hover:text-cyan-600">
                         Cara Kerja
-                    </Link>
-                    <Link href="#footer" className="hover:text-cyan-600">
+                    </a>
+                    <a href="#footer" className="hover:text-cyan-600">
                         Kontak
-                    </Link>
+                    </a>
                 </nav>
 
                 {/* Button */}
                 <div>
-                    <Link href="/sign-in">
-                        <Button text="Login" />
-                    </Link>
+                    <Button text="Login" href="/sign-in" />
                 </div>
             </div>
         </header>

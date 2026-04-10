@@ -8,6 +8,7 @@ import { UsersThree, CreditCard, GridFour, ChartBar } from "phosphor-react";
 import Figure6 from "public/assets/Figure6.png";
 import Figure10 from "public/assets/Figure10.png";
 import Figure11 from "public/assets/Figure11.png";
+import Link from "next/link";
 export default function FormateLanding() {
   // const { status } = useSession();
   // const router = useRouter();
@@ -89,10 +90,10 @@ export default function FormateLanding() {
     <>
       <HeaderLandingPage />
 
-      <main className="flex min-h-screen flex-col items-center justify-center bg-white text-white">
+      <main id="about" className="flex min-h-screen flex-col items-center justify-center bg-white text-white">
 
         {/* Hero Section */}
-        <section id="about" className="relative mt-30 max-w-7xl mx-auto px-6 text-center">
+        <section className="relative mt-30 max-w-7xl mx-auto px-6 text-center">
           <div className="absolute top-25 left-[-130px] w-20 h-auto transform -translate-y-1/2">
             <Image src={Figure6} alt="Figure 8" className="w-full h-auto object-contain" />
           </div>
@@ -110,7 +111,7 @@ export default function FormateLanding() {
             Buat form pendaftaran, jual produk, terima pembayaran - semua dalam satu platform.
           </p>
           <div className="mb-10">
-            <Button text="Mulai Gratis" />
+            <Button text="Mulai Gratis" href="/sign-in" />
           </div>
         </section >
 
@@ -331,14 +332,11 @@ export default function FormateLanding() {
               Mulai sekarang gratis!
             </h2>
 
-            <Button text="Daftar Sekarang" />
+            <Button text="Daftar Sekarang" href="/sign-in" />
           </div>
         </section>
 
         <Footer />
-
-
-
       </main >
     </>
   );

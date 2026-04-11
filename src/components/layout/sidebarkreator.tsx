@@ -56,40 +56,40 @@ export default function SidebarKreator() {
                     <SidebarItem
                         icon={<SquaresFour size={20} weight="fill" />}
                         label="Dashboard"
-                        href="/kreator/dashboard"
+                        href="/dashboard"
                         active
                     />
                     <SidebarItem
                         icon={<VideoCamera size={20} weight="fill" />}
                         label="Webinar"
-                        href="#"
+                        href="/webinar"
                     />
                     <SidebarItem
                         icon={<BookOpen size={20} weight="fill" />}
                         label="Kelas"
-                        href="#"
+                        href="/kelas"
                     />
                     <SidebarItem
                         icon={<CloudArrowUp size={20} weight="fill" />}
                         label="Produk Digital"
-                        href="#"
+                        href="/produk-digital"
                     />
                     <SidebarItem
                         icon={<Users size={20} weight="fill" />}
                         label="Peserta"
-                        href="#"
+                        href="/peserta"
                     />
                     <SidebarItem
                         icon={<CreditCard size={20} weight="fill" />}
                         label="Pembayaran"
-                        href="#"
+                        href="/pembayaran"
                     />
                 </div>
                 <div className="mt-4 flex flex-col items-center rounded-lg border-2 border-cyan-600 shadow-[0px_4px_0px_rgba(0,146,184)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition duration-200 ease-out hover:border-cyan-700 hover:bg-cyan-50">
                     <SidebarItem
                         icon={<Storefront size={20} weight="fill" />}
                         label="Katalog Saya"
-                        href="#"
+                        href="/katalog-saya"
                         iconClassName="text-cyan-600 hover:text-cyan-700"
                         textClassName="text-cyan-600 font-semibold text-base hover:text-cyan-700"
                     />

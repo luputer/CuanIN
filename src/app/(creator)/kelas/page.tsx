@@ -1,18 +1,11 @@
 'use client'
 
-interface Props {
-	params: {
-		id: string;
-	};
-}
 
-export default function Page({ params }: Props) {
-	const { id } = params;
+export default function Page() {
 
 	return (
 		<>
-			<h1>Page { id }</h1>
-			<p>Page content</p>
+			<p>kelas Page</p>
 		</>
 	);
 }

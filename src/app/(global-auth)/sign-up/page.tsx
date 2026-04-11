@@ -8,29 +8,10 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { api } from "~/trpc/react";
+import type { SignupFormData } from "~/lib/validation";
+import { signupSchema } from "~/lib/validation";
 
-const signupSchema = z
-    .object({
-        name: z.string().min(2, "Nama minimal 2 karakter"),
-        email: z.string().email("Format email tidak valid"),
-        phone: z
-            .string()
-            .min(10, "Nomor HP minimal 10 digit")
-            .regex(
-                /^(\+62|62|0)8[1-9][0-9]{6,9}$/,
-                "Format nomor HP tidak valid (contoh: 08123456789)"
-            ),
-        password: z.string().min(8, "Password minimal 8 karakter"),
-        confirmPassword: z.string(),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-        message: "Password dan konfirmasi password tidak sama",
-        path: ["confirmPassword"],
-    });
-
-type SignupFormData = z.infer<typeof signupSchema>;
 
 function SignupPageInner() {
     const router = useRouter();
@@ -38,12 +19,14 @@ function SignupPageInner() {
 
     const { data: session, update: updateSession, status } = useSession();
 
-    const fromGoogle = searchParams.get("fromGoogle") === "1" || !!session?.user;
+    const [isSuccess, setIsSuccess] = useState(false);
+    const fromGoogle = searchParams.get("fromGoogle") === "1" || (!!session?.user && !isSuccess);
     const googleName = searchParams.get("name") ?? session?.user?.name ?? "";
     const googleEmail = searchParams.get("email") ?? session?.user?.email ?? "";
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+
 
     const {
         register,
@@ -71,11 +54,11 @@ function SignupPageInner() {
     // ✅ tRPC mutation
     const registerMutation = api.auth.register.useMutation({
         onSuccess: async (_result, variables) => {
+            setIsSuccess(true);
             if (fromGoogle) {
                 // For Google SSO users: Profile completed!
                 // Refresh the session token so it contains the new data (like role, etc.)
                 await updateSession();
-                // Redirect straight to dashboard
                 router.push("/dashboard");
                 router.refresh();
             } else {
@@ -88,8 +71,7 @@ function SignupPageInner() {
                 if (loginResult?.error) {
                     router.push("/sign-in?registered=1");
                 } else {
-                    router.push("/dashboard");
-                    router.refresh();
+                    window.location.href = "/dashboard";
                 }
             }
         },

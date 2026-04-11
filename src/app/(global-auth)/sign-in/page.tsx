@@ -4,20 +4,13 @@ import Link from "next/link";
 import { Mail, Lock, Phone, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import type { LoginFormData } from "~/lib/validation";
+import { loginSchema } from "~/lib/validation";
 
-const loginSchema = z.object({
-    email: z.string().email("Format email tidak valid"),
-    password: z.string().min(1, "Password tidak boleh kosong"),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
@@ -40,8 +33,7 @@ export default function LoginPage() {
         if (result?.error) {
             setServerError("Email atau password salah. Silakan coba lagi.");
         } else {
-            router.push("/dashboard");
-            router.refresh();
+            window.location.href = "/dashboard";
         }
     };
 
@@ -91,6 +83,7 @@ export default function LoginPage() {
                                 </div>
                                 <input
                                     type="email"
+                                    required
                                     placeholder="Masukkan Email Anda"
                                     className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 ${errors.email
                                         ? "border-red-400 focus:border-red-400 focus:ring-red-100"
@@ -142,7 +135,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="cursor-pointer mt-6 w-full rounded-lg bg-linear-to-r from-blue-500 to-indigo-500 py-2.5 font-bold text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="cursor-pointer mt-6 w-full rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 py-2.5 font-bold text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isSubmitting ? "Memproses..." : "Login"}
                         </button>

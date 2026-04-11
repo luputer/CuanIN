@@ -3,11 +3,15 @@ import { CaretDown } from "phosphor-react";
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function HeaderKreator() {
     const [open, setOpen] = useState(false);
     const { data: session } = useSession();
     const user = session?.user;
+    const router = useRouter();
+
+
 
     return (
         <header className="sticky top-0 z-50 bg-white shadow px-12 py-3 flex items-center justify-end border-b-2 border-indigo-950">
@@ -48,7 +52,7 @@ export default function HeaderKreator() {
                     {open && (
                         <div className="absolute right-0 top-14 w-full bg-white border-2 border-indigo-950 rounded-xl shadow-md p-2">
                             <button
-                                onClick={() => signOut({ callbackUrl: "/sign-in" })}
+                                onClick={() => router.push('profile')}
                                 className="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 font-medium text-sm text-red-600 transition"
                             >
                                 Akun Saya

@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
     Wallet,
@@ -6,6 +6,7 @@ import {
     Users,
     ChartLineUp,
 } from "phosphor-react";
+import { useState } from "react";
 import {
     XAxis,
     YAxis,
@@ -35,9 +36,8 @@ function Card({
     bgColor,
 }: CardProps) {
 
-
     return (
-        <div className={`${bgColor ?? "bg-white"} gap-1 rounded-xl border-1 border-indigo-950 shadow-[0px_1px_0px_rgba(30,27,75)] p-4 flex flex-col`}>
+        <div className={`${bgColor ?? "bg-white"} gap-1 rounded-xl border border-indigo-950 shadow-[0px_1px_0px_rgba(30,27,75)] p-4 flex flex-col`}>
 
             {/* ICON */}
             <div className={`mb-3 rounded-full text-2xl ${iconColor}`}>
@@ -99,6 +99,8 @@ const buyerData = [
 ];
 
 export default function DashboardPage() {
+    const [loding, seLoding] = useState(true);
+
     return (
         <div>
             <div className="text-2xl font-semibold mb-2 text-indigo-950">Dashboard</div>

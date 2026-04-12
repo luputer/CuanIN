@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import Link from "next/link";
-import { Mail, Lock, Phone, User, Eye, EyeOff } from "lucide-react";
+import { User, Envelope, LockKey, Phone, Eye, EyeSlash } from "phosphor-react";
 import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -11,6 +11,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "~/trpc/react";
 import type { SignupFormData } from "~/lib/validation";
 import { signupSchema } from "~/lib/validation";
+import HeaderLandingPage from "~/components/layout/headerlandingpage";
+import Footer from "~/components/layout/footer";
 
 
 function SignupPageInner() {
@@ -90,37 +92,27 @@ function SignupPageInner() {
     const serverError = registerMutation.error?.message ?? null;
 
     return (
-        <div className="flex min-h-screen flex-col bg-blue-50 font-sans text-gray-800">
+        <div className="flex min-h-screen flex-col bg-white">
             {/* Header */}
-            <header className="fixed top-0 left-0 right-0 z-10 w-full bg-white px-6 py-4 shadow-sm">
-                <div className="container mx-auto flex items-center justify-between">
-                    <Link href="/" className="text-2xl font-bold text-blue-500">
-                        CuanIN
-                    </Link>
-                    <Link
-                        href="/sign-in"
-                        className="rounded-full bg-blue-500 px-6 py-2 font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-blue-600"
-                    >
-                        Login
-                    </Link>
-                </div>
-            </header>
+            <HeaderLandingPage buttonText="Login" buttonHref="/sign-in" />
 
             {/* Main Content */}
-            <main className="flex flex-1 items-center justify-center pt-24 pb-12 px-4">
-                <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
-                    <div className="mb-8 text-center">
-                        <h1 className="mb-2 text-3xl font-bold text-blue-600">Daftar Akun</h1>
-                        <p className="text-sm text-gray-500">
-                            {fromGoogle
-                                ? "Lengkapi profil Anda untuk melanjutkan"
-                                : "Buat akun untuk mengakses fitur platform"}
+            <main className="flex flex-1 items-center justify-center px-4 py-12 sm:py-20">
+                <div className="w-full max-w-lg rounded-2xl border-2 border-indigo-950 bg-white p-6 sm:p-10 shadow-[0px_5px_0px_rgba(30,27,75)]">
+
+                    {/* Title */}
+                    <div className="pb-8 pt-2 text-center">
+                        <h1 className="pb-3 text-3xl font-semibold text-cyan-600">Daftar</h1>
+                        <p className="text-lg text-indigo-950">
+                            Selamat datang!
+                            <br />
+                            Silahkan daftarkan akun Anda
                         </p>
                     </div>
 
                     {/* Google banner */}
                     {fromGoogle && (
-                        <div className="mb-5 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+                        <div className="mb-5 rounded-lg border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm text-cyan-700">
                             🎉 Akun Google Anda terdeteksi! Lengkapi data di bawah untuk menyelesaikan pendaftaran.
                         </div>
                     )}
@@ -135,20 +127,20 @@ function SignupPageInner() {
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
                         {/* Nama Lengkap */}
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-blue-500">Nama Lengkap</label>
+                            <label className="block text-sm font-medium text-indigo-950">Nama Lengkap</label>
                             <div className="relative">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                                    <User size={18} />
+                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                                    <User size={24} />
                                 </div>
                                 <input
                                     type="text"
                                     placeholder="Masukkan Nama Lengkap Anda"
                                     readOnly={fromGoogle && !!googleName}
-                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 ${fromGoogle && googleName
+                                    className={`w-full rounded-lg border py-2.5 pl-12 pr-6 text-sm outline-none transition-all placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${fromGoogle && googleName
                                         ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200"
                                         : errors.name
                                             ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                            : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                                            : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
                                         }`}
                                     {...register("name")}
                                 />
@@ -160,24 +152,25 @@ function SignupPageInner() {
 
                         {/* Email */}
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-blue-500">Email</label>
+                            <label className="block text-sm font-medium text-indigo-950">Email</label>
+
                             <div className="relative">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                                    <Mail size={18} />
+                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                                    <Envelope size={24} />
                                 </div>
+
                                 <input
                                     type="email"
-                                    placeholder="Masukkan Email Aktif"
-                                    readOnly={fromGoogle && !!googleEmail}
-                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 ${fromGoogle && googleEmail
-                                        ? "bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200"
-                                        : errors.email
-                                            ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                            : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                                    required
+                                    placeholder="Masukkan Email Anda"
+                                    className={`w-full rounded-lg border py-2.5 pl-12 pr-6 text-sm outline-none transition-all placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${errors.email
+                                        ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                                        : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
                                         }`}
                                     {...register("email")}
                                 />
                             </div>
+
                             {errors.email && (
                                 <p className="text-xs text-red-500">{errors.email.message}</p>
                             )}
@@ -185,17 +178,17 @@ function SignupPageInner() {
 
                         {/* Nomor HP */}
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-blue-500">Nomor HP</label>
+                            <label className="block text-sm font-medium text-indigo-950">Nomor HP</label>
                             <div className="relative">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                                    <Phone size={18} />
+                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                                    <Phone size={24} />
                                 </div>
                                 <input
                                     type="tel"
                                     placeholder="Masukkan Nomor HP (contoh: 08123456789)"
-                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 ${errors.phone
+                                    className={`w-full rounded-lg border py-2.5 pl-12 pr-6 text-sm outline-none transition-all placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${errors.phone
                                         ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                        : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                                        : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
                                         }`}
                                     {...register("phone")}
                                 />
@@ -207,26 +200,26 @@ function SignupPageInner() {
 
                         {/* Password */}
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-blue-500">Password</label>
+                            <label className="block text-sm font-medium text-indigo-950">Password</label>
                             <div className="relative">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                                    <Lock size={18} />
+                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                                    <LockKey size={24} />
                                 </div>
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Buat Password (min. 8 karakter)"
-                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm outline-none transition-all focus:ring-2 ${errors.password
+                                    className={`w-full rounded-lg border py-2.5 pl-12 pr-10 text-sm outline-none transition-all placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${errors.password
                                         ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                        : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                                        : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
                                         }`}
                                     {...register("password")}
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword((v) => !v)}
-                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
                                 >
-                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    {showPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
                                 </button>
                             </div>
                             {errors.password && (
@@ -236,26 +229,26 @@ function SignupPageInner() {
 
                         {/* Confirm Password */}
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-blue-500">Konfirmasi Password</label>
+                            <label className="block text-sm font-medium text-indigo-950">Konfirmasi Password</label>
                             <div className="relative">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                                    <Lock size={18} />
+                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                                    <LockKey size={24} />
                                 </div>
                                 <input
                                     type={showConfirm ? "text" : "password"}
                                     placeholder="Ulangi Password"
-                                    className={`w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm outline-none transition-all focus:ring-2 ${errors.confirmPassword
+                                    className={`w-full rounded-lg border py-2.5 pl-12 pr-10 text-sm outline-none transition-all placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${errors.confirmPassword
                                         ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                        : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                                        : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
                                         }`}
                                     {...register("confirmPassword")}
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowConfirm((v) => !v)}
-                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
                                 >
-                                    {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    {showConfirm ? <EyeSlash size={18} /> : <Eye size={18} />}
                                 </button>
                             </div>
                             {errors.confirmPassword && (
@@ -267,7 +260,7 @@ function SignupPageInner() {
                         <button
                             type="submit"
                             disabled={isPending}
-                            className="cursor-pointer mt-6 w-full rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 py-2.5 font-bold text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="cursor-pointer mt-4 w-full rounded-lg border-2 border-indigo-950 bg-yellow-200 py-2.5 text-lg font-semibold text-indigo-950 shadow-[0px_3px_0px_rgba(30,27,75)] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
                         >
                             {isPending
                                 ? "Mendaftar..."
@@ -282,9 +275,9 @@ function SignupPageInner() {
                         <>
                             <div className="relative my-6 text-center">
                                 <div className="absolute inset-0 flex items-center">
-                                    <span className="w-full border-t border-gray-200"></span>
+                                    <span className="w-full border-t border-slate-300"></span>
                                 </div>
-                                <span className="relative bg-white px-2 text-xs text-gray-400">
+                                <span className="relative bg-white px-2 text-xs text-slate-500">
                                     Atau Daftar dengan
                                 </span>
                             </div>
@@ -292,7 +285,7 @@ function SignupPageInner() {
                             <button
                                 type="button"
                                 onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-                                className="cursor-pointer flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-400 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-cyan-50"
                             >
                                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -304,10 +297,13 @@ function SignupPageInner() {
                             </button>
                         </>
                     )}
-
-                    <div className="mt-6 text-center text-xs text-gray-500">
+                    {/* Footer */}
+                    <div className="mt-6 text-center text-xs text-slate-500">
                         Sudah punya akun?{" "}
-                        <Link href="/sign-in" className="font-medium text-blue-500 hover:underline">
+                        <Link
+                            href="/sign-in"
+                            className="font-medium text-cyan-600 hover:text-cyan-800 hover:underline"
+                        >
                             Login Disini
                         </Link>
                     </div>
@@ -315,34 +311,7 @@ function SignupPageInner() {
             </main>
 
             {/* Footer */}
-            <footer className="w-full bg-blue-900 py-10 text-white mt-auto">
-                <div className="container mx-auto px-6">
-                    <div className="flex flex-col md:flex-row justify-between items-start gap-8">
-                        <div className="max-w-xs">
-                            <h3 className="text-xl font-bold text-blue-400 mb-2">CuanIN</h3>
-                            <p className="text-sm text-gray-300 leading-relaxed">
-                                Platform all-in-one untuk kelola produk anda dengan mudah.
-                            </p>
-                        </div>
-                        <div>
-                            <h4 className="text-lg font-semibold mb-3">Kontak Kami</h4>
-                            <ul className="space-y-2 text-sm text-gray-300">
-                                <li className="flex items-center gap-2">
-                                    <Phone size={16} />
-                                    <span>+62 8123 4567 890</span>
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <Mail size={16} />
-                                    <span>formate@gmail.com</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="mt-10 border-t border-blue-800 pt-6 text-center text-xs text-blue-200">
-                        &copy; 2026 CuanIN. All rights reserved.
-                    </div>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 }

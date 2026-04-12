@@ -5,6 +5,7 @@ import {
     Bag,
     Users,
     ChartLineUp,
+    ArrowUpRight,
 } from "phosphor-react";
 import { useState } from "react";
 import {
@@ -26,6 +27,7 @@ type CardProps = {
     icon: React.ReactNode;
     iconColor?: string;
     bgColor?: string;
+    showArrow?: boolean;
 };
 
 function Card({
@@ -34,14 +36,25 @@ function Card({
     icon,
     iconColor,
     bgColor,
+    showArrow,
 }: CardProps) {
 
     return (
         <div className={`${bgColor ?? "bg-white"} gap-1 rounded-xl border border-indigo-950 shadow-[0px_1px_0px_rgba(30,27,75)] p-4 flex flex-col`}>
 
-            {/* ICON */}
-            <div className={`mb-3 rounded-full text-2xl ${iconColor}`}>
-                {icon}
+            {/* TOP ROW: ICON & ARROW */}
+            <div className="flex justify-between items-start mb-3">
+                {/* MAIN ICON */}
+                <div className={`rounded-full text-2xl ${iconColor}`}>
+                    {icon}
+                </div>
+
+                {/* ARROW UP RIGHT */}
+                {showArrow && (
+                    <button className="flex items-center justify-center p-1.5 rounded-full bg-cyan-600 text-white cursor-pointer">
+                        <ArrowUpRight size={14} weight="bold" />
+                    </button>
+                )}
             </div>
 
             {/* TITLE & VALUE */}
@@ -63,7 +76,6 @@ function Card({
         </div>
     );
 }
-
 
 const weeklyRevenue = [
     { day: "Senin", value: 400 },
@@ -102,9 +114,11 @@ export default function DashboardPage() {
     const [loding, seLoding] = useState(true);
 
     return (
-        <div>
-            <div className="text-2xl font-semibold mb-2 text-indigo-950">Dashboard</div>
-            <div className="text-sm font-regular mb-4 text-slate-600 mb-4">Selamat datang, Mason Brooks. Kelola produk dan pantau penjualan Anda di sini.</div>
+        <div className="bg-slate-50">
+            <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 pt-4 pb-4 mb-2">
+                <div className="text-2xl font-semibold mb-1 text-indigo-950">Dashboard</div>
+                <div className="text-sm font-regular text-slate-600">Selamat datang, Mason Brooks. Kelola produk dan pantau penjualan Anda di sini.</div>
+            </div>
 
             {/* TOP CARDS */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
@@ -114,6 +128,7 @@ export default function DashboardPage() {
                     icon={<Wallet weight="fill" className="w-8 h-8" />}
                     iconColor="text-cyan-600"
                     bgColor="bg-cyan-50"
+                    showArrow={true}
                 />
 
                 <Card
@@ -139,8 +154,8 @@ export default function DashboardPage() {
             </div>
 
             {/* CHART ROW 1 */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-4">
-                <div className="col-span-2 bg-white rounded-xl border-1 border-indigo-950 shadow-[0px_1px_0px_rgba(30,27,75)] p-4">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-4">
+                <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border-2 border-indigo-950 shadow-[0px_2px_0px_rgba(30,27,75)] p-4 overflow-hidden">
                     <h2 className="pl-2 font-semibold text-lg mb-6 text-indigo-950">Pendapatan Mingguan</h2>
                     <ResponsiveContainer width="100%" height={300}>
                         <AreaChart data={weeklyRevenue}>
@@ -160,8 +175,9 @@ export default function DashboardPage() {
                                 stroke="#A2F4FD"
                             />
                             <YAxis
-                                tick={{ fill: "#06b6d4", fontSize: 18, fontWeight: 600 }}
+                                tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
                                 tickMargin={10}
+                                width={60}
                                 stroke="#A2F4FD"
                             />
                             <Tooltip />
@@ -179,25 +195,26 @@ export default function DashboardPage() {
                     </ResponsiveContainer>
                 </div>
 
-                <div className="col-span-1 bg-white rounded-xl border-1 border-indigo-950 shadow-[0px_1px_0px_rgba(30,27,75)] p-4">
+                <div className="lg:col-span-1 bg-white rounded-xl border-2 border-indigo-950 shadow-[0px_2px_0px_rgba(30,27,75)] p-4 overflow-hidden">
                     <h2 className="pl-2 font-semibold text-lg mb-6 text-indigo-950">Total per Kategori</h2>
                     <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={categoryData}>
+                        <BarChart data={categoryData} barCategoryGap="20%">
                             <CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
                             <XAxis
                                 dataKey="name"
-                                tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 500 }}
+                                tick={{ fill: "#0f172a", fontSize: 11, fontWeight: 500 }}
                                 tickMargin={10}
                                 stroke="#A2F4FD"
                             />
                             <YAxis
-                                tick={{ fill: "#06b6d4", fontSize: 18, fontWeight: 600 }}
+                                tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
                                 tickMargin={10}
+                                width={30}
                                 stroke="#A2F4FD"
                             />
                             <Tooltip />
 
-                            <Bar dataKey="total" radius={[8, 8, 0, 0]} barSize={60}>
+                            <Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
                                 {categoryData.map((entry, index) => {
                                     const colors = ["#FFF085", "#FFB86A"];
                                     return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
@@ -209,8 +226,8 @@ export default function DashboardPage() {
             </div>
 
             {/* CHART ROW 2 */}
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
-                <div className="col-span-3 bg-white rounded-xl border-1 border-indigo-950 shadow-[0px_1px_0px_rgba(30,27,75)] p-4">
+            <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
+                <div className="lg:col-span-1 xl:col-span-3 bg-white rounded-xl border-2 border-indigo-950 shadow-[0px_2px_0px_rgba(30,27,75)] p-4 overflow-hidden">
                     <h2 className="pl-2 font-semibold text-lg mb-6 text-indigo-950">Traffic Website</h2>
                     <ResponsiveContainer width="100%" height={300}>
                         <AreaChart data={trafficData}>
@@ -230,8 +247,9 @@ export default function DashboardPage() {
                                 stroke="#A2F4FD"
                             />
                             <YAxis
-                                tick={{ fill: "#06b6d4", fontSize: 18, fontWeight: 600 }}
+                                tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
                                 tickMargin={10}
+                                width={40}
                                 stroke="#A2F4FD"
                             />
                             <Tooltip />
@@ -249,25 +267,26 @@ export default function DashboardPage() {
                     </ResponsiveContainer>
                 </div>
 
-                <div className="col-span-2 bg-white rounded-xl border-1 border-indigo-950 shadow-[0px_1px_0px_rgba(30,27,75)] p-4">
+                <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border-2 border-indigo-950 shadow-[0px_2px_0px_rgba(30,27,75)] p-4 overflow-hidden">
                     <h2 className="pl-2 font-semibold text-lg mb-6 text-indigo-950">Jumlah Pembeli</h2>
                     <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={buyerData}>
+                        <BarChart data={buyerData} barCategoryGap="20%">
                             <CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
                             <XAxis
                                 dataKey="week"
-                                tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 500 }}
+                                tick={{ fill: "#0f172a", fontSize: 11, fontWeight: 500 }}
                                 tickMargin={10}
                                 stroke="#A2F4FD"
                             />
                             <YAxis
-                                tick={{ fill: "#06b6d4", fontSize: 18, fontWeight: 600 }}
+                                tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
                                 tickMargin={10}
+                                width={30}
                                 stroke="#A2F4FD"
                             />
                             <Tooltip />
 
-                            <Bar dataKey="total" radius={[8, 8, 0, 0]} barSize={60}>
+                            <Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
                                 {buyerData.map((entry, index) => {
                                     const colors = ["#FFF085", "#FFB86A"];
                                     return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;

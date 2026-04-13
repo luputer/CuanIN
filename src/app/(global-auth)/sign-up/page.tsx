@@ -57,24 +57,20 @@ function SignupPageInner() {
     const registerMutation = api.auth.register.useMutation({
         onSuccess: async (_result, variables) => {
             setIsSuccess(true);
-            if (fromGoogle) {
-                // For Google SSO users: Profile completed!
-                // Refresh the session token so it contains the new data (like role, etc.)
-                await updateSession();
-                router.push("/dashboard");
-                router.refresh();
+            
+            // For both regular and Google users, sign in automatically using credentials.
+            // Since NextAuth `signIn` callback aborts the session if phone number is missing,
+            // Google SSO users arriving here actually don't have an active session yet.
+            const loginResult = await signIn("credentials", {
+                redirect: false,
+                email: variables.email,
+                password: variables.password,
+            });
+            
+            if (loginResult?.error) {
+                router.push("/sign-in?registered=1");
             } else {
-                // For normal email/pass users: Sign in automatically
-                const loginResult = await signIn("credentials", {
-                    redirect: false,
-                    email: variables.email,
-                    password: variables.password,
-                });
-                if (loginResult?.error) {
-                    router.push("/sign-in?registered=1");
-                } else {
-                    window.location.href = "/dashboard";
-                }
+                window.location.href = "/dashboard";
             }
         },
     });

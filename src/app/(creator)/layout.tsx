@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="flex-1">
                 <HeaderKreator />
 
-                <main className="p-6 bg-slate-50 min-h-screen">
+                <main className="p-6 min-h-screen">
                     {children}
                 </main>
             </div>

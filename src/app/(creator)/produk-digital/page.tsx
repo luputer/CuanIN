@@ -41,9 +41,11 @@ import {
 import Link from "next/link";
 import { api } from "~/trpc/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function DigitalProductPage() {
 	const utils = api.useUtils();
+	const router = useRouter();
 	const { data: products, isLoading } = api.products.getAll.useQuery({ type: "DIGITAL_PRODUCT" });
 
 	const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -192,7 +194,7 @@ export default function DigitalProductPage() {
 										<TableCell className="py-4 px-6">
 											<div className="flex items-center gap-2">
 												<span className="text-slate-600">27</span>
-												<button className="px-3 py-1 text-xs font-medium text-blue-500 border border-blue-400 rounded-md hover:bg-blue-50 transition-colors">
+												<button className="px-3 py-1 text-xs font-medium text-blue-500 border border-blue-400 rounded-md hover:bg-blue-50 transition-colors cursor-pointer">
 													Lihat
 												</button>
 											</div>
@@ -204,17 +206,20 @@ export default function DigitalProductPage() {
 										</TableCell>
 										<TableCell className="py-4 px-6 whitespace-normal">
 											<div className="flex justify-center gap-3">
-												<button className="text-[#00B4D8] hover:text-[#008ba8] transition-colors">
+												<button
+													onClick={() => router.push(`/produk-digital/${item.id}`)}
+													title="Edit Produk"
+													className="text-[#00B4D8] cursor-pointer hover:text-[#008ba8] transition-colors">
 													<Eye className="w-[18px] h-[18px]" strokeWidth={2} />
 												</button>
 												<button
 													onClick={() => setDeleteId(item.id)}
-													className="text-rose-400 hover:text-rose-600 transition-colors"
+													className="text-rose-400 cursor-pointer hover:text-rose-600 transition-colors"
 													title="Hapus Produk"
 												>
 													<Trash2 className="w-[18px] h-[18px]" strokeWidth={2} />
 												</button>
-												<button className="text-amber-400 hover:text-amber-600 transition-colors" title="Duplikasi Produk">
+												<button className="text-amber-400 cursor-pointer hover:text-amber-600 transition-colors" title="Duplikasi Produk">
 													<Copy className="w-[18px] h-[18px]" strokeWidth={2} />
 												</button>
 											</div>

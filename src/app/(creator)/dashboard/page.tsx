@@ -7,7 +7,6 @@ import {
     ChartLineUp,
     ArrowUpRight,
 } from "phosphor-react";
-import { useState } from "react";
 import {
     XAxis,
     YAxis,

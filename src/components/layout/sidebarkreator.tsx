@@ -78,42 +78,42 @@ export default function SidebarKreator() {
                         icon={<SquaresFour size={20} weight="fill" />}
                         label="Dashboard"
                         href="/dashboard"
-                        active={pathname === "/dashboard"}
+                        active={pathname.startsWith("/dashboard")}
                         isCollapsed={isCollapsed}
                     />
                     <SidebarItem
                         icon={<VideoCamera size={20} weight="fill" />}
                         label="Webinar"
                         href="/webinar"
-                        active={pathname === "/webinar"}
+                        active={pathname.startsWith("/webinar")}
                         isCollapsed={isCollapsed}
                     />
                     <SidebarItem
                         icon={<BookOpen size={20} weight="fill" />}
                         label="Kelas"
                         href="/kelas"
-                        active={pathname === "/kelas"}
+                        active={pathname.startsWith("/kelas")}
                         isCollapsed={isCollapsed}
                     />
                     <SidebarItem
                         icon={<CloudArrowUp size={20} weight="fill" />}
                         label="Produk Digital"
                         href="/produk-digital"
-                        active={pathname === "/produk-digital"}
+                        active={pathname.startsWith("/produk-digital")}
                         isCollapsed={isCollapsed}
                     />
                     <SidebarItem
                         icon={<Users size={20} weight="fill" />}
                         label="Peserta"
                         href="/peserta"
-                        active={pathname === "/peserta"}
+                        active={pathname.startsWith("/peserta")}
                         isCollapsed={isCollapsed}
                     />
                     <SidebarItem
                         icon={<CreditCard size={20} weight="fill" />}
                         label="Pembayaran"
                         href="/pembayaran"
-                        active={pathname === "/pembayaran"}
+                        active={pathname.startsWith("/pembayaran")}
                         isCollapsed={isCollapsed}
                     />
                 </div>

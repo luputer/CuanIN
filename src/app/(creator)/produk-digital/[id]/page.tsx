@@ -1,7 +1,7 @@
 
 "use client"
-import NextImage from "next/image";
-import { ChevronLeft, Edit, Image as ImageIcon, Loader2, Pencil } from "lucide-react";
+import { ChevronLeft, Copy, Image as ImageIcon, Loader2, Pencil } from "lucide-react";
+
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../components/ui/tabs";
@@ -10,12 +10,19 @@ import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
+import { toast } from "sonner";
+import Image from "next/image";
 
 export default function ProductDetailPage() {
     const params = useParams();
     const id = params.id as string;
 
     const { data: product, isLoading } = api.products.getById.useQuery({ id });
+    const handleCopyLink = () => {
+        if (!product?.link) return;
+        void navigator.clipboard.writeText(product.link);
+        toast.success("Link produk disalin!");
+    };
 
     const Label = ({ children }: { children: React.ReactNode }) => (
         <div className="w-[200px] text-slate-700 font-semibold">{children}</div>
@@ -96,15 +103,15 @@ export default function ProductDetailPage() {
                     <span>Kembali ke Daftar Produk Digital</span>
                 </Link>
 
-                <Link href={`/produk-digital/${id}/edit`}>
-                    <Button
-                        variant={"outline"}
-                        className="flex items-center gap-2"
-                    >
-                        <Edit className="w-4 h-4" />
-                        Edit Produk
-                    </Button>
-                </Link>
+                <Button
+                    variant={"outline"}
+                    className="flex items-center gap-2"
+                    onClick={handleCopyLink}
+                >
+                    <Copy className="w-4 h-4" />
+                    Salin Link Produk
+                </Button>
+
 
             </div>
 
@@ -112,7 +119,7 @@ export default function ProductDetailPage() {
             <h1 className="text-2xl font-bold text-blue-600">{product.name}</h1>
 
             {/* Tabs */}
-            <Tabs defaultValue="detail" className="w-full">
+            <Tabs defaultValue="detail" className="">
                 <div className="bg-white rounded-t-xl overflow-hidden border-b border-slate-200">
                     <TabsList className="w-full flex h-auto p-0 bg-transparent">
                         <TabsTrigger
@@ -157,7 +164,7 @@ export default function ProductDetailPage() {
                                 <div className="w-full rounded-lg border border-blue-200 bg-white p-4 min-h-[44px]">
                                     <div className="w-48 h-48 bg-slate-100 rounded-md overflow-hidden flex items-center justify-center border border-slate-200">
                                         {product.image ? (
-                                            <NextImage
+                                            <Image
                                                 src={product.image}
                                                 alt={product.name}
                                                 width={200}

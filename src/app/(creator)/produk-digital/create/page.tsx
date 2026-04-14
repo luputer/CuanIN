@@ -116,14 +116,12 @@ export default function CreateDigitalProductPage() {
             if (!res.ok) throw new Error("Gagal upload ke storage");
 
             // Gunakan BUCKET_PUBLIC_URL dari env jika perlu, 
-            // tapi biasanya URL presigned (PUT) berbeda dengan URL akses (GET).
-            // R2/S3 public access biasanya: endpoint/bucket/key atau custom domain/key.
-            // Di .env user ada BUCKET_PUBLIC_URL.
             const publicUrl = `https://pub-3098f58e584244c8bf48888938b34bae.r2.dev/${key}`;
+
             setValue("image", publicUrl, { shouldValidate: true });
             toast.success("Gambar berhasil diunggah");
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Gagal unggah gambar";
+            const errorMessage = error instanceof Error ? error.message : "Terjadi kesalahan";
             toast.error(`Gagal unggah gambar: ${errorMessage}`);
             setPreviewUrl(null);
         } finally {
@@ -187,7 +185,7 @@ export default function CreateDigitalProductPage() {
                             >
                                 {previewUrl ? (
                                     <>
-                                        <Image src={previewUrl} alt="Preview" fill className="object-cover" />
+                                        <Image src={previewUrl} alt="Preview" fill className="object-cover" unoptimized />
                                         {uploading && (
                                             <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                                                 <Loader2 className="h-6 w-6 animate-spin text-white" />

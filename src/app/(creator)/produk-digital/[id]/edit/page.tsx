@@ -228,7 +228,13 @@ export default function EditProductPage() {
                             >
                                 {previewUrl ? (
                                     <>
-                                        <Image src={previewUrl} alt="Preview" fill className="object-cover" />
+                                        <Image 
+                                            src={previewUrl} 
+                                            alt="Preview" 
+                                            fill 
+                                            unoptimized
+                                            className="object-cover" 
+                                        />
                                         {uploading && (
                                             <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                                                 <Loader2 className="h-6 w-6 animate-spin text-white" />

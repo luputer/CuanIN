@@ -11,7 +11,7 @@ import {
 	Loader2,
 	Copy
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import {
 	AlertDialog,
@@ -38,6 +38,7 @@ import {
 	PaginationItem,
 	PaginationLink,
 } from "~/components/ui/pagination";
+import { Skeleton } from "~/components/ui/skeleton";
 import Link from "next/link";
 import { api } from "~/trpc/react";
 import Image from "next/image";
@@ -46,7 +47,31 @@ import { useRouter } from "next/navigation";
 export default function DigitalProductPage() {
 	const utils = api.useUtils();
 	const router = useRouter();
-	const { data: products, isLoading } = api.products.getAll.useQuery({ type: "DIGITAL_PRODUCT" });
+	
+	const [page, setPage] = useState(1);
+	const [limit, setLimit] = useState(10);
+	const [search, setSearch] = useState("");
+	const [debouncedSearch, setDebouncedSearch] = useState("");
+
+	// Debounce search
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setDebouncedSearch(search);
+			setPage(1); // Reset to page 1 on search
+		}, 500);
+		return () => clearTimeout(timer);
+	}, [search]);
+
+	const { data, isLoading } = api.products.getAll.useQuery({ 
+		type: "DIGITAL_PRODUCT",
+		page,
+		limit,
+		search: debouncedSearch
+	});
+
+	const products = data?.items;
+	const total = data?.total ?? 0;
+	const totalPages = data?.totalPages ?? 1;
 
 	const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -102,6 +127,8 @@ export default function DigitalProductPage() {
 					<input
 						type="text"
 						placeholder="Cari berdasarkan Nama Produk"
+						value={search}
+						onChange={(e) => setSearch(e.target.value)}
 						className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
 					/>
 				</div>
@@ -146,11 +173,17 @@ export default function DigitalProductPage() {
 					</TableHeader>
 					<TableBody className="divide-y divide-slate-100">
 						{isLoading ? (
-							<TableRow>
-								<TableCell colSpan={7} className="py-10 text-center text-slate-500">
-									Memuat data...
-								</TableCell>
-							</TableRow>
+							Array.from({ length: 5 }).map((_, i) => (
+								<TableRow key={i}>
+									<TableCell className="py-4 px-6"><Skeleton className="h-4 w-32" /></TableCell>
+									<TableCell className="py-4 px-6"><Skeleton className="h-12 w-12" /></TableCell>
+									<TableCell className="py-4 px-6"><Skeleton className="h-4 w-16" /></TableCell>
+									<TableCell className="py-4 px-6"><Skeleton className="h-4 w-20" /></TableCell>
+									<TableCell className="py-4 px-6"><Skeleton className="h-4 w-12" /></TableCell>
+									<TableCell className="py-4 px-6"><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+									<TableCell className="py-4 px-6"><div className="flex justify-center gap-3"><Skeleton className="h-5 w-5" /><Skeleton className="h-5 w-5" /><Skeleton className="h-5 w-5" /></div></TableCell>
+								</TableRow>
+							))
 						) : products?.length === 0 ? (
 							<TableRow>
 								<TableCell colSpan={7} className="py-10 text-center text-slate-500">
@@ -193,7 +226,7 @@ export default function DigitalProductPage() {
 										</TableCell>
 										<TableCell className="py-4 px-6">
 											<div className="flex items-center gap-2">
-												<span className="text-slate-600">27</span>
+												<span className="text-slate-600">0</span>
 												<button className="px-3 py-1 text-xs font-medium text-blue-500 border border-blue-400 rounded-md hover:bg-blue-50 transition-colors cursor-pointer">
 													Lihat
 												</button>
@@ -235,44 +268,72 @@ export default function DigitalProductPage() {
 			{/* Pagination */}
 			<div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[13px] text-slate-500 pt-2 w-full">
 				<div className="flex items-center gap-3">
-					<button className="flex items-center justify-between px-3 py-1.5 border border-slate-200 rounded text-slate-600 hover:bg-slate-50 w-16">
-						7 <ChevronDown className="w-3 h-3 text-slate-400" />
-					</button>
-					<span className="text-slate-500 whitespace-nowrap">Hasil: 1-7 dari 300</span>
+					<div className="relative">
+						<select 
+							value={limit}
+							onChange={(e) => {
+								setLimit(Number(e.target.value));
+								setPage(1);
+							}}
+							className="appearance-none bg-white border border-slate-200 rounded px-3 py-1.5 pr-8 text-slate-600 hover:bg-slate-50 focus:outline-none cursor-pointer w-20"
+						>
+							<option value={5}>5</option>
+							<option value={10}>10</option>
+							<option value={20}>20</option>
+							<option value={50}>50</option>
+						</select>
+						<ChevronDown className="w-3 h-3 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+					</div>
+					<span className="text-slate-500 whitespace-nowrap">
+						Hasil: {total > 0 ? (page - 1) * limit + 1 : 0}-{Math.min(page * limit, total)} dari {total}
+					</span>
 				</div>
 				<div className="flex items-center">
 					<Pagination className="justify-center sm:justify-end">
 						<PaginationContent className="gap-1">
 							<PaginationItem>
-								<a href="#" className="flex items-center justify-center p-2 text-slate-400 hover:text-slate-700">
-									<ChevronLeft className="w-4 h-4" />
-								</a>
-							</PaginationItem>
-							<PaginationItem>
-								<PaginationLink
-									href="#"
-									isActive
-									className="h-7 w-7 rounded-[4px] bg-[#00B4D8] text-white hover:bg-[#009bc2] hover:text-white border-0 font-medium text-xs"
+								<button 
+									onClick={() => setPage(p => Math.max(1, p - 1))}
+									disabled={page === 1}
+									className="flex items-center justify-center p-2 text-slate-400 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
 								>
-									1
-								</PaginationLink>
+									<ChevronLeft className="w-4 h-4" />
+								</button>
 							</PaginationItem>
+							
+							{Array.from({ length: totalPages }, (_, i) => i + 1)
+								.filter(p => p === 1 || p === totalPages || (p >= page - 1 && p <= page + 1))
+								.map((p, index, array) => {
+									const prev = array[index - 1];
+									const showEllipsis = index > 0 && prev !== undefined && p - prev > 1;
+									return (
+										<div key={p} className="flex items-center gap-1">
+											{showEllipsis && <PaginationEllipsis />}
+											<PaginationItem>
+												<button
+													onClick={() => setPage(p)}
+													className={`h-7 w-7 rounded-[4px] flex items-center justify-center font-medium text-xs transition-colors ${
+														page === p 
+														? "bg-[#00B4D8] text-white hover:bg-[#009bc2]" 
+														: "text-slate-500 hover:bg-slate-100"
+													}`}
+												>
+													{p}
+												</button>
+											</PaginationItem>
+										</div>
+									);
+								})
+							}
+
 							<PaginationItem>
-								<PaginationLink href="#" className="h-7 w-7 rounded-[4px] border-0 text-slate-500 font-medium text-xs hover:bg-slate-100">2</PaginationLink>
-							</PaginationItem>
-							<PaginationItem>
-								<PaginationLink href="#" className="h-7 w-7 rounded-[4px] border-0 text-slate-500 font-medium text-xs hover:bg-slate-100">3</PaginationLink>
-							</PaginationItem>
-							<PaginationItem>
-								<PaginationEllipsis className="mt-1" />
-							</PaginationItem>
-							<PaginationItem>
-								<PaginationLink href="#" className="h-7 px-2 rounded-[4px] border-0 text-slate-500 font-medium text-xs hover:bg-slate-100">100</PaginationLink>
-							</PaginationItem>
-							<PaginationItem>
-								<a href="#" className="flex items-center justify-center p-2 text-slate-400 hover:text-slate-700">
+								<button 
+									onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+									disabled={page === totalPages}
+									className="flex items-center justify-center p-2 text-slate-400 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+								>
 									<ChevronRight className="w-4 h-4" />
-								</a>
+								</button>
 							</PaginationItem>
 						</PaginationContent>
 					</Pagination>

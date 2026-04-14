@@ -28,11 +28,13 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
+import { Skeleton } from "~/components/ui/skeleton";
 
 export default function WebinarPage() {
     const utils = api.useUtils();
 
-    const { data: webinars, isLoading } = api.products.getAll.useQuery({ type: "WEBINAR" });
+    const { data, isLoading } = api.products.getAll.useQuery({ type: "WEBINAR" });
+    const webinars = data?.items;
 
     const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -121,12 +123,17 @@ export default function WebinarPage() {
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {isLoading ? (
-                            <tr>
-                                <td colSpan={7} className="text-center py-12 text-slate-500">
-                                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-blue-400" />
-                                    Memuat data...
-                                </td>
-                            </tr>
+                            Array.from({ length: 5 }).map((_, i) => (
+                                <tr key={i}>
+                                    <td className="px-6 py-4"><Skeleton className="h-4 w-32" /></td>
+                                    <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
+                                    <td className="px-6 py-4"><Skeleton className="h-4 w-16" /></td>
+                                    <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
+                                    <td className="px-6 py-4"><Skeleton className="h-4 w-12" /></td>
+                                    <td className="px-6 py-4"><Skeleton className="h-6 w-16 rounded-full" /></td>
+                                    <td className="px-6 py-4"><div className="flex justify-center gap-3"><Skeleton className="h-5 w-5" /><Skeleton className="h-5 w-5" /></div></td>
+                                </tr>
+                            ))
                         ) : webinars?.length === 0 ? (
                             <tr>
                                 <td colSpan={7} className="text-center py-12 text-slate-400">

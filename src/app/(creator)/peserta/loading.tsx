@@ -1,3 +1,5 @@
+import { TableSkeleton } from "~/components/layout/table-skeleton";
+
 export default function Loading() {
-	return <p>Loading...</p>
+	return <TableSkeleton />;
 }

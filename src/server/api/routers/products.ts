@@ -7,25 +7,57 @@ import { env } from "~/env";
 const ProductType = z.enum(["WEBINAR", "DIGITAL_PRODUCT", "KELAS_ONLINE"]);
 
 export const productsRouter = createTRPCRouter({
-    // Get all products milik user yang login (dashboard)
+    // Get all products milik user yang login (dashboard) dengan pagination
     getAll: protectedProcedure
-        .input(z.object({ type: ProductType.optional() }).optional())
+        .input(
+            z.object({
+                type: ProductType.optional(),
+                page: z.number().min(1).default(1),
+                limit: z.number().min(1).max(100).default(10),
+                search: z.string().optional(),
+            }).optional()
+        )
         .query(async ({ ctx, input }) => {
-            return await ctx.db.product.findMany({
-                where: {
-                    userId: ctx.session.user.id, // ← hanya milik user ini
-                    ...(input?.type ? { type: input.type } : {}),
-                },
-                include: {
-                    user: {
-                        select: {
-                            name: true,
-                            image: true,
+            const page = input?.page ?? 1;
+            const limit = input?.limit ?? 10;
+            const skip = (page - 1) * limit;
+
+            const where = {
+                userId: ctx.session.user.id,
+                ...(input?.type ? { type: input.type } : {}),
+                ...(input?.search ? {
+                    name: {
+                        contains: input.search,
+                        mode: 'insensitive' as const,
+                    }
+                } : {}),
+            };
+
+            const [items, total] = await Promise.all([
+                ctx.db.product.findMany({
+                    where,
+                    include: {
+                        user: {
+                            select: {
+                                name: true,
+                                image: true,
+                            },
                         },
                     },
-                },
-                orderBy: { createdAt: "desc" },
-            });
+                    orderBy: { createdAt: "desc" },
+                    skip,
+                    take: limit,
+                }),
+                ctx.db.product.count({ where }),
+            ]);
+
+            return {
+                items,
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            };
         }),
 
     // Get product by ID — hanya boleh akses milik sendiri

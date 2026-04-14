@@ -4,6 +4,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { SquaresFour, VideoCamera, BookOpen, CloudArrowUp, Users, CreditCard, Storefront, List } from "phosphor-react";
 import { usePathname } from "next/navigation";
+import { api } from "~/trpc/react";
 
 // Component kecil (item menu)
 function SidebarItem({
@@ -41,10 +42,15 @@ function SidebarItem({
     );
 }
 
+
 // Sidebar utama
 export default function SidebarKreator() {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
+
+    // Fetch data katalog untuk menentukan link
+    const { data: catalog } = api.catalog.getMine.useQuery();
+    const catalogHref = catalog?.slug ? `/catalog/${catalog.slug}` : "/catalog/setup";
 
     return (
         <aside className={`sticky top-0 transition-all duration-300 z-50 ease-in-out ${isCollapsed ? "w-20" : "w-64"} h-screen bg-white p-4 text-white border-r-2 border-indigo-950 flex flex-col`}>
@@ -121,7 +127,7 @@ export default function SidebarKreator() {
                     <SidebarItem
                         icon={<Storefront size={20} weight="fill" />}
                         label="Katalog Saya"
-                        href="/katalog-saya"
+                        href={catalogHref}
                         iconClassName="text-cyan-600"
                         textClassName="text-cyan-600 font-semibold text-base"
                         isCollapsed={isCollapsed}

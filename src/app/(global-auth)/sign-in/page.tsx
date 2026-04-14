@@ -10,7 +10,6 @@ import type { LoginFormData } from "~/lib/validation";
 import { loginSchema } from "~/lib/validation";
 import HeaderLandingPage from "~/components/layout/headerlandingpage";
 import Footer from "~/components/layout/footer";
-import type { PhosphorLogo } from "phosphor-react";
 
 
 export default function LoginPage() {

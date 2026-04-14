@@ -1,5 +1,8 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { s3Client } from "./s3";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { env } from "~/env";
 
 const ProductType = z.enum(["WEBINAR", "DIGITAL_PRODUCT", "KELAS_ONLINE"]);
 
@@ -12,6 +15,14 @@ export const productsRouter = createTRPCRouter({
                 where: {
                     userId: ctx.session.user.id, // ← hanya milik user ini
                     ...(input?.type ? { type: input.type } : {}),
+                },
+                include: {
+                    user: {
+                        select: {
+                            name: true,
+                            image: true,
+                        },
+                    },
                 },
                 orderBy: { createdAt: "desc" },
             });
@@ -40,6 +51,7 @@ export const productsRouter = createTRPCRouter({
                 startDate: z.date().optional(),
                 endDate: z.date().optional(),
                 link: z.string().optional(),
+                image: z.string().optional(),
             })
         )
         .mutation(async ({ ctx, input }) => {
@@ -63,8 +75,11 @@ export const productsRouter = createTRPCRouter({
                 startDate: z.date().optional(),
                 endDate: z.date().optional(),
                 link: z.string().optional(),
+                image: z.string().optional(),
+                status: z.string().optional(),
             })
         )
+
         .mutation(async ({ ctx, input }) => {
             const { id, ...data } = input;
             // Pastikan produk milik user yang login
@@ -82,7 +97,29 @@ export const productsRouter = createTRPCRouter({
             const product = await ctx.db.product.findUnique({
                 where: { id: input.id, userId: ctx.session.user.id },
             });
+
             if (!product) throw new Error("Produk tidak ditemukan atau bukan milikmu");
+
+            // Jika ada gambar, hapus dari S3
+            if (product.image) {
+                try {
+                    const url = new URL(product.image);
+                    const key = url.pathname.startsWith("/")
+                        ? url.pathname.substring(1)
+                        : url.pathname;
+
+                    const deleteObjectCommand = new DeleteObjectCommand({
+                        Bucket: env.BUCKET_NAME,
+                        Key: key,
+                    });
+
+                    await s3Client.send(deleteObjectCommand);
+                } catch (e) {
+                    console.error("Gagal menghapus gambar dari S3:", e);
+                    // Kita tetap lanjut hapus record DB walaupun S3 gagal
+                }
+            }
+
             return await ctx.db.product.delete({ where: { id: input.id } });
         }),
 });

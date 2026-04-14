@@ -38,9 +38,8 @@ export const webinarSchema = z
         platform: z.string().min(1, "Platform wajib dipilih"),
         link: z
             .string()
-            .url("Link tidak valid, pastikan format URL benar (https://...)")
-            .optional()
-            .or(z.literal("")),
+            .min(1, "Link webinar wajib diisi")
+            .url("Link tidak valid, pastikan format URL benar (https://...)"),
         notes: z.string().optional(),
         status: z.string().min(1, "Status wajib dipilih"),
         dateStart: z.date({ required_error: "Waktu mulai wajib diisi" }),
@@ -70,5 +69,32 @@ export const webinarSchema = z
         {
             message: "Waktu selesai harus setelah waktu mulai",
             path: ["dateEnd"],
+        }
+    );
+
+export const productDigitalSchema = z
+    .object({
+        name: z.string().min(1, "Nama produk wajib diisi"),
+        description: z.string().min(1, "Deskripsi wajib diisi"),
+        priceType: z.enum(["free", "paid"]),
+        price: z.number().min(0, "Harga tidak boleh negatif").optional(),
+        link: z
+            .string()
+            .min(1, "Link produk wajib diisi")
+            .url("Link tidak valid, pastikan format URL benar (https://...)"),
+        notes: z.string().optional(),
+        status: z.string().min(1, "Status wajib dipilih"),
+        image: z.string().optional(),
+    })
+    .refine(
+        (data) => {
+            if (data.priceType === "paid") {
+                return data.price !== undefined && data.price > 0;
+            }
+            return true;
+        },
+        {
+            message: "Harga wajib diisi untuk produk berbayar",
+            path: ["price"],
         }
     );

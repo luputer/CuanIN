@@ -3639,6 +3639,7 @@ export namespace Prisma {
     description: string | null
     price: Decimal | null
     type: $Enums.ProductType | null
+    image: string | null
     startDate: Date | null
     endDate: Date | null
     link: string | null
@@ -3654,6 +3655,7 @@ export namespace Prisma {
     description: string | null
     price: Decimal | null
     type: $Enums.ProductType | null
+    image: string | null
     startDate: Date | null
     endDate: Date | null
     link: string | null
@@ -3669,6 +3671,7 @@ export namespace Prisma {
     description: number
     price: number
     type: number
+    image: number
     startDate: number
     endDate: number
     link: number
@@ -3694,6 +3697,7 @@ export namespace Prisma {
     description?: true
     price?: true
     type?: true
+    image?: true
     startDate?: true
     endDate?: true
     link?: true
@@ -3709,6 +3713,7 @@ export namespace Prisma {
     description?: true
     price?: true
     type?: true
+    image?: true
     startDate?: true
     endDate?: true
     link?: true
@@ -3724,6 +3729,7 @@ export namespace Prisma {
     description?: true
     price?: true
     type?: true
+    image?: true
     startDate?: true
     endDate?: true
     link?: true
@@ -3826,6 +3832,7 @@ export namespace Prisma {
     description: string | null
     price: Decimal
     type: $Enums.ProductType
+    image: string | null
     startDate: Date | null
     endDate: Date | null
     link: string | null
@@ -3860,6 +3867,7 @@ export namespace Prisma {
     description?: boolean
     price?: boolean
     type?: boolean
+    image?: boolean
     startDate?: boolean
     endDate?: boolean
     link?: boolean
@@ -3876,6 +3884,7 @@ export namespace Prisma {
     description?: boolean
     price?: boolean
     type?: boolean
+    image?: boolean
     startDate?: boolean
     endDate?: boolean
     link?: boolean
@@ -3892,6 +3901,7 @@ export namespace Prisma {
     description?: boolean
     price?: boolean
     type?: boolean
+    image?: boolean
     startDate?: boolean
     endDate?: boolean
     link?: boolean
@@ -3908,6 +3918,7 @@ export namespace Prisma {
     description?: boolean
     price?: boolean
     type?: boolean
+    image?: boolean
     startDate?: boolean
     endDate?: boolean
     link?: boolean
@@ -3917,7 +3928,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "price" | "type" | "startDate" | "endDate" | "link" | "status" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "price" | "type" | "image" | "startDate" | "endDate" | "link" | "status" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -3939,6 +3950,7 @@ export namespace Prisma {
       description: string | null
       price: Prisma.Decimal
       type: $Enums.ProductType
+      image: string | null
       startDate: Date | null
       endDate: Date | null
       link: string | null
@@ -4375,6 +4387,7 @@ export namespace Prisma {
     readonly description: FieldRef<"Product", 'String'>
     readonly price: FieldRef<"Product", 'Decimal'>
     readonly type: FieldRef<"Product", 'ProductType'>
+    readonly image: FieldRef<"Product", 'String'>
     readonly startDate: FieldRef<"Product", 'DateTime'>
     readonly endDate: FieldRef<"Product", 'DateTime'>
     readonly link: FieldRef<"Product", 'String'>
@@ -10358,6 +10371,7 @@ export namespace Prisma {
     description: 'description',
     price: 'price',
     type: 'type',
+    image: 'image',
     startDate: 'startDate',
     endDate: 'endDate',
     link: 'link',
@@ -10666,6 +10680,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"Product"> | string | null
     price?: DecimalFilter<"Product"> | Decimal | DecimalJsLike | number | string
     type?: EnumProductTypeFilter<"Product"> | $Enums.ProductType
+    image?: StringNullableFilter<"Product"> | string | null
     startDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     endDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     link?: StringNullableFilter<"Product"> | string | null
@@ -10682,6 +10697,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     price?: SortOrder
     type?: SortOrder
+    image?: SortOrderInput | SortOrder
     startDate?: SortOrderInput | SortOrder
     endDate?: SortOrderInput | SortOrder
     link?: SortOrderInput | SortOrder
@@ -10701,6 +10717,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"Product"> | string | null
     price?: DecimalFilter<"Product"> | Decimal | DecimalJsLike | number | string
     type?: EnumProductTypeFilter<"Product"> | $Enums.ProductType
+    image?: StringNullableFilter<"Product"> | string | null
     startDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     endDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     link?: StringNullableFilter<"Product"> | string | null
@@ -10717,6 +10734,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     price?: SortOrder
     type?: SortOrder
+    image?: SortOrderInput | SortOrder
     startDate?: SortOrderInput | SortOrder
     endDate?: SortOrderInput | SortOrder
     link?: SortOrderInput | SortOrder
@@ -10740,6 +10758,7 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"Product"> | string | null
     price?: DecimalWithAggregatesFilter<"Product"> | Decimal | DecimalJsLike | number | string
     type?: EnumProductTypeWithAggregatesFilter<"Product"> | $Enums.ProductType
+    image?: StringNullableWithAggregatesFilter<"Product"> | string | null
     startDate?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
     endDate?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
     link?: StringNullableWithAggregatesFilter<"Product"> | string | null
@@ -11204,6 +11223,7 @@ export namespace Prisma {
     description?: string | null
     price: Decimal | DecimalJsLike | number | string
     type?: $Enums.ProductType
+    image?: string | null
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
@@ -11219,6 +11239,7 @@ export namespace Prisma {
     description?: string | null
     price: Decimal | DecimalJsLike | number | string
     type?: $Enums.ProductType
+    image?: string | null
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
@@ -11234,6 +11255,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11249,6 +11271,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11264,6 +11287,7 @@ export namespace Prisma {
     description?: string | null
     price: Decimal | DecimalJsLike | number | string
     type?: $Enums.ProductType
+    image?: string | null
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
@@ -11279,6 +11303,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11293,6 +11318,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11912,6 +11938,7 @@ export namespace Prisma {
     description?: SortOrder
     price?: SortOrder
     type?: SortOrder
+    image?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
     link?: SortOrder
@@ -11931,6 +11958,7 @@ export namespace Prisma {
     description?: SortOrder
     price?: SortOrder
     type?: SortOrder
+    image?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
     link?: SortOrder
@@ -11946,6 +11974,7 @@ export namespace Prisma {
     description?: SortOrder
     price?: SortOrder
     type?: SortOrder
+    image?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
     link?: SortOrder
@@ -13070,6 +13099,7 @@ export namespace Prisma {
     description?: string | null
     price: Decimal | DecimalJsLike | number | string
     type?: $Enums.ProductType
+    image?: string | null
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
@@ -13084,6 +13114,7 @@ export namespace Prisma {
     description?: string | null
     price: Decimal | DecimalJsLike | number | string
     type?: $Enums.ProductType
+    image?: string | null
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
@@ -13208,6 +13239,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"Product"> | string | null
     price?: DecimalFilter<"Product"> | Decimal | DecimalJsLike | number | string
     type?: EnumProductTypeFilter<"Product"> | $Enums.ProductType
+    image?: StringNullableFilter<"Product"> | string | null
     startDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     endDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     link?: StringNullableFilter<"Product"> | string | null
@@ -13362,6 +13394,7 @@ export namespace Prisma {
     description?: string | null
     price: Decimal | DecimalJsLike | number | string
     type?: $Enums.ProductType
+    image?: string | null
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
@@ -13436,6 +13469,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13450,6 +13484,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13464,6 +13499,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null

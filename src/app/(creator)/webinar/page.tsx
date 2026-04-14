@@ -100,7 +100,7 @@ export default function WebinarPage() {
             </div>
 
             {/* Table */}
-            <div className="bg-white border border-slate-200 ">
+            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
                 <table className="w-full text-sm text-left">
                     <thead className="bg-[#EBF5FF] text-slate-700 font-bold border-b border-blue-100">
                         <tr>

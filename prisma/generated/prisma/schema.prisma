@@ -9,7 +9,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Post {
@@ -41,6 +41,7 @@ model Product {
   description String?     @db.Text
   price       Decimal
   type        ProductType @default(WEBINAR)
+  image       String?
 
   // Webinar specific fields
   startDate DateTime?

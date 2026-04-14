@@ -5,9 +5,24 @@ import {
 	ChevronDown,
 	Plus,
 	Eye,
+	Trash2,
 	ChevronLeft,
-	ChevronRight
+	ChevronRight,
+	Loader2,
+	Copy
 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
 import {
 	Table,
 	TableHead,
@@ -24,77 +39,46 @@ import {
 	PaginationLink,
 } from "~/components/ui/pagination";
 import Link from "next/link";
+import { api } from "~/trpc/react";
+import Image from "next/image";
 
 export default function DigitalProductPage() {
-	const products = [
-		{
-			id: 1,
-			name: "Webinar UI/UX Dasar",
-			creator: "Mason Brooks",
-			avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mason Brooks",
-			category: "Webinar",
-			type: "Gratis",
-			price: 0,
-			status: "Selesai"
+	const utils = api.useUtils();
+	const { data: products, isLoading } = api.products.getAll.useQuery({ type: "DIGITAL_PRODUCT" });
+
+	const [deleteId, setDeleteId] = useState<string | null>(null);
+
+	const deleteProduct = api.products.delete.useMutation({
+		onSuccess: () => {
+			void utils.products.getAll.invalidate();
+			toast.success("Produk Digital berhasil dihapus");
+			setDeleteId(null);
 		},
-		{
-			id: 2,
-			name: "Kelas React untuk Pemula",
-			creator: "Olivia Bennett",
-			avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Olivia Bennett",
-			category: "Kelas",
-			type: "Berbayar",
-			price: 149000,
-			status: "Published"
+		onError: (error) => {
+			toast.error(`Gagal menghapus produk: ${error.message}`);
+			setDeleteId(null);
 		},
-		{
-			id: 3,
-			name: "Template CV ATS Friendly",
-			creator: "Mason Brooks",
-			avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mason Brooks",
-			category: "Produk Digital",
-			type: "Gratis",
-			price: 0,
-			status: "Published"
-		},
-		{
-			id: 4,
-			name: "Webinar UI/UX Dasar",
-			creator: "Olivia Bennett",
-			avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Olivia Bennett",
-			category: "Webinar",
-			type: "Berbayar",
-			price: 149000,
-			status: "Unpublished"
-		},
-		{
-			id: 5,
-			name: "Kelas React untuk Pemula",
-			creator: "Mason Brooks",
-			avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mason Brooks",
-			category: "Kelas",
-			type: "Gratis",
-			price: 0,
-			status: "Selesai"
-		},
-		{
-			id: 6,
-			name: "Template CV ATS Friendly",
-			creator: "Olivia Bennett",
-			avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Olivia Bennett",
-			category: "Produk Digital",
-			type: "Berbayar",
-			price: 149000,
-			status: "Unpublished"
-		},
-	];
+	});
+
+	const productToDelete = products?.find((p) => p.id === deleteId);
 
 	const getStatusColor = (status: string) => {
-		switch (status) {
-			case "Selesai": return "bg-green-100 text-green-700";
-			case "Published": return "bg-yellow-100 text-yellow-600";
-			case "Unpublished": return "bg-slate-200 text-slate-500";
+		const s = status.toLowerCase();
+		switch (s) {
+			case "selesai": return "bg-green-100 text-green-700";
+			case "published": return "bg-yellow-100 text-yellow-600";
+			case "unpublished": return "bg-slate-200 text-slate-500";
 			default: return "bg-slate-100 text-slate-600";
+		}
+	};
+
+	const getStatusLabel = (status: string) => {
+		const s = status.toLowerCase();
+		switch (s) {
+			case "selesai": return "Selesai";
+			case "published": return "Published";
+			case "unpublished": return "Unpublished";
+			default: return status;
 		}
 	};
 
@@ -115,7 +99,7 @@ export default function DigitalProductPage() {
 					<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
 					<input
 						type="text"
-						placeholder="Cari berdasarkan Nama Produk atau Kreator"
+						placeholder="Cari berdasarkan Nama Produk"
 						className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
 					/>
 				</div>
@@ -150,59 +134,95 @@ export default function DigitalProductPage() {
 									</div>
 								</div>
 							</TableHead>
-							<TableHead className="py-4 px-6 text-slate-700 font-bold whitespace-normal">
-								<div className="flex items-center gap-2 cursor-pointer hover:text-blue-600">
-									Kreator
-									<div className="flex flex-col text-slate-400">
-										<ChevronDown className="w-3 h-3 rotate-180 -mb-1" />
-										<ChevronDown className="w-3 h-3" />
-									</div>
-								</div>
-							</TableHead>
-							<TableHead className="py-4 px-6 text-slate-700 font-bold whitespace-normal">Kategori</TableHead>
+							<TableHead className="py-4 px-6 text-slate-700 font-bold whitespace-normal">Thumbnail</TableHead>
 							<TableHead className="py-4 px-6 text-slate-700 font-bold whitespace-normal">Tipe</TableHead>
 							<TableHead className="py-4 px-6 text-slate-700 font-bold whitespace-normal">Harga</TableHead>
+							<TableHead className="py-4 px-6 text-slate-700 font-bold whitespace-normal">Pembeli</TableHead>
 							<TableHead className="py-4 px-6 text-slate-700 font-bold whitespace-normal">Status</TableHead>
 							<TableHead className="py-4 px-6 text-slate-700 font-bold text-center whitespace-normal">Aksi</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody className="divide-y divide-slate-100">
-						{products.map((item) => (
-							<TableRow key={item.id} className="hover:bg-slate-50 transition-colors group">
-								<TableCell className="py-4 px-6 text-slate-600 whitespace-normal">
-									{item.name}
-								</TableCell>
-								<TableCell className="py-4 px-6 whitespace-normal">
-									<div className="flex items-center gap-3">
-										<div className="w-7 h-7 rounded-full bg-slate-200 overflow-hidden shrink-0">
-											<img
-												src={item.avatar}
-												alt={item.creator}
-												className="w-full h-full object-cover"
-											/>
-										</div>
-										<span className="text-slate-600 text-sm">{item.creator}</span>
-									</div>
-								</TableCell>
-								<TableCell className="py-4 px-6 text-slate-600 whitespace-normal">{item.category}</TableCell>
-								<TableCell className="py-4 px-6 text-slate-600 whitespace-normal">{item.type}</TableCell>
-								<TableCell className="py-4 px-6 text-slate-600 whitespace-normal">
-									{item.price === 0 ? "Rp 0" : `Rp ${item.price.toLocaleString("id-ID")}`}
-								</TableCell>
-								<TableCell className="py-4 px-6 whitespace-normal">
-									<span className={`px-4 py-1 rounded-full text-[13px] font-medium ${getStatusColor(item.status)}`}>
-										{item.status}
-									</span>
-								</TableCell>
-								<TableCell className="py-4 px-6 whitespace-normal">
-									<div className="flex justify-center">
-										<button className="text-[#00B4D8] hover:text-[#008ba8] transition-colors">
-											<Eye className="w-[18px] h-[18px]" strokeWidth={2} />
-										</button>
-									</div>
+						{isLoading ? (
+							<TableRow>
+								<TableCell colSpan={7} className="py-10 text-center text-slate-500">
+									Memuat data...
 								</TableCell>
 							</TableRow>
-						))}
+						) : products?.length === 0 ? (
+							<TableRow>
+								<TableCell colSpan={7} className="py-10 text-center text-slate-500">
+									Belum ada produk digital.
+								</TableCell>
+							</TableRow>
+						) : (
+							products?.map((item) => {
+								const priceNum = Number(item.price);
+								return (
+									<TableRow key={item.id} className="hover:bg-slate-50 transition-colors group">
+										<TableCell className="py-4 px-6 text-slate-600 font-medium hover:underline cursor-pointer ">
+											<Link href={`/produk-digital/${item.id}`}>
+												{item.name}
+											</Link>
+										</TableCell>
+										<TableCell className="py-4 px-6 whitespace-normal">
+											<div className="w-12 h-12 bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
+												{item.image ? (
+													<Image
+														src={item.image}
+														alt={item.name}
+														width={48}
+														height={48}
+														unoptimized
+														className="w-full h-full object-cover"
+													/>
+												) : (
+													<div className="w-full h-full flex items-center justify-center text-[10px] text-slate-400 italic">
+														No image
+													</div>
+												)}
+											</div>
+										</TableCell>
+										<TableCell className="py-4 px-6 text-slate-600">
+											{priceNum > 0 ? "Berbayar" : "Gratis"}
+										</TableCell>
+										<TableCell className="py-4 px-6 text-slate-600 font-medium">
+											{priceNum === 0 ? "Rp 0" : `Rp ${priceNum.toLocaleString("id-ID")}`}
+										</TableCell>
+										<TableCell className="py-4 px-6">
+											<div className="flex items-center gap-2">
+												<span className="text-slate-600">27</span>
+												<button className="px-3 py-1 text-xs font-medium text-blue-500 border border-blue-400 rounded-md hover:bg-blue-50 transition-colors">
+													Lihat
+												</button>
+											</div>
+										</TableCell>
+										<TableCell className="py-4 px-6 whitespace-normal">
+											<span className={`px-4 py-1 rounded-full text-[13px] font-medium ${getStatusColor(item.status)}`}>
+												{getStatusLabel(item.status)}
+											</span>
+										</TableCell>
+										<TableCell className="py-4 px-6 whitespace-normal">
+											<div className="flex justify-center gap-3">
+												<button className="text-[#00B4D8] hover:text-[#008ba8] transition-colors">
+													<Eye className="w-[18px] h-[18px]" strokeWidth={2} />
+												</button>
+												<button
+													onClick={() => setDeleteId(item.id)}
+													className="text-rose-400 hover:text-rose-600 transition-colors"
+													title="Hapus Produk"
+												>
+													<Trash2 className="w-[18px] h-[18px]" strokeWidth={2} />
+												</button>
+												<button className="text-amber-400 hover:text-amber-600 transition-colors" title="Duplikasi Produk">
+													<Copy className="w-[18px] h-[18px]" strokeWidth={2} />
+												</button>
+											</div>
+										</TableCell>
+									</TableRow>
+								);
+							})
+						)}
 					</TableBody>
 				</Table>
 			</div>
@@ -253,6 +273,35 @@ export default function DigitalProductPage() {
 					</Pagination>
 				</div>
 			</div>
+
+			{/* Delete Confirmation Dialog */}
+			<AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Hapus Produk Digital?</AlertDialogTitle>
+						<AlertDialogDescription>
+							Kamu yakin ingin menghapus produk{" "}
+							<span className="font-semibold text-slate-800">&quot;{productToDelete?.name}&quot;</span>?
+							<br />
+							Tindakan ini tidak bisa dibatalkan.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Batal</AlertDialogCancel>
+						<AlertDialogAction
+							className="bg-rose-600 hover:bg-rose-700 text-white"
+							onClick={() => {
+								if (deleteId) deleteProduct.mutate({ id: deleteId });
+							}}
+							disabled={deleteProduct.isPending}
+						>
+							{deleteProduct.isPending ? (
+								<><Loader2 className="w-4 h-4 animate-spin mr-2" /> Menghapus...</>
+							) : "Ya, Hapus"}
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

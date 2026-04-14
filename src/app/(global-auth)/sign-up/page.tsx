@@ -19,7 +19,7 @@ function SignupPageInner() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const { data: session, update: updateSession, status } = useSession();
+    const { data: session, status } = useSession();
 
     const [isSuccess, setIsSuccess] = useState(false);
     const fromGoogle = searchParams.get("fromGoogle") === "1" || (!!session?.user && !isSuccess);

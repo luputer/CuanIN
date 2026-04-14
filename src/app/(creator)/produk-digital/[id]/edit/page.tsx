@@ -1,13 +1,13 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { useRef, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import type { z } from "zod";
+import { useEffect, useRef, useState } from "react";
+
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { ChevronLeft, Plus, Loader2 } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { ChevronLeft, Loader2, Save } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -22,8 +22,11 @@ import {
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { productDigitalSchema } from "~/lib/validation";
+import type { z } from "zod";
+import { Plus } from "lucide-react";
 
-type DigitalProductFormValues = z.infer<typeof productDigitalSchema>;
+
+type ProductFormValues = z.infer<typeof productDigitalSchema>;
 
 const FormGroup = ({
     label,
@@ -49,17 +52,28 @@ const SectionHeader = ({ title }: { title: string }) => (
     </div>
 );
 
-export default function CreateDigitalProductPage() {
+export default function EditProductPage() {
     const router = useRouter();
+    const params = useParams();
+    const id = params.id as string;
+
+    const { data: product, isLoading } = api.products.getById.useQuery({ id });
+    const utils = api.useUtils();
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [uploading, setUploading] = useState(false);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+    const getPresignedUrl = api.s3.getUploadPresignedUrl.useMutation();
 
 
     const {
         register,
         handleSubmit,
-        watch,
         setValue,
+        watch,
+        reset,
         formState: { errors },
-    } = useForm<DigitalProductFormValues>({
+    } = useForm<ProductFormValues>({
         resolver: zodResolver(productDigitalSchema),
         defaultValues: {
             priceType: "free",
@@ -70,30 +84,28 @@ export default function CreateDigitalProductPage() {
 
     const priceType = watch("priceType");
 
-    const utils = api.useUtils();
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const [uploading, setUploading] = useState(false);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-    const getPresignedUrl = api.s3.getUploadPresignedUrl.useMutation();
-
-    const createProduct = api.products.create.useMutation({
-        onSuccess: () => {
-            // Invalidate di background — tidak blocking navigasi
-            void utils.products.getAll.invalidate();
-            toast.success("Produk Digital berhasil dibuat");
-            router.push("/produk-digital");
-        },
-        onError: (error) => {
-            toast.error(`Gagal membuat produk digital: ${error.message}`);
-        },
-    });
+    // Pre-fill form when data loads
+    useEffect(() => {
+        if (product) {
+            const priceVal = Number(product.price);
+            reset({
+                name: product.name,
+                description: product.description ?? "",
+                priceType: priceVal === 0 ? "free" : "paid",
+                price: priceVal,
+                link: product.link ?? "",
+                status: product.status ?? "published",
+                notes: "",
+                image: product.image ?? undefined,
+            });
+            if (product.image) setPreviewUrl(product.image);
+        }
+    }, [product, reset]);
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // Preview local
         const localUrl = URL.createObjectURL(file);
         setPreviewUrl(localUrl);
         setUploading(true);
@@ -115,71 +127,100 @@ export default function CreateDigitalProductPage() {
 
             if (!res.ok) throw new Error("Gagal upload ke storage");
 
-            // Gunakan BUCKET_PUBLIC_URL dari env jika perlu, 
-            // tapi biasanya URL presigned (PUT) berbeda dengan URL akses (GET).
-            // R2/S3 public access biasanya: endpoint/bucket/key atau custom domain/key.
-            // Di .env user ada BUCKET_PUBLIC_URL.
             const publicUrl = `https://pub-3098f58e584244c8bf48888938b34bae.r2.dev/${key}`;
             setValue("image", publicUrl, { shouldValidate: true });
             toast.success("Gambar berhasil diunggah");
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Gagal unggah gambar";
             toast.error(`Gagal unggah gambar: ${errorMessage}`);
-            setPreviewUrl(null);
+            setPreviewUrl(product?.image ?? null);
         } finally {
             setUploading(false);
         }
     };
 
-    const onSubmit = (data: DigitalProductFormValues) => {
-        createProduct.mutate({
+
+    const updateProduct = api.products.update.useMutation({
+        onSuccess: () => {
+            void utils.products.getById.invalidate({ id });
+            void utils.products.getAll.invalidate();
+            toast.success("Produk Digital berhasil diperbarui");
+            router.push(`/produk-digital/${id}`);
+        },
+        onError: (error) => {
+            toast.error(`Gagal memperbarui produk: ${error.message}`);
+        },
+    });
+
+    const onSubmit = (data: ProductFormValues) => {
+        updateProduct.mutate({
+            id,
             name: data.name,
             description: data.description,
             price: data.priceType === "free" ? 0 : (data.price ?? 0),
-            type: "DIGITAL_PRODUCT",
-            link: data.link ?? undefined,
+            link: data.link,
+            status: data.status,
             image: data.image,
         });
     };
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+            </div>
+        );
+    }
+
+    if (!product) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+                <p className="text-slate-500 text-lg">Produk tidak ditemukan.</p>
+                <Link href="/produk-digital" className="text-blue-500 hover:underline">
+                    ← Kembali ke Daftar Produk Digital
+                </Link>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
             {/* Header */}
             <div className="flex flex-col gap-2 mb-8">
                 <Link
-                    href="/produk-digital"
+                    href={`/produk-digital/${id}`}
                     className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 w-fit"
                 >
                     <ChevronLeft className="h-4 w-4" />
-                    <span>Kembali ke Daftar Produk Digital</span>
+                    <span>Kembali ke Detail Produk</span>
                 </Link>
-                <h1 className="text-2xl font-bold text-blue-600">Tambah Produk Digital Baru</h1>
+                <h1 className="text-2xl font-bold text-blue-600">
+                    Edit Produk Digital
+                </h1>
+                <p className="text-slate-500 text-sm">{product.name}</p>
             </div>
 
-            <div className="bg-cyan-50 p-6 rounded-xl space-y-8">
-                {/* ─── Informasi Produk ─── */}
+            <div className="bg-blue-50 p-6 rounded-xl space-y-8">
+                {/* Informasi Produk */}
                 <section>
                     <SectionHeader title="Informasi Produk" />
                     <div className="space-y-5">
-                        {/* Nama */}
                         <FormGroup label="Nama" error={errors.name?.message}>
                             <Input
-                                placeholder="Masukkan Nama Produk"
+                                placeholder="Masukkan nama produk"
                                 className="bg-white h-[52px] border-blue-200 focus-visible:ring-blue-500"
                                 {...register("name")}
                             />
                         </FormGroup>
 
-                        {/* Deskripsi */}
                         <FormGroup label="Deskripsi" error={errors.description?.message}>
                             <Textarea
-                                placeholder="Masukkan Deskripsi Produk"
+                                placeholder="Masukkan deskripsi produk"
                                 className="min-h-[120px] bg-white border-blue-200 focus-visible:ring-blue-500"
                                 {...register("description")}
                             />
                         </FormGroup>
 
-                        {/* Gambar */}
                         <FormGroup label="Gambar">
                             <div
                                 onClick={() => fileInputRef.current?.click()}
@@ -210,17 +251,13 @@ export default function CreateDigitalProductPage() {
                             </div>
                         </FormGroup>
 
-                        {/* Tipe (free / paid) */}
+
                         <FormGroup label="Tipe" error={errors.priceType?.message}>
                             <Select
                                 value={priceType}
-                                onValueChange={(val) =>
-                                    setValue("priceType", val as "free" | "paid", {
-                                        shouldValidate: true,
-                                    })
-                                }
+                                onValueChange={(val) => setValue("priceType", val as "free" | "paid", { shouldValidate: true })}
                             >
-                                <SelectTrigger className="bg-white w-full border-blue-200 focus:ring-blue-500">
+                                <SelectTrigger className="bg-white w-full h-[52px] border-blue-200 focus:ring-blue-500">
                                     <SelectValue placeholder="Pilih Salah Satu" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -230,56 +267,38 @@ export default function CreateDigitalProductPage() {
                             </Select>
                         </FormGroup>
 
-                        {/* Harga — hanya muncul kalau paid */}
                         {priceType === "paid" && (
                             <FormGroup label="Harga" error={errors.price?.message}>
-                                <div className="relative flex items-center">
-                                    <span className="absolute left-3 text-slate-500 pointer-events-none">
-                                        Rp
-                                    </span>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-3.5 text-slate-500">Rp</span>
                                     <Input
                                         type="number"
                                         placeholder="0"
-                                        className="pl-10 bg-white border-blue-200 focus-visible:ring-blue-500"
+                                        className="pl-10 bg-white h-[52px] border-blue-200 focus-visible:ring-blue-500"
                                         {...register("price", { valueAsNumber: true })}
                                     />
                                 </div>
                             </FormGroup>
                         )}
 
-                        {/* Link */}
-                        <FormGroup label="Link Produk (Google Drive, Dropbox, dll)" error={errors.link?.message}>
+                        <FormGroup label="Link" error={errors.link?.message}>
                             <Input
-                                placeholder="https://drive.google.com/..."
-                                className="bg-white border-blue-200 focus-visible:ring-blue-500"
+                                placeholder="https://..."
+                                className="bg-white h-[52px] border-blue-200 focus-visible:ring-blue-500"
                                 {...register("link")}
                             />
                         </FormGroup>
 
-                        {/* Catatan */}
-                        <FormGroup label="Catatan" error={errors.notes?.message}>
-                            <Textarea
-                                placeholder="Masukkan catatan (opsional)"
-                                className="min-h-[120px] bg-white border-blue-200 focus-visible:ring-blue-500"
-                                {...register("notes")}
-                            />
-                        </FormGroup>
-
-                        {/* Status */}
                         <FormGroup label="Status" error={errors.status?.message}>
                             <Select
-                                defaultValue="published"
-                                onValueChange={(val) =>
-                                    setValue("status", val, { shouldValidate: true })
-                                }
+                                value={watch("status")}
+                                onValueChange={(val) => setValue("status", val, { shouldValidate: true })}
                             >
                                 <SelectTrigger className="bg-white w-full h-[52px] border-blue-200 focus:ring-blue-500">
                                     <SelectValue placeholder="Pilih Status" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="published" className="text-amber-600 font-medium">
-                                        Published
-                                    </SelectItem>
+                                    <SelectItem value="published" className="text-amber-600 font-medium">Published</SelectItem>
                                     <SelectItem value="draft">Draft</SelectItem>
                                     <SelectItem value="archived">Archived</SelectItem>
                                 </SelectContent>
@@ -291,17 +310,18 @@ export default function CreateDigitalProductPage() {
 
             <Button
                 onClick={handleSubmit(onSubmit)}
-                disabled={createProduct.isPending}
-                className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-6 text-lg shadow-md shadow-cyan-200 rounded-2xl"
+                disabled={updateProduct.isPending}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-6 text-lg shadow-md shadow-blue-200"
             >
-                {createProduct.isPending ? (
+                {updateProduct.isPending ? (
                     <>
                         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                         Menyimpan...
                     </>
                 ) : (
                     <>
-                        Tambah <Plus className="ml-2 h-5 w-5" />
+                        <Save className="mr-2 h-5 w-5" />
+                        Simpan Perubahan
                     </>
                 )}
             </Button>

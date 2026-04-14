@@ -38,6 +38,8 @@ export const authConfig = {
     session: {
         strategy: "jwt",
     },
+    secret: env.AUTH_SECRET,
+    trustHost: true,
     pages: {
         signIn: "/sign-in",
     },
@@ -47,16 +49,16 @@ export const authConfig = {
             clientSecret: env.GOOGLE_CLIENT_SECRET,
             allowDangerousEmailAccountLinking: true,
         }),
-        // Kita biarkan kosong atau hanya definisikan tipenya di sini,
-        // karena authorize() biasanya butuh DB/Bcrypt yang tidak aman di Edge.
-        // Konfigurasi lengkapnya akan ada di auth.ts
         CredentialsProvider({}),
     ],
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {
-            const isLoggedIn = !!auth?.user;
+            const isLoggedIn = !!auth;
             const isDashboard = nextUrl.pathname.startsWith("/dashboard");
-            const isAuthPage = nextUrl.pathname.startsWith("/sign-in") || nextUrl.pathname.startsWith("/sign-up") || nextUrl.pathname === "/";
+            const isAuthPage =
+                nextUrl.pathname.startsWith("/sign-in") ||
+                nextUrl.pathname.startsWith("/sign-up") ||
+                nextUrl.pathname === "/";
 
             if (isDashboard) {
                 if (isLoggedIn) return true;
@@ -66,9 +68,10 @@ export const authConfig = {
             }
             return true;
         },
-        jwt({ token, user, trigger, session }) {
+        async jwt({ token, user, trigger, session }) {
             if (user) {
                 token.id = user.id!;
+                token.sub = user.id!;
                 token.role = user.role;
                 token.status = user.status;
                 token.statusPayment = user.statusPayment;

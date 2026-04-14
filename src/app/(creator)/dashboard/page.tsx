@@ -111,8 +111,6 @@ const buyerData = [
 ];
 
 export default function DashboardPage() {
-    const [loding, seLoding] = useState(true);
-
     return (
         <div className="bg-slate-50">
             <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 pt-4 pb-4 mb-2">

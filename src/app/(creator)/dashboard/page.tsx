@@ -174,7 +174,7 @@ export default function DashboardPage() {
                             <YAxis
                                 tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
                                 tickMargin={10}
-                                width={60}
+                                width={50}
                                 stroke="#A2F4FD"
                             />
                             <Tooltip />
@@ -206,7 +206,7 @@ export default function DashboardPage() {
                             <YAxis
                                 tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
                                 tickMargin={10}
-                                width={30}
+                                width={40}
                                 stroke="#A2F4FD"
                             />
                             <Tooltip />
@@ -246,7 +246,7 @@ export default function DashboardPage() {
                             <YAxis
                                 tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
                                 tickMargin={10}
-                                width={40}
+                                width={50}
                                 stroke="#A2F4FD"
                             />
                             <Tooltip />
@@ -278,7 +278,7 @@ export default function DashboardPage() {
                             <YAxis
                                 tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
                                 tickMargin={10}
-                                width={30}
+                                width={40}
                                 stroke="#A2F4FD"
                             />
                             <Tooltip />

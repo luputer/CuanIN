@@ -36,7 +36,6 @@ import {
 	PaginationContent,
 	PaginationEllipsis,
 	PaginationItem,
-	PaginationLink,
 } from "~/components/ui/pagination";
 import { Skeleton } from "~/components/ui/skeleton";
 import Link from "next/link";
@@ -107,6 +106,19 @@ export default function DigitalProductPage() {
 			case "unpublished": return "Unpublished";
 			default: return status;
 		}
+	};
+
+	const { data: catalog } = api.catalog.getMine.useQuery();
+	const handleCopyLink = (itemId: string, itemSlug: string | null) => {
+		if (!catalog?.slug) {
+			toast.error("Gagal menyalin link: Catalog belum siap");
+			return;
+		}
+		const host = window.location.origin;
+		const productSlug = itemSlug ?? itemId;
+		const publicUrl = `${host}/${catalog.slug}/${productSlug}`;
+		void navigator.clipboard.writeText(publicUrl);
+		toast.success("Link produk disalin!");
 	};
 
 	return (
@@ -252,7 +264,11 @@ export default function DigitalProductPage() {
 												>
 													<Trash2 className="w-[18px] h-[18px]" strokeWidth={2} />
 												</button>
-												<button className="text-amber-400 cursor-pointer hover:text-amber-600 transition-colors" title="Duplikasi Produk">
+												<button
+													onClick={() => handleCopyLink(item.id, item.slug ?? null)}
+													className="text-amber-400 cursor-pointer hover:text-amber-600 transition-colors"
+													title="Salin Link Produk"
+												>
 													<Copy className="w-[18px] h-[18px]" strokeWidth={2} />
 												</button>
 											</div>

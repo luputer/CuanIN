@@ -37,6 +37,7 @@ enum ProductType {
 
 model Product {
     id          String      @id @default(uuid())
+    slug        String?     @unique @default(cuid())
     name        String
     description String?     @db.Text
     price       Decimal

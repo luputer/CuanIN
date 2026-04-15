@@ -122,7 +122,7 @@ export default function CreateWebinarPage() {
                 <h1 className="text-2xl font-bold text-blue-600">Tambah Webinar Baru</h1>
             </div>
 
-            <div className="bg-blue-50 p-6 rounded-xl space-y-8">
+            <div className="bg-blue-50 p-6 rounded-xl space-y-8 border-2 border-blue-200">
                 {/* ─── Informasi Produk ─── */}
                 <section>
                     <SectionHeader title="Informasi Produk" />

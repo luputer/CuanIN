@@ -17,10 +17,20 @@ export default function ProductDetailPage() {
     const params = useParams();
     const id = params.id as string;
 
+    const { data: catalog } = api.catalog.getMine.useQuery();
+    
     const { data: product, isLoading } = api.products.getById.useQuery({ id });
     const handleCopyLink = () => {
-        if (!product?.link) return;
-        void navigator.clipboard.writeText(product.link);
+        if (!product || !catalog?.slug) {
+            toast.error("Gagal menyalin link: Data belum siap");
+            return;
+        }
+        
+        const host = window.location.origin;
+        const productSlug = product.slug ?? product.id;
+        const publicUrl = `${host}/${catalog.slug}/${productSlug}`;
+        
+        void navigator.clipboard.writeText(publicUrl);
         toast.success("Link produk disalin!");
     };
 
@@ -223,7 +233,9 @@ export default function ProductDetailPage() {
                     <div className="p-6 text-center text-slate-500">Belum ada peserta terdaftar.</div>
                 </TabsContent>
                 <TabsContent value="form">
-                    <div className="p-6 text-center text-slate-500">Form Customization belum tersedia.</div>
+                    <div className="p-6 text-center text-slate-500">
+                        <h2>Costumisasi form</h2>
+                    </div>
                 </TabsContent>
             </Tabs>
         </div>

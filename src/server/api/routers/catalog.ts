@@ -69,6 +69,17 @@ export const catalogRouter = createTRPCRouter({
                             image: true,
                         },
                     },
+                    formFields: {
+                        orderBy: { order: "asc" },
+                        select: {
+                            id: true,
+                            label: true,
+                            type: true,
+                            options: true,
+                            required: true,
+                            order: true,
+                        },
+                    },
                 },
             });
 
@@ -90,7 +101,7 @@ export const catalogRouter = createTRPCRouter({
     getMine: protectedProcedure.query(async ({ ctx }) => {
         return await ctx.db.catalog.findUnique({
             where: { userId: ctx.session.user.id },
-            select: { slug: true },
+            select: { slug: true, bio: true },
         });
     }),
 

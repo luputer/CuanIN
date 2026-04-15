@@ -29,6 +29,21 @@ export type Profile = $Result.DefaultSelection<Prisma.$ProfilePayload>
  */
 export type Product = $Result.DefaultSelection<Prisma.$ProductPayload>
 /**
+ * Model FormField
+ * 
+ */
+export type FormField = $Result.DefaultSelection<Prisma.$FormFieldPayload>
+/**
+ * Model Purchase
+ * 
+ */
+export type Purchase = $Result.DefaultSelection<Prisma.$PurchasePayload>
+/**
+ * Model FormAnswer
+ * 
+ */
+export type FormAnswer = $Result.DefaultSelection<Prisma.$FormAnswerPayload>
+/**
  * Model Account
  * 
  */
@@ -66,11 +81,26 @@ export namespace $Enums {
 
 export type ProductType = (typeof ProductType)[keyof typeof ProductType]
 
+
+export const FieldType: {
+  SHORT: 'SHORT',
+  LONG: 'LONG',
+  MULTIPLE_CHOICE: 'MULTIPLE_CHOICE',
+  CHECKBOX: 'CHECKBOX',
+  DROPDOWN: 'DROPDOWN'
+};
+
+export type FieldType = (typeof FieldType)[keyof typeof FieldType]
+
 }
 
 export type ProductType = $Enums.ProductType
 
 export const ProductType: typeof $Enums.ProductType
+
+export type FieldType = $Enums.FieldType
+
+export const FieldType: typeof $Enums.FieldType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -219,6 +249,36 @@ export class PrismaClient<
     * ```
     */
   get product(): Prisma.ProductDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.formField`: Exposes CRUD operations for the **FormField** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FormFields
+    * const formFields = await prisma.formField.findMany()
+    * ```
+    */
+  get formField(): Prisma.FormFieldDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.purchase`: Exposes CRUD operations for the **Purchase** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Purchases
+    * const purchases = await prisma.purchase.findMany()
+    * ```
+    */
+  get purchase(): Prisma.PurchaseDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.formAnswer`: Exposes CRUD operations for the **FormAnswer** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FormAnswers
+    * const formAnswers = await prisma.formAnswer.findMany()
+    * ```
+    */
+  get formAnswer(): Prisma.FormAnswerDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.account`: Exposes CRUD operations for the **Account** model.
@@ -713,6 +773,9 @@ export namespace Prisma {
     Post: 'Post',
     Profile: 'Profile',
     Product: 'Product',
+    FormField: 'FormField',
+    Purchase: 'Purchase',
+    FormAnswer: 'FormAnswer',
     Account: 'Account',
     Session: 'Session',
     User: 'User',
@@ -736,7 +799,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "post" | "profile" | "product" | "account" | "session" | "user" | "verificationToken" | "catalog"
+      modelProps: "post" | "profile" | "product" | "formField" | "purchase" | "formAnswer" | "account" | "session" | "user" | "verificationToken" | "catalog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -959,6 +1022,228 @@ export namespace Prisma {
           count: {
             args: Prisma.ProductCountArgs<ExtArgs>
             result: $Utils.Optional<ProductCountAggregateOutputType> | number
+          }
+        }
+      }
+      FormField: {
+        payload: Prisma.$FormFieldPayload<ExtArgs>
+        fields: Prisma.FormFieldFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FormFieldFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormFieldPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FormFieldFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormFieldPayload>
+          }
+          findFirst: {
+            args: Prisma.FormFieldFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormFieldPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FormFieldFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormFieldPayload>
+          }
+          findMany: {
+            args: Prisma.FormFieldFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormFieldPayload>[]
+          }
+          create: {
+            args: Prisma.FormFieldCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormFieldPayload>
+          }
+          createMany: {
+            args: Prisma.FormFieldCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FormFieldCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormFieldPayload>[]
+          }
+          delete: {
+            args: Prisma.FormFieldDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormFieldPayload>
+          }
+          update: {
+            args: Prisma.FormFieldUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormFieldPayload>
+          }
+          deleteMany: {
+            args: Prisma.FormFieldDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FormFieldUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FormFieldUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormFieldPayload>[]
+          }
+          upsert: {
+            args: Prisma.FormFieldUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormFieldPayload>
+          }
+          aggregate: {
+            args: Prisma.FormFieldAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFormField>
+          }
+          groupBy: {
+            args: Prisma.FormFieldGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FormFieldGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FormFieldCountArgs<ExtArgs>
+            result: $Utils.Optional<FormFieldCountAggregateOutputType> | number
+          }
+        }
+      }
+      Purchase: {
+        payload: Prisma.$PurchasePayload<ExtArgs>
+        fields: Prisma.PurchaseFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PurchaseFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PurchasePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PurchaseFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PurchasePayload>
+          }
+          findFirst: {
+            args: Prisma.PurchaseFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PurchasePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PurchaseFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PurchasePayload>
+          }
+          findMany: {
+            args: Prisma.PurchaseFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PurchasePayload>[]
+          }
+          create: {
+            args: Prisma.PurchaseCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PurchasePayload>
+          }
+          createMany: {
+            args: Prisma.PurchaseCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PurchaseCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PurchasePayload>[]
+          }
+          delete: {
+            args: Prisma.PurchaseDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PurchasePayload>
+          }
+          update: {
+            args: Prisma.PurchaseUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PurchasePayload>
+          }
+          deleteMany: {
+            args: Prisma.PurchaseDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PurchaseUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PurchaseUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PurchasePayload>[]
+          }
+          upsert: {
+            args: Prisma.PurchaseUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PurchasePayload>
+          }
+          aggregate: {
+            args: Prisma.PurchaseAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePurchase>
+          }
+          groupBy: {
+            args: Prisma.PurchaseGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PurchaseGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PurchaseCountArgs<ExtArgs>
+            result: $Utils.Optional<PurchaseCountAggregateOutputType> | number
+          }
+        }
+      }
+      FormAnswer: {
+        payload: Prisma.$FormAnswerPayload<ExtArgs>
+        fields: Prisma.FormAnswerFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FormAnswerFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormAnswerPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FormAnswerFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormAnswerPayload>
+          }
+          findFirst: {
+            args: Prisma.FormAnswerFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormAnswerPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FormAnswerFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormAnswerPayload>
+          }
+          findMany: {
+            args: Prisma.FormAnswerFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormAnswerPayload>[]
+          }
+          create: {
+            args: Prisma.FormAnswerCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormAnswerPayload>
+          }
+          createMany: {
+            args: Prisma.FormAnswerCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FormAnswerCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormAnswerPayload>[]
+          }
+          delete: {
+            args: Prisma.FormAnswerDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormAnswerPayload>
+          }
+          update: {
+            args: Prisma.FormAnswerUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormAnswerPayload>
+          }
+          deleteMany: {
+            args: Prisma.FormAnswerDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FormAnswerUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FormAnswerUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormAnswerPayload>[]
+          }
+          upsert: {
+            args: Prisma.FormAnswerUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FormAnswerPayload>
+          }
+          aggregate: {
+            args: Prisma.FormAnswerAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFormAnswer>
+          }
+          groupBy: {
+            args: Prisma.FormAnswerGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FormAnswerGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FormAnswerCountArgs<ExtArgs>
+            result: $Utils.Optional<FormAnswerCountAggregateOutputType> | number
           }
         }
       }
@@ -1431,6 +1716,9 @@ export namespace Prisma {
     post?: PostOmit
     profile?: ProfileOmit
     product?: ProductOmit
+    formField?: FormFieldOmit
+    purchase?: PurchaseOmit
+    formAnswer?: FormAnswerOmit
     account?: AccountOmit
     session?: SessionOmit
     user?: UserOmit
@@ -1509,6 +1797,108 @@ export namespace Prisma {
   /**
    * Count Types
    */
+
+
+  /**
+   * Count Type ProductCountOutputType
+   */
+
+  export type ProductCountOutputType = {
+    formFields: number
+    purchases: number
+  }
+
+  export type ProductCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    formFields?: boolean | ProductCountOutputTypeCountFormFieldsArgs
+    purchases?: boolean | ProductCountOutputTypeCountPurchasesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductCountOutputType
+     */
+    select?: ProductCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeCountFormFieldsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FormFieldWhereInput
+  }
+
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeCountPurchasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PurchaseWhereInput
+  }
+
+
+  /**
+   * Count Type FormFieldCountOutputType
+   */
+
+  export type FormFieldCountOutputType = {
+    answers: number
+  }
+
+  export type FormFieldCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    answers?: boolean | FormFieldCountOutputTypeCountAnswersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * FormFieldCountOutputType without action
+   */
+  export type FormFieldCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormFieldCountOutputType
+     */
+    select?: FormFieldCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * FormFieldCountOutputType without action
+   */
+  export type FormFieldCountOutputTypeCountAnswersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FormAnswerWhereInput
+  }
+
+
+  /**
+   * Count Type PurchaseCountOutputType
+   */
+
+  export type PurchaseCountOutputType = {
+    answers: number
+  }
+
+  export type PurchaseCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    answers?: boolean | PurchaseCountOutputTypeCountAnswersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * PurchaseCountOutputType without action
+   */
+  export type PurchaseCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PurchaseCountOutputType
+     */
+    select?: PurchaseCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * PurchaseCountOutputType without action
+   */
+  export type PurchaseCountOutputTypeCountAnswersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FormAnswerWhereInput
+  }
 
 
   /**
@@ -3884,6 +4274,9 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    formFields?: boolean | Product$formFieldsArgs<ExtArgs>
+    purchases?: boolean | Product$purchasesArgs<ExtArgs>
+    _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3942,6 +4335,9 @@ export namespace Prisma {
   export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "slug" | "name" | "description" | "price" | "type" | "image" | "startDate" | "endDate" | "link" | "status" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    formFields?: boolean | Product$formFieldsArgs<ExtArgs>
+    purchases?: boolean | Product$purchasesArgs<ExtArgs>
+    _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProductIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3954,6 +4350,8 @@ export namespace Prisma {
     name: "Product"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
+      formFields: Prisma.$FormFieldPayload<ExtArgs>[]
+      purchases: Prisma.$PurchasePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4365,6 +4763,8 @@ export namespace Prisma {
   export interface Prisma__ProductClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    formFields<T extends Product$formFieldsArgs<ExtArgs> = {}>(args?: Subset<T, Product$formFieldsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FormFieldPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    purchases<T extends Product$purchasesArgs<ExtArgs> = {}>(args?: Subset<T, Product$purchasesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4804,6 +5204,54 @@ export namespace Prisma {
   }
 
   /**
+   * Product.formFields
+   */
+  export type Product$formFieldsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormField
+     */
+    select?: FormFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormField
+     */
+    omit?: FormFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormFieldInclude<ExtArgs> | null
+    where?: FormFieldWhereInput
+    orderBy?: FormFieldOrderByWithRelationInput | FormFieldOrderByWithRelationInput[]
+    cursor?: FormFieldWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FormFieldScalarFieldEnum | FormFieldScalarFieldEnum[]
+  }
+
+  /**
+   * Product.purchases
+   */
+  export type Product$purchasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Purchase
+     */
+    select?: PurchaseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Purchase
+     */
+    omit?: PurchaseOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PurchaseInclude<ExtArgs> | null
+    where?: PurchaseWhereInput
+    orderBy?: PurchaseOrderByWithRelationInput | PurchaseOrderByWithRelationInput[]
+    cursor?: PurchaseWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PurchaseScalarFieldEnum | PurchaseScalarFieldEnum[]
+  }
+
+  /**
    * Product without action
    */
   export type ProductDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4819,6 +5267,3416 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ProductInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model FormField
+   */
+
+  export type AggregateFormField = {
+    _count: FormFieldCountAggregateOutputType | null
+    _avg: FormFieldAvgAggregateOutputType | null
+    _sum: FormFieldSumAggregateOutputType | null
+    _min: FormFieldMinAggregateOutputType | null
+    _max: FormFieldMaxAggregateOutputType | null
+  }
+
+  export type FormFieldAvgAggregateOutputType = {
+    order: number | null
+  }
+
+  export type FormFieldSumAggregateOutputType = {
+    order: number | null
+  }
+
+  export type FormFieldMinAggregateOutputType = {
+    id: string | null
+    productId: string | null
+    label: string | null
+    type: $Enums.FieldType | null
+    required: boolean | null
+    order: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FormFieldMaxAggregateOutputType = {
+    id: string | null
+    productId: string | null
+    label: string | null
+    type: $Enums.FieldType | null
+    required: boolean | null
+    order: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FormFieldCountAggregateOutputType = {
+    id: number
+    productId: number
+    label: number
+    type: number
+    options: number
+    required: number
+    order: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type FormFieldAvgAggregateInputType = {
+    order?: true
+  }
+
+  export type FormFieldSumAggregateInputType = {
+    order?: true
+  }
+
+  export type FormFieldMinAggregateInputType = {
+    id?: true
+    productId?: true
+    label?: true
+    type?: true
+    required?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FormFieldMaxAggregateInputType = {
+    id?: true
+    productId?: true
+    label?: true
+    type?: true
+    required?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FormFieldCountAggregateInputType = {
+    id?: true
+    productId?: true
+    label?: true
+    type?: true
+    options?: true
+    required?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type FormFieldAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FormField to aggregate.
+     */
+    where?: FormFieldWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FormFields to fetch.
+     */
+    orderBy?: FormFieldOrderByWithRelationInput | FormFieldOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FormFieldWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FormFields from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FormFields.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FormFields
+    **/
+    _count?: true | FormFieldCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: FormFieldAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: FormFieldSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FormFieldMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FormFieldMaxAggregateInputType
+  }
+
+  export type GetFormFieldAggregateType<T extends FormFieldAggregateArgs> = {
+        [P in keyof T & keyof AggregateFormField]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFormField[P]>
+      : GetScalarType<T[P], AggregateFormField[P]>
+  }
+
+
+
+
+  export type FormFieldGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FormFieldWhereInput
+    orderBy?: FormFieldOrderByWithAggregationInput | FormFieldOrderByWithAggregationInput[]
+    by: FormFieldScalarFieldEnum[] | FormFieldScalarFieldEnum
+    having?: FormFieldScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FormFieldCountAggregateInputType | true
+    _avg?: FormFieldAvgAggregateInputType
+    _sum?: FormFieldSumAggregateInputType
+    _min?: FormFieldMinAggregateInputType
+    _max?: FormFieldMaxAggregateInputType
+  }
+
+  export type FormFieldGroupByOutputType = {
+    id: string
+    productId: string
+    label: string
+    type: $Enums.FieldType
+    options: JsonValue | null
+    required: boolean
+    order: number
+    createdAt: Date
+    updatedAt: Date
+    _count: FormFieldCountAggregateOutputType | null
+    _avg: FormFieldAvgAggregateOutputType | null
+    _sum: FormFieldSumAggregateOutputType | null
+    _min: FormFieldMinAggregateOutputType | null
+    _max: FormFieldMaxAggregateOutputType | null
+  }
+
+  type GetFormFieldGroupByPayload<T extends FormFieldGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FormFieldGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FormFieldGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FormFieldGroupByOutputType[P]>
+            : GetScalarType<T[P], FormFieldGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FormFieldSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    productId?: boolean
+    label?: boolean
+    type?: boolean
+    options?: boolean
+    required?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    answers?: boolean | FormField$answersArgs<ExtArgs>
+    _count?: boolean | FormFieldCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["formField"]>
+
+  export type FormFieldSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    productId?: boolean
+    label?: boolean
+    type?: boolean
+    options?: boolean
+    required?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["formField"]>
+
+  export type FormFieldSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    productId?: boolean
+    label?: boolean
+    type?: boolean
+    options?: boolean
+    required?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["formField"]>
+
+  export type FormFieldSelectScalar = {
+    id?: boolean
+    productId?: boolean
+    label?: boolean
+    type?: boolean
+    options?: boolean
+    required?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type FormFieldOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "label" | "type" | "options" | "required" | "order" | "createdAt" | "updatedAt", ExtArgs["result"]["formField"]>
+  export type FormFieldInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    answers?: boolean | FormField$answersArgs<ExtArgs>
+    _count?: boolean | FormFieldCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type FormFieldIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }
+  export type FormFieldIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }
+
+  export type $FormFieldPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FormField"
+    objects: {
+      product: Prisma.$ProductPayload<ExtArgs>
+      answers: Prisma.$FormAnswerPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      productId: string
+      label: string
+      type: $Enums.FieldType
+      options: Prisma.JsonValue | null
+      required: boolean
+      order: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["formField"]>
+    composites: {}
+  }
+
+  type FormFieldGetPayload<S extends boolean | null | undefined | FormFieldDefaultArgs> = $Result.GetResult<Prisma.$FormFieldPayload, S>
+
+  type FormFieldCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FormFieldFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FormFieldCountAggregateInputType | true
+    }
+
+  export interface FormFieldDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FormField'], meta: { name: 'FormField' } }
+    /**
+     * Find zero or one FormField that matches the filter.
+     * @param {FormFieldFindUniqueArgs} args - Arguments to find a FormField
+     * @example
+     * // Get one FormField
+     * const formField = await prisma.formField.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FormFieldFindUniqueArgs>(args: SelectSubset<T, FormFieldFindUniqueArgs<ExtArgs>>): Prisma__FormFieldClient<$Result.GetResult<Prisma.$FormFieldPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one FormField that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FormFieldFindUniqueOrThrowArgs} args - Arguments to find a FormField
+     * @example
+     * // Get one FormField
+     * const formField = await prisma.formField.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FormFieldFindUniqueOrThrowArgs>(args: SelectSubset<T, FormFieldFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FormFieldClient<$Result.GetResult<Prisma.$FormFieldPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FormField that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FormFieldFindFirstArgs} args - Arguments to find a FormField
+     * @example
+     * // Get one FormField
+     * const formField = await prisma.formField.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FormFieldFindFirstArgs>(args?: SelectSubset<T, FormFieldFindFirstArgs<ExtArgs>>): Prisma__FormFieldClient<$Result.GetResult<Prisma.$FormFieldPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FormField that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FormFieldFindFirstOrThrowArgs} args - Arguments to find a FormField
+     * @example
+     * // Get one FormField
+     * const formField = await prisma.formField.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FormFieldFindFirstOrThrowArgs>(args?: SelectSubset<T, FormFieldFindFirstOrThrowArgs<ExtArgs>>): Prisma__FormFieldClient<$Result.GetResult<Prisma.$FormFieldPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more FormFields that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FormFieldFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FormFields
+     * const formFields = await prisma.formField.findMany()
+     * 
+     * // Get first 10 FormFields
+     * const formFields = await prisma.formField.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const formFieldWithIdOnly = await prisma.formField.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FormFieldFindManyArgs>(args?: SelectSubset<T, FormFieldFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FormFieldPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a FormField.
+     * @param {FormFieldCreateArgs} args - Arguments to create a FormField.
+     * @example
+     * // Create one FormField
+     * const FormField = await prisma.formField.create({
+     *   data: {
+     *     // ... data to create a FormField
+     *   }
+     * })
+     * 
+     */
+    create<T extends FormFieldCreateArgs>(args: SelectSubset<T, FormFieldCreateArgs<ExtArgs>>): Prisma__FormFieldClient<$Result.GetResult<Prisma.$FormFieldPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many FormFields.
+     * @param {FormFieldCreateManyArgs} args - Arguments to create many FormFields.
+     * @example
+     * // Create many FormFields
+     * const formField = await prisma.formField.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FormFieldCreateManyArgs>(args?: SelectSubset<T, FormFieldCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FormFields and returns the data saved in the database.
+     * @param {FormFieldCreateManyAndReturnArgs} args - Arguments to create many FormFields.
+     * @example
+     * // Create many FormFields
+     * const formField = await prisma.formField.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FormFields and only return the `id`
+     * const formFieldWithIdOnly = await prisma.formField.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FormFieldCreateManyAndReturnArgs>(args?: SelectSubset<T, FormFieldCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FormFieldPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a FormField.
+     * @param {FormFieldDeleteArgs} args - Arguments to delete one FormField.
+     * @example
+     * // Delete one FormField
+     * const FormField = await prisma.formField.delete({
+     *   where: {
+     *     // ... filter to delete one FormField
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FormFieldDeleteArgs>(args: SelectSubset<T, FormFieldDeleteArgs<ExtArgs>>): Prisma__FormFieldClient<$Result.GetResult<Prisma.$FormFieldPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one FormField.
+     * @param {FormFieldUpdateArgs} args - Arguments to update one FormField.
+     * @example
+     * // Update one FormField
+     * const formField = await prisma.formField.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FormFieldUpdateArgs>(args: SelectSubset<T, FormFieldUpdateArgs<ExtArgs>>): Prisma__FormFieldClient<$Result.GetResult<Prisma.$FormFieldPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more FormFields.
+     * @param {FormFieldDeleteManyArgs} args - Arguments to filter FormFields to delete.
+     * @example
+     * // Delete a few FormFields
+     * const { count } = await prisma.formField.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FormFieldDeleteManyArgs>(args?: SelectSubset<T, FormFieldDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FormFields.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FormFieldUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FormFields
+     * const formField = await prisma.formField.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FormFieldUpdateManyArgs>(args: SelectSubset<T, FormFieldUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FormFields and returns the data updated in the database.
+     * @param {FormFieldUpdateManyAndReturnArgs} args - Arguments to update many FormFields.
+     * @example
+     * // Update many FormFields
+     * const formField = await prisma.formField.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more FormFields and only return the `id`
+     * const formFieldWithIdOnly = await prisma.formField.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FormFieldUpdateManyAndReturnArgs>(args: SelectSubset<T, FormFieldUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FormFieldPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one FormField.
+     * @param {FormFieldUpsertArgs} args - Arguments to update or create a FormField.
+     * @example
+     * // Update or create a FormField
+     * const formField = await prisma.formField.upsert({
+     *   create: {
+     *     // ... data to create a FormField
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FormField we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FormFieldUpsertArgs>(args: SelectSubset<T, FormFieldUpsertArgs<ExtArgs>>): Prisma__FormFieldClient<$Result.GetResult<Prisma.$FormFieldPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of FormFields.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FormFieldCountArgs} args - Arguments to filter FormFields to count.
+     * @example
+     * // Count the number of FormFields
+     * const count = await prisma.formField.count({
+     *   where: {
+     *     // ... the filter for the FormFields we want to count
+     *   }
+     * })
+    **/
+    count<T extends FormFieldCountArgs>(
+      args?: Subset<T, FormFieldCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FormFieldCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FormField.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FormFieldAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FormFieldAggregateArgs>(args: Subset<T, FormFieldAggregateArgs>): Prisma.PrismaPromise<GetFormFieldAggregateType<T>>
+
+    /**
+     * Group by FormField.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FormFieldGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FormFieldGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FormFieldGroupByArgs['orderBy'] }
+        : { orderBy?: FormFieldGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FormFieldGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFormFieldGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FormField model
+   */
+  readonly fields: FormFieldFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FormField.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FormFieldClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    answers<T extends FormField$answersArgs<ExtArgs> = {}>(args?: Subset<T, FormField$answersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FormAnswerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FormField model
+   */
+  interface FormFieldFieldRefs {
+    readonly id: FieldRef<"FormField", 'String'>
+    readonly productId: FieldRef<"FormField", 'String'>
+    readonly label: FieldRef<"FormField", 'String'>
+    readonly type: FieldRef<"FormField", 'FieldType'>
+    readonly options: FieldRef<"FormField", 'Json'>
+    readonly required: FieldRef<"FormField", 'Boolean'>
+    readonly order: FieldRef<"FormField", 'Int'>
+    readonly createdAt: FieldRef<"FormField", 'DateTime'>
+    readonly updatedAt: FieldRef<"FormField", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FormField findUnique
+   */
+  export type FormFieldFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormField
+     */
+    select?: FormFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormField
+     */
+    omit?: FormFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormFieldInclude<ExtArgs> | null
+    /**
+     * Filter, which FormField to fetch.
+     */
+    where: FormFieldWhereUniqueInput
+  }
+
+  /**
+   * FormField findUniqueOrThrow
+   */
+  export type FormFieldFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormField
+     */
+    select?: FormFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormField
+     */
+    omit?: FormFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormFieldInclude<ExtArgs> | null
+    /**
+     * Filter, which FormField to fetch.
+     */
+    where: FormFieldWhereUniqueInput
+  }
+
+  /**
+   * FormField findFirst
+   */
+  export type FormFieldFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormField
+     */
+    select?: FormFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormField
+     */
+    omit?: FormFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormFieldInclude<ExtArgs> | null
+    /**
+     * Filter, which FormField to fetch.
+     */
+    where?: FormFieldWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FormFields to fetch.
+     */
+    orderBy?: FormFieldOrderByWithRelationInput | FormFieldOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FormFields.
+     */
+    cursor?: FormFieldWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FormFields from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FormFields.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FormFields.
+     */
+    distinct?: FormFieldScalarFieldEnum | FormFieldScalarFieldEnum[]
+  }
+
+  /**
+   * FormField findFirstOrThrow
+   */
+  export type FormFieldFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormField
+     */
+    select?: FormFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormField
+     */
+    omit?: FormFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormFieldInclude<ExtArgs> | null
+    /**
+     * Filter, which FormField to fetch.
+     */
+    where?: FormFieldWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FormFields to fetch.
+     */
+    orderBy?: FormFieldOrderByWithRelationInput | FormFieldOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FormFields.
+     */
+    cursor?: FormFieldWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FormFields from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FormFields.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FormFields.
+     */
+    distinct?: FormFieldScalarFieldEnum | FormFieldScalarFieldEnum[]
+  }
+
+  /**
+   * FormField findMany
+   */
+  export type FormFieldFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormField
+     */
+    select?: FormFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormField
+     */
+    omit?: FormFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormFieldInclude<ExtArgs> | null
+    /**
+     * Filter, which FormFields to fetch.
+     */
+    where?: FormFieldWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FormFields to fetch.
+     */
+    orderBy?: FormFieldOrderByWithRelationInput | FormFieldOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FormFields.
+     */
+    cursor?: FormFieldWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FormFields from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FormFields.
+     */
+    skip?: number
+    distinct?: FormFieldScalarFieldEnum | FormFieldScalarFieldEnum[]
+  }
+
+  /**
+   * FormField create
+   */
+  export type FormFieldCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormField
+     */
+    select?: FormFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormField
+     */
+    omit?: FormFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormFieldInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FormField.
+     */
+    data: XOR<FormFieldCreateInput, FormFieldUncheckedCreateInput>
+  }
+
+  /**
+   * FormField createMany
+   */
+  export type FormFieldCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FormFields.
+     */
+    data: FormFieldCreateManyInput | FormFieldCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * FormField createManyAndReturn
+   */
+  export type FormFieldCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormField
+     */
+    select?: FormFieldSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormField
+     */
+    omit?: FormFieldOmit<ExtArgs> | null
+    /**
+     * The data used to create many FormFields.
+     */
+    data: FormFieldCreateManyInput | FormFieldCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormFieldIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FormField update
+   */
+  export type FormFieldUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormField
+     */
+    select?: FormFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormField
+     */
+    omit?: FormFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormFieldInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FormField.
+     */
+    data: XOR<FormFieldUpdateInput, FormFieldUncheckedUpdateInput>
+    /**
+     * Choose, which FormField to update.
+     */
+    where: FormFieldWhereUniqueInput
+  }
+
+  /**
+   * FormField updateMany
+   */
+  export type FormFieldUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FormFields.
+     */
+    data: XOR<FormFieldUpdateManyMutationInput, FormFieldUncheckedUpdateManyInput>
+    /**
+     * Filter which FormFields to update
+     */
+    where?: FormFieldWhereInput
+    /**
+     * Limit how many FormFields to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * FormField updateManyAndReturn
+   */
+  export type FormFieldUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormField
+     */
+    select?: FormFieldSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormField
+     */
+    omit?: FormFieldOmit<ExtArgs> | null
+    /**
+     * The data used to update FormFields.
+     */
+    data: XOR<FormFieldUpdateManyMutationInput, FormFieldUncheckedUpdateManyInput>
+    /**
+     * Filter which FormFields to update
+     */
+    where?: FormFieldWhereInput
+    /**
+     * Limit how many FormFields to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormFieldIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FormField upsert
+   */
+  export type FormFieldUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormField
+     */
+    select?: FormFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormField
+     */
+    omit?: FormFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormFieldInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FormField to update in case it exists.
+     */
+    where: FormFieldWhereUniqueInput
+    /**
+     * In case the FormField found by the `where` argument doesn't exist, create a new FormField with this data.
+     */
+    create: XOR<FormFieldCreateInput, FormFieldUncheckedCreateInput>
+    /**
+     * In case the FormField was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FormFieldUpdateInput, FormFieldUncheckedUpdateInput>
+  }
+
+  /**
+   * FormField delete
+   */
+  export type FormFieldDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormField
+     */
+    select?: FormFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormField
+     */
+    omit?: FormFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormFieldInclude<ExtArgs> | null
+    /**
+     * Filter which FormField to delete.
+     */
+    where: FormFieldWhereUniqueInput
+  }
+
+  /**
+   * FormField deleteMany
+   */
+  export type FormFieldDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FormFields to delete
+     */
+    where?: FormFieldWhereInput
+    /**
+     * Limit how many FormFields to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * FormField.answers
+   */
+  export type FormField$answersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormAnswer
+     */
+    select?: FormAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormAnswer
+     */
+    omit?: FormAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormAnswerInclude<ExtArgs> | null
+    where?: FormAnswerWhereInput
+    orderBy?: FormAnswerOrderByWithRelationInput | FormAnswerOrderByWithRelationInput[]
+    cursor?: FormAnswerWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FormAnswerScalarFieldEnum | FormAnswerScalarFieldEnum[]
+  }
+
+  /**
+   * FormField without action
+   */
+  export type FormFieldDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormField
+     */
+    select?: FormFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormField
+     */
+    omit?: FormFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormFieldInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Purchase
+   */
+
+  export type AggregatePurchase = {
+    _count: PurchaseCountAggregateOutputType | null
+    _avg: PurchaseAvgAggregateOutputType | null
+    _sum: PurchaseSumAggregateOutputType | null
+    _min: PurchaseMinAggregateOutputType | null
+    _max: PurchaseMaxAggregateOutputType | null
+  }
+
+  export type PurchaseAvgAggregateOutputType = {
+    amount: Decimal | null
+  }
+
+  export type PurchaseSumAggregateOutputType = {
+    amount: Decimal | null
+  }
+
+  export type PurchaseMinAggregateOutputType = {
+    id: string | null
+    productId: string | null
+    buyerName: string | null
+    buyerEmail: string | null
+    buyerPhone: string | null
+    amount: Decimal | null
+    status: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PurchaseMaxAggregateOutputType = {
+    id: string | null
+    productId: string | null
+    buyerName: string | null
+    buyerEmail: string | null
+    buyerPhone: string | null
+    amount: Decimal | null
+    status: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PurchaseCountAggregateOutputType = {
+    id: number
+    productId: number
+    buyerName: number
+    buyerEmail: number
+    buyerPhone: number
+    amount: number
+    status: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PurchaseAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type PurchaseSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type PurchaseMinAggregateInputType = {
+    id?: true
+    productId?: true
+    buyerName?: true
+    buyerEmail?: true
+    buyerPhone?: true
+    amount?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PurchaseMaxAggregateInputType = {
+    id?: true
+    productId?: true
+    buyerName?: true
+    buyerEmail?: true
+    buyerPhone?: true
+    amount?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PurchaseCountAggregateInputType = {
+    id?: true
+    productId?: true
+    buyerName?: true
+    buyerEmail?: true
+    buyerPhone?: true
+    amount?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PurchaseAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Purchase to aggregate.
+     */
+    where?: PurchaseWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Purchases to fetch.
+     */
+    orderBy?: PurchaseOrderByWithRelationInput | PurchaseOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PurchaseWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Purchases from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Purchases.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Purchases
+    **/
+    _count?: true | PurchaseCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PurchaseAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PurchaseSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PurchaseMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PurchaseMaxAggregateInputType
+  }
+
+  export type GetPurchaseAggregateType<T extends PurchaseAggregateArgs> = {
+        [P in keyof T & keyof AggregatePurchase]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePurchase[P]>
+      : GetScalarType<T[P], AggregatePurchase[P]>
+  }
+
+
+
+
+  export type PurchaseGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PurchaseWhereInput
+    orderBy?: PurchaseOrderByWithAggregationInput | PurchaseOrderByWithAggregationInput[]
+    by: PurchaseScalarFieldEnum[] | PurchaseScalarFieldEnum
+    having?: PurchaseScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PurchaseCountAggregateInputType | true
+    _avg?: PurchaseAvgAggregateInputType
+    _sum?: PurchaseSumAggregateInputType
+    _min?: PurchaseMinAggregateInputType
+    _max?: PurchaseMaxAggregateInputType
+  }
+
+  export type PurchaseGroupByOutputType = {
+    id: string
+    productId: string
+    buyerName: string
+    buyerEmail: string
+    buyerPhone: string
+    amount: Decimal
+    status: string
+    createdAt: Date
+    updatedAt: Date
+    _count: PurchaseCountAggregateOutputType | null
+    _avg: PurchaseAvgAggregateOutputType | null
+    _sum: PurchaseSumAggregateOutputType | null
+    _min: PurchaseMinAggregateOutputType | null
+    _max: PurchaseMaxAggregateOutputType | null
+  }
+
+  type GetPurchaseGroupByPayload<T extends PurchaseGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PurchaseGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PurchaseGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PurchaseGroupByOutputType[P]>
+            : GetScalarType<T[P], PurchaseGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PurchaseSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    productId?: boolean
+    buyerName?: boolean
+    buyerEmail?: boolean
+    buyerPhone?: boolean
+    amount?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    answers?: boolean | Purchase$answersArgs<ExtArgs>
+    _count?: boolean | PurchaseCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["purchase"]>
+
+  export type PurchaseSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    productId?: boolean
+    buyerName?: boolean
+    buyerEmail?: boolean
+    buyerPhone?: boolean
+    amount?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["purchase"]>
+
+  export type PurchaseSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    productId?: boolean
+    buyerName?: boolean
+    buyerEmail?: boolean
+    buyerPhone?: boolean
+    amount?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["purchase"]>
+
+  export type PurchaseSelectScalar = {
+    id?: boolean
+    productId?: boolean
+    buyerName?: boolean
+    buyerEmail?: boolean
+    buyerPhone?: boolean
+    amount?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PurchaseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "buyerName" | "buyerEmail" | "buyerPhone" | "amount" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["purchase"]>
+  export type PurchaseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    answers?: boolean | Purchase$answersArgs<ExtArgs>
+    _count?: boolean | PurchaseCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type PurchaseIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }
+  export type PurchaseIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }
+
+  export type $PurchasePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Purchase"
+    objects: {
+      product: Prisma.$ProductPayload<ExtArgs>
+      answers: Prisma.$FormAnswerPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      productId: string
+      buyerName: string
+      buyerEmail: string
+      buyerPhone: string
+      amount: Prisma.Decimal
+      status: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["purchase"]>
+    composites: {}
+  }
+
+  type PurchaseGetPayload<S extends boolean | null | undefined | PurchaseDefaultArgs> = $Result.GetResult<Prisma.$PurchasePayload, S>
+
+  type PurchaseCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PurchaseFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PurchaseCountAggregateInputType | true
+    }
+
+  export interface PurchaseDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Purchase'], meta: { name: 'Purchase' } }
+    /**
+     * Find zero or one Purchase that matches the filter.
+     * @param {PurchaseFindUniqueArgs} args - Arguments to find a Purchase
+     * @example
+     * // Get one Purchase
+     * const purchase = await prisma.purchase.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PurchaseFindUniqueArgs>(args: SelectSubset<T, PurchaseFindUniqueArgs<ExtArgs>>): Prisma__PurchaseClient<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Purchase that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PurchaseFindUniqueOrThrowArgs} args - Arguments to find a Purchase
+     * @example
+     * // Get one Purchase
+     * const purchase = await prisma.purchase.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PurchaseFindUniqueOrThrowArgs>(args: SelectSubset<T, PurchaseFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PurchaseClient<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Purchase that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PurchaseFindFirstArgs} args - Arguments to find a Purchase
+     * @example
+     * // Get one Purchase
+     * const purchase = await prisma.purchase.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PurchaseFindFirstArgs>(args?: SelectSubset<T, PurchaseFindFirstArgs<ExtArgs>>): Prisma__PurchaseClient<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Purchase that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PurchaseFindFirstOrThrowArgs} args - Arguments to find a Purchase
+     * @example
+     * // Get one Purchase
+     * const purchase = await prisma.purchase.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PurchaseFindFirstOrThrowArgs>(args?: SelectSubset<T, PurchaseFindFirstOrThrowArgs<ExtArgs>>): Prisma__PurchaseClient<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Purchases that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PurchaseFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Purchases
+     * const purchases = await prisma.purchase.findMany()
+     * 
+     * // Get first 10 Purchases
+     * const purchases = await prisma.purchase.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const purchaseWithIdOnly = await prisma.purchase.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PurchaseFindManyArgs>(args?: SelectSubset<T, PurchaseFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Purchase.
+     * @param {PurchaseCreateArgs} args - Arguments to create a Purchase.
+     * @example
+     * // Create one Purchase
+     * const Purchase = await prisma.purchase.create({
+     *   data: {
+     *     // ... data to create a Purchase
+     *   }
+     * })
+     * 
+     */
+    create<T extends PurchaseCreateArgs>(args: SelectSubset<T, PurchaseCreateArgs<ExtArgs>>): Prisma__PurchaseClient<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Purchases.
+     * @param {PurchaseCreateManyArgs} args - Arguments to create many Purchases.
+     * @example
+     * // Create many Purchases
+     * const purchase = await prisma.purchase.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PurchaseCreateManyArgs>(args?: SelectSubset<T, PurchaseCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Purchases and returns the data saved in the database.
+     * @param {PurchaseCreateManyAndReturnArgs} args - Arguments to create many Purchases.
+     * @example
+     * // Create many Purchases
+     * const purchase = await prisma.purchase.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Purchases and only return the `id`
+     * const purchaseWithIdOnly = await prisma.purchase.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PurchaseCreateManyAndReturnArgs>(args?: SelectSubset<T, PurchaseCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Purchase.
+     * @param {PurchaseDeleteArgs} args - Arguments to delete one Purchase.
+     * @example
+     * // Delete one Purchase
+     * const Purchase = await prisma.purchase.delete({
+     *   where: {
+     *     // ... filter to delete one Purchase
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PurchaseDeleteArgs>(args: SelectSubset<T, PurchaseDeleteArgs<ExtArgs>>): Prisma__PurchaseClient<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Purchase.
+     * @param {PurchaseUpdateArgs} args - Arguments to update one Purchase.
+     * @example
+     * // Update one Purchase
+     * const purchase = await prisma.purchase.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PurchaseUpdateArgs>(args: SelectSubset<T, PurchaseUpdateArgs<ExtArgs>>): Prisma__PurchaseClient<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Purchases.
+     * @param {PurchaseDeleteManyArgs} args - Arguments to filter Purchases to delete.
+     * @example
+     * // Delete a few Purchases
+     * const { count } = await prisma.purchase.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PurchaseDeleteManyArgs>(args?: SelectSubset<T, PurchaseDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Purchases.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PurchaseUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Purchases
+     * const purchase = await prisma.purchase.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PurchaseUpdateManyArgs>(args: SelectSubset<T, PurchaseUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Purchases and returns the data updated in the database.
+     * @param {PurchaseUpdateManyAndReturnArgs} args - Arguments to update many Purchases.
+     * @example
+     * // Update many Purchases
+     * const purchase = await prisma.purchase.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Purchases and only return the `id`
+     * const purchaseWithIdOnly = await prisma.purchase.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PurchaseUpdateManyAndReturnArgs>(args: SelectSubset<T, PurchaseUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Purchase.
+     * @param {PurchaseUpsertArgs} args - Arguments to update or create a Purchase.
+     * @example
+     * // Update or create a Purchase
+     * const purchase = await prisma.purchase.upsert({
+     *   create: {
+     *     // ... data to create a Purchase
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Purchase we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PurchaseUpsertArgs>(args: SelectSubset<T, PurchaseUpsertArgs<ExtArgs>>): Prisma__PurchaseClient<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Purchases.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PurchaseCountArgs} args - Arguments to filter Purchases to count.
+     * @example
+     * // Count the number of Purchases
+     * const count = await prisma.purchase.count({
+     *   where: {
+     *     // ... the filter for the Purchases we want to count
+     *   }
+     * })
+    **/
+    count<T extends PurchaseCountArgs>(
+      args?: Subset<T, PurchaseCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PurchaseCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Purchase.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PurchaseAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PurchaseAggregateArgs>(args: Subset<T, PurchaseAggregateArgs>): Prisma.PrismaPromise<GetPurchaseAggregateType<T>>
+
+    /**
+     * Group by Purchase.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PurchaseGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PurchaseGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PurchaseGroupByArgs['orderBy'] }
+        : { orderBy?: PurchaseGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PurchaseGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPurchaseGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Purchase model
+   */
+  readonly fields: PurchaseFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Purchase.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PurchaseClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    answers<T extends Purchase$answersArgs<ExtArgs> = {}>(args?: Subset<T, Purchase$answersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FormAnswerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Purchase model
+   */
+  interface PurchaseFieldRefs {
+    readonly id: FieldRef<"Purchase", 'String'>
+    readonly productId: FieldRef<"Purchase", 'String'>
+    readonly buyerName: FieldRef<"Purchase", 'String'>
+    readonly buyerEmail: FieldRef<"Purchase", 'String'>
+    readonly buyerPhone: FieldRef<"Purchase", 'String'>
+    readonly amount: FieldRef<"Purchase", 'Decimal'>
+    readonly status: FieldRef<"Purchase", 'String'>
+    readonly createdAt: FieldRef<"Purchase", 'DateTime'>
+    readonly updatedAt: FieldRef<"Purchase", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Purchase findUnique
+   */
+  export type PurchaseFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Purchase
+     */
+    select?: PurchaseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Purchase
+     */
+    omit?: PurchaseOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PurchaseInclude<ExtArgs> | null
+    /**
+     * Filter, which Purchase to fetch.
+     */
+    where: PurchaseWhereUniqueInput
+  }
+
+  /**
+   * Purchase findUniqueOrThrow
+   */
+  export type PurchaseFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Purchase
+     */
+    select?: PurchaseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Purchase
+     */
+    omit?: PurchaseOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PurchaseInclude<ExtArgs> | null
+    /**
+     * Filter, which Purchase to fetch.
+     */
+    where: PurchaseWhereUniqueInput
+  }
+
+  /**
+   * Purchase findFirst
+   */
+  export type PurchaseFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Purchase
+     */
+    select?: PurchaseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Purchase
+     */
+    omit?: PurchaseOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PurchaseInclude<ExtArgs> | null
+    /**
+     * Filter, which Purchase to fetch.
+     */
+    where?: PurchaseWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Purchases to fetch.
+     */
+    orderBy?: PurchaseOrderByWithRelationInput | PurchaseOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Purchases.
+     */
+    cursor?: PurchaseWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Purchases from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Purchases.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Purchases.
+     */
+    distinct?: PurchaseScalarFieldEnum | PurchaseScalarFieldEnum[]
+  }
+
+  /**
+   * Purchase findFirstOrThrow
+   */
+  export type PurchaseFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Purchase
+     */
+    select?: PurchaseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Purchase
+     */
+    omit?: PurchaseOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PurchaseInclude<ExtArgs> | null
+    /**
+     * Filter, which Purchase to fetch.
+     */
+    where?: PurchaseWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Purchases to fetch.
+     */
+    orderBy?: PurchaseOrderByWithRelationInput | PurchaseOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Purchases.
+     */
+    cursor?: PurchaseWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Purchases from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Purchases.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Purchases.
+     */
+    distinct?: PurchaseScalarFieldEnum | PurchaseScalarFieldEnum[]
+  }
+
+  /**
+   * Purchase findMany
+   */
+  export type PurchaseFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Purchase
+     */
+    select?: PurchaseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Purchase
+     */
+    omit?: PurchaseOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PurchaseInclude<ExtArgs> | null
+    /**
+     * Filter, which Purchases to fetch.
+     */
+    where?: PurchaseWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Purchases to fetch.
+     */
+    orderBy?: PurchaseOrderByWithRelationInput | PurchaseOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Purchases.
+     */
+    cursor?: PurchaseWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Purchases from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Purchases.
+     */
+    skip?: number
+    distinct?: PurchaseScalarFieldEnum | PurchaseScalarFieldEnum[]
+  }
+
+  /**
+   * Purchase create
+   */
+  export type PurchaseCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Purchase
+     */
+    select?: PurchaseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Purchase
+     */
+    omit?: PurchaseOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PurchaseInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Purchase.
+     */
+    data: XOR<PurchaseCreateInput, PurchaseUncheckedCreateInput>
+  }
+
+  /**
+   * Purchase createMany
+   */
+  export type PurchaseCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Purchases.
+     */
+    data: PurchaseCreateManyInput | PurchaseCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Purchase createManyAndReturn
+   */
+  export type PurchaseCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Purchase
+     */
+    select?: PurchaseSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Purchase
+     */
+    omit?: PurchaseOmit<ExtArgs> | null
+    /**
+     * The data used to create many Purchases.
+     */
+    data: PurchaseCreateManyInput | PurchaseCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PurchaseIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Purchase update
+   */
+  export type PurchaseUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Purchase
+     */
+    select?: PurchaseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Purchase
+     */
+    omit?: PurchaseOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PurchaseInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Purchase.
+     */
+    data: XOR<PurchaseUpdateInput, PurchaseUncheckedUpdateInput>
+    /**
+     * Choose, which Purchase to update.
+     */
+    where: PurchaseWhereUniqueInput
+  }
+
+  /**
+   * Purchase updateMany
+   */
+  export type PurchaseUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Purchases.
+     */
+    data: XOR<PurchaseUpdateManyMutationInput, PurchaseUncheckedUpdateManyInput>
+    /**
+     * Filter which Purchases to update
+     */
+    where?: PurchaseWhereInput
+    /**
+     * Limit how many Purchases to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Purchase updateManyAndReturn
+   */
+  export type PurchaseUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Purchase
+     */
+    select?: PurchaseSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Purchase
+     */
+    omit?: PurchaseOmit<ExtArgs> | null
+    /**
+     * The data used to update Purchases.
+     */
+    data: XOR<PurchaseUpdateManyMutationInput, PurchaseUncheckedUpdateManyInput>
+    /**
+     * Filter which Purchases to update
+     */
+    where?: PurchaseWhereInput
+    /**
+     * Limit how many Purchases to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PurchaseIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Purchase upsert
+   */
+  export type PurchaseUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Purchase
+     */
+    select?: PurchaseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Purchase
+     */
+    omit?: PurchaseOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PurchaseInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Purchase to update in case it exists.
+     */
+    where: PurchaseWhereUniqueInput
+    /**
+     * In case the Purchase found by the `where` argument doesn't exist, create a new Purchase with this data.
+     */
+    create: XOR<PurchaseCreateInput, PurchaseUncheckedCreateInput>
+    /**
+     * In case the Purchase was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PurchaseUpdateInput, PurchaseUncheckedUpdateInput>
+  }
+
+  /**
+   * Purchase delete
+   */
+  export type PurchaseDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Purchase
+     */
+    select?: PurchaseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Purchase
+     */
+    omit?: PurchaseOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PurchaseInclude<ExtArgs> | null
+    /**
+     * Filter which Purchase to delete.
+     */
+    where: PurchaseWhereUniqueInput
+  }
+
+  /**
+   * Purchase deleteMany
+   */
+  export type PurchaseDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Purchases to delete
+     */
+    where?: PurchaseWhereInput
+    /**
+     * Limit how many Purchases to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Purchase.answers
+   */
+  export type Purchase$answersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormAnswer
+     */
+    select?: FormAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormAnswer
+     */
+    omit?: FormAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormAnswerInclude<ExtArgs> | null
+    where?: FormAnswerWhereInput
+    orderBy?: FormAnswerOrderByWithRelationInput | FormAnswerOrderByWithRelationInput[]
+    cursor?: FormAnswerWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FormAnswerScalarFieldEnum | FormAnswerScalarFieldEnum[]
+  }
+
+  /**
+   * Purchase without action
+   */
+  export type PurchaseDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Purchase
+     */
+    select?: PurchaseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Purchase
+     */
+    omit?: PurchaseOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PurchaseInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model FormAnswer
+   */
+
+  export type AggregateFormAnswer = {
+    _count: FormAnswerCountAggregateOutputType | null
+    _min: FormAnswerMinAggregateOutputType | null
+    _max: FormAnswerMaxAggregateOutputType | null
+  }
+
+  export type FormAnswerMinAggregateOutputType = {
+    id: string | null
+    purchaseId: string | null
+    formFieldId: string | null
+    answer: string | null
+    createdAt: Date | null
+  }
+
+  export type FormAnswerMaxAggregateOutputType = {
+    id: string | null
+    purchaseId: string | null
+    formFieldId: string | null
+    answer: string | null
+    createdAt: Date | null
+  }
+
+  export type FormAnswerCountAggregateOutputType = {
+    id: number
+    purchaseId: number
+    formFieldId: number
+    answer: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type FormAnswerMinAggregateInputType = {
+    id?: true
+    purchaseId?: true
+    formFieldId?: true
+    answer?: true
+    createdAt?: true
+  }
+
+  export type FormAnswerMaxAggregateInputType = {
+    id?: true
+    purchaseId?: true
+    formFieldId?: true
+    answer?: true
+    createdAt?: true
+  }
+
+  export type FormAnswerCountAggregateInputType = {
+    id?: true
+    purchaseId?: true
+    formFieldId?: true
+    answer?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type FormAnswerAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FormAnswer to aggregate.
+     */
+    where?: FormAnswerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FormAnswers to fetch.
+     */
+    orderBy?: FormAnswerOrderByWithRelationInput | FormAnswerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FormAnswerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FormAnswers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FormAnswers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FormAnswers
+    **/
+    _count?: true | FormAnswerCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FormAnswerMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FormAnswerMaxAggregateInputType
+  }
+
+  export type GetFormAnswerAggregateType<T extends FormAnswerAggregateArgs> = {
+        [P in keyof T & keyof AggregateFormAnswer]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFormAnswer[P]>
+      : GetScalarType<T[P], AggregateFormAnswer[P]>
+  }
+
+
+
+
+  export type FormAnswerGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FormAnswerWhereInput
+    orderBy?: FormAnswerOrderByWithAggregationInput | FormAnswerOrderByWithAggregationInput[]
+    by: FormAnswerScalarFieldEnum[] | FormAnswerScalarFieldEnum
+    having?: FormAnswerScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FormAnswerCountAggregateInputType | true
+    _min?: FormAnswerMinAggregateInputType
+    _max?: FormAnswerMaxAggregateInputType
+  }
+
+  export type FormAnswerGroupByOutputType = {
+    id: string
+    purchaseId: string
+    formFieldId: string
+    answer: string
+    createdAt: Date
+    _count: FormAnswerCountAggregateOutputType | null
+    _min: FormAnswerMinAggregateOutputType | null
+    _max: FormAnswerMaxAggregateOutputType | null
+  }
+
+  type GetFormAnswerGroupByPayload<T extends FormAnswerGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FormAnswerGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FormAnswerGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FormAnswerGroupByOutputType[P]>
+            : GetScalarType<T[P], FormAnswerGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FormAnswerSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    purchaseId?: boolean
+    formFieldId?: boolean
+    answer?: boolean
+    createdAt?: boolean
+    purchase?: boolean | PurchaseDefaultArgs<ExtArgs>
+    formField?: boolean | FormFieldDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["formAnswer"]>
+
+  export type FormAnswerSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    purchaseId?: boolean
+    formFieldId?: boolean
+    answer?: boolean
+    createdAt?: boolean
+    purchase?: boolean | PurchaseDefaultArgs<ExtArgs>
+    formField?: boolean | FormFieldDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["formAnswer"]>
+
+  export type FormAnswerSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    purchaseId?: boolean
+    formFieldId?: boolean
+    answer?: boolean
+    createdAt?: boolean
+    purchase?: boolean | PurchaseDefaultArgs<ExtArgs>
+    formField?: boolean | FormFieldDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["formAnswer"]>
+
+  export type FormAnswerSelectScalar = {
+    id?: boolean
+    purchaseId?: boolean
+    formFieldId?: boolean
+    answer?: boolean
+    createdAt?: boolean
+  }
+
+  export type FormAnswerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "purchaseId" | "formFieldId" | "answer" | "createdAt", ExtArgs["result"]["formAnswer"]>
+  export type FormAnswerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    purchase?: boolean | PurchaseDefaultArgs<ExtArgs>
+    formField?: boolean | FormFieldDefaultArgs<ExtArgs>
+  }
+  export type FormAnswerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    purchase?: boolean | PurchaseDefaultArgs<ExtArgs>
+    formField?: boolean | FormFieldDefaultArgs<ExtArgs>
+  }
+  export type FormAnswerIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    purchase?: boolean | PurchaseDefaultArgs<ExtArgs>
+    formField?: boolean | FormFieldDefaultArgs<ExtArgs>
+  }
+
+  export type $FormAnswerPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FormAnswer"
+    objects: {
+      purchase: Prisma.$PurchasePayload<ExtArgs>
+      formField: Prisma.$FormFieldPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      purchaseId: string
+      formFieldId: string
+      answer: string
+      createdAt: Date
+    }, ExtArgs["result"]["formAnswer"]>
+    composites: {}
+  }
+
+  type FormAnswerGetPayload<S extends boolean | null | undefined | FormAnswerDefaultArgs> = $Result.GetResult<Prisma.$FormAnswerPayload, S>
+
+  type FormAnswerCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FormAnswerFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FormAnswerCountAggregateInputType | true
+    }
+
+  export interface FormAnswerDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FormAnswer'], meta: { name: 'FormAnswer' } }
+    /**
+     * Find zero or one FormAnswer that matches the filter.
+     * @param {FormAnswerFindUniqueArgs} args - Arguments to find a FormAnswer
+     * @example
+     * // Get one FormAnswer
+     * const formAnswer = await prisma.formAnswer.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FormAnswerFindUniqueArgs>(args: SelectSubset<T, FormAnswerFindUniqueArgs<ExtArgs>>): Prisma__FormAnswerClient<$Result.GetResult<Prisma.$FormAnswerPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one FormAnswer that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FormAnswerFindUniqueOrThrowArgs} args - Arguments to find a FormAnswer
+     * @example
+     * // Get one FormAnswer
+     * const formAnswer = await prisma.formAnswer.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FormAnswerFindUniqueOrThrowArgs>(args: SelectSubset<T, FormAnswerFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FormAnswerClient<$Result.GetResult<Prisma.$FormAnswerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FormAnswer that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FormAnswerFindFirstArgs} args - Arguments to find a FormAnswer
+     * @example
+     * // Get one FormAnswer
+     * const formAnswer = await prisma.formAnswer.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FormAnswerFindFirstArgs>(args?: SelectSubset<T, FormAnswerFindFirstArgs<ExtArgs>>): Prisma__FormAnswerClient<$Result.GetResult<Prisma.$FormAnswerPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FormAnswer that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FormAnswerFindFirstOrThrowArgs} args - Arguments to find a FormAnswer
+     * @example
+     * // Get one FormAnswer
+     * const formAnswer = await prisma.formAnswer.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FormAnswerFindFirstOrThrowArgs>(args?: SelectSubset<T, FormAnswerFindFirstOrThrowArgs<ExtArgs>>): Prisma__FormAnswerClient<$Result.GetResult<Prisma.$FormAnswerPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more FormAnswers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FormAnswerFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FormAnswers
+     * const formAnswers = await prisma.formAnswer.findMany()
+     * 
+     * // Get first 10 FormAnswers
+     * const formAnswers = await prisma.formAnswer.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const formAnswerWithIdOnly = await prisma.formAnswer.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FormAnswerFindManyArgs>(args?: SelectSubset<T, FormAnswerFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FormAnswerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a FormAnswer.
+     * @param {FormAnswerCreateArgs} args - Arguments to create a FormAnswer.
+     * @example
+     * // Create one FormAnswer
+     * const FormAnswer = await prisma.formAnswer.create({
+     *   data: {
+     *     // ... data to create a FormAnswer
+     *   }
+     * })
+     * 
+     */
+    create<T extends FormAnswerCreateArgs>(args: SelectSubset<T, FormAnswerCreateArgs<ExtArgs>>): Prisma__FormAnswerClient<$Result.GetResult<Prisma.$FormAnswerPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many FormAnswers.
+     * @param {FormAnswerCreateManyArgs} args - Arguments to create many FormAnswers.
+     * @example
+     * // Create many FormAnswers
+     * const formAnswer = await prisma.formAnswer.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FormAnswerCreateManyArgs>(args?: SelectSubset<T, FormAnswerCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FormAnswers and returns the data saved in the database.
+     * @param {FormAnswerCreateManyAndReturnArgs} args - Arguments to create many FormAnswers.
+     * @example
+     * // Create many FormAnswers
+     * const formAnswer = await prisma.formAnswer.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FormAnswers and only return the `id`
+     * const formAnswerWithIdOnly = await prisma.formAnswer.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FormAnswerCreateManyAndReturnArgs>(args?: SelectSubset<T, FormAnswerCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FormAnswerPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a FormAnswer.
+     * @param {FormAnswerDeleteArgs} args - Arguments to delete one FormAnswer.
+     * @example
+     * // Delete one FormAnswer
+     * const FormAnswer = await prisma.formAnswer.delete({
+     *   where: {
+     *     // ... filter to delete one FormAnswer
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FormAnswerDeleteArgs>(args: SelectSubset<T, FormAnswerDeleteArgs<ExtArgs>>): Prisma__FormAnswerClient<$Result.GetResult<Prisma.$FormAnswerPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one FormAnswer.
+     * @param {FormAnswerUpdateArgs} args - Arguments to update one FormAnswer.
+     * @example
+     * // Update one FormAnswer
+     * const formAnswer = await prisma.formAnswer.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FormAnswerUpdateArgs>(args: SelectSubset<T, FormAnswerUpdateArgs<ExtArgs>>): Prisma__FormAnswerClient<$Result.GetResult<Prisma.$FormAnswerPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more FormAnswers.
+     * @param {FormAnswerDeleteManyArgs} args - Arguments to filter FormAnswers to delete.
+     * @example
+     * // Delete a few FormAnswers
+     * const { count } = await prisma.formAnswer.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FormAnswerDeleteManyArgs>(args?: SelectSubset<T, FormAnswerDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FormAnswers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FormAnswerUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FormAnswers
+     * const formAnswer = await prisma.formAnswer.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FormAnswerUpdateManyArgs>(args: SelectSubset<T, FormAnswerUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FormAnswers and returns the data updated in the database.
+     * @param {FormAnswerUpdateManyAndReturnArgs} args - Arguments to update many FormAnswers.
+     * @example
+     * // Update many FormAnswers
+     * const formAnswer = await prisma.formAnswer.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more FormAnswers and only return the `id`
+     * const formAnswerWithIdOnly = await prisma.formAnswer.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FormAnswerUpdateManyAndReturnArgs>(args: SelectSubset<T, FormAnswerUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FormAnswerPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one FormAnswer.
+     * @param {FormAnswerUpsertArgs} args - Arguments to update or create a FormAnswer.
+     * @example
+     * // Update or create a FormAnswer
+     * const formAnswer = await prisma.formAnswer.upsert({
+     *   create: {
+     *     // ... data to create a FormAnswer
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FormAnswer we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FormAnswerUpsertArgs>(args: SelectSubset<T, FormAnswerUpsertArgs<ExtArgs>>): Prisma__FormAnswerClient<$Result.GetResult<Prisma.$FormAnswerPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of FormAnswers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FormAnswerCountArgs} args - Arguments to filter FormAnswers to count.
+     * @example
+     * // Count the number of FormAnswers
+     * const count = await prisma.formAnswer.count({
+     *   where: {
+     *     // ... the filter for the FormAnswers we want to count
+     *   }
+     * })
+    **/
+    count<T extends FormAnswerCountArgs>(
+      args?: Subset<T, FormAnswerCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FormAnswerCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FormAnswer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FormAnswerAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FormAnswerAggregateArgs>(args: Subset<T, FormAnswerAggregateArgs>): Prisma.PrismaPromise<GetFormAnswerAggregateType<T>>
+
+    /**
+     * Group by FormAnswer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FormAnswerGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FormAnswerGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FormAnswerGroupByArgs['orderBy'] }
+        : { orderBy?: FormAnswerGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FormAnswerGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFormAnswerGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FormAnswer model
+   */
+  readonly fields: FormAnswerFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FormAnswer.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FormAnswerClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    purchase<T extends PurchaseDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PurchaseDefaultArgs<ExtArgs>>): Prisma__PurchaseClient<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    formField<T extends FormFieldDefaultArgs<ExtArgs> = {}>(args?: Subset<T, FormFieldDefaultArgs<ExtArgs>>): Prisma__FormFieldClient<$Result.GetResult<Prisma.$FormFieldPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FormAnswer model
+   */
+  interface FormAnswerFieldRefs {
+    readonly id: FieldRef<"FormAnswer", 'String'>
+    readonly purchaseId: FieldRef<"FormAnswer", 'String'>
+    readonly formFieldId: FieldRef<"FormAnswer", 'String'>
+    readonly answer: FieldRef<"FormAnswer", 'String'>
+    readonly createdAt: FieldRef<"FormAnswer", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FormAnswer findUnique
+   */
+  export type FormAnswerFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormAnswer
+     */
+    select?: FormAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormAnswer
+     */
+    omit?: FormAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormAnswerInclude<ExtArgs> | null
+    /**
+     * Filter, which FormAnswer to fetch.
+     */
+    where: FormAnswerWhereUniqueInput
+  }
+
+  /**
+   * FormAnswer findUniqueOrThrow
+   */
+  export type FormAnswerFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormAnswer
+     */
+    select?: FormAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormAnswer
+     */
+    omit?: FormAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormAnswerInclude<ExtArgs> | null
+    /**
+     * Filter, which FormAnswer to fetch.
+     */
+    where: FormAnswerWhereUniqueInput
+  }
+
+  /**
+   * FormAnswer findFirst
+   */
+  export type FormAnswerFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormAnswer
+     */
+    select?: FormAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormAnswer
+     */
+    omit?: FormAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormAnswerInclude<ExtArgs> | null
+    /**
+     * Filter, which FormAnswer to fetch.
+     */
+    where?: FormAnswerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FormAnswers to fetch.
+     */
+    orderBy?: FormAnswerOrderByWithRelationInput | FormAnswerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FormAnswers.
+     */
+    cursor?: FormAnswerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FormAnswers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FormAnswers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FormAnswers.
+     */
+    distinct?: FormAnswerScalarFieldEnum | FormAnswerScalarFieldEnum[]
+  }
+
+  /**
+   * FormAnswer findFirstOrThrow
+   */
+  export type FormAnswerFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormAnswer
+     */
+    select?: FormAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormAnswer
+     */
+    omit?: FormAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormAnswerInclude<ExtArgs> | null
+    /**
+     * Filter, which FormAnswer to fetch.
+     */
+    where?: FormAnswerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FormAnswers to fetch.
+     */
+    orderBy?: FormAnswerOrderByWithRelationInput | FormAnswerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FormAnswers.
+     */
+    cursor?: FormAnswerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FormAnswers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FormAnswers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FormAnswers.
+     */
+    distinct?: FormAnswerScalarFieldEnum | FormAnswerScalarFieldEnum[]
+  }
+
+  /**
+   * FormAnswer findMany
+   */
+  export type FormAnswerFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormAnswer
+     */
+    select?: FormAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormAnswer
+     */
+    omit?: FormAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormAnswerInclude<ExtArgs> | null
+    /**
+     * Filter, which FormAnswers to fetch.
+     */
+    where?: FormAnswerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FormAnswers to fetch.
+     */
+    orderBy?: FormAnswerOrderByWithRelationInput | FormAnswerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FormAnswers.
+     */
+    cursor?: FormAnswerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FormAnswers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FormAnswers.
+     */
+    skip?: number
+    distinct?: FormAnswerScalarFieldEnum | FormAnswerScalarFieldEnum[]
+  }
+
+  /**
+   * FormAnswer create
+   */
+  export type FormAnswerCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormAnswer
+     */
+    select?: FormAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormAnswer
+     */
+    omit?: FormAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormAnswerInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FormAnswer.
+     */
+    data: XOR<FormAnswerCreateInput, FormAnswerUncheckedCreateInput>
+  }
+
+  /**
+   * FormAnswer createMany
+   */
+  export type FormAnswerCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FormAnswers.
+     */
+    data: FormAnswerCreateManyInput | FormAnswerCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * FormAnswer createManyAndReturn
+   */
+  export type FormAnswerCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormAnswer
+     */
+    select?: FormAnswerSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormAnswer
+     */
+    omit?: FormAnswerOmit<ExtArgs> | null
+    /**
+     * The data used to create many FormAnswers.
+     */
+    data: FormAnswerCreateManyInput | FormAnswerCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormAnswerIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FormAnswer update
+   */
+  export type FormAnswerUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormAnswer
+     */
+    select?: FormAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormAnswer
+     */
+    omit?: FormAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormAnswerInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FormAnswer.
+     */
+    data: XOR<FormAnswerUpdateInput, FormAnswerUncheckedUpdateInput>
+    /**
+     * Choose, which FormAnswer to update.
+     */
+    where: FormAnswerWhereUniqueInput
+  }
+
+  /**
+   * FormAnswer updateMany
+   */
+  export type FormAnswerUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FormAnswers.
+     */
+    data: XOR<FormAnswerUpdateManyMutationInput, FormAnswerUncheckedUpdateManyInput>
+    /**
+     * Filter which FormAnswers to update
+     */
+    where?: FormAnswerWhereInput
+    /**
+     * Limit how many FormAnswers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * FormAnswer updateManyAndReturn
+   */
+  export type FormAnswerUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormAnswer
+     */
+    select?: FormAnswerSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormAnswer
+     */
+    omit?: FormAnswerOmit<ExtArgs> | null
+    /**
+     * The data used to update FormAnswers.
+     */
+    data: XOR<FormAnswerUpdateManyMutationInput, FormAnswerUncheckedUpdateManyInput>
+    /**
+     * Filter which FormAnswers to update
+     */
+    where?: FormAnswerWhereInput
+    /**
+     * Limit how many FormAnswers to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormAnswerIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FormAnswer upsert
+   */
+  export type FormAnswerUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormAnswer
+     */
+    select?: FormAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormAnswer
+     */
+    omit?: FormAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormAnswerInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FormAnswer to update in case it exists.
+     */
+    where: FormAnswerWhereUniqueInput
+    /**
+     * In case the FormAnswer found by the `where` argument doesn't exist, create a new FormAnswer with this data.
+     */
+    create: XOR<FormAnswerCreateInput, FormAnswerUncheckedCreateInput>
+    /**
+     * In case the FormAnswer was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FormAnswerUpdateInput, FormAnswerUncheckedUpdateInput>
+  }
+
+  /**
+   * FormAnswer delete
+   */
+  export type FormAnswerDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormAnswer
+     */
+    select?: FormAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormAnswer
+     */
+    omit?: FormAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormAnswerInclude<ExtArgs> | null
+    /**
+     * Filter which FormAnswer to delete.
+     */
+    where: FormAnswerWhereUniqueInput
+  }
+
+  /**
+   * FormAnswer deleteMany
+   */
+  export type FormAnswerDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FormAnswers to delete
+     */
+    where?: FormAnswerWhereInput
+    /**
+     * Limit how many FormAnswers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * FormAnswer without action
+   */
+  export type FormAnswerDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FormAnswer
+     */
+    select?: FormAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FormAnswer
+     */
+    omit?: FormAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FormAnswerInclude<ExtArgs> | null
   }
 
 
@@ -10398,6 +14256,47 @@ export namespace Prisma {
   export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
 
 
+  export const FormFieldScalarFieldEnum: {
+    id: 'id',
+    productId: 'productId',
+    label: 'label',
+    type: 'type',
+    options: 'options',
+    required: 'required',
+    order: 'order',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type FormFieldScalarFieldEnum = (typeof FormFieldScalarFieldEnum)[keyof typeof FormFieldScalarFieldEnum]
+
+
+  export const PurchaseScalarFieldEnum: {
+    id: 'id',
+    productId: 'productId',
+    buyerName: 'buyerName',
+    buyerEmail: 'buyerEmail',
+    buyerPhone: 'buyerPhone',
+    amount: 'amount',
+    status: 'status',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PurchaseScalarFieldEnum = (typeof PurchaseScalarFieldEnum)[keyof typeof PurchaseScalarFieldEnum]
+
+
+  export const FormAnswerScalarFieldEnum: {
+    id: 'id',
+    purchaseId: 'purchaseId',
+    formFieldId: 'formFieldId',
+    answer: 'answer',
+    createdAt: 'createdAt'
+  };
+
+  export type FormAnswerScalarFieldEnum = (typeof FormAnswerScalarFieldEnum)[keyof typeof FormAnswerScalarFieldEnum]
+
+
   export const AccountScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
@@ -10474,6 +14373,14 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
@@ -10488,6 +14395,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -10562,6 +14478,41 @@ export namespace Prisma {
    * Reference to a field of type 'ProductType[]'
    */
   export type ListEnumProductTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'FieldType'
+   */
+  export type EnumFieldTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FieldType'>
+    
+
+
+  /**
+   * Reference to a field of type 'FieldType[]'
+   */
+  export type ListEnumFieldTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FieldType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -10704,6 +14655,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    formFields?: FormFieldListRelationFilter
+    purchases?: PurchaseListRelationFilter
   }
 
   export type ProductOrderByWithRelationInput = {
@@ -10722,6 +14675,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
+    formFields?: FormFieldOrderByRelationAggregateInput
+    purchases?: PurchaseOrderByRelationAggregateInput
   }
 
   export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -10743,6 +14698,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    formFields?: FormFieldListRelationFilter
+    purchases?: PurchaseListRelationFilter
   }, "id" | "slug">
 
   export type ProductOrderByWithAggregationInput = {
@@ -10785,6 +14742,224 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"Product"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
+  }
+
+  export type FormFieldWhereInput = {
+    AND?: FormFieldWhereInput | FormFieldWhereInput[]
+    OR?: FormFieldWhereInput[]
+    NOT?: FormFieldWhereInput | FormFieldWhereInput[]
+    id?: StringFilter<"FormField"> | string
+    productId?: StringFilter<"FormField"> | string
+    label?: StringFilter<"FormField"> | string
+    type?: EnumFieldTypeFilter<"FormField"> | $Enums.FieldType
+    options?: JsonNullableFilter<"FormField">
+    required?: BoolFilter<"FormField"> | boolean
+    order?: IntFilter<"FormField"> | number
+    createdAt?: DateTimeFilter<"FormField"> | Date | string
+    updatedAt?: DateTimeFilter<"FormField"> | Date | string
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    answers?: FormAnswerListRelationFilter
+  }
+
+  export type FormFieldOrderByWithRelationInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    label?: SortOrder
+    type?: SortOrder
+    options?: SortOrderInput | SortOrder
+    required?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    product?: ProductOrderByWithRelationInput
+    answers?: FormAnswerOrderByRelationAggregateInput
+  }
+
+  export type FormFieldWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: FormFieldWhereInput | FormFieldWhereInput[]
+    OR?: FormFieldWhereInput[]
+    NOT?: FormFieldWhereInput | FormFieldWhereInput[]
+    productId?: StringFilter<"FormField"> | string
+    label?: StringFilter<"FormField"> | string
+    type?: EnumFieldTypeFilter<"FormField"> | $Enums.FieldType
+    options?: JsonNullableFilter<"FormField">
+    required?: BoolFilter<"FormField"> | boolean
+    order?: IntFilter<"FormField"> | number
+    createdAt?: DateTimeFilter<"FormField"> | Date | string
+    updatedAt?: DateTimeFilter<"FormField"> | Date | string
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    answers?: FormAnswerListRelationFilter
+  }, "id">
+
+  export type FormFieldOrderByWithAggregationInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    label?: SortOrder
+    type?: SortOrder
+    options?: SortOrderInput | SortOrder
+    required?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: FormFieldCountOrderByAggregateInput
+    _avg?: FormFieldAvgOrderByAggregateInput
+    _max?: FormFieldMaxOrderByAggregateInput
+    _min?: FormFieldMinOrderByAggregateInput
+    _sum?: FormFieldSumOrderByAggregateInput
+  }
+
+  export type FormFieldScalarWhereWithAggregatesInput = {
+    AND?: FormFieldScalarWhereWithAggregatesInput | FormFieldScalarWhereWithAggregatesInput[]
+    OR?: FormFieldScalarWhereWithAggregatesInput[]
+    NOT?: FormFieldScalarWhereWithAggregatesInput | FormFieldScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"FormField"> | string
+    productId?: StringWithAggregatesFilter<"FormField"> | string
+    label?: StringWithAggregatesFilter<"FormField"> | string
+    type?: EnumFieldTypeWithAggregatesFilter<"FormField"> | $Enums.FieldType
+    options?: JsonNullableWithAggregatesFilter<"FormField">
+    required?: BoolWithAggregatesFilter<"FormField"> | boolean
+    order?: IntWithAggregatesFilter<"FormField"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"FormField"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"FormField"> | Date | string
+  }
+
+  export type PurchaseWhereInput = {
+    AND?: PurchaseWhereInput | PurchaseWhereInput[]
+    OR?: PurchaseWhereInput[]
+    NOT?: PurchaseWhereInput | PurchaseWhereInput[]
+    id?: StringFilter<"Purchase"> | string
+    productId?: StringFilter<"Purchase"> | string
+    buyerName?: StringFilter<"Purchase"> | string
+    buyerEmail?: StringFilter<"Purchase"> | string
+    buyerPhone?: StringFilter<"Purchase"> | string
+    amount?: DecimalFilter<"Purchase"> | Decimal | DecimalJsLike | number | string
+    status?: StringFilter<"Purchase"> | string
+    createdAt?: DateTimeFilter<"Purchase"> | Date | string
+    updatedAt?: DateTimeFilter<"Purchase"> | Date | string
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    answers?: FormAnswerListRelationFilter
+  }
+
+  export type PurchaseOrderByWithRelationInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    buyerName?: SortOrder
+    buyerEmail?: SortOrder
+    buyerPhone?: SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    product?: ProductOrderByWithRelationInput
+    answers?: FormAnswerOrderByRelationAggregateInput
+  }
+
+  export type PurchaseWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: PurchaseWhereInput | PurchaseWhereInput[]
+    OR?: PurchaseWhereInput[]
+    NOT?: PurchaseWhereInput | PurchaseWhereInput[]
+    productId?: StringFilter<"Purchase"> | string
+    buyerName?: StringFilter<"Purchase"> | string
+    buyerEmail?: StringFilter<"Purchase"> | string
+    buyerPhone?: StringFilter<"Purchase"> | string
+    amount?: DecimalFilter<"Purchase"> | Decimal | DecimalJsLike | number | string
+    status?: StringFilter<"Purchase"> | string
+    createdAt?: DateTimeFilter<"Purchase"> | Date | string
+    updatedAt?: DateTimeFilter<"Purchase"> | Date | string
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    answers?: FormAnswerListRelationFilter
+  }, "id">
+
+  export type PurchaseOrderByWithAggregationInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    buyerName?: SortOrder
+    buyerEmail?: SortOrder
+    buyerPhone?: SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PurchaseCountOrderByAggregateInput
+    _avg?: PurchaseAvgOrderByAggregateInput
+    _max?: PurchaseMaxOrderByAggregateInput
+    _min?: PurchaseMinOrderByAggregateInput
+    _sum?: PurchaseSumOrderByAggregateInput
+  }
+
+  export type PurchaseScalarWhereWithAggregatesInput = {
+    AND?: PurchaseScalarWhereWithAggregatesInput | PurchaseScalarWhereWithAggregatesInput[]
+    OR?: PurchaseScalarWhereWithAggregatesInput[]
+    NOT?: PurchaseScalarWhereWithAggregatesInput | PurchaseScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Purchase"> | string
+    productId?: StringWithAggregatesFilter<"Purchase"> | string
+    buyerName?: StringWithAggregatesFilter<"Purchase"> | string
+    buyerEmail?: StringWithAggregatesFilter<"Purchase"> | string
+    buyerPhone?: StringWithAggregatesFilter<"Purchase"> | string
+    amount?: DecimalWithAggregatesFilter<"Purchase"> | Decimal | DecimalJsLike | number | string
+    status?: StringWithAggregatesFilter<"Purchase"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Purchase"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Purchase"> | Date | string
+  }
+
+  export type FormAnswerWhereInput = {
+    AND?: FormAnswerWhereInput | FormAnswerWhereInput[]
+    OR?: FormAnswerWhereInput[]
+    NOT?: FormAnswerWhereInput | FormAnswerWhereInput[]
+    id?: StringFilter<"FormAnswer"> | string
+    purchaseId?: StringFilter<"FormAnswer"> | string
+    formFieldId?: StringFilter<"FormAnswer"> | string
+    answer?: StringFilter<"FormAnswer"> | string
+    createdAt?: DateTimeFilter<"FormAnswer"> | Date | string
+    purchase?: XOR<PurchaseScalarRelationFilter, PurchaseWhereInput>
+    formField?: XOR<FormFieldScalarRelationFilter, FormFieldWhereInput>
+  }
+
+  export type FormAnswerOrderByWithRelationInput = {
+    id?: SortOrder
+    purchaseId?: SortOrder
+    formFieldId?: SortOrder
+    answer?: SortOrder
+    createdAt?: SortOrder
+    purchase?: PurchaseOrderByWithRelationInput
+    formField?: FormFieldOrderByWithRelationInput
+  }
+
+  export type FormAnswerWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: FormAnswerWhereInput | FormAnswerWhereInput[]
+    OR?: FormAnswerWhereInput[]
+    NOT?: FormAnswerWhereInput | FormAnswerWhereInput[]
+    purchaseId?: StringFilter<"FormAnswer"> | string
+    formFieldId?: StringFilter<"FormAnswer"> | string
+    answer?: StringFilter<"FormAnswer"> | string
+    createdAt?: DateTimeFilter<"FormAnswer"> | Date | string
+    purchase?: XOR<PurchaseScalarRelationFilter, PurchaseWhereInput>
+    formField?: XOR<FormFieldScalarRelationFilter, FormFieldWhereInput>
+  }, "id">
+
+  export type FormAnswerOrderByWithAggregationInput = {
+    id?: SortOrder
+    purchaseId?: SortOrder
+    formFieldId?: SortOrder
+    answer?: SortOrder
+    createdAt?: SortOrder
+    _count?: FormAnswerCountOrderByAggregateInput
+    _max?: FormAnswerMaxOrderByAggregateInput
+    _min?: FormAnswerMinOrderByAggregateInput
+  }
+
+  export type FormAnswerScalarWhereWithAggregatesInput = {
+    AND?: FormAnswerScalarWhereWithAggregatesInput | FormAnswerScalarWhereWithAggregatesInput[]
+    OR?: FormAnswerScalarWhereWithAggregatesInput[]
+    NOT?: FormAnswerScalarWhereWithAggregatesInput | FormAnswerScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"FormAnswer"> | string
+    purchaseId?: StringWithAggregatesFilter<"FormAnswer"> | string
+    formFieldId?: StringWithAggregatesFilter<"FormAnswer"> | string
+    answer?: StringWithAggregatesFilter<"FormAnswer"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"FormAnswer"> | Date | string
   }
 
   export type AccountWhereInput = {
@@ -11251,6 +15426,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutProductsInput
+    formFields?: FormFieldCreateNestedManyWithoutProductInput
+    purchases?: PurchaseCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateInput = {
@@ -11268,6 +15445,8 @@ export namespace Prisma {
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    formFields?: FormFieldUncheckedCreateNestedManyWithoutProductInput
+    purchases?: PurchaseUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductUpdateInput = {
@@ -11285,6 +15464,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutProductsNestedInput
+    formFields?: FormFieldUpdateManyWithoutProductNestedInput
+    purchases?: PurchaseUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateInput = {
@@ -11302,6 +15483,8 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    formFields?: FormFieldUncheckedUpdateManyWithoutProductNestedInput
+    purchases?: PurchaseUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductCreateManyInput = {
@@ -11352,6 +15535,234 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FormFieldCreateInput = {
+    id?: string
+    label: string
+    type?: $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product: ProductCreateNestedOneWithoutFormFieldsInput
+    answers?: FormAnswerCreateNestedManyWithoutFormFieldInput
+  }
+
+  export type FormFieldUncheckedCreateInput = {
+    id?: string
+    productId: string
+    label: string
+    type?: $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    answers?: FormAnswerUncheckedCreateNestedManyWithoutFormFieldInput
+  }
+
+  export type FormFieldUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    type?: EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneRequiredWithoutFormFieldsNestedInput
+    answers?: FormAnswerUpdateManyWithoutFormFieldNestedInput
+  }
+
+  export type FormFieldUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    type?: EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    answers?: FormAnswerUncheckedUpdateManyWithoutFormFieldNestedInput
+  }
+
+  export type FormFieldCreateManyInput = {
+    id?: string
+    productId: string
+    label: string
+    type?: $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FormFieldUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    type?: EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FormFieldUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    type?: EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PurchaseCreateInput = {
+    id?: string
+    buyerName: string
+    buyerEmail: string
+    buyerPhone: string
+    amount?: Decimal | DecimalJsLike | number | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product: ProductCreateNestedOneWithoutPurchasesInput
+    answers?: FormAnswerCreateNestedManyWithoutPurchaseInput
+  }
+
+  export type PurchaseUncheckedCreateInput = {
+    id?: string
+    productId: string
+    buyerName: string
+    buyerEmail: string
+    buyerPhone: string
+    amount?: Decimal | DecimalJsLike | number | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    answers?: FormAnswerUncheckedCreateNestedManyWithoutPurchaseInput
+  }
+
+  export type PurchaseUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    buyerName?: StringFieldUpdateOperationsInput | string
+    buyerEmail?: StringFieldUpdateOperationsInput | string
+    buyerPhone?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneRequiredWithoutPurchasesNestedInput
+    answers?: FormAnswerUpdateManyWithoutPurchaseNestedInput
+  }
+
+  export type PurchaseUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    buyerName?: StringFieldUpdateOperationsInput | string
+    buyerEmail?: StringFieldUpdateOperationsInput | string
+    buyerPhone?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    answers?: FormAnswerUncheckedUpdateManyWithoutPurchaseNestedInput
+  }
+
+  export type PurchaseCreateManyInput = {
+    id?: string
+    productId: string
+    buyerName: string
+    buyerEmail: string
+    buyerPhone: string
+    amount?: Decimal | DecimalJsLike | number | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PurchaseUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    buyerName?: StringFieldUpdateOperationsInput | string
+    buyerEmail?: StringFieldUpdateOperationsInput | string
+    buyerPhone?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PurchaseUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    buyerName?: StringFieldUpdateOperationsInput | string
+    buyerEmail?: StringFieldUpdateOperationsInput | string
+    buyerPhone?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FormAnswerCreateInput = {
+    id?: string
+    answer: string
+    createdAt?: Date | string
+    purchase: PurchaseCreateNestedOneWithoutAnswersInput
+    formField: FormFieldCreateNestedOneWithoutAnswersInput
+  }
+
+  export type FormAnswerUncheckedCreateInput = {
+    id?: string
+    purchaseId: string
+    formFieldId: string
+    answer: string
+    createdAt?: Date | string
+  }
+
+  export type FormAnswerUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    purchase?: PurchaseUpdateOneRequiredWithoutAnswersNestedInput
+    formField?: FormFieldUpdateOneRequiredWithoutAnswersNestedInput
+  }
+
+  export type FormAnswerUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purchaseId?: StringFieldUpdateOperationsInput | string
+    formFieldId?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FormAnswerCreateManyInput = {
+    id?: string
+    purchaseId: string
+    formFieldId: string
+    answer: string
+    createdAt?: Date | string
+  }
+
+  export type FormAnswerUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FormAnswerUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purchaseId?: StringFieldUpdateOperationsInput | string
+    formFieldId?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AccountCreateInput = {
@@ -11958,6 +16369,26 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
+  export type FormFieldListRelationFilter = {
+    every?: FormFieldWhereInput
+    some?: FormFieldWhereInput
+    none?: FormFieldWhereInput
+  }
+
+  export type PurchaseListRelationFilter = {
+    every?: PurchaseWhereInput
+    some?: PurchaseWhereInput
+    none?: PurchaseWhereInput
+  }
+
+  export type FormFieldOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PurchaseOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type ProductCountOrderByAggregateInput = {
     id?: SortOrder
     slug?: SortOrder
@@ -12055,6 +16486,220 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type EnumFieldTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FieldType | EnumFieldTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FieldType[] | ListEnumFieldTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FieldType[] | ListEnumFieldTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFieldTypeFilter<$PrismaModel> | $Enums.FieldType
+  }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type ProductScalarRelationFilter = {
+    is?: ProductWhereInput
+    isNot?: ProductWhereInput
+  }
+
+  export type FormAnswerListRelationFilter = {
+    every?: FormAnswerWhereInput
+    some?: FormAnswerWhereInput
+    none?: FormAnswerWhereInput
+  }
+
+  export type FormAnswerOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FormFieldCountOrderByAggregateInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    label?: SortOrder
+    type?: SortOrder
+    options?: SortOrder
+    required?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FormFieldAvgOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
+  export type FormFieldMaxOrderByAggregateInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    label?: SortOrder
+    type?: SortOrder
+    required?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FormFieldMinOrderByAggregateInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    label?: SortOrder
+    type?: SortOrder
+    required?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FormFieldSumOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
+  export type EnumFieldTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FieldType | EnumFieldTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FieldType[] | ListEnumFieldTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FieldType[] | ListEnumFieldTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFieldTypeWithAggregatesFilter<$PrismaModel> | $Enums.FieldType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFieldTypeFilter<$PrismaModel>
+    _max?: NestedEnumFieldTypeFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type PurchaseCountOrderByAggregateInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    buyerName?: SortOrder
+    buyerEmail?: SortOrder
+    buyerPhone?: SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PurchaseAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type PurchaseMaxOrderByAggregateInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    buyerName?: SortOrder
+    buyerEmail?: SortOrder
+    buyerPhone?: SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PurchaseMinOrderByAggregateInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    buyerName?: SortOrder
+    buyerEmail?: SortOrder
+    buyerPhone?: SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PurchaseSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type PurchaseScalarRelationFilter = {
+    is?: PurchaseWhereInput
+    isNot?: PurchaseWhereInput
+  }
+
+  export type FormFieldScalarRelationFilter = {
+    is?: FormFieldWhereInput
+    isNot?: FormFieldWhereInput
+  }
+
+  export type FormAnswerCountOrderByAggregateInput = {
+    id?: SortOrder
+    purchaseId?: SortOrder
+    formFieldId?: SortOrder
+    answer?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type FormAnswerMaxOrderByAggregateInput = {
+    id?: SortOrder
+    purchaseId?: SortOrder
+    formFieldId?: SortOrder
+    answer?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type FormAnswerMinOrderByAggregateInput = {
+    id?: SortOrder
+    purchaseId?: SortOrder
+    formFieldId?: SortOrder
+    answer?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {
@@ -12322,6 +16967,34 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type FormFieldCreateNestedManyWithoutProductInput = {
+    create?: XOR<FormFieldCreateWithoutProductInput, FormFieldUncheckedCreateWithoutProductInput> | FormFieldCreateWithoutProductInput[] | FormFieldUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: FormFieldCreateOrConnectWithoutProductInput | FormFieldCreateOrConnectWithoutProductInput[]
+    createMany?: FormFieldCreateManyProductInputEnvelope
+    connect?: FormFieldWhereUniqueInput | FormFieldWhereUniqueInput[]
+  }
+
+  export type PurchaseCreateNestedManyWithoutProductInput = {
+    create?: XOR<PurchaseCreateWithoutProductInput, PurchaseUncheckedCreateWithoutProductInput> | PurchaseCreateWithoutProductInput[] | PurchaseUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: PurchaseCreateOrConnectWithoutProductInput | PurchaseCreateOrConnectWithoutProductInput[]
+    createMany?: PurchaseCreateManyProductInputEnvelope
+    connect?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+  }
+
+  export type FormFieldUncheckedCreateNestedManyWithoutProductInput = {
+    create?: XOR<FormFieldCreateWithoutProductInput, FormFieldUncheckedCreateWithoutProductInput> | FormFieldCreateWithoutProductInput[] | FormFieldUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: FormFieldCreateOrConnectWithoutProductInput | FormFieldCreateOrConnectWithoutProductInput[]
+    createMany?: FormFieldCreateManyProductInputEnvelope
+    connect?: FormFieldWhereUniqueInput | FormFieldWhereUniqueInput[]
+  }
+
+  export type PurchaseUncheckedCreateNestedManyWithoutProductInput = {
+    create?: XOR<PurchaseCreateWithoutProductInput, PurchaseUncheckedCreateWithoutProductInput> | PurchaseCreateWithoutProductInput[] | PurchaseUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: PurchaseCreateOrConnectWithoutProductInput | PurchaseCreateOrConnectWithoutProductInput[]
+    createMany?: PurchaseCreateManyProductInputEnvelope
+    connect?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+  }
+
   export type DecimalFieldUpdateOperationsInput = {
     set?: Decimal | DecimalJsLike | number | string
     increment?: Decimal | DecimalJsLike | number | string
@@ -12344,6 +17017,210 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutProductsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutProductsInput, UserUpdateWithoutProductsInput>, UserUncheckedUpdateWithoutProductsInput>
+  }
+
+  export type FormFieldUpdateManyWithoutProductNestedInput = {
+    create?: XOR<FormFieldCreateWithoutProductInput, FormFieldUncheckedCreateWithoutProductInput> | FormFieldCreateWithoutProductInput[] | FormFieldUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: FormFieldCreateOrConnectWithoutProductInput | FormFieldCreateOrConnectWithoutProductInput[]
+    upsert?: FormFieldUpsertWithWhereUniqueWithoutProductInput | FormFieldUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: FormFieldCreateManyProductInputEnvelope
+    set?: FormFieldWhereUniqueInput | FormFieldWhereUniqueInput[]
+    disconnect?: FormFieldWhereUniqueInput | FormFieldWhereUniqueInput[]
+    delete?: FormFieldWhereUniqueInput | FormFieldWhereUniqueInput[]
+    connect?: FormFieldWhereUniqueInput | FormFieldWhereUniqueInput[]
+    update?: FormFieldUpdateWithWhereUniqueWithoutProductInput | FormFieldUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: FormFieldUpdateManyWithWhereWithoutProductInput | FormFieldUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: FormFieldScalarWhereInput | FormFieldScalarWhereInput[]
+  }
+
+  export type PurchaseUpdateManyWithoutProductNestedInput = {
+    create?: XOR<PurchaseCreateWithoutProductInput, PurchaseUncheckedCreateWithoutProductInput> | PurchaseCreateWithoutProductInput[] | PurchaseUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: PurchaseCreateOrConnectWithoutProductInput | PurchaseCreateOrConnectWithoutProductInput[]
+    upsert?: PurchaseUpsertWithWhereUniqueWithoutProductInput | PurchaseUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: PurchaseCreateManyProductInputEnvelope
+    set?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    disconnect?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    delete?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    connect?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    update?: PurchaseUpdateWithWhereUniqueWithoutProductInput | PurchaseUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: PurchaseUpdateManyWithWhereWithoutProductInput | PurchaseUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: PurchaseScalarWhereInput | PurchaseScalarWhereInput[]
+  }
+
+  export type FormFieldUncheckedUpdateManyWithoutProductNestedInput = {
+    create?: XOR<FormFieldCreateWithoutProductInput, FormFieldUncheckedCreateWithoutProductInput> | FormFieldCreateWithoutProductInput[] | FormFieldUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: FormFieldCreateOrConnectWithoutProductInput | FormFieldCreateOrConnectWithoutProductInput[]
+    upsert?: FormFieldUpsertWithWhereUniqueWithoutProductInput | FormFieldUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: FormFieldCreateManyProductInputEnvelope
+    set?: FormFieldWhereUniqueInput | FormFieldWhereUniqueInput[]
+    disconnect?: FormFieldWhereUniqueInput | FormFieldWhereUniqueInput[]
+    delete?: FormFieldWhereUniqueInput | FormFieldWhereUniqueInput[]
+    connect?: FormFieldWhereUniqueInput | FormFieldWhereUniqueInput[]
+    update?: FormFieldUpdateWithWhereUniqueWithoutProductInput | FormFieldUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: FormFieldUpdateManyWithWhereWithoutProductInput | FormFieldUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: FormFieldScalarWhereInput | FormFieldScalarWhereInput[]
+  }
+
+  export type PurchaseUncheckedUpdateManyWithoutProductNestedInput = {
+    create?: XOR<PurchaseCreateWithoutProductInput, PurchaseUncheckedCreateWithoutProductInput> | PurchaseCreateWithoutProductInput[] | PurchaseUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: PurchaseCreateOrConnectWithoutProductInput | PurchaseCreateOrConnectWithoutProductInput[]
+    upsert?: PurchaseUpsertWithWhereUniqueWithoutProductInput | PurchaseUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: PurchaseCreateManyProductInputEnvelope
+    set?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    disconnect?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    delete?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    connect?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    update?: PurchaseUpdateWithWhereUniqueWithoutProductInput | PurchaseUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: PurchaseUpdateManyWithWhereWithoutProductInput | PurchaseUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: PurchaseScalarWhereInput | PurchaseScalarWhereInput[]
+  }
+
+  export type ProductCreateNestedOneWithoutFormFieldsInput = {
+    create?: XOR<ProductCreateWithoutFormFieldsInput, ProductUncheckedCreateWithoutFormFieldsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutFormFieldsInput
+    connect?: ProductWhereUniqueInput
+  }
+
+  export type FormAnswerCreateNestedManyWithoutFormFieldInput = {
+    create?: XOR<FormAnswerCreateWithoutFormFieldInput, FormAnswerUncheckedCreateWithoutFormFieldInput> | FormAnswerCreateWithoutFormFieldInput[] | FormAnswerUncheckedCreateWithoutFormFieldInput[]
+    connectOrCreate?: FormAnswerCreateOrConnectWithoutFormFieldInput | FormAnswerCreateOrConnectWithoutFormFieldInput[]
+    createMany?: FormAnswerCreateManyFormFieldInputEnvelope
+    connect?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+  }
+
+  export type FormAnswerUncheckedCreateNestedManyWithoutFormFieldInput = {
+    create?: XOR<FormAnswerCreateWithoutFormFieldInput, FormAnswerUncheckedCreateWithoutFormFieldInput> | FormAnswerCreateWithoutFormFieldInput[] | FormAnswerUncheckedCreateWithoutFormFieldInput[]
+    connectOrCreate?: FormAnswerCreateOrConnectWithoutFormFieldInput | FormAnswerCreateOrConnectWithoutFormFieldInput[]
+    createMany?: FormAnswerCreateManyFormFieldInputEnvelope
+    connect?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+  }
+
+  export type EnumFieldTypeFieldUpdateOperationsInput = {
+    set?: $Enums.FieldType
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type ProductUpdateOneRequiredWithoutFormFieldsNestedInput = {
+    create?: XOR<ProductCreateWithoutFormFieldsInput, ProductUncheckedCreateWithoutFormFieldsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutFormFieldsInput
+    upsert?: ProductUpsertWithoutFormFieldsInput
+    connect?: ProductWhereUniqueInput
+    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutFormFieldsInput, ProductUpdateWithoutFormFieldsInput>, ProductUncheckedUpdateWithoutFormFieldsInput>
+  }
+
+  export type FormAnswerUpdateManyWithoutFormFieldNestedInput = {
+    create?: XOR<FormAnswerCreateWithoutFormFieldInput, FormAnswerUncheckedCreateWithoutFormFieldInput> | FormAnswerCreateWithoutFormFieldInput[] | FormAnswerUncheckedCreateWithoutFormFieldInput[]
+    connectOrCreate?: FormAnswerCreateOrConnectWithoutFormFieldInput | FormAnswerCreateOrConnectWithoutFormFieldInput[]
+    upsert?: FormAnswerUpsertWithWhereUniqueWithoutFormFieldInput | FormAnswerUpsertWithWhereUniqueWithoutFormFieldInput[]
+    createMany?: FormAnswerCreateManyFormFieldInputEnvelope
+    set?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    disconnect?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    delete?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    connect?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    update?: FormAnswerUpdateWithWhereUniqueWithoutFormFieldInput | FormAnswerUpdateWithWhereUniqueWithoutFormFieldInput[]
+    updateMany?: FormAnswerUpdateManyWithWhereWithoutFormFieldInput | FormAnswerUpdateManyWithWhereWithoutFormFieldInput[]
+    deleteMany?: FormAnswerScalarWhereInput | FormAnswerScalarWhereInput[]
+  }
+
+  export type FormAnswerUncheckedUpdateManyWithoutFormFieldNestedInput = {
+    create?: XOR<FormAnswerCreateWithoutFormFieldInput, FormAnswerUncheckedCreateWithoutFormFieldInput> | FormAnswerCreateWithoutFormFieldInput[] | FormAnswerUncheckedCreateWithoutFormFieldInput[]
+    connectOrCreate?: FormAnswerCreateOrConnectWithoutFormFieldInput | FormAnswerCreateOrConnectWithoutFormFieldInput[]
+    upsert?: FormAnswerUpsertWithWhereUniqueWithoutFormFieldInput | FormAnswerUpsertWithWhereUniqueWithoutFormFieldInput[]
+    createMany?: FormAnswerCreateManyFormFieldInputEnvelope
+    set?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    disconnect?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    delete?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    connect?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    update?: FormAnswerUpdateWithWhereUniqueWithoutFormFieldInput | FormAnswerUpdateWithWhereUniqueWithoutFormFieldInput[]
+    updateMany?: FormAnswerUpdateManyWithWhereWithoutFormFieldInput | FormAnswerUpdateManyWithWhereWithoutFormFieldInput[]
+    deleteMany?: FormAnswerScalarWhereInput | FormAnswerScalarWhereInput[]
+  }
+
+  export type ProductCreateNestedOneWithoutPurchasesInput = {
+    create?: XOR<ProductCreateWithoutPurchasesInput, ProductUncheckedCreateWithoutPurchasesInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutPurchasesInput
+    connect?: ProductWhereUniqueInput
+  }
+
+  export type FormAnswerCreateNestedManyWithoutPurchaseInput = {
+    create?: XOR<FormAnswerCreateWithoutPurchaseInput, FormAnswerUncheckedCreateWithoutPurchaseInput> | FormAnswerCreateWithoutPurchaseInput[] | FormAnswerUncheckedCreateWithoutPurchaseInput[]
+    connectOrCreate?: FormAnswerCreateOrConnectWithoutPurchaseInput | FormAnswerCreateOrConnectWithoutPurchaseInput[]
+    createMany?: FormAnswerCreateManyPurchaseInputEnvelope
+    connect?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+  }
+
+  export type FormAnswerUncheckedCreateNestedManyWithoutPurchaseInput = {
+    create?: XOR<FormAnswerCreateWithoutPurchaseInput, FormAnswerUncheckedCreateWithoutPurchaseInput> | FormAnswerCreateWithoutPurchaseInput[] | FormAnswerUncheckedCreateWithoutPurchaseInput[]
+    connectOrCreate?: FormAnswerCreateOrConnectWithoutPurchaseInput | FormAnswerCreateOrConnectWithoutPurchaseInput[]
+    createMany?: FormAnswerCreateManyPurchaseInputEnvelope
+    connect?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+  }
+
+  export type ProductUpdateOneRequiredWithoutPurchasesNestedInput = {
+    create?: XOR<ProductCreateWithoutPurchasesInput, ProductUncheckedCreateWithoutPurchasesInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutPurchasesInput
+    upsert?: ProductUpsertWithoutPurchasesInput
+    connect?: ProductWhereUniqueInput
+    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutPurchasesInput, ProductUpdateWithoutPurchasesInput>, ProductUncheckedUpdateWithoutPurchasesInput>
+  }
+
+  export type FormAnswerUpdateManyWithoutPurchaseNestedInput = {
+    create?: XOR<FormAnswerCreateWithoutPurchaseInput, FormAnswerUncheckedCreateWithoutPurchaseInput> | FormAnswerCreateWithoutPurchaseInput[] | FormAnswerUncheckedCreateWithoutPurchaseInput[]
+    connectOrCreate?: FormAnswerCreateOrConnectWithoutPurchaseInput | FormAnswerCreateOrConnectWithoutPurchaseInput[]
+    upsert?: FormAnswerUpsertWithWhereUniqueWithoutPurchaseInput | FormAnswerUpsertWithWhereUniqueWithoutPurchaseInput[]
+    createMany?: FormAnswerCreateManyPurchaseInputEnvelope
+    set?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    disconnect?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    delete?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    connect?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    update?: FormAnswerUpdateWithWhereUniqueWithoutPurchaseInput | FormAnswerUpdateWithWhereUniqueWithoutPurchaseInput[]
+    updateMany?: FormAnswerUpdateManyWithWhereWithoutPurchaseInput | FormAnswerUpdateManyWithWhereWithoutPurchaseInput[]
+    deleteMany?: FormAnswerScalarWhereInput | FormAnswerScalarWhereInput[]
+  }
+
+  export type FormAnswerUncheckedUpdateManyWithoutPurchaseNestedInput = {
+    create?: XOR<FormAnswerCreateWithoutPurchaseInput, FormAnswerUncheckedCreateWithoutPurchaseInput> | FormAnswerCreateWithoutPurchaseInput[] | FormAnswerUncheckedCreateWithoutPurchaseInput[]
+    connectOrCreate?: FormAnswerCreateOrConnectWithoutPurchaseInput | FormAnswerCreateOrConnectWithoutPurchaseInput[]
+    upsert?: FormAnswerUpsertWithWhereUniqueWithoutPurchaseInput | FormAnswerUpsertWithWhereUniqueWithoutPurchaseInput[]
+    createMany?: FormAnswerCreateManyPurchaseInputEnvelope
+    set?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    disconnect?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    delete?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    connect?: FormAnswerWhereUniqueInput | FormAnswerWhereUniqueInput[]
+    update?: FormAnswerUpdateWithWhereUniqueWithoutPurchaseInput | FormAnswerUpdateWithWhereUniqueWithoutPurchaseInput[]
+    updateMany?: FormAnswerUpdateManyWithWhereWithoutPurchaseInput | FormAnswerUpdateManyWithWhereWithoutPurchaseInput[]
+    deleteMany?: FormAnswerScalarWhereInput | FormAnswerScalarWhereInput[]
+  }
+
+  export type PurchaseCreateNestedOneWithoutAnswersInput = {
+    create?: XOR<PurchaseCreateWithoutAnswersInput, PurchaseUncheckedCreateWithoutAnswersInput>
+    connectOrCreate?: PurchaseCreateOrConnectWithoutAnswersInput
+    connect?: PurchaseWhereUniqueInput
+  }
+
+  export type FormFieldCreateNestedOneWithoutAnswersInput = {
+    create?: XOR<FormFieldCreateWithoutAnswersInput, FormFieldUncheckedCreateWithoutAnswersInput>
+    connectOrCreate?: FormFieldCreateOrConnectWithoutAnswersInput
+    connect?: FormFieldWhereUniqueInput
+  }
+
+  export type PurchaseUpdateOneRequiredWithoutAnswersNestedInput = {
+    create?: XOR<PurchaseCreateWithoutAnswersInput, PurchaseUncheckedCreateWithoutAnswersInput>
+    connectOrCreate?: PurchaseCreateOrConnectWithoutAnswersInput
+    upsert?: PurchaseUpsertWithoutAnswersInput
+    connect?: PurchaseWhereUniqueInput
+    update?: XOR<XOR<PurchaseUpdateToOneWithWhereWithoutAnswersInput, PurchaseUpdateWithoutAnswersInput>, PurchaseUncheckedUpdateWithoutAnswersInput>
+  }
+
+  export type FormFieldUpdateOneRequiredWithoutAnswersNestedInput = {
+    create?: XOR<FormFieldCreateWithoutAnswersInput, FormFieldUncheckedCreateWithoutAnswersInput>
+    connectOrCreate?: FormFieldCreateOrConnectWithoutAnswersInput
+    upsert?: FormFieldUpsertWithoutAnswersInput
+    connect?: FormFieldWhereUniqueInput
+    update?: XOR<XOR<FormFieldUpdateToOneWithWhereWithoutAnswersInput, FormFieldUpdateWithoutAnswersInput>, FormFieldUncheckedUpdateWithoutAnswersInput>
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -12759,6 +17636,59 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumFieldTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FieldType | EnumFieldTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FieldType[] | ListEnumFieldTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FieldType[] | ListEnumFieldTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFieldTypeFilter<$PrismaModel> | $Enums.FieldType
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedEnumFieldTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FieldType | EnumFieldTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FieldType[] | ListEnumFieldTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FieldType[] | ListEnumFieldTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFieldTypeWithAggregatesFilter<$PrismaModel> | $Enums.FieldType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFieldTypeFilter<$PrismaModel>
+    _max?: NestedEnumFieldTypeFilter<$PrismaModel>
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -12829,6 +17759,74 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutProductsInput, UserUncheckedCreateWithoutProductsInput>
   }
 
+  export type FormFieldCreateWithoutProductInput = {
+    id?: string
+    label: string
+    type?: $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    answers?: FormAnswerCreateNestedManyWithoutFormFieldInput
+  }
+
+  export type FormFieldUncheckedCreateWithoutProductInput = {
+    id?: string
+    label: string
+    type?: $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    answers?: FormAnswerUncheckedCreateNestedManyWithoutFormFieldInput
+  }
+
+  export type FormFieldCreateOrConnectWithoutProductInput = {
+    where: FormFieldWhereUniqueInput
+    create: XOR<FormFieldCreateWithoutProductInput, FormFieldUncheckedCreateWithoutProductInput>
+  }
+
+  export type FormFieldCreateManyProductInputEnvelope = {
+    data: FormFieldCreateManyProductInput | FormFieldCreateManyProductInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PurchaseCreateWithoutProductInput = {
+    id?: string
+    buyerName: string
+    buyerEmail: string
+    buyerPhone: string
+    amount?: Decimal | DecimalJsLike | number | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    answers?: FormAnswerCreateNestedManyWithoutPurchaseInput
+  }
+
+  export type PurchaseUncheckedCreateWithoutProductInput = {
+    id?: string
+    buyerName: string
+    buyerEmail: string
+    buyerPhone: string
+    amount?: Decimal | DecimalJsLike | number | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    answers?: FormAnswerUncheckedCreateNestedManyWithoutPurchaseInput
+  }
+
+  export type PurchaseCreateOrConnectWithoutProductInput = {
+    where: PurchaseWhereUniqueInput
+    create: XOR<PurchaseCreateWithoutProductInput, PurchaseUncheckedCreateWithoutProductInput>
+  }
+
+  export type PurchaseCreateManyProductInputEnvelope = {
+    data: PurchaseCreateManyProductInput | PurchaseCreateManyProductInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutProductsInput = {
     update: XOR<UserUpdateWithoutProductsInput, UserUncheckedUpdateWithoutProductsInput>
     create: XOR<UserCreateWithoutProductsInput, UserUncheckedCreateWithoutProductsInput>
@@ -12876,6 +17874,463 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type FormFieldUpsertWithWhereUniqueWithoutProductInput = {
+    where: FormFieldWhereUniqueInput
+    update: XOR<FormFieldUpdateWithoutProductInput, FormFieldUncheckedUpdateWithoutProductInput>
+    create: XOR<FormFieldCreateWithoutProductInput, FormFieldUncheckedCreateWithoutProductInput>
+  }
+
+  export type FormFieldUpdateWithWhereUniqueWithoutProductInput = {
+    where: FormFieldWhereUniqueInput
+    data: XOR<FormFieldUpdateWithoutProductInput, FormFieldUncheckedUpdateWithoutProductInput>
+  }
+
+  export type FormFieldUpdateManyWithWhereWithoutProductInput = {
+    where: FormFieldScalarWhereInput
+    data: XOR<FormFieldUpdateManyMutationInput, FormFieldUncheckedUpdateManyWithoutProductInput>
+  }
+
+  export type FormFieldScalarWhereInput = {
+    AND?: FormFieldScalarWhereInput | FormFieldScalarWhereInput[]
+    OR?: FormFieldScalarWhereInput[]
+    NOT?: FormFieldScalarWhereInput | FormFieldScalarWhereInput[]
+    id?: StringFilter<"FormField"> | string
+    productId?: StringFilter<"FormField"> | string
+    label?: StringFilter<"FormField"> | string
+    type?: EnumFieldTypeFilter<"FormField"> | $Enums.FieldType
+    options?: JsonNullableFilter<"FormField">
+    required?: BoolFilter<"FormField"> | boolean
+    order?: IntFilter<"FormField"> | number
+    createdAt?: DateTimeFilter<"FormField"> | Date | string
+    updatedAt?: DateTimeFilter<"FormField"> | Date | string
+  }
+
+  export type PurchaseUpsertWithWhereUniqueWithoutProductInput = {
+    where: PurchaseWhereUniqueInput
+    update: XOR<PurchaseUpdateWithoutProductInput, PurchaseUncheckedUpdateWithoutProductInput>
+    create: XOR<PurchaseCreateWithoutProductInput, PurchaseUncheckedCreateWithoutProductInput>
+  }
+
+  export type PurchaseUpdateWithWhereUniqueWithoutProductInput = {
+    where: PurchaseWhereUniqueInput
+    data: XOR<PurchaseUpdateWithoutProductInput, PurchaseUncheckedUpdateWithoutProductInput>
+  }
+
+  export type PurchaseUpdateManyWithWhereWithoutProductInput = {
+    where: PurchaseScalarWhereInput
+    data: XOR<PurchaseUpdateManyMutationInput, PurchaseUncheckedUpdateManyWithoutProductInput>
+  }
+
+  export type PurchaseScalarWhereInput = {
+    AND?: PurchaseScalarWhereInput | PurchaseScalarWhereInput[]
+    OR?: PurchaseScalarWhereInput[]
+    NOT?: PurchaseScalarWhereInput | PurchaseScalarWhereInput[]
+    id?: StringFilter<"Purchase"> | string
+    productId?: StringFilter<"Purchase"> | string
+    buyerName?: StringFilter<"Purchase"> | string
+    buyerEmail?: StringFilter<"Purchase"> | string
+    buyerPhone?: StringFilter<"Purchase"> | string
+    amount?: DecimalFilter<"Purchase"> | Decimal | DecimalJsLike | number | string
+    status?: StringFilter<"Purchase"> | string
+    createdAt?: DateTimeFilter<"Purchase"> | Date | string
+    updatedAt?: DateTimeFilter<"Purchase"> | Date | string
+  }
+
+  export type ProductCreateWithoutFormFieldsInput = {
+    id?: string
+    slug?: string | null
+    name: string
+    description?: string | null
+    price: Decimal | DecimalJsLike | number | string
+    type?: $Enums.ProductType
+    image?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
+    link?: string | null
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutProductsInput
+    purchases?: PurchaseCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateWithoutFormFieldsInput = {
+    id?: string
+    slug?: string | null
+    name: string
+    description?: string | null
+    price: Decimal | DecimalJsLike | number | string
+    type?: $Enums.ProductType
+    image?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
+    link?: string | null
+    status?: string
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    purchases?: PurchaseUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutFormFieldsInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutFormFieldsInput, ProductUncheckedCreateWithoutFormFieldsInput>
+  }
+
+  export type FormAnswerCreateWithoutFormFieldInput = {
+    id?: string
+    answer: string
+    createdAt?: Date | string
+    purchase: PurchaseCreateNestedOneWithoutAnswersInput
+  }
+
+  export type FormAnswerUncheckedCreateWithoutFormFieldInput = {
+    id?: string
+    purchaseId: string
+    answer: string
+    createdAt?: Date | string
+  }
+
+  export type FormAnswerCreateOrConnectWithoutFormFieldInput = {
+    where: FormAnswerWhereUniqueInput
+    create: XOR<FormAnswerCreateWithoutFormFieldInput, FormAnswerUncheckedCreateWithoutFormFieldInput>
+  }
+
+  export type FormAnswerCreateManyFormFieldInputEnvelope = {
+    data: FormAnswerCreateManyFormFieldInput | FormAnswerCreateManyFormFieldInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProductUpsertWithoutFormFieldsInput = {
+    update: XOR<ProductUpdateWithoutFormFieldsInput, ProductUncheckedUpdateWithoutFormFieldsInput>
+    create: XOR<ProductCreateWithoutFormFieldsInput, ProductUncheckedCreateWithoutFormFieldsInput>
+    where?: ProductWhereInput
+  }
+
+  export type ProductUpdateToOneWithWhereWithoutFormFieldsInput = {
+    where?: ProductWhereInput
+    data: XOR<ProductUpdateWithoutFormFieldsInput, ProductUncheckedUpdateWithoutFormFieldsInput>
+  }
+
+  export type ProductUpdateWithoutFormFieldsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutProductsNestedInput
+    purchases?: PurchaseUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutFormFieldsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    purchases?: PurchaseUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type FormAnswerUpsertWithWhereUniqueWithoutFormFieldInput = {
+    where: FormAnswerWhereUniqueInput
+    update: XOR<FormAnswerUpdateWithoutFormFieldInput, FormAnswerUncheckedUpdateWithoutFormFieldInput>
+    create: XOR<FormAnswerCreateWithoutFormFieldInput, FormAnswerUncheckedCreateWithoutFormFieldInput>
+  }
+
+  export type FormAnswerUpdateWithWhereUniqueWithoutFormFieldInput = {
+    where: FormAnswerWhereUniqueInput
+    data: XOR<FormAnswerUpdateWithoutFormFieldInput, FormAnswerUncheckedUpdateWithoutFormFieldInput>
+  }
+
+  export type FormAnswerUpdateManyWithWhereWithoutFormFieldInput = {
+    where: FormAnswerScalarWhereInput
+    data: XOR<FormAnswerUpdateManyMutationInput, FormAnswerUncheckedUpdateManyWithoutFormFieldInput>
+  }
+
+  export type FormAnswerScalarWhereInput = {
+    AND?: FormAnswerScalarWhereInput | FormAnswerScalarWhereInput[]
+    OR?: FormAnswerScalarWhereInput[]
+    NOT?: FormAnswerScalarWhereInput | FormAnswerScalarWhereInput[]
+    id?: StringFilter<"FormAnswer"> | string
+    purchaseId?: StringFilter<"FormAnswer"> | string
+    formFieldId?: StringFilter<"FormAnswer"> | string
+    answer?: StringFilter<"FormAnswer"> | string
+    createdAt?: DateTimeFilter<"FormAnswer"> | Date | string
+  }
+
+  export type ProductCreateWithoutPurchasesInput = {
+    id?: string
+    slug?: string | null
+    name: string
+    description?: string | null
+    price: Decimal | DecimalJsLike | number | string
+    type?: $Enums.ProductType
+    image?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
+    link?: string | null
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutProductsInput
+    formFields?: FormFieldCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateWithoutPurchasesInput = {
+    id?: string
+    slug?: string | null
+    name: string
+    description?: string | null
+    price: Decimal | DecimalJsLike | number | string
+    type?: $Enums.ProductType
+    image?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
+    link?: string | null
+    status?: string
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    formFields?: FormFieldUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutPurchasesInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutPurchasesInput, ProductUncheckedCreateWithoutPurchasesInput>
+  }
+
+  export type FormAnswerCreateWithoutPurchaseInput = {
+    id?: string
+    answer: string
+    createdAt?: Date | string
+    formField: FormFieldCreateNestedOneWithoutAnswersInput
+  }
+
+  export type FormAnswerUncheckedCreateWithoutPurchaseInput = {
+    id?: string
+    formFieldId: string
+    answer: string
+    createdAt?: Date | string
+  }
+
+  export type FormAnswerCreateOrConnectWithoutPurchaseInput = {
+    where: FormAnswerWhereUniqueInput
+    create: XOR<FormAnswerCreateWithoutPurchaseInput, FormAnswerUncheckedCreateWithoutPurchaseInput>
+  }
+
+  export type FormAnswerCreateManyPurchaseInputEnvelope = {
+    data: FormAnswerCreateManyPurchaseInput | FormAnswerCreateManyPurchaseInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProductUpsertWithoutPurchasesInput = {
+    update: XOR<ProductUpdateWithoutPurchasesInput, ProductUncheckedUpdateWithoutPurchasesInput>
+    create: XOR<ProductCreateWithoutPurchasesInput, ProductUncheckedCreateWithoutPurchasesInput>
+    where?: ProductWhereInput
+  }
+
+  export type ProductUpdateToOneWithWhereWithoutPurchasesInput = {
+    where?: ProductWhereInput
+    data: XOR<ProductUpdateWithoutPurchasesInput, ProductUncheckedUpdateWithoutPurchasesInput>
+  }
+
+  export type ProductUpdateWithoutPurchasesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutProductsNestedInput
+    formFields?: FormFieldUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutPurchasesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    formFields?: FormFieldUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type FormAnswerUpsertWithWhereUniqueWithoutPurchaseInput = {
+    where: FormAnswerWhereUniqueInput
+    update: XOR<FormAnswerUpdateWithoutPurchaseInput, FormAnswerUncheckedUpdateWithoutPurchaseInput>
+    create: XOR<FormAnswerCreateWithoutPurchaseInput, FormAnswerUncheckedCreateWithoutPurchaseInput>
+  }
+
+  export type FormAnswerUpdateWithWhereUniqueWithoutPurchaseInput = {
+    where: FormAnswerWhereUniqueInput
+    data: XOR<FormAnswerUpdateWithoutPurchaseInput, FormAnswerUncheckedUpdateWithoutPurchaseInput>
+  }
+
+  export type FormAnswerUpdateManyWithWhereWithoutPurchaseInput = {
+    where: FormAnswerScalarWhereInput
+    data: XOR<FormAnswerUpdateManyMutationInput, FormAnswerUncheckedUpdateManyWithoutPurchaseInput>
+  }
+
+  export type PurchaseCreateWithoutAnswersInput = {
+    id?: string
+    buyerName: string
+    buyerEmail: string
+    buyerPhone: string
+    amount?: Decimal | DecimalJsLike | number | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product: ProductCreateNestedOneWithoutPurchasesInput
+  }
+
+  export type PurchaseUncheckedCreateWithoutAnswersInput = {
+    id?: string
+    productId: string
+    buyerName: string
+    buyerEmail: string
+    buyerPhone: string
+    amount?: Decimal | DecimalJsLike | number | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PurchaseCreateOrConnectWithoutAnswersInput = {
+    where: PurchaseWhereUniqueInput
+    create: XOR<PurchaseCreateWithoutAnswersInput, PurchaseUncheckedCreateWithoutAnswersInput>
+  }
+
+  export type FormFieldCreateWithoutAnswersInput = {
+    id?: string
+    label: string
+    type?: $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product: ProductCreateNestedOneWithoutFormFieldsInput
+  }
+
+  export type FormFieldUncheckedCreateWithoutAnswersInput = {
+    id?: string
+    productId: string
+    label: string
+    type?: $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FormFieldCreateOrConnectWithoutAnswersInput = {
+    where: FormFieldWhereUniqueInput
+    create: XOR<FormFieldCreateWithoutAnswersInput, FormFieldUncheckedCreateWithoutAnswersInput>
+  }
+
+  export type PurchaseUpsertWithoutAnswersInput = {
+    update: XOR<PurchaseUpdateWithoutAnswersInput, PurchaseUncheckedUpdateWithoutAnswersInput>
+    create: XOR<PurchaseCreateWithoutAnswersInput, PurchaseUncheckedCreateWithoutAnswersInput>
+    where?: PurchaseWhereInput
+  }
+
+  export type PurchaseUpdateToOneWithWhereWithoutAnswersInput = {
+    where?: PurchaseWhereInput
+    data: XOR<PurchaseUpdateWithoutAnswersInput, PurchaseUncheckedUpdateWithoutAnswersInput>
+  }
+
+  export type PurchaseUpdateWithoutAnswersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    buyerName?: StringFieldUpdateOperationsInput | string
+    buyerEmail?: StringFieldUpdateOperationsInput | string
+    buyerPhone?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneRequiredWithoutPurchasesNestedInput
+  }
+
+  export type PurchaseUncheckedUpdateWithoutAnswersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    buyerName?: StringFieldUpdateOperationsInput | string
+    buyerEmail?: StringFieldUpdateOperationsInput | string
+    buyerPhone?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FormFieldUpsertWithoutAnswersInput = {
+    update: XOR<FormFieldUpdateWithoutAnswersInput, FormFieldUncheckedUpdateWithoutAnswersInput>
+    create: XOR<FormFieldCreateWithoutAnswersInput, FormFieldUncheckedCreateWithoutAnswersInput>
+    where?: FormFieldWhereInput
+  }
+
+  export type FormFieldUpdateToOneWithWhereWithoutAnswersInput = {
+    where?: FormFieldWhereInput
+    data: XOR<FormFieldUpdateWithoutAnswersInput, FormFieldUncheckedUpdateWithoutAnswersInput>
+  }
+
+  export type FormFieldUpdateWithoutAnswersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    type?: EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneRequiredWithoutFormFieldsNestedInput
+  }
+
+  export type FormFieldUncheckedUpdateWithoutAnswersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    type?: EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -13136,6 +18591,8 @@ export namespace Prisma {
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    formFields?: FormFieldCreateNestedManyWithoutProductInput
+    purchases?: PurchaseCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutUserInput = {
@@ -13152,6 +18609,8 @@ export namespace Prisma {
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    formFields?: FormFieldUncheckedCreateNestedManyWithoutProductInput
+    purchases?: PurchaseUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutUserInput = {
@@ -13400,6 +18859,154 @@ export namespace Prisma {
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
   }
 
+  export type FormFieldCreateManyProductInput = {
+    id?: string
+    label: string
+    type?: $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PurchaseCreateManyProductInput = {
+    id?: string
+    buyerName: string
+    buyerEmail: string
+    buyerPhone: string
+    amount?: Decimal | DecimalJsLike | number | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FormFieldUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    type?: EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    answers?: FormAnswerUpdateManyWithoutFormFieldNestedInput
+  }
+
+  export type FormFieldUncheckedUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    type?: EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    answers?: FormAnswerUncheckedUpdateManyWithoutFormFieldNestedInput
+  }
+
+  export type FormFieldUncheckedUpdateManyWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    type?: EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
+    options?: NullableJsonNullValueInput | InputJsonValue
+    required?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PurchaseUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    buyerName?: StringFieldUpdateOperationsInput | string
+    buyerEmail?: StringFieldUpdateOperationsInput | string
+    buyerPhone?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    answers?: FormAnswerUpdateManyWithoutPurchaseNestedInput
+  }
+
+  export type PurchaseUncheckedUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    buyerName?: StringFieldUpdateOperationsInput | string
+    buyerEmail?: StringFieldUpdateOperationsInput | string
+    buyerPhone?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    answers?: FormAnswerUncheckedUpdateManyWithoutPurchaseNestedInput
+  }
+
+  export type PurchaseUncheckedUpdateManyWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    buyerName?: StringFieldUpdateOperationsInput | string
+    buyerEmail?: StringFieldUpdateOperationsInput | string
+    buyerPhone?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FormAnswerCreateManyFormFieldInput = {
+    id?: string
+    purchaseId: string
+    answer: string
+    createdAt?: Date | string
+  }
+
+  export type FormAnswerUpdateWithoutFormFieldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    purchase?: PurchaseUpdateOneRequiredWithoutAnswersNestedInput
+  }
+
+  export type FormAnswerUncheckedUpdateWithoutFormFieldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purchaseId?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FormAnswerUncheckedUpdateManyWithoutFormFieldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purchaseId?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FormAnswerCreateManyPurchaseInput = {
+    id?: string
+    formFieldId: string
+    answer: string
+    createdAt?: Date | string
+  }
+
+  export type FormAnswerUpdateWithoutPurchaseInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    formField?: FormFieldUpdateOneRequiredWithoutAnswersNestedInput
+  }
+
+  export type FormAnswerUncheckedUpdateWithoutPurchaseInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    formFieldId?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FormAnswerUncheckedUpdateManyWithoutPurchaseInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    formFieldId?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type AccountCreateManyUserInput = {
     id?: string
     type: string
@@ -13510,6 +19117,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    formFields?: FormFieldUpdateManyWithoutProductNestedInput
+    purchases?: PurchaseUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutUserInput = {
@@ -13526,6 +19135,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    formFields?: FormFieldUncheckedUpdateManyWithoutProductNestedInput
+    purchases?: PurchaseUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateManyWithoutUserInput = {

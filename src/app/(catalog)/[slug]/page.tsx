@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
 import { ImageIcon, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { api } from "~/trpc/react";
@@ -99,13 +99,7 @@ export default function CatalogSlugPage() {
 
     // ── Not Found ──
     if (!data) {
-        return (
-            <div className="min-h-screen flex flex-col items-center justify-center gap-3 text-center px-4">
-                <ImageIcon className="w-12 h-12 text-slate-300" strokeWidth={1} />
-                <p className="text-slate-500 font-medium">Catalog tidak ditemukan.</p>
-                <p className="text-slate-400 text-sm">Pastikan URL sudah benar.</p>
-            </div>
-        );
+        notFound();
     }
 
     const { creator, products, bio } = data;

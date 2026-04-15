@@ -50,7 +50,7 @@ export default function SidebarKreator() {
 
     // Fetch data katalog untuk menentukan link
     const { data: catalog } = api.catalog.getMine.useQuery();
-    const catalogHref = catalog?.slug ? `/${catalog.slug}` : "/catalog/setup";
+    const catalogHref = catalog?.slug ? `/${catalog.slug}` : "/setup";
 
     return (
         <aside className={`sticky top-0 transition-all duration-300 z-50 ease-in-out ${isCollapsed ? "w-20" : "w-64"} h-screen bg-white p-4 text-white border-r-2 border-indigo-950 flex flex-col`}>

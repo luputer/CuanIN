@@ -54,18 +54,21 @@ export const authConfig = {
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {
             const isLoggedIn = !!auth;
-            const isDashboard = nextUrl.pathname.startsWith("/dashboard");
             const isAuthPage =
                 nextUrl.pathname.startsWith("/sign-in") ||
                 nextUrl.pathname.startsWith("/sign-up") ||
                 nextUrl.pathname === "/";
 
-            if (isDashboard) {
-                if (isLoggedIn) return true;
-                return false; // Redirect ke login
-            } else if (isAuthPage && isLoggedIn) {
+            // If trying to access public auth/landing pages while logged in, redirect to dashboard
+            if (isAuthPage && isLoggedIn) {
                 return Response.redirect(new URL("/dashboard", nextUrl));
             }
+            
+            // If trying to access any OTHER matched path (like /setup, /dashboard, etc) while logged out, block access
+            if (!isAuthPage && !isLoggedIn) {
+                return false; // Automatically redirects to signIn page
+            }
+
             return true;
         },
         async jwt({ token, user, trigger, session }) {

@@ -2,7 +2,7 @@
 
 import { ArrowLeft, Clock, Calendar, MapPin, Share2, ImageIcon, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
 import { api } from "~/trpc/react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
@@ -32,19 +32,7 @@ export default function ProductDetailPage() {
     }
 
     if (!product) {
-        return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-4">
-                <ImageIcon className="w-16 h-16 text-slate-300" strokeWidth={1} />
-                <div className="text-center">
-                    <h2 className="text-xl font-semibold text-slate-800">Produk tidak ditemukan</h2>
-                    <p className="text-slate-500 mt-1">Produk mungkin sudah dihapus atau ditarik.</p>
-                </div>
-                <Link href={`/${slug}`} className="mt-4 text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2">
-                    <ArrowLeft className="w-4 h-4" />
-                    Kembali ke Katalog
-                </Link>
-            </div>
-        );
+        notFound();
     }
 
     const price = Number(product.price);

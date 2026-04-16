@@ -5,13 +5,15 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronLeft, Loader2, Save } from "lucide-react";
+import { ChevronLeft, Loader2, Save, Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import dynamic from "next/dynamic";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
+
 import {
     Select,
     SelectContent,
@@ -23,7 +25,10 @@ import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { productDigitalSchema } from "~/lib/validation";
 import type { z } from "zod";
-import { Plus } from "lucide-react";
+import MarkdownPreview from "~/components/MarkdownPreview";
+
+// Import MDEditor secara dynamic karena tidak support SSR
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 
 type ProductFormValues = z.infer<typeof productDigitalSchema>;
@@ -214,11 +219,28 @@ export default function EditProductPage() {
                         </FormGroup>
 
                         <FormGroup label="Deskripsi" error={errors.description?.message}>
-                            <Textarea
-                                placeholder="Masukkan deskripsi produk"
-                                className="min-h-[120px] bg-white border-blue-200 focus-visible:ring-blue-500"
-                                {...register("description")}
-                            />
+                            <div data-color-mode="light" className="w-full">
+                                <MDEditor
+                                    value={watch("description") ?? ""}
+                                    onChange={(val) =>
+                                        setValue("description", val ?? "", { shouldValidate: true })
+                                    }
+                                    preview="live"
+                                    height={400}
+                                    visibleDragbar={false}
+                                    className="w-full border-blue-200"
+                                    previewOptions={{
+                                        className: "p-4",
+                                    }}
+                                    components={{
+                                        preview: (source: string) => (
+                                            <div className="p-4 bg-white min-h-full">
+                                                <MarkdownPreview content={source} />
+                                            </div>
+                                        )
+                                    }}
+                                />
+                            </div>
                         </FormGroup>
 
                         <FormGroup label="Gambar">

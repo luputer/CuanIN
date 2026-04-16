@@ -8,6 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Plus, Loader2 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -22,6 +23,10 @@ import {
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { productDigitalSchema } from "~/lib/validation";
+import MarkdownPreview from "~/components/MarkdownPreview";
+
+// Import MDEditor secara dynamic karena tidak support SSR
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 type DigitalProductFormValues = z.infer<typeof productDigitalSchema>;
 
@@ -52,7 +57,6 @@ const SectionHeader = ({ title }: { title: string }) => (
 export default function CreateDigitalProductPage() {
     const router = useRouter();
 
-
     const {
         register,
         handleSubmit,
@@ -69,6 +73,7 @@ export default function CreateDigitalProductPage() {
     });
 
     const priceType = watch("priceType");
+    const descriptionValue = watch("description");
 
     const utils = api.useUtils();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -79,7 +84,6 @@ export default function CreateDigitalProductPage() {
 
     const createProduct = api.products.create.useMutation({
         onSuccess: () => {
-            // Invalidate di background — tidak blocking navigasi
             void utils.products.getAll.invalidate();
             toast.success("Produk Digital berhasil dibuat");
             router.push("/produk-digital");
@@ -93,7 +97,6 @@ export default function CreateDigitalProductPage() {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // Preview local
         const localUrl = URL.createObjectURL(file);
         setPreviewUrl(localUrl);
         setUploading(true);
@@ -108,16 +111,12 @@ export default function CreateDigitalProductPage() {
             const res = await fetch(url, {
                 method: "PUT",
                 body: file,
-                headers: {
-                    "Content-Type": file.type,
-                },
+                headers: { "Content-Type": file.type },
             });
 
             if (!res.ok) throw new Error("Gagal upload ke storage");
 
-            // Gunakan BUCKET_PUBLIC_URL dari env jika perlu, 
             const publicUrl = `https://pub-3098f58e584244c8bf48888938b34bae.r2.dev/${key}`;
-
             setValue("image", publicUrl, { shouldValidate: true });
             toast.success("Gambar berhasil diunggah");
         } catch (error) {
@@ -155,10 +154,10 @@ export default function CreateDigitalProductPage() {
             </div>
 
             <div className="bg-cyan-50 p-6 rounded-xl space-y-8 border">
-                {/* ─── Informasi Produk ─── */}
                 <section>
                     <SectionHeader title="Informasi Produk" />
                     <div className="space-y-5">
+
                         {/* Nama */}
                         <FormGroup label="Nama" error={errors.name?.message}>
                             <Input
@@ -168,13 +167,30 @@ export default function CreateDigitalProductPage() {
                             />
                         </FormGroup>
 
-                        {/* Deskripsi */}
+                        {/* Deskripsi — MDEditor */}
                         <FormGroup label="Deskripsi" error={errors.description?.message}>
-                            <Textarea
-                                placeholder="Masukkan Deskripsi Produk"
-                                className="min-h-[120px] bg-white border-blue-200 focus-visible:ring-blue-500"
-                                {...register("description")}
-                            />
+                            <div data-color-mode="light" className="w-full">
+                                <MDEditor
+                                    value={descriptionValue ?? ""}
+                                    onChange={(val) =>
+                                        setValue("description", val ?? "", { shouldValidate: true })
+                                    }
+                                    preview="live"
+                                    height={400}
+                                    visibleDragbar={false}
+                                    className="w-full border-blue-200"
+                                    previewOptions={{
+                                        className: "p-4",
+                                    }}
+                                    components={{
+                                        preview: (source: string) => (
+                                            <div className="p-4 bg-white min-h-full">
+                                                <MarkdownPreview content={source} />
+                                            </div>
+                                        )
+                                    }}
+                                />
+                            </div>
                         </FormGroup>
 
                         {/* Gambar */}
@@ -185,7 +201,13 @@ export default function CreateDigitalProductPage() {
                             >
                                 {previewUrl ? (
                                     <>
-                                        <Image src={previewUrl} alt="Preview" fill className="object-cover" unoptimized />
+                                        <Image
+                                            src={previewUrl}
+                                            alt="Preview"
+                                            fill
+                                            className="object-cover"
+                                            unoptimized
+                                        />
                                         {uploading && (
                                             <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                                                 <Loader2 className="h-6 w-6 animate-spin text-white" />
@@ -208,7 +230,7 @@ export default function CreateDigitalProductPage() {
                             </div>
                         </FormGroup>
 
-                        {/* Tipe (free / paid) */}
+                        {/* Tipe */}
                         <FormGroup label="Tipe" error={errors.priceType?.message}>
                             <Select
                                 value={priceType}
@@ -228,7 +250,7 @@ export default function CreateDigitalProductPage() {
                             </Select>
                         </FormGroup>
 
-                        {/* Harga — hanya muncul kalau paid */}
+                        {/* Harga */}
                         {priceType === "paid" && (
                             <FormGroup label="Harga" error={errors.price?.message}>
                                 <div className="relative flex items-center">
@@ -283,6 +305,7 @@ export default function CreateDigitalProductPage() {
                                 </SelectContent>
                             </Select>
                         </FormGroup>
+
                     </div>
                 </section>
             </div>

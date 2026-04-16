@@ -12,6 +12,8 @@ import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import Image from "next/image";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { FormCustomizer } from "../_Component/form-customizer";
 import Pembeli from "../_Component/pembeli";
 import { Skeleton } from "~/components/ui/skeleton";
@@ -191,9 +193,9 @@ export default function ProductDetailPage() {
                         <Row label="Nama">{product.name}</Row>
 
                         <Row label="Deskripsi">
-                            <span className="leading-relaxed">
-                                {product.description ?? "-"}
-                            </span>
+                            <div className="prose prose-sm prose-slate max-w-none text-slate-600 leading-relaxed">
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{product.description ?? "-"}</ReactMarkdown>
+                            </div>
                         </Row>
 
                         <div className="flex flex-col md:flex-row gap-2 md:items-start mb-4">

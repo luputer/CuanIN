@@ -6,6 +6,7 @@ import { useParams, notFound } from "next/navigation";
 import { api } from "~/trpc/react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
+import MarkdownPreview from "~/components/MarkdownPreview";
 
 const TYPE_MAP: Record<string, string> = {
     WEBINAR: "Webinar",
@@ -127,10 +128,7 @@ export default function ProductDetailPage() {
                         {/* Descripticatalogon */}
                         {product.description && (
                             <div className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8">
-                                <h3 className="font-semibold text-slate-800 mb-4">Deskripsi</h3>
-                                <div className="prose prose-sm prose-slate max-w-none text-slate-600 leading-relaxed whitespace-pre-wrap">
-                                    {product.description}
-                                </div>
+                                <MarkdownPreview content={product.description} />
                             </div>
                         )}
 

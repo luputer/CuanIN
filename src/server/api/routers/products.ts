@@ -3,7 +3,6 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { s3Client } from "./s3";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { env } from "~/env";
-import crypto from "crypto";
 
 const ProductType = z.enum(["WEBINAR", "DIGITAL_PRODUCT", "KELAS_ONLINE"]);
 
@@ -88,12 +87,26 @@ export const productsRouter = createTRPCRouter({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const generateSlug = () => crypto.randomBytes(3).toString("hex");
-            
+            // Generate slug from product name
+            const baseSlug = input.name
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9\s-]/g, "")
+                .replace(/\s+/g, "-")
+                .replace(/-+/g, "-")
+                .slice(0, 60);
+
+            // Ensure slug is unique — append suffix if collision
+            let slug = baseSlug;
+            let counter = 1;
+            while (await ctx.db.product.findUnique({ where: { slug } })) {
+                slug = `${baseSlug}-${counter++}`;
+            }
+
             return await ctx.db.product.create({
                 data: {
                     ...input,
-                    slug: generateSlug(),
+                    slug,
                     userId: ctx.session.user.id,
                 },
             });
@@ -117,13 +130,34 @@ export const productsRouter = createTRPCRouter({
         )
 
         .mutation(async ({ ctx, input }) => {
-            const { id, ...data } = input;
+            const { id, name, ...rest } = input;
             // Pastikan produk milik user yang login
             const product = await ctx.db.product.findUnique({
                 where: { id, userId: ctx.session.user.id },
             });
             if (!product) throw new Error("Produk tidak ditemukan atau bukan milikmu");
-            return await ctx.db.product.update({ where: { id }, data });
+
+            let slug: string | undefined;
+            if (name && name !== product.name) {
+                const baseSlug = name
+                    .toLowerCase()
+                    .trim()
+                    .replace(/[^a-z0-9\s-]/g, "")
+                    .replace(/\s+/g, "-")
+                    .replace(/-+/g, "-")
+                    .slice(0, 60);
+
+                slug = baseSlug;
+                let counter = 1;
+                while (await ctx.db.product.findFirst({ where: { slug, NOT: { id } } })) {
+                    slug = `${baseSlug}-${counter++}`;
+                }
+            }
+
+            return await ctx.db.product.update({
+                where: { id },
+                data: { ...rest, ...(name ? { name } : {}), ...(slug ? { slug } : {}) },
+            });
         }),
 
     // Delete a product — hanya milik sendiri

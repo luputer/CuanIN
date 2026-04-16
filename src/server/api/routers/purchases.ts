@@ -162,4 +162,25 @@ export const purchasesRouter = createTRPCRouter({
             }
             return countMap;
         }),
+
+    // Delete single purchase (creator dashboard)
+    delete: protectedProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            const purchase = await ctx.db.purchase.findUnique({
+                where: { id: input.id },
+                include: { product: { select: { userId: true } } },
+            });
+
+            if (!purchase) throw new Error("Data pembeli tidak ditemukan");
+            if (purchase.product.userId !== ctx.session.user.id) {
+                throw new Error("Kamu tidak memiliki akses ke data ini");
+            }
+
+            await ctx.db.purchase.delete({
+                where: { id: input.id },
+            });
+
+            return { success: true };
+        }),
 });

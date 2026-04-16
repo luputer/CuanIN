@@ -4,6 +4,7 @@ import { GripVertical, Loader2, Plus, Save, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
+import { Skeleton } from "~/components/ui/skeleton";
 
 export type FieldType = "SHORT" | "LONG" | "MULTIPLE_CHOICE" | "CHECKBOX" | "DROPDOWN";
 
@@ -140,8 +141,30 @@ export function FormCustomizer({ productId }: { productId: string }) {
 
     if (isLoading) {
         return (
-            <div className="bg-[#f0f9fa] p-4 md:p-6 rounded-b-xl border border-slate-200 flex items-center justify-center min-h-[200px]">
-                <Loader2 className="w-6 h-6 animate-spin text-blue-400" />
+            <div className="bg-[#f0f9fa] p-4 md:p-6 rounded-b-xl border border-slate-200 animate-pulse">
+                <Skeleton className="h-6 w-48 mb-2" />
+                <div className="h-[2px] bg-[#00B4D8] opacity-20 w-full mb-6"></div>
+
+                <div className="space-y-4 mb-6">
+                    {[1, 2].map((i) => (
+                        <div key={i} className="bg-white border border-slate-200 rounded-lg p-5 flex gap-4">
+                            <Skeleton className="w-[18px] h-[18px] mt-6" />
+                            <div className="flex-1 space-y-4">
+                                <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 border-b border-slate-100 pb-4">
+                                    <Skeleton className="h-10 flex-1 md:max-w-[60%]" />
+                                    <div className="flex items-center gap-4">
+                                        <Skeleton className="h-10 w-32 rounded-md" />
+                                        <Skeleton className="w-6 h-6 rounded-md" />
+                                    </div>
+                                </div>
+                                <div className="pt-2">
+                                    <Skeleton className="h-4 w-24 mb-4" />
+                                    <Skeleton className="h-6 w-48 border-b border-slate-100 pb-2" />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         );
     }

@@ -3,6 +3,7 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { s3Client } from "./s3";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { env } from "~/env";
+import crypto from "crypto";
 
 const ProductType = z.enum(["WEBINAR", "DIGITAL_PRODUCT", "KELAS_ONLINE"]);
 
@@ -87,9 +88,12 @@ export const productsRouter = createTRPCRouter({
             })
         )
         .mutation(async ({ ctx, input }) => {
+            const generateSlug = () => crypto.randomBytes(3).toString("hex");
+            
             return await ctx.db.product.create({
                 data: {
                     ...input,
+                    slug: generateSlug(),
                     userId: ctx.session.user.id,
                 },
             });

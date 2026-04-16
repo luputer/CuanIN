@@ -3,7 +3,7 @@
 import { ChevronLeft, Copy, Image as ImageIcon, Loader2, Pencil } from "lucide-react";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../components/ui/tabs";
 
 import { format } from "date-fns";
@@ -12,15 +12,33 @@ import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import Image from "next/image";
+import { FormCustomizer } from "../_Component/form-customizer";
+import Pembeli from "../_Component/pembeli";
 
 export default function ProductDetailPage() {
     const params = useParams();
     const id = params.id as string;
+    const searchParams = useSearchParams();
+    const defaultTab = searchParams.get("tab") ?? "detail";
+
+    const { data: catalog } = api.catalog.getMine.useQuery();
 
     const { data: product, isLoading } = api.products.getById.useQuery({ id });
+    const { data: buyerCount } = api.purchases.countByProductId.useQuery(
+        { productId: id },
+        { enabled: !!id }
+    );
     const handleCopyLink = () => {
-        if (!product?.link) return;
-        void navigator.clipboard.writeText(product.link);
+        if (!product || !catalog?.slug) {
+            toast.error("Gagal menyalin link: Data belum siap");
+            return;
+        }
+
+        const host = window.location.origin;
+        const productSlug = product.slug ?? product.id;
+        const publicUrl = `${host}/${catalog.slug}/${productSlug}`;
+
+        void navigator.clipboard.writeText(publicUrl);
         toast.success("Link produk disalin!");
     };
 
@@ -119,31 +137,31 @@ export default function ProductDetailPage() {
             <h1 className="text-2xl font-bold text-blue-600">{product.name}</h1>
 
             {/* Tabs */}
-            <Tabs defaultValue="detail" className="">
+            <Tabs defaultValue={defaultTab}>
                 <div className="bg-white rounded-t-xl overflow-hidden border-b border-slate-200">
-                    <TabsList className="w-full flex h-auto p-0 bg-transparent">
+                    <TabsList className="w-full flex h-auto p-0 bg-transparent ">
                         <TabsTrigger
                             value="detail"
-                            className="flex-1 rounded-none border-b-2 border-transparent py-4 data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 bg-transparent text-slate-500 font-medium"
+                            className="flex-1   rounded-none border-b-2 border-transparent py-4 data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 bg-transparent text-slate-500 font-medium cursor-pointer"
                         >
                             Detail Produk
                         </TabsTrigger>
                         <TabsTrigger
                             value="user"
-                            className="flex-1 rounded-none border-b-2 border-transparent py-4 data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 bg-transparent text-slate-500 font-medium"
+                            className="flex-1 rounded-none border-b-2 border-transparent py-4 data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 bg-transparent text-slate-500 font-medium cursor-pointer"
                         >
-                            User (0)
+                            Pembeli ({buyerCount ?? 0})
                         </TabsTrigger>
                         <TabsTrigger
                             value="form"
-                            className="flex-1 rounded-none border-b-2 border-transparent py-4 data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 bg-transparent text-slate-500 font-medium"
+                            className="flex-1 rounded-none border-b-2 border-transparent py-4 data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 bg-transparent text-slate-500 font-medium cursor-pointer"
                         >
                             Kustomisasi Form
                         </TabsTrigger>
                     </TabsList>
                 </div>
 
-                <TabsContent value="detail" className="space-y-8 bg-blue-50/50 p-6 rounded-b-xl min-h-screen">
+                <TabsContent value="detail" className="space-y-8 bg-blue-50/50 p-6 rounded-b-xl">
                     {/* Informasi Produk */}
                     <section>
                         <SectionHeader title="Informasi Produk" showEdit />
@@ -220,10 +238,10 @@ export default function ProductDetailPage() {
                 </TabsContent>
 
                 <TabsContent value="user">
-                    <div className="p-6 text-center text-slate-500">Belum ada peserta terdaftar.</div>
+                    <Pembeli productId={id} />
                 </TabsContent>
                 <TabsContent value="form">
-                    <div className="p-6 text-center text-slate-500">Form Customization belum tersedia.</div>
+                    <FormCustomizer productId={id} />
                 </TabsContent>
             </Tabs>
         </div>

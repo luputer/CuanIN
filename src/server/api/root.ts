@@ -3,12 +3,16 @@ import { authRouter } from "~/server/api/routers/auth";
 import { catalogRouter } from "./routers/catalog";
 import { productsRouter } from "./routers/products";
 import { s3Router } from "./routers/s3";
+import { formFieldsRouter } from "./routers/formFields";
+import { purchasesRouter } from "./routers/purchases";
 
 export const appRouter = createTRPCRouter({
     auth: authRouter,
     catalog: catalogRouter,
     products: productsRouter,
     s3: s3Router,
+    formFields: formFieldsRouter,
+    purchases: purchasesRouter,
 });
 
 

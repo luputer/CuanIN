@@ -38,6 +38,54 @@ export const catalogRouter = createTRPCRouter({
             };
         }),
 
+    // Ambil detail satu produk berdasarkan slug creator dan slug produk
+    getProductById: publicProcedure
+        .input(z.object({ slug: z.string(), productSlug: z.string() }))
+        .query(async ({ ctx, input }) => {
+            // First, get the catalog to find the user
+            const catalog = await ctx.db.catalog.findUnique({
+                where: { slug: input.slug },
+                select: { userId: true },
+            });
+
+            if (!catalog) {
+                return null;
+            }
+
+            const product = await ctx.db.product.findFirst({
+                where: {
+                    OR: [
+                        { slug: input.productSlug },
+                        { id: input.productSlug }
+                    ],
+                    status: "published",
+                    userId: catalog.userId,
+                },
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            image: true,
+                        },
+                    },
+                    formFields: {
+                        orderBy: { order: "asc" },
+                        select: {
+                            id: true,
+                            label: true,
+                            type: true,
+                            options: true,
+                            required: true,
+                            order: true,
+                        },
+                    },
+                },
+            });
+
+            return product;
+        }),
+
     // Cek apakah slug tersedia (publik, untuk real-time validation di form)
     checkSlug: publicProcedure
         .input(z.object({ slug: z.string() }))
@@ -53,7 +101,7 @@ export const catalogRouter = createTRPCRouter({
     getMine: protectedProcedure.query(async ({ ctx }) => {
         return await ctx.db.catalog.findUnique({
             where: { userId: ctx.session.user.id },
-            select: { slug: true },
+            select: { slug: true, bio: true },
         });
     }),
 

@@ -36,7 +36,6 @@ import {
 	PaginationContent,
 	PaginationEllipsis,
 	PaginationItem,
-	PaginationLink,
 } from "~/components/ui/pagination";
 import { Skeleton } from "~/components/ui/skeleton";
 import Link from "next/link";
@@ -47,7 +46,7 @@ import { useRouter } from "next/navigation";
 export default function DigitalProductPage() {
 	const utils = api.useUtils();
 	const router = useRouter();
-	
+
 	const [page, setPage] = useState(1);
 	const [limit, setLimit] = useState(10);
 	const [search, setSearch] = useState("");
@@ -62,7 +61,7 @@ export default function DigitalProductPage() {
 		return () => clearTimeout(timer);
 	}, [search]);
 
-	const { data, isLoading } = api.products.getAll.useQuery({ 
+	const { data, isLoading } = api.products.getAll.useQuery({
 		type: "DIGITAL_PRODUCT",
 		page,
 		limit,
@@ -72,6 +71,13 @@ export default function DigitalProductPage() {
 	const products = data?.items;
 	const total = data?.total ?? 0;
 	const totalPages = data?.totalPages ?? 1;
+
+	// Fetch buyer counts for all products
+	const productIds = products?.map(p => p.id) ?? [];
+	const { data: buyerCounts } = api.purchases.countByProductIds.useQuery(
+		{ productIds },
+		{ enabled: productIds.length > 0 }
+	);
 
 	const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -107,6 +113,19 @@ export default function DigitalProductPage() {
 			case "unpublished": return "Unpublished";
 			default: return status;
 		}
+	};
+
+	const { data: catalog } = api.catalog.getMine.useQuery();
+	const handleCopyLink = (itemId: string, itemSlug: string | null) => {
+		if (!catalog?.slug) {
+			toast.error("Gagal menyalin link: Catalog belum siap");
+			return;
+		}
+		const host = window.location.origin;
+		const productSlug = itemSlug ?? itemId;
+		const publicUrl = `${host}/${catalog.slug}/${productSlug}`;
+		void navigator.clipboard.writeText(publicUrl);
+		toast.success("Link produk disalin!");
 	};
 
 	return (
@@ -226,8 +245,11 @@ export default function DigitalProductPage() {
 										</TableCell>
 										<TableCell className="py-4 px-6">
 											<div className="flex items-center gap-2">
-												<span className="text-slate-600">0</span>
-												<button className="px-3 py-1 text-xs font-medium text-blue-500 border border-blue-400 rounded-md hover:bg-blue-50 transition-colors cursor-pointer">
+												<span className="text-slate-600">{buyerCounts?.[item.id] ?? 0}</span>
+												<button
+													onClick={() => router.push(`/produk-digital/${item.id}?tab=user`)}
+													className="px-3 py-1 text-xs font-medium text-blue-500 border border-blue-400 rounded-md hover:bg-blue-50 transition-colors cursor-pointer"
+												>
 													Lihat
 												</button>
 											</div>
@@ -252,7 +274,11 @@ export default function DigitalProductPage() {
 												>
 													<Trash2 className="w-[18px] h-[18px]" strokeWidth={2} />
 												</button>
-												<button className="text-amber-400 cursor-pointer hover:text-amber-600 transition-colors" title="Duplikasi Produk">
+												<button
+													onClick={() => handleCopyLink(item.id, item.slug ?? null)}
+													className="text-amber-400 cursor-pointer hover:text-amber-600 transition-colors"
+													title="Salin Link Produk"
+												>
 													<Copy className="w-[18px] h-[18px]" strokeWidth={2} />
 												</button>
 											</div>
@@ -269,7 +295,7 @@ export default function DigitalProductPage() {
 			<div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[13px] text-slate-500 pt-2 w-full">
 				<div className="flex items-center gap-3">
 					<div className="relative">
-						<select 
+						<select
 							value={limit}
 							onChange={(e) => {
 								setLimit(Number(e.target.value));
@@ -292,7 +318,7 @@ export default function DigitalProductPage() {
 					<Pagination className="justify-center sm:justify-end">
 						<PaginationContent className="gap-1">
 							<PaginationItem>
-								<button 
+								<button
 									onClick={() => setPage(p => Math.max(1, p - 1))}
 									disabled={page === 1}
 									className="flex items-center justify-center p-2 text-slate-400 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -300,7 +326,7 @@ export default function DigitalProductPage() {
 									<ChevronLeft className="w-4 h-4" />
 								</button>
 							</PaginationItem>
-							
+
 							{Array.from({ length: totalPages }, (_, i) => i + 1)
 								.filter(p => p === 1 || p === totalPages || (p >= page - 1 && p <= page + 1))
 								.map((p, index, array) => {
@@ -312,11 +338,10 @@ export default function DigitalProductPage() {
 											<PaginationItem>
 												<button
 													onClick={() => setPage(p)}
-													className={`h-7 w-7 rounded-[4px] flex items-center justify-center font-medium text-xs transition-colors ${
-														page === p 
-														? "bg-[#00B4D8] text-white hover:bg-[#009bc2]" 
-														: "text-slate-500 hover:bg-slate-100"
-													}`}
+													className={`h-7 w-7 rounded-[4px] flex items-center justify-center font-medium text-xs transition-colors ${page === p
+															? "bg-[#00B4D8] text-white hover:bg-[#009bc2]"
+															: "text-slate-500 hover:bg-slate-100"
+														}`}
 												>
 													{p}
 												</button>
@@ -327,7 +352,7 @@ export default function DigitalProductPage() {
 							}
 
 							<PaginationItem>
-								<button 
+								<button
 									onClick={() => setPage(p => Math.min(totalPages, p + 1))}
 									disabled={page === totalPages}
 									className="flex items-center justify-center p-2 text-slate-400 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"

@@ -154,7 +154,7 @@ export default function CreateDigitalProductPage() {
                 <h1 className="text-2xl font-bold text-blue-600">Tambah Produk Digital Baru</h1>
             </div>
 
-            <div className="bg-cyan-50 p-6 rounded-xl space-y-8">
+            <div className="bg-cyan-50 p-6 rounded-xl space-y-8 border">
                 {/* ─── Informasi Produk ─── */}
                 <section>
                     <SectionHeader title="Informasi Produk" />

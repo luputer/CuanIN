@@ -37,6 +37,7 @@ enum ProductType {
 
 model Product {
     id          String      @id @default(uuid())
+    slug        String?     @unique @default(cuid())
     name        String
     description String?     @db.Text
     price       Decimal
@@ -52,8 +53,69 @@ model Product {
     userId String
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+    formFields FormField[]
+    purchases  Purchase[]
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+}
+
+enum FieldType {
+    SHORT
+    LONG
+    MULTIPLE_CHOICE
+    CHECKBOX
+    DROPDOWN
+}
+
+model FormField {
+    id        String    @id @default(uuid())
+    productId String
+    product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+    label     String
+    type      FieldType @default(SHORT)
+    options   Json?     // Array of strings for multiple choice / checkbox / dropdown
+    required  Boolean   @default(false)
+    order     Int       @default(0)
+
+    answers FormAnswer[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([productId])
+}
+
+model Purchase {
+    id         String   @id @default(uuid())
+    productId  String
+    product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+    buyerName  String
+    buyerEmail String
+    buyerPhone String
+    amount     Decimal  @default(0)
+    status     String   @default("completed") // 'completed', 'pending', 'cancelled'
+
+    answers FormAnswer[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([productId])
+}
+
+model FormAnswer {
+    id          String    @id @default(uuid())
+    purchaseId  String
+    purchase    Purchase  @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+    formFieldId String
+    formField   FormField @relation(fields: [formFieldId], references: [id], onDelete: Cascade)
+    answer      String    @db.Text
+
+    createdAt DateTime @default(now())
+
+    @@index([purchaseId])
+    @@index([formFieldId])
 }
 
 // NextAuth Models

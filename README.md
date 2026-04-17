@@ -1,29 +1,103 @@
-# Create T3 App
+# CuanIN
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+CuanIN is an all-in-one platform for creators to easily sell digital products, host webinars, and manage online classes. Built with the T3 Stack for high performance and scalability.
 
-## What's next? How do I make an app with this?
+## 🚀 Tech Stack
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- **Framework:** [Next.js 15 (App Router)](https://nextjs.org)
+- **Authentication:** [NextAuth.js v5](https://next-auth.js.org)
+- **ORM:** [Prisma](https://prisma.io)
+- **Database:** PostgreSQL
+- **API:** [tRPC](https://trpc.io)
+- **Styling:** [Tailwind CSS 4](https://tailwindcss.com)
+- **Validation:** [Zod](https://zod.dev)
+- **Storage:** S3 Compatible Storage (AWS SDK)
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## ✨ Key Features
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- **Creator Dashboard:** Concise analytics and content management in one place.
+- **Product Management:**
+  - **Webinars:** Sell webinar tickets with integrated meeting links.
+  - **Digital Products:** Sell files or digital assets.
+  - **Online Classes:** Manage courses with structured materials.
+- **Public Catalog:** Customizable creator profile pages to showcase all products (e.g., `/catalog/username`).
+- **Custom Forms:** Creators can add custom form fields (Short text, Long text, Dropdown, etc.) to collect data during checkout.
+- **Payment Tracking:** Monitor transaction statuses and purchase history.
 
-## Learn More
+## 🛠️ Getting Started
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+### Prerequisites
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+- Node.js (Latest LTS recommended)
+- PostgreSQL Database
+- S3 Compatible Storage (for image/file uploads)
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+### Installation
 
-## How do I deploy this?
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/username/cuanin.git
+   cd cuanin
+   ```
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   bun install
+   ```
+
+3. Configure Environment Variables:
+   Create a `.env` file in the root directory and populate the following variables:
+
+   ```env
+   # Database
+   DATABASE_URL="postgresql://user:password@localhost:5432/cuanin"
+   DIRECT_URL="postgresql://user:password@localhost:5432/cuanin"
+
+   # NextAuth
+   AUTH_SECRET="your-secret-key"
+   GOOGLE_CLIENT_ID="your-google-client-id"
+   GOOGLE_CLIENT_SECRET="your-google-client-secret"
+
+   # Storage (S3 Compatible)
+   BUCKET_ENDPOINT="https://your-endpoint.com"
+   BUCKET_NAME="cuanin-bucket"
+   BUCKET_REGION="auto"
+   BUCKET_ACCESS_KEY="your-access-key"
+   BUCKET_SECRET_KEY="your-secret-key"
+   BUCKET_PUBLIC_URL="https://pub-your-id.r2.dev"
+   ```
+
+4. Setup Database:
+   ```bash
+   npx prisma migrate dev
+   ```
+
+5. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+## 📂 Folder Structure
+
+- `src/app`: Next.js App Router.
+  - `(creator)`: Creator dashboard and management pages.
+  - `(catalog)`: Public catalog and product pages.
+  - `(global-auth)`: Authentication pages (Sign-in/Sign-up).
+- `src/components`: Reusable UI components (using Shadcn UI).
+- `src/server`: Server-side logic, tRPC routers, and database configuration.
+- `prisma`: Database schema and migrations.
+
+## 📜 Available Scripts
+
+- `npm run dev`: Starts the application in development mode.
+- `npm run build`: Builds the application for production.
+- `npm run start`: Starts the production build.
+- `npm run lint`: Runs ESLint to check for code issues.
+- `npm run db:push`: Synchronizes the Prisma schema with the database.
+- `npm run db:studio`: Opens a GUI to view and manage your database.
+
+---
+
+Built with ❤️ for Indonesian Creators.

@@ -10,7 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <HeaderKreator />
 
-                <main className="flex-1 overflow-y-auto p-6">
+                <main className="bg-slate-50 flex-1 overflow-y-auto p-6">
                     <div className="max-w-none">
                         {children}
                     </div>

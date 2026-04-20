@@ -1,5 +1,5 @@
 "use client";
-import { CaretDown, User, SignOut } from "phosphor-react";
+import { CaretDownIcon, UserIcon, SignOutIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
@@ -30,7 +30,7 @@ export default function HeaderKreator() {
     }, []);
 
     return (
-        <header className="sticky top-0 z-50 bg-white shadow px-12 py-3 flex items-center justify-end border-b-2 border-indigo-950">
+        <header className="sticky top-0 z-50 bg-white px-12 py-3 flex items-center justify-end border-b-1 border-slate-800">
 
             <div className="flex items-center gap-4">
 
@@ -39,7 +39,7 @@ export default function HeaderKreator() {
                     {/* Profile */}
                     <div
                         onClick={() => setOpen(!open)}
-                        className="flex items-center justify-between cursor-pointer border-2 border-indigo-950 rounded-full py-2 px-4 w-full gap-3 shadow-[0px_2px_0px_rgba(30,27,75)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition duration-200 ease-out"
+                        className="flex items-center justify-between cursor-pointer border-1 border-slate-800 rounded-full py-2 px-4 w-full gap-3 shadow-[0px_1px_0px_rgba(30,27,75)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition duration-200 ease-out"
                     >
                         <div className="flex items-center gap-2">
                             {user?.image ? (
@@ -55,25 +55,25 @@ export default function HeaderKreator() {
                                     {user?.name?.[0] ?? "U"}
                                 </div>
                             )}
-                            <span className="text-sm font-regular text-indigo-950 truncate max-w-[120px]">
+                            <span className="text-sm font-regular text-slate-800 truncate max-w-[120px]">
                                 {user?.name ?? "User"}
                             </span>
                         </div>
 
-                        <CaretDown size={16} className="text-slate-600" />
+                        <CaretDownIcon size={16} className="text-slate-600" />
 
                     </div>
 
                     {/* Dropdown */}
                     {open && (
-                        <div className="absolute left-1/2 top-14 -translate-x-1/2 w-48 bg-white border border-indigo-950 rounded-xl shadow-[0px_3px_0px_rgba(30,27,75)] py-2 px-3 mt-1">
+                        <div className="absolute left-1/2 top-14 -translate-x-1/2 w-48 bg-white border border-slate-800 rounded-xl shadow-[0px_3px_0px_rgba(30,27,75)] py-2 px-3 mt-1">
 
                             {/* Akun Saya */}
                             <button
                                 onClick={() => router.push('profile')}
                                 className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition"
                             >
-                                <User size={20} />
+                                <UserIcon size={20} />
                                 <span>Akun Saya</span>
                             </button>
 
@@ -85,7 +85,7 @@ export default function HeaderKreator() {
                                 onClick={() => signOut({ callbackUrl: "/sign-in" })}
                                 className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition"
                             >
-                                <SignOut size={20} />
+                                <SignOutIcon size={20} />
                                 <span>Logout</span>
                             </button>
 

@@ -1,0 +1,40 @@
+import * as React from "react";
+import { CaretDownIcon } from "@phosphor-icons/react";
+
+export interface FilterButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    label: string;
+}
+
+const FilterButton = React.forwardRef<HTMLButtonElement, FilterButtonProps>(
+    ({ label, className, ...props }, ref) => {
+        return (
+            <button
+                ref={ref}
+                type="button"
+                className={`
+                    flex-1 sm:flex-none
+                    flex items-center justify-between sm:justify-start gap-2
+                    px-4 py-2
+                    border border-slate-800
+                    rounded-lg
+                    text-sm
+                    text-slate-700
+                    bg-white
+                    shadow-[0px_1px_0px_rgba(30,27,75)]
+                    transition-all duration-200 ease-out
+                    hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none
+                    focus:translate-x-[1px] focus:translate-y-[1px] focus:shadow-none
+                    ${className || ""}
+                `}
+                {...props}
+            >
+                <span>{label}</span>
+                <CaretDownIcon className="w-4 h-4 text-slate-600" />
+            </button>
+        );
+    }
+);
+
+FilterButton.displayName = "FilterButton";
+
+export default FilterButton;

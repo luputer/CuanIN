@@ -7,52 +7,21 @@ import type { z } from "zod";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Plus, Loader2 } from "lucide-react";
-import dynamic from "next/dynamic";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Textarea } from "~/components/ui/textarea";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "~/components/ui/select";
+import { PlusIcon, ArrowLeftIcon, CircleNotchIcon, CaretUpIcon, CaretDownIcon } from "@phosphor-icons/react";
+import ButtonSave from "~/components/ui/button-save";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { productDigitalSchema } from "~/lib/validation";
+import { formatNumberWithDots, parseDotsToNumber } from "~/lib/utils";
+import { FormGroup, SectionHeader, FormInput, FormSelect } from "~/components/ui/form-layout";
+
+import dynamic from "next/dynamic";
 import MarkdownPreview from "~/components/MarkdownPreview";
 
-// Import MDEditor secara dynamic karena tidak support SSR
+// Markdown Editor (SSR off)
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 type DigitalProductFormValues = z.infer<typeof productDigitalSchema>;
-
-const FormGroup = ({
-    label,
-    children,
-    error,
-}: {
-    label: string;
-    children: React.ReactNode;
-    error?: string;
-}) => (
-    <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4 items-start">
-        <Label className="mt-2 text-slate-700 font-medium text-base">{label}</Label>
-        <div className="w-full">
-            {children}
-            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-        </div>
-    </div>
-);
-
-const SectionHeader = ({ title }: { title: string }) => (
-    <div className="border-b-2 border-blue-500 pb-2 mb-6">
-        <h2 className="text-lg font-bold text-slate-700">{title}</h2>
-    </div>
-);
 
 export default function CreateDigitalProductPage() {
     const router = useRouter();
@@ -62,6 +31,7 @@ export default function CreateDigitalProductPage() {
         handleSubmit,
         watch,
         setValue,
+        getValues,
         formState: { errors },
     } = useForm<DigitalProductFormValues>({
         resolver: zodResolver(productDigitalSchema),
@@ -120,11 +90,22 @@ export default function CreateDigitalProductPage() {
             setValue("image", publicUrl, { shouldValidate: true });
             toast.success("Gambar berhasil diunggah");
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Terjadi kesalahan";
-            toast.error(`Gagal unggah gambar: ${errorMessage}`);
+            const message = error instanceof Error ? error.message : "Terjadi kesalahan";
+            toast.error(`Gagal unggah gambar: ${message}`);
             setPreviewUrl(null);
         } finally {
             setUploading(false);
+        }
+    };
+
+    const handlePriceAdjust = (amount: number) => {
+        const currentPrice = parseDotsToNumber(getValues("price")?.toString() ?? "0");
+        const newPrice = Math.max(0, currentPrice + amount);
+        setValue("price", newPrice, { shouldValidate: true });
+
+        const input = document.getElementById("price-input-create") as HTMLInputElement;
+        if (input) {
+            input.value = formatNumberWithDots(newPrice.toString());
         }
     };
 
@@ -141,55 +122,69 @@ export default function CreateDigitalProductPage() {
 
     return (
         <div className="space-y-6">
+
             {/* Header */}
-            <div className="flex flex-col gap-2 mb-8">
-                <Link
-                    href="/produk-digital"
-                    className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 w-fit"
-                >
-                    <ChevronLeft className="h-4 w-4" />
-                    <span>Kembali ke Daftar Produk Digital</span>
-                </Link>
-                <h1 className="text-2xl font-bold text-blue-600">Tambah Produk Digital Baru</h1>
+            <div className="bg-slate-50">
+                <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
+                    <div className="max-w-7xl mx-auto flex flex-col gap-1">
+                        <Link
+                            href="/produk-digital"
+                            className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
+                        >
+                            <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                            <span className="leading-none">Kembali ke Daftar Produk Digital</span>
+                        </Link>
+
+                        <h1 className="text-xl font-semibold text-slate-800">
+                            Tambah Produk Digital Baru
+                        </h1>
+                    </div>
+                </div>
             </div>
 
-            <div className="bg-cyan-50 p-6 rounded-xl space-y-8 border">
-                <section>
+            <div className="bg-white rounded-xl border border-slate-800 overflow-hidden">
+                <div className="px-10 py-8">
+
                     <SectionHeader title="Informasi Produk" />
-                    <div className="space-y-5">
+
+                    <div className="space-y-0">
 
                         {/* Nama */}
                         <FormGroup label="Nama" error={errors.name?.message}>
-                            <Input
+                            <FormInput
                                 placeholder="Masukkan Nama Produk"
-                                className="bg-white h-[52px] border-blue-200 focus-visible:ring-blue-500"
                                 {...register("name")}
                             />
                         </FormGroup>
 
-                        {/* Deskripsi — MDEditor */}
+                        {/* Deskripsi */}
                         <FormGroup label="Deskripsi" error={errors.description?.message}>
-                            <div data-color-mode="light" className="w-full">
-                                <MDEditor
-                                    value={descriptionValue ?? ""}
-                                    onChange={(val) =>
-                                        setValue("description", val ?? "", { shouldValidate: true })
-                                    }
-                                    preview="live"
-                                    height={400}
-                                    visibleDragbar={false}
-                                    className="w-full border-blue-200"
-                                    previewOptions={{
-                                        className: "p-4",
-                                    }}
-                                    components={{
-                                        preview: (source: string) => (
-                                            <div className="p-4 bg-white min-h-full">
-                                                <MarkdownPreview content={source} />
-                                            </div>
-                                        )
-                                    }}
-                                />
+                            <div className="space-y-3">
+
+                                {/* Editor */}
+                                <div className="border border-slate-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-cyan-500">
+                                    <MDEditor
+                                        value={descriptionValue ?? ""}
+                                        onChange={(val) =>
+                                            setValue("description", val ?? "", { shouldValidate: true })
+                                        }
+                                        preview="edit"
+                                        height={250}
+                                        visibleDragbar={false}
+                                        textareaProps={{
+                                            placeholder: "Masukkan deskripsi produk...",
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Preview */}
+                                {descriptionValue && (
+                                    <div className="p-4 border border-slate-200 rounded-lg bg-slate-50">
+                                        <p className="text-xs text-slate-500 mb-2">Preview</p>
+                                        <MarkdownPreview content={descriptionValue} />
+                                    </div>
+                                )}
+
                             </div>
                         </FormGroup>
 
@@ -197,29 +192,24 @@ export default function CreateDigitalProductPage() {
                         <FormGroup label="Gambar">
                             <div
                                 onClick={() => fileInputRef.current?.click()}
-                                className="flex h-32 w-32 cursor-pointer flex-col items-center justify-center border border-blue-300 bg-white hover:bg-blue-50 text-blue-500 transition-colors rounded-lg overflow-hidden relative"
+                                className="flex h-48 w-48 cursor-pointer flex-col items-center justify-center rounded-lg border border-slate-400 bg-cyan-50 hover:bg-cyan-100/50 text-slate-400 transition-colors overflow-hidden relative"
                             >
                                 {previewUrl ? (
                                     <>
-                                        <Image
-                                            src={previewUrl}
-                                            alt="Preview"
-                                            fill
-                                            className="object-cover"
-                                            unoptimized
-                                        />
+                                        <Image src={previewUrl} alt="Preview" fill className="object-cover" unoptimized />
                                         {uploading && (
                                             <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                                                <Loader2 className="h-6 w-6 animate-spin text-white" />
+                                                <CircleNotchIcon className="h-6 w-6 animate-spin text-white" />
                                             </div>
                                         )}
                                     </>
                                 ) : (
                                     <>
-                                        <Plus className="h-8 w-8" />
-                                        <span className="text-xs mt-1">Upload</span>
+                                        <PlusIcon className="h-8 w-8" />
+                                        <span className="text-xs mt-1">Upload Gambar</span>
                                     </>
                                 )}
+
                                 <input
                                     type="file"
                                     ref={fileInputRef}
@@ -231,101 +221,64 @@ export default function CreateDigitalProductPage() {
                         </FormGroup>
 
                         {/* Tipe */}
-                        <FormGroup label="Tipe" error={errors.priceType?.message}>
-                            <Select
-                                value={priceType}
-                                onValueChange={(val) =>
-                                    setValue("priceType", val as "free" | "paid", {
-                                        shouldValidate: true,
-                                    })
-                                }
-                            >
-                                <SelectTrigger className="bg-white w-full border-blue-200 focus:ring-blue-500">
-                                    <SelectValue placeholder="Pilih Salah Satu" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="free">Gratis</SelectItem>
-                                    <SelectItem value="paid">Berbayar</SelectItem>
-                                </SelectContent>
-                            </Select>
+                        <FormGroup label="Tipe">
+                            <FormSelect {...register("priceType")}>
+                                <option value="free">Gratis</option>
+                                <option value="paid">Berbayar</option>
+                            </FormSelect>
                         </FormGroup>
 
                         {/* Harga */}
                         {priceType === "paid" && (
                             <FormGroup label="Harga" error={errors.price?.message}>
-                                <div className="relative flex items-center">
-                                    <span className="absolute left-3 text-slate-500 pointer-events-none">
-                                        Rp
-                                    </span>
-                                    <Input
-                                        type="number"
-                                        placeholder="0"
-                                        className="pl-10 bg-white border-blue-200 focus-visible:ring-blue-500"
-                                        {...register("price", { valueAsNumber: true })}
-                                    />
-                                </div>
+                                <FormInput
+                                    id="price-input-create"
+                                    type="text"
+                                    prefix="Rp"
+                                    placeholder="0"
+                                    suffix={
+                                        <div className="flex flex-col">
+                                            <button type="button" onClick={() => handlePriceAdjust(1000)}>
+                                                <CaretUpIcon weight="fill" />
+                                            </button>
+                                            <button type="button" onClick={() => handlePriceAdjust(-1000)}>
+                                                <CaretDownIcon weight="fill" />
+                                            </button>
+                                        </div>
+                                    }
+                                    {...register("price", {
+                                        setValueAs: (v) => parseDotsToNumber(v),
+                                    })}
+                                />
                             </FormGroup>
                         )}
 
                         {/* Link */}
-                        <FormGroup label="Link Produk (Google Drive, Dropbox, dll)" error={errors.link?.message}>
-                            <Input
-                                placeholder="https://drive.google.com/..."
-                                className="bg-white border-blue-200 focus-visible:ring-blue-500"
-                                {...register("link")}
-                            />
-                        </FormGroup>
-
-                        {/* Catatan */}
-                        <FormGroup label="Catatan" error={errors.notes?.message}>
-                            <Textarea
-                                placeholder="Masukkan catatan (opsional)"
-                                className="min-h-[120px] bg-white border-blue-200 focus-visible:ring-blue-500"
-                                {...register("notes")}
-                            />
+                        <FormGroup label="Link" error={errors.link?.message}>
+                            <FormInput {...register("link")} placeholder="https://..." />
                         </FormGroup>
 
                         {/* Status */}
-                        <FormGroup label="Status" error={errors.status?.message}>
-                            <Select
-                                defaultValue="published"
-                                onValueChange={(val) =>
-                                    setValue("status", val, { shouldValidate: true })
-                                }
-                            >
-                                <SelectTrigger className="bg-white w-full h-[52px] border-blue-200 focus:ring-blue-500">
-                                    <SelectValue placeholder="Pilih Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="published" className="text-amber-600 font-medium">
-                                        Published
-                                    </SelectItem>
-                                    <SelectItem value="draft">Draft</SelectItem>
-                                    <SelectItem value="archived">Archived</SelectItem>
-                                </SelectContent>
-                            </Select>
+                        <FormGroup label="Status">
+                            <FormSelect {...register("status")}>
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                                <option value="archived">Archived</option>
+                            </FormSelect>
                         </FormGroup>
 
                     </div>
-                </section>
-            </div>
+                </div>
 
-            <Button
-                onClick={handleSubmit(onSubmit)}
-                disabled={createProduct.isPending}
-                className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-6 text-lg shadow-md shadow-cyan-200 rounded-2xl"
-            >
-                {createProduct.isPending ? (
-                    <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Menyimpan...
-                    </>
-                ) : (
-                    <>
-                        Tambah <Plus className="ml-2 h-5 w-5" />
-                    </>
-                )}
-            </Button>
+                <div className="px-10 pb-8 flex justify-end">
+                    <ButtonSave
+                        onClick={handleSubmit(onSubmit)}
+                        isLoading={createProduct.isPending}
+                        label="Tambah Produk Digital"
+                        icon={PlusIcon}
+                    />
+                </div>
+            </div>
         </div>
     );
 }

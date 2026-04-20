@@ -64,6 +64,7 @@ export const purchasesRouter = createTRPCRouter({
                 page: z.number().min(1).default(1),
                 limit: z.number().min(1).max(100).default(7),
                 search: z.string().optional(),
+                status: z.string().optional().default("ALL"),
             })
         )
         .query(async ({ ctx, input }) => {
@@ -82,12 +83,13 @@ export const purchasesRouter = createTRPCRouter({
                 productId: input.productId,
                 ...(input.search
                     ? {
-                          buyerName: {
-                              contains: input.search,
-                              mode: "insensitive" as const,
-                          },
-                      }
+                        buyerName: {
+                            contains: input.search,
+                            mode: "insensitive" as const,
+                        },
+                    }
                     : {}),
+                ...(input.status && input.status !== "ALL" ? { status: input.status } : {}),
             };
 
             const [items, total] = await Promise.all([

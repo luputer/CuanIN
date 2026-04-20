@@ -15,49 +15,63 @@ export const productsRouter = createTRPCRouter({
                 page: z.number().min(1).default(1),
                 limit: z.number().min(1).max(100).default(10),
                 search: z.string().optional(),
+                sortBy: z.enum(["name", "createdAt"]).optional().default("createdAt"),
+                sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
+                priceType: z.enum(["ALL", "FREE", "PAID"]).optional().default("ALL"),
+                status: z.string().optional().default("ALL"),
             }).optional()
         )
         .query(async ({ ctx, input }) => {
-            const page = input?.page ?? 1;
-            const limit = input?.limit ?? 10;
-            const skip = (page - 1) * limit;
+            console.log(">> products.getAll input:", input);
+            try {
+                const page = input?.page ?? 1;
+                const limit = input?.limit ?? 10;
+                const skip = (page - 1) * limit;
 
-            const where = {
-                userId: ctx.session.user.id,
-                ...(input?.type ? { type: input.type } : {}),
-                ...(input?.search ? {
-                    name: {
-                        contains: input.search,
-                        mode: 'insensitive' as const,
-                    }
-                } : {}),
-            };
+                const where = {
+                    userId: ctx.session.user.id,
+                    ...(input?.type ? { type: input.type } : {}),
+                    ...(input?.search ? {
+                        name: {
+                            contains: input.search,
+                            mode: 'insensitive' as const,
+                        }
+                    } : {}),
+                    ...(input?.status && input.status !== "ALL" ? { status: input.status } : {}),
+                    ...(input?.priceType === "FREE" ? { price: { equals: 0 } } : input?.priceType === "PAID" ? { price: { gt: 0 } } : {}),
+                };
 
-            const [items, total] = await Promise.all([
-                ctx.db.product.findMany({
-                    where,
-                    include: {
-                        user: {
-                            select: {
-                                name: true,
-                                image: true,
+                const [items, total] = await Promise.all([
+                    ctx.db.product.findMany({
+                        where,
+                        include: {
+                            user: {
+                                select: {
+                                    name: true,
+                                    image: true,
+                                },
                             },
                         },
-                    },
-                    orderBy: { createdAt: "desc" },
-                    skip,
-                    take: limit,
-                }),
-                ctx.db.product.count({ where }),
-            ]);
+                        orderBy: {
+                            [input?.sortBy ?? "createdAt"]: input?.sortOrder ?? "desc"
+                        },
+                        skip,
+                        take: limit,
+                    }),
+                    ctx.db.product.count({ where }),
+                ]);
 
-            return {
-                items,
-                total,
-                page,
-                limit,
-                totalPages: Math.ceil(total / limit),
-            };
+                return {
+                    items,
+                    total,
+                    page,
+                    limit,
+                    totalPages: Math.ceil(total / limit),
+                };
+            } catch (error) {
+                console.error("!! products.getAll error:", error);
+                throw error;
+            }
         }),
 
     // Get product by ID — hanya boleh akses milik sendiri

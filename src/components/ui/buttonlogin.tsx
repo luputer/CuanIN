@@ -22,7 +22,7 @@ export default function Button({ text, onClick, href }: ButtonProps) {
         px-8 py-2 
         rounded-lg 
         border-2
-        border-indigo-950
+        border-slate-800
         
         text-xl font-semibold
         

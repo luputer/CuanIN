@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import Link from "next/link";
-import { User, Envelope, LockKey, Phone, Eye, EyeSlash } from "phosphor-react";
+import { UserIcon, EnvelopeIcon, LockKeyIcon, PhoneIcon, EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -57,7 +57,7 @@ function SignupPageInner() {
     const registerMutation = api.auth.register.useMutation({
         onSuccess: async (_result, variables) => {
             setIsSuccess(true);
-            
+
             // For both regular and Google users, sign in automatically using credentials.
             // Since NextAuth `signIn` callback aborts the session if phone number is missing,
             // Google SSO users arriving here actually don't have an active session yet.
@@ -66,7 +66,7 @@ function SignupPageInner() {
                 email: variables.email,
                 password: variables.password,
             });
-            
+
             if (loginResult?.error) {
                 router.push("/sign-in?registered=1");
             } else {
@@ -94,12 +94,12 @@ function SignupPageInner() {
 
             {/* Main Content */}
             <main className="flex flex-1 items-center justify-center px-4 py-12 sm:py-20">
-                <div className="w-full max-w-lg rounded-2xl border-2 border-indigo-950 bg-white p-6 sm:p-10 shadow-[0px_5px_0px_rgba(30,27,75)]">
+                <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-6 sm:p-10 shadow-[0px_5px_0px_rgba(30,27,75)]">
 
                     {/* Title */}
                     <div className="pb-8 pt-2 text-center">
                         <h1 className="pb-3 text-3xl font-semibold text-cyan-600">Daftar</h1>
-                        <p className="text-lg text-indigo-950">
+                        <p className="text-lg text-slate-800">
                             Selamat datang!
                             <br />
                             Silahkan daftarkan akun Anda
@@ -123,10 +123,10 @@ function SignupPageInner() {
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
                         {/* Nama Lengkap */}
                         <div className="space-y-1">
-                            <label className="block text-sm font-medium text-indigo-950">Nama Lengkap</label>
+                            <label className="block text-sm font-medium text-slate-800">Nama Lengkap</label>
                             <div className="relative">
                                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                    <User size={24} />
+                                    <UserIcon size={24} />
                                 </div>
                                 <input
                                     type="text"
@@ -148,11 +148,11 @@ function SignupPageInner() {
 
                         {/* Email */}
                         <div className="space-y-1">
-                            <label className="block text-sm font-medium text-indigo-950">Email</label>
+                            <label className="block text-sm font-medium text-slate-800">Email</label>
 
                             <div className="relative">
                                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                    <Envelope size={24} />
+                                    <EnvelopeIcon size={24} />
                                 </div>
 
                                 <input
@@ -174,10 +174,10 @@ function SignupPageInner() {
 
                         {/* Nomor HP */}
                         <div className="space-y-1">
-                            <label className="block text-sm font-medium text-indigo-950">Nomor HP</label>
+                            <label className="block text-sm font-medium text-slate-800">Nomor HP</label>
                             <div className="relative">
                                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                    <Phone size={24} />
+                                    <PhoneIcon size={24} />
                                 </div>
                                 <input
                                     type="tel"
@@ -196,10 +196,10 @@ function SignupPageInner() {
 
                         {/* Password */}
                         <div className="space-y-1">
-                            <label className="block text-sm font-medium text-indigo-950">Password</label>
+                            <label className="block text-sm font-medium text-slate-800">Password</label>
                             <div className="relative">
                                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                    <LockKey size={24} />
+                                    <LockKeyIcon size={24} />
                                 </div>
                                 <input
                                     type={showPassword ? "text" : "password"}
@@ -215,7 +215,7 @@ function SignupPageInner() {
                                     onClick={() => setShowPassword((v) => !v)}
                                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
                                 >
-                                    {showPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
+                                    {showPassword ? <EyeSlashIcon size={18} /> : <EyeIcon size={18} />}
                                 </button>
                             </div>
                             {errors.password && (
@@ -225,10 +225,10 @@ function SignupPageInner() {
 
                         {/* Confirm Password */}
                         <div className="space-y-1">
-                            <label className="block text-sm font-medium text-indigo-950">Konfirmasi Password</label>
+                            <label className="block text-sm font-medium text-slate-800">Konfirmasi Password</label>
                             <div className="relative">
                                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                    <LockKey size={24} />
+                                    <LockKeyIcon size={24} />
                                 </div>
                                 <input
                                     type={showConfirm ? "text" : "password"}
@@ -244,7 +244,7 @@ function SignupPageInner() {
                                     onClick={() => setShowConfirm((v) => !v)}
                                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
                                 >
-                                    {showConfirm ? <EyeSlash size={18} /> : <Eye size={18} />}
+                                    {showConfirm ? <EyeSlashIcon size={18} /> : <EyeIcon size={18} />}
                                 </button>
                             </div>
                             {errors.confirmPassword && (
@@ -256,7 +256,7 @@ function SignupPageInner() {
                         <button
                             type="submit"
                             disabled={isPending}
-                            className="cursor-pointer mt-4 w-full rounded-lg border-2 border-indigo-950 bg-yellow-200 py-2.5 text-lg font-semibold text-indigo-950 shadow-[0px_3px_0px_rgba(30,27,75)] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
+                            className="cursor-pointer mt-4 w-full rounded-lg border-2 border-slate-800 bg-yellow-200 py-2.5 text-lg font-semibold text-slate-800 shadow-[0px_3px_0px_rgba(30,27,75)] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
                         >
                             {isPending
                                 ? "Mendaftar..."

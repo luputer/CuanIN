@@ -1,4 +1,4 @@
-import { Phone, Envelope } from "phosphor-react";
+import { PhoneIcon, EnvelopeIcon } from "@phosphor-icons/react";
 
 export default function Footer() {
     return (
@@ -17,11 +17,11 @@ export default function Footer() {
 
                             <ul className="flex flex-col sm:flex-row gap-4 sm:gap-8 text-sm text-slate-200">
                                 <li className="flex items-center gap-2">
-                                    <Phone size={16} />
+                                    <PhoneIcon size={16} />
                                     <span>+62 8123 4567 890</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    <Envelope size={16} />
+                                    <EnvelopeIcon size={16} />
                                     <span>cuanin9@gmail.com</span>
                                 </li>
                             </ul>

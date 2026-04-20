@@ -1,10 +1,9 @@
-
 "use client"
-import { ChevronLeft, Copy, Image as ImageIcon, Pencil } from "lucide-react";
+import { ArrowLeftIcon, CopyIcon, ImageIcon, PencilIcon } from "@phosphor-icons/react";
 
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../components/ui/tabs";
+import { ProductDetailTabs, ProductDetailTabContent } from "../../../../components/layout/product-detail-tabs";
 
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
@@ -17,6 +16,7 @@ import remarkGfm from "remark-gfm";
 import { FormCustomizer } from "../_Component/form-customizer";
 import Pembeli from "../_Component/pembeli";
 import { Skeleton } from "~/components/ui/skeleton";
+import remarkBreaks from "remark-breaks";
 
 export default function ProductDetailPage() {
     const params = useParams();
@@ -47,37 +47,35 @@ export default function ProductDetailPage() {
     };
 
     const Label = ({ children }: { children: React.ReactNode }) => (
-        <div className="w-[200px] text-slate-700 font-semibold">{children}</div>
+        <div className="w-[200px] text-sm text-slate-800 font-medium">{children}</div>
     );
 
     const Value = ({ children }: { children: React.ReactNode }) => (
         <div className="flex-1">
-            <div className="w-full rounded-lg border border-blue-200 bg-white px-4 py-2.5 text-slate-600 min-h-[44px] flex items-center">
+            <div className="w-full text-sm font-regular text-slate-800 min-h-[44px] flex items-center">
                 {children}
             </div>
         </div>
     );
 
     const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
-        <div className="flex flex-col md:flex-row gap-2 md:items-start mb-4">
+        <div className="flex flex-col md:flex-row gap-10 md:items-start mb-2">
             <div className="md:pt-2.5">
                 <Label>{label}</Label>
             </div>
-            <Value>
-                {children}
-            </Value>
+            <Value>{children}</Value>
         </div>
     );
 
     const SectionHeader = ({ title, showEdit }: { title: string; showEdit?: boolean }) => (
-        <div className="flex items-center justify-between border-b-2 border-blue-500 pb-2 mb-6">
-            <h2 className="text-lg font-bold text-slate-800">{title}</h2>
+        <div className="flex items-center justify-between border-b-1 border-cyan-600 pb-4 mb-4">
+            <h2 className="text-md font-semibold text-cyan-600">{title}</h2>
             {showEdit && (
                 <Link
                     href={`/produk-digital/${id}/edit`}
-                    className="flex items-center gap-1.5 text-xs text-blue-500 hover:text-blue-700 font-medium transition-colors"
+                    className="flex items-center gap-1.5 text-sm text-cyan-600 hover:text-cyan-700 font-medium transition-colors"
                 >
-                    <Pencil className="w-3.5 h-3.5" />
+                    <PencilIcon className="w-4 h-4" />
                     Edit
                 </Link>
             )}
@@ -94,6 +92,7 @@ export default function ProductDetailPage() {
         }
     };
 
+    // ✅ Skeleton loading
     if (isLoading) {
         return (
             <div className="w-full space-y-6">
@@ -105,17 +104,15 @@ export default function ProductDetailPage() {
 
                 <div className="bg-white rounded-xl overflow-hidden border border-slate-200">
                     <div className="flex border-b border-slate-200">
-                        <Skeleton className="h-14 flex-1 rounded-none border-r border-slate-100" />
-                        <Skeleton className="h-14 flex-1 rounded-none border-r border-slate-100" />
-                        <Skeleton className="h-14 flex-1 rounded-none" />
+                        <Skeleton className="h-14 flex-1" />
+                        <Skeleton className="h-14 flex-1" />
+                        <Skeleton className="h-14 flex-1" />
                     </div>
-                    <div className="p-6 space-y-8 min-h-[400px]">
-                        <Skeleton className="h-6 w-40 mb-6" />
-                        <div className="space-y-4">
-                            <Skeleton className="h-12 w-full" />
-                            <Skeleton className="h-12 w-full" />
-                            <Skeleton className="h-48 w-full md:w-3/4" />
-                        </div>
+                    <div className="p-6 space-y-6">
+                        <Skeleton className="h-6 w-40" />
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-40 w-full" />
                     </div>
                 </div>
             </div>
@@ -134,76 +131,58 @@ export default function ProductDetailPage() {
     }
 
     return (
-        <div className="w-full space-y-6">
-            {/* Header Back */}
-            <div className="flex items-center justify-between">
-                <Link
-                    href="/produk-digital"
-                    className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 w-fit"
-                >
-                    <ChevronLeft className="h-4 w-4" />
-                    <span>Kembali ke Daftar Produk Digital</span>
-                </Link>
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="bg-slate-50">
+                <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
+                    <div className="max-w-7xl mx-auto flex flex-col gap-1">
+                        <Link
+                            href="/produk-digital"
+                            className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit"
+                        >
+                            <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                            <span className="leading-none">Kembali ke Daftar</span>
+                        </Link>
 
-                <Button
-                    variant={"outline"}
-                    className="flex items-center gap-2"
-                    onClick={handleCopyLink}
-                >
-                    <Copy className="w-4 h-4" />
-                    Salin Link Produk
-                </Button>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <h1 className="text-xl font-semibold text-slate-800">{product.name}</h1>
 
-
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex items-center gap-2 bg-white border-cyan-600 hover:bg-cyan-50 hover:shadow-sm h-9 px-4 rounded-lg transition-all cursor-pointer"
+                                onClick={handleCopyLink}
+                            >
+                                <CopyIcon className="w-4 h-4 text-cyan-600" />
+                                <span className="text-sm font-regular text-cyan-600">
+                                    Salin Link Produk
+                                </span>
+                            </Button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            {/* Title */}
-            <h1 className="text-2xl font-bold text-blue-600">{product.name}</h1>
-
             {/* Tabs */}
-            <Tabs defaultValue={defaultTab}>
-                <div className="bg-white rounded-t-xl overflow-hidden border-b border-slate-200">
-                    <TabsList className="w-full flex h-auto p-0 bg-transparent ">
-                        <TabsTrigger
-                            value="detail"
-                            className="flex-1   rounded-none border-b-2 border-transparent py-4 data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 bg-transparent text-slate-500 font-medium cursor-pointer"
-                        >
-                            Detail Produk
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="user"
-                            className="flex-1 rounded-none border-b-2 border-transparent py-4 data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 bg-transparent text-slate-500 font-medium cursor-pointer"
-                        >
-                            Pembeli ({buyerCount ?? 0})
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="form"
-                            className="flex-1 rounded-none border-b-2 border-transparent py-4 data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 bg-transparent text-slate-500 font-medium cursor-pointer"
-                        >
-                            Kustomisasi Form
-                        </TabsTrigger>
-                    </TabsList>
-                </div>
+            <div className="rounded-xl border border-slate-800 overflow-hidden">
+                <ProductDetailTabs className="bg-cyan-50" defaultTab={defaultTab} buyerCount={buyerCount ?? 0}>
+                    <ProductDetailTabContent value="detail" className="space-y-8 bg-white px-10 py-8">
+                        <section>
+                            <SectionHeader title="Informasi Produk" showEdit />
 
-                <TabsContent value="detail" className="space-y-8 bg-blue-50/50 p-6 rounded-b-xl">
-                    {/* Informasi Produk */}
-                    <section>
-                        <SectionHeader title="Informasi Produk" showEdit />
+                            <Row label="Nama">{product.name}</Row>
 
-                        <Row label="Nama">{product.name}</Row>
+                            {/* markdown */}
+                            <Row label="Deskripsi">
+                                <div className="pt-2.5 prose prose-sm prose-slate max-w-none text-slate-600 leading-relaxed [&>*:first-child]:mt-0">
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                        {product.description ?? "-"}
+                                    </ReactMarkdown>
+                                </div>
+                            </Row>
 
-                        <Row label="Deskripsi">
-                            <div className="prose prose-sm prose-slate max-w-none text-slate-600 leading-relaxed">
-                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{product.description ?? "-"}</ReactMarkdown>
-                            </div>
-                        </Row>
-
-                        <div className="flex flex-col md:flex-row gap-2 md:items-start mb-4">
-                            <div className="md:pt-2.5">
-                                <Label>Gambar</Label>
-                            </div>
-                            <div className="flex-1">
-                                <div className="w-full rounded-lg border border-blue-200 bg-white p-4 min-h-[44px]">
+                            <Row label="Gambar">
+                                <div className="w-full pt-4 min-h-[44px]">
                                     <div className="w-48 h-48 bg-slate-100 rounded-md overflow-hidden flex items-center justify-center border border-slate-200">
                                         {product.image ? (
                                             <Image
@@ -219,55 +198,51 @@ export default function ProductDetailPage() {
                                         )}
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            </Row>
 
-                        <Row label="Tipe">
-                            {Number(product.price) === 0 ? "Gratis" : "Berbayar"}
-                        </Row>
-                        <Row label="Harga">
-                            {Number(product.price) === 0
-                                ? "Rp 0"
-                                : `Rp ${Number(product.price).toLocaleString("id-ID")}`
-                            }
-                        </Row>
-                        <Row label="Link">
-                            {product.link ? (
-                                <a href={product.link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline break-all">
-                                    {product.link}
-                                </a>
-                            ) : "-"}
-                        </Row>
+                            <Row label="Tipe">
+                                {Number(product.price) === 0 ? "Gratis" : "Berbayar"}
+                            </Row>
 
-                        <div className="flex flex-col md:flex-row gap-2 md:items-start mb-4">
-                            <div className="md:pt-2.5">
-                                <Label>Status</Label>
-                            </div>
-                            <Value>
+                            <Row label="Harga">
+                                {Number(product.price) === 0
+                                    ? "Rp 0"
+                                    : `Rp ${Number(product.price).toLocaleString("id-ID")}`}
+                            </Row>
+
+                            <Row label="Link">
+                                {product.link ? (
+                                    <a href={product.link} target="_blank" className="text-blue-500 hover:underline break-all">
+                                        {product.link}
+                                    </a>
+                                ) : "-"}
+                            </Row>
+
+                            <Row label="Status">
                                 <span className={`font-semibold ${getStatusColor(product.status ?? "draft")}`}>
                                     {product.status
                                         ? product.status.charAt(0).toUpperCase() + product.status.slice(1)
                                         : "Draft"}
                                 </span>
-                            </Value>
+                            </Row>
+                        </section>
+
+                        <div className="flex justify-end pt-2">
+                            <p className="text-slate-400 text-sm italic">
+                                Ditambahkan pada {format(new Date(product.createdAt), "d MMMM yyyy HH:mm", { locale: idLocale })}
+                            </p>
                         </div>
-                    </section>
+                    </ProductDetailTabContent>
 
-                    {/* Timestamp */}
-                    <div className="flex justify-end pt-4">
-                        <p className="text-slate-400 text-sm italic">
-                            Ditambahkan pada {format(new Date(product.createdAt), "d MMMM yyyy HH:mm", { locale: idLocale })}
-                        </p>
-                    </div>
-                </TabsContent>
+                    <ProductDetailTabContent value="user">
+                        <Pembeli productId={id} />
+                    </ProductDetailTabContent>
 
-                <TabsContent value="user">
-                    <Pembeli productId={id} />
-                </TabsContent>
-                <TabsContent value="form">
-                    <FormCustomizer productId={id} />
-                </TabsContent>
-            </Tabs>
+                    <ProductDetailTabContent value="form">
+                        <FormCustomizer productId={id} />
+                    </ProductDetailTabContent>
+                </ProductDetailTabs>
+            </div>
         </div>
     );
 }

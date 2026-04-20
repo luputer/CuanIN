@@ -134,3 +134,32 @@ html {
     @apply bg-background text-foreground;
   }
 }
+
+.w-md-editor {
+  background-color: #ECFEFF !important;
+  border: none !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.w-md-editor-toolbar {
+  border-bottom: 1px solid #e2e8f0 !important;
+  background-color: #f8fafc;
+}
+
+.w-md-editor-text textarea {
+  font-size: 14px !important;
+  padding: 12px !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.wmde-markdown {
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.w-md-editor-preview {
+  padding: 16px !important;
+}
+
+.w-md-editor-toolbar button:hover {
+  color: #06b6d4;
+}

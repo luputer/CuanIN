@@ -1,7 +1,8 @@
 "use client";
 
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { api } from "~/trpc/react";
+import { Skeleton } from "~/components/ui/skeleton";
 
 export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBack: () => void }) {
     const { data: purchase, isLoading } = api.purchases.getDetail.useQuery(
@@ -11,8 +12,25 @@ export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBa
 
     if (isLoading) {
         return (
-            <div className="bg-[#f0f9fa] p-4 md:p-6 rounded-b-xl border border-slate-200 flex items-center justify-center min-h-[200px]">
-                <Loader2 className="w-6 h-6 animate-spin text-blue-400" />
+            <div className="bg-[#f0f9fa] p-4 md:p-6 rounded-b-xl border border-slate-200 animate-pulse">
+                {/* Back button skeleton */}
+                <Skeleton className="h-6 w-32 mb-6" />
+
+                <div className="space-y-8">
+                    <section>
+                        <Skeleton className="h-6 w-32 mb-2" />
+                        <div className="h-[2px] bg-[#00B4D8] opacity-20 w-full mb-6"></div>
+
+                        <div className="space-y-4">
+                            {[1, 2, 3].map((i) => (
+                                <div key={i} className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                                    <Skeleton className="h-5 w-24 md:w-32" />
+                                    <Skeleton className="flex-1 h-[46px] rounded-lg" />
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                </div>
             </div>
         );
     }

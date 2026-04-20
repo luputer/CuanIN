@@ -1,6 +1,6 @@
 
 "use client"
-import { ChevronLeft, Copy, Image as ImageIcon, Loader2, Pencil } from "lucide-react";
+import { ChevronLeft, Copy, Image as ImageIcon, Pencil } from "lucide-react";
 
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
@@ -12,8 +12,11 @@ import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import Image from "next/image";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { FormCustomizer } from "../_Component/form-customizer";
 import Pembeli from "../_Component/pembeli";
+import { Skeleton } from "~/components/ui/skeleton";
 
 export default function ProductDetailPage() {
     const params = useParams();
@@ -28,6 +31,7 @@ export default function ProductDetailPage() {
         { productId: id },
         { enabled: !!id }
     );
+
     const handleCopyLink = () => {
         if (!product || !catalog?.slug) {
             toast.error("Gagal menyalin link: Data belum siap");
@@ -92,8 +96,28 @@ export default function ProductDetailPage() {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+            <div className="w-full space-y-6">
+                <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-48" />
+                    <Skeleton className="h-10 w-32" />
+                </div>
+                <Skeleton className="h-8 w-64" />
+
+                <div className="bg-white rounded-xl overflow-hidden border border-slate-200">
+                    <div className="flex border-b border-slate-200">
+                        <Skeleton className="h-14 flex-1 rounded-none border-r border-slate-100" />
+                        <Skeleton className="h-14 flex-1 rounded-none border-r border-slate-100" />
+                        <Skeleton className="h-14 flex-1 rounded-none" />
+                    </div>
+                    <div className="p-6 space-y-8 min-h-[400px]">
+                        <Skeleton className="h-6 w-40 mb-6" />
+                        <div className="space-y-4">
+                            <Skeleton className="h-12 w-full" />
+                            <Skeleton className="h-12 w-full" />
+                            <Skeleton className="h-48 w-full md:w-3/4" />
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -169,9 +193,9 @@ export default function ProductDetailPage() {
                         <Row label="Nama">{product.name}</Row>
 
                         <Row label="Deskripsi">
-                            <span className="leading-relaxed">
-                                {product.description ?? "-"}
-                            </span>
+                            <div className="prose prose-sm prose-slate max-w-none text-slate-600 leading-relaxed">
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{product.description ?? "-"}</ReactMarkdown>
+                            </div>
                         </Row>
 
                         <div className="flex flex-col md:flex-row gap-2 md:items-start mb-4">

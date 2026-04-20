@@ -6,10 +6,14 @@ import type { z } from "zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Plus, Loader2 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
+
+// Import MDEditor secara dynamic karena tidak support SSR
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 import {
     Select,
     SelectContent,
@@ -21,6 +25,7 @@ import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { DateTimePicker } from "~/components/ui/date-time-picker";
 import { webinarSchema } from "~/lib/validation";
+import remarkGfm from "remark-gfm";
 
 // ============================================================
 // Schema Zod
@@ -136,13 +141,25 @@ export default function CreateWebinarPage() {
                             />
                         </FormGroup>
 
-                        {/* Deskripsi */}
                         <FormGroup label="Deskripsi" error={errors.description?.message}>
-                            <Textarea
-                                placeholder="Masukkan deskripsi webinar"
-                                className="min-h-[120px] bg-white border-blue-200 focus-visible:ring-blue-500"
-                                {...register("description")}
-                            />
+                            <div data-color-mode="light">
+                                <MDEditor
+                                    value={watch("description") ?? ""}
+                                    onChange={(val) =>
+                                        setValue("description", val ?? "", { shouldValidate: true })
+                                    }
+                                    preview="live"
+                                    height={300}
+                                    visibleDragbar={false}
+                                    previewOptions={{
+                                        remarkPlugins: [[remarkGfm]],
+                                        className: "prose prose-sm prose-slate max-w-none text-slate-600",
+                                        wrapperElement: {
+                                            "data-color-mode": "light",
+                                        },
+                                    }}
+                                />
+                            </div>
                         </FormGroup>
 
                         {/* Gambar */}

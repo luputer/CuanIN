@@ -339,8 +339,8 @@ export default function DigitalProductPage() {
 												<button
 													onClick={() => setPage(p)}
 													className={`h-7 w-7 rounded-[4px] flex items-center justify-center font-medium text-xs transition-colors ${page === p
-															? "bg-[#00B4D8] text-white hover:bg-[#009bc2]"
-															: "text-slate-500 hover:bg-slate-100"
+														? "bg-[#00B4D8] text-white hover:bg-[#009bc2]"
+														: "text-slate-500 hover:bg-slate-100"
 														}`}
 												>
 													{p}

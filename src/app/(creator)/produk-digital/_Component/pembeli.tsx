@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { Eye, Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Loader2, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
@@ -12,6 +12,18 @@ import {
     PaginationEllipsis,
     PaginationItem,
 } from "~/components/ui/pagination";
+import { Skeleton } from "~/components/ui/skeleton";
+import { toast } from "sonner";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
 
 export default function Pembeli({ productId }: { productId: string }) {
     const [view, setView] = useState<"list" | "detail">("list");
@@ -33,6 +45,24 @@ export default function Pembeli({ productId }: { productId: string }) {
         { productId, page, limit, search: debouncedSearch },
         { enabled: !!productId }
     );
+
+
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const utils = api.useUtils();
+
+    const deletePurchase = api.purchases.delete.useMutation({
+        onSuccess: () => {
+            void utils.purchases.getByProductId.invalidate({ productId });
+            toast.success("Pembeli berhasil dihapus");
+            setDeleteId(null);
+        },
+        onError: (error: { message: string }) => {
+            toast.error(`Gagal menghapus data pembeli: ${error.message}`);
+            setDeleteId(null);
+        },
+    });
+
+    const purchaseToDelete = data?.items?.find((p) => p.id === deleteId);
 
     const items = data?.items ?? [];
     const total = data?.total ?? 0;
@@ -67,6 +97,12 @@ export default function Pembeli({ productId }: { productId: string }) {
                 <div className="relative w-full lg:w-auto">
                     <select className="w-full lg:w-auto appearance-none bg-white border border-slate-700 text-slate-600 text-[15px] rounded-lg pl-4 pr-10 py-2 focus:outline-none focus:border-[#00B4D8] font-medium min-w-[150px]">
                         <option>Status: Semua</option>
+                        <option>Status: Sudah Bayar</option>
+                        <option>Status: Pending</option>
+                        <option>Status: Ditolak</option>
+                        <option>Status: Sudah Bayar</option>
+                        <option>Status: Pending</option>
+                        <option>Status: Ditolak</option>
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 w-[18px] h-[18px] pointer-events-none" />
                 </div>
@@ -96,11 +132,16 @@ export default function Pembeli({ productId }: { productId: string }) {
                         </thead>
                         <tbody>
                             {isLoading ? (
-                                <tr>
-                                    <td colSpan={6} className="py-10 text-center">
-                                        <Loader2 className="w-6 h-6 animate-spin text-blue-400 mx-auto" />
-                                    </td>
-                                </tr>
+                                Array.from({ length: 5 }).map((_, i) => (
+                                    <tr key={i} className="border-b border-slate-200">
+                                        <td className="px-6 py-5"><Skeleton className="h-4 w-32" /></td>
+                                        <td className="px-6 py-5"><Skeleton className="h-4 w-40" /></td>
+                                        <td className="px-6 py-5"><Skeleton className="h-4 w-32" /></td>
+                                        <td className="px-6 py-5"><Skeleton className="h-4 w-32" /></td>
+                                        <td className="px-6 py-5"><Skeleton className="h-6 w-24 rounded-full" /></td>
+                                        <td className="px-6 py-5"><div className="flex justify-center"><Skeleton className="h-5 w-5" /></div></td>
+                                    </tr>
+                                ))
                             ) : items.length === 0 ? (
                                 <tr>
                                     <td colSpan={6} className="py-10 text-center text-slate-500">
@@ -142,6 +183,13 @@ export default function Pembeli({ productId }: { productId: string }) {
                                                     title="Lihat Detail"
                                                 >
                                                     <Eye className="w-5 h-5" />
+                                                </button>
+                                                <button
+                                                    onClick={() => setDeleteId(item.id)}
+                                                    className="text-rose-400 cursor-pointer hover:text-rose-600 transition-colors"
+                                                    title="Hapus Pembeli"
+                                                >
+                                                    <Trash2 className="w-[18px] h-[18px]" strokeWidth={2} />
                                                 </button>
                                             </div>
                                         </td>
@@ -228,8 +276,38 @@ export default function Pembeli({ productId }: { productId: string }) {
                             </Pagination>
                         </div>
                     </div>
+                    {/* Delete Confirmation Dialog */}
+                    <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Hapus Data Pembeli?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Kamu yakin ingin menghapus data partisipan/pembeli bernama{" "}
+                                    <span className="font-semibold text-slate-800">&quot;{purchaseToDelete?.buyerName}&quot;</span>?
+                                    <br />
+                                    Tindakan ini tidak bisa dibatalkan.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Batal</AlertDialogCancel>
+                                <AlertDialogAction
+                                    className="bg-rose-600 hover:bg-rose-700 text-white"
+                                    onClick={() => {
+                                        if (deleteId) deletePurchase.mutate({ id: deleteId });
+                                    }}
+                                    disabled={deletePurchase.isPending}
+                                >
+                                    {deletePurchase.isPending ? (
+                                        <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Menghapus...</>
+                                    ) : "Ya, Hapus"}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
+
             )}
         </div>
+
     );
 }

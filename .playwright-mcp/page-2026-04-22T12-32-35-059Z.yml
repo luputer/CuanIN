@@ -1,0 +1,102 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T"
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "CuanIN" [ref=e5] [cursor=pointer]:
+        - /url: /
+      - button "Login" [ref=e7] [cursor=pointer]
+  - main [ref=e8]:
+    - generic [ref=e9]:
+      - img "Figure 8" [ref=e11]
+      - img "Figure 12" [ref=e13]
+      - heading "Jual Webinar, Kelas dan Produk Digital" [level=1] [ref=e14]
+      - text: Tanpa Ribet!
+      - paragraph [ref=e15]: Buat form pendaftaran, jual produk, terima pembayaran - semua dalam satu platform.
+      - button "Mulai Gratis" [ref=e17] [cursor=pointer]
+    - generic [ref=e18]:
+      - paragraph [ref=e20]: Image Preview
+      - generic [ref=e21]:
+        - img "Decor Top Left" [ref=e23]
+        - img "Decor Bottom Right" [ref=e25]
+        - generic [ref=e26]: “Ubah Keahlian Jadi Penghasilan”
+    - generic [ref=e28]:
+      - heading "Masalah yang Sering Terjadi" [level=2] [ref=e29]
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - img [ref=e34]
+          - paragraph [ref=e37]: Ribet Karena Banyak Platform
+        - generic [ref=e38]:
+          - img [ref=e41]
+          - paragraph [ref=e44]: Data Peserta Berantakan
+        - generic [ref=e45]:
+          - img [ref=e48]
+          - paragraph [ref=e51]: Konfirmasi Pembayaran Manual
+        - generic [ref=e52]:
+          - img [ref=e55]
+          - paragraph [ref=e58]: Sulit Melihat Analitik dan Laporan
+    - generic [ref=e60]:
+      - heading "Semua yang kamu butuhkan ada di CuanIN" [level=2] [ref=e61]
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - generic [ref=e65]: Image
+          - heading "All-in-One Platform" [level=3] [ref=e66]
+          - paragraph [ref=e67]: Kelola form, produk, pembeli dan pembayaran dalam satu sistem terintegrasi.
+        - generic [ref=e68]:
+          - generic [ref=e70]: Image
+          - heading "Payment Gateway" [level=3] [ref=e71]
+          - paragraph [ref=e72]: Terima pembayaran otomatis dengan verifikasi instan, tanpa perlu cek manual.
+        - generic [ref=e73]:
+          - generic [ref=e75]: Image
+          - heading "Kustomisasi Form" [level=3] [ref=e76]
+          - paragraph [ref=e77]: Buat form pendaftaran dengan bebas sesuai kebutuhanmu.
+        - generic [ref=e78]:
+          - generic [ref=e80]: Image
+          - heading "Dashboard Analitik" [level=3] [ref=e81]
+          - paragraph [ref=e82]: Pantau pembeli, pendapatan, dan performa produk secara real-time dalam satu dashboard.
+    - generic [ref=e84]:
+      - generic [ref=e86]: Image
+      - generic [ref=e89]:
+        - heading "Hanya Butuh 4 Langkah untuk Mulai Jualan" [level=2] [ref=e90]
+        - generic [ref=e91]:
+          - button "1 Buat Akun" [ref=e93]:
+            - generic [ref=e94]:
+              - generic [ref=e95]: "1"
+              - generic [ref=e96]: Buat Akun
+            - img [ref=e98]
+          - button "2 Tambahkan Produk" [ref=e102]:
+            - generic [ref=e103]:
+              - generic [ref=e104]: "2"
+              - generic [ref=e105]: Tambahkan Produk
+            - img [ref=e107]
+          - button "3 Bagikan Link" [ref=e111]:
+            - generic [ref=e112]:
+              - generic [ref=e113]: "3"
+              - generic [ref=e114]: Bagikan Link
+            - img [ref=e116]
+          - button "4 Terima Pembayaran" [ref=e120]:
+            - generic [ref=e121]:
+              - generic [ref=e122]: "4"
+              - generic [ref=e123]: Terima Pembayaran
+            - img [ref=e125]
+    - generic [ref=e129]:
+      - img "Decor Top Left" [ref=e131]
+      - img "Decor Bottom Right" [ref=e133]
+      - heading "Siap mengelola semuanya tanpa ribet? Mulai sekarang gratis!" [level=2] [ref=e134]:
+        - text: Siap mengelola semuanya tanpa ribet?
+        - text: Mulai sekarang gratis!
+      - button "Daftar Sekarang" [ref=e135] [cursor=pointer]
+    - generic [ref=e136]:
+      - generic [ref=e138]:
+        - generic [ref=e139]:
+          - heading "CuanIN" [level=3] [ref=e140]
+          - paragraph [ref=e141]: Ubah Keahlian Jadi Penghasilan
+        - generic [ref=e143]:
+          - heading "Kontak Kami" [level=4] [ref=e144]
+          - list [ref=e145]:
+            - listitem [ref=e146]:
+              - img [ref=e147]
+              - generic [ref=e150]: +62 8123 4567 890
+            - listitem [ref=e151]:
+              - img [ref=e152]
+              - generic [ref=e158]: cuanin9@gmail.com
+      - generic [ref=e159]: © 2026 CuanIN. All rights reserved.

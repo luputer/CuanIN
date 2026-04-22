@@ -1,0 +1,188 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T"
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - link "CuanIN" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - button "Collapse menu" [ref=e7]:
+          - img [ref=e8]
+      - generic [ref=e10]:
+        - generic [ref=e11]: MENU
+        - generic [ref=e12]:
+          - link "Dashboard" [ref=e13] [cursor=pointer]:
+            - /url: /dashboard
+            - generic [ref=e14]:
+              - img [ref=e15]
+              - generic [ref=e21]: Dashboard
+          - link "Webinar" [ref=e22] [cursor=pointer]:
+            - /url: /webinar
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Webinar
+          - link "Kelas" [ref=e28] [cursor=pointer]:
+            - /url: /kelas
+            - generic [ref=e29]:
+              - img [ref=e30]
+              - generic [ref=e33]: Kelas
+          - link "Produk Digital" [ref=e34] [cursor=pointer]:
+            - /url: /produk-digital
+            - generic [ref=e35]:
+              - img [ref=e36]
+              - generic [ref=e39]: Produk Digital
+          - link "Peserta" [ref=e40] [cursor=pointer]:
+            - /url: /peserta
+            - generic [ref=e41]:
+              - img [ref=e42]
+              - generic [ref=e46]: Peserta
+          - link "Pembayaran" [ref=e47] [cursor=pointer]:
+            - /url: /pembayaran
+            - generic [ref=e48]:
+              - img [ref=e49]
+              - generic [ref=e52]: Pembayaran
+        - link "Katalog Saya" [ref=e54] [cursor=pointer]:
+          - /url: /testuser
+          - generic [ref=e55]:
+            - img [ref=e56]
+            - generic [ref=e59]: Katalog Saya
+    - generic [ref=e60]:
+      - banner [ref=e61]:
+        - generic [ref=e64] [cursor=pointer]:
+          - generic [ref=e65]:
+            - generic [ref=e66]: T
+            - generic [ref=e67]: Test User
+          - img [ref=e68]
+      - main [ref=e71]:
+        - generic [ref=e443]:
+          - generic [ref=e444]:
+            - link "Kembali ke Detail Kelas" [ref=e445] [cursor=pointer]:
+              - /url: /kelas/257b73e2-5a70-482f-b983-3c97c5d9ff18
+              - img [ref=e446]
+              - generic [ref=e448]: Kembali ke Detail Kelas
+            - heading "Edit Kelas Online" [level=1] [ref=e449]
+            - paragraph [ref=e450]: Kelas React Dasar
+          - generic [ref=e452]:
+            - heading "Informasi Kelas" [level=2] [ref=e454]
+            - generic [ref=e455]:
+              - generic [ref=e456]:
+                - generic [ref=e457]: Nama Kelas
+                - textbox "Masukkan nama kelas" [ref=e459]: Kelas React Dasar
+              - generic [ref=e460]:
+                - generic [ref=e461]: Deskripsi Singkat
+                - textbox "Masukkan deskripsi singkat" [ref=e463]: Belajar React dari nol.
+              - generic [ref=e464]:
+                - generic [ref=e465]: Deskripsi
+                - generic [ref=e468]:
+                  - generic [ref=e469]:
+                    - list [ref=e470]:
+                      - listitem [ref=e471]:
+                        - button "Add bold text (ctrl + b)" [ref=e472] [cursor=pointer]:
+                          - img [ref=e473]
+                      - listitem [ref=e475]:
+                        - button "Add italic text (ctrl + i)" [ref=e476] [cursor=pointer]:
+                          - img [ref=e477]
+                      - listitem [ref=e479]:
+                        - button "Add strikethrough text (ctrl + shift + x)" [ref=e480] [cursor=pointer]:
+                          - img [ref=e481]
+                      - listitem [ref=e483]:
+                        - button "Insert HR (ctrl + h)" [ref=e484] [cursor=pointer]:
+                          - img [ref=e485]
+                      - listitem [ref=e487]:
+                        - button "Insert title" [ref=e488] [cursor=pointer]:
+                          - img [ref=e489]
+                      - listitem [ref=e491]
+                      - listitem [ref=e492]:
+                        - button "Add a link (ctrl + l)" [ref=e493] [cursor=pointer]:
+                          - img [ref=e494]
+                      - listitem [ref=e496]:
+                        - button "Insert a quote (ctrl + q)" [ref=e497] [cursor=pointer]:
+                          - img [ref=e498]
+                      - listitem [ref=e500]:
+                        - button "Insert code (ctrl + j)" [ref=e501] [cursor=pointer]:
+                          - img [ref=e502]
+                      - listitem [ref=e504]:
+                        - button "Insert Code Block (ctrl + shift + j)" [ref=e505] [cursor=pointer]:
+                          - img [ref=e506]
+                      - listitem [ref=e508]:
+                        - button "Insert comment (ctrl + /)" [ref=e509] [cursor=pointer]:
+                          - img [ref=e510]
+                      - listitem [ref=e515]:
+                        - button "Add image (ctrl + k)" [ref=e516] [cursor=pointer]:
+                          - img [ref=e517]
+                      - listitem [ref=e519]:
+                        - button "Add table" [ref=e520] [cursor=pointer]:
+                          - img [ref=e521]
+                      - listitem [ref=e523]
+                      - listitem [ref=e524]:
+                        - button "Add unordered list (ctrl + shift + u)" [ref=e525] [cursor=pointer]:
+                          - img [ref=e526]
+                      - listitem [ref=e528]:
+                        - button "Add ordered list (ctrl + shift + o)" [ref=e529] [cursor=pointer]:
+                          - img [ref=e530]
+                      - listitem [ref=e532]:
+                        - button "Add checked list (ctrl + shift + c)" [ref=e533] [cursor=pointer]:
+                          - img [ref=e534]
+                      - listitem [ref=e536]
+                      - listitem [ref=e537]:
+                        - button "Open help" [ref=e538] [cursor=pointer]:
+                          - img [ref=e539]
+                    - list [ref=e541]:
+                      - listitem [ref=e542]:
+                        - button "Edit code (ctrl + 7)" [ref=e543] [cursor=pointer]:
+                          - img [ref=e544]
+                      - listitem [ref=e547]:
+                        - button "Live code (ctrl + 8)" [ref=e548] [cursor=pointer]:
+                          - img [ref=e549]
+                      - listitem [ref=e552]:
+                        - button "Preview code (ctrl + 9)" [ref=e553] [cursor=pointer]:
+                          - img [ref=e554]
+                      - listitem [ref=e557]
+                      - listitem [ref=e558]:
+                        - button "Toggle fullscreen (ctrl + 0)" [ref=e559] [cursor=pointer]:
+                          - img [ref=e560]
+                  - generic [ref=e562]:
+                    - generic [ref=e564]:
+                      - generic [ref=e565]:
+                        - generic:
+                          - code: Ini adalah deskripsi lengkap kelas React Dasar. Belajar Hooks, Component, dan State.
+                      - textbox [ref=e566]: Ini adalah deskripsi lengkap kelas React Dasar. Belajar Hooks, Component, dan State.
+                    - paragraph [ref=e570]: Ini adalah deskripsi lengkap kelas React Dasar. Belajar Hooks, Component, dan State.
+              - generic [ref=e571]:
+                - generic [ref=e572]: Gambar Thumbnail
+                - generic [ref=e574] [cursor=pointer]:
+                  - img [ref=e575]
+                  - generic [ref=e576]: Upload
+              - generic [ref=e577]:
+                - generic [ref=e578]: Tipe Akses
+                - combobox [ref=e580]:
+                  - generic: Berbayar
+                  - img
+              - generic [ref=e581]:
+                - generic [ref=e582]: Harga
+                - generic [ref=e584]:
+                  - generic [ref=e585]: Rp
+                  - spinbutton [ref=e586]: "100000"
+              - generic [ref=e587]:
+                - generic [ref=e588]: Link Akses
+                - textbox "https://..." [ref=e590]: https://example.com/akses-kelas
+              - generic [ref=e591]:
+                - generic [ref=e592]: Keuntungan / Benefit
+                - generic [ref=e594]:
+                  - generic [ref=e595]:
+                    - textbox "Benefit 1" [ref=e596]: Sertifikat Digital
+                    - button [ref=e597]:
+                      - img
+                  - button "Tambah Benefit" [ref=e598]:
+                    - img
+                    - text: Tambah Benefit
+              - generic [ref=e599]:
+                - generic [ref=e600]: Status
+                - combobox [ref=e602]:
+                  - generic: Published
+                  - img
+          - button "Simpan Perubahan" [ref=e603]:
+            - img
+            - text: Simpan Perubahan
+  - button "Open Next.js Dev Tools" [ref=e214] [cursor=pointer]:
+    - img [ref=e215]
+  - alert [ref=e218]

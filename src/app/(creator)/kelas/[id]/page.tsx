@@ -14,9 +14,9 @@ import { toast } from "sonner";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import FormCustomizer from "~/components/FormCustomizer";
 import PurchaseList from "~/components/PurchaseList";
 import { Skeleton } from "~/components/ui/skeleton";
-import FormCustomizer from "~/components/FormCustomizer";
 
 export default function ProductDetailPage() {
     const params = useParams();
@@ -43,7 +43,7 @@ export default function ProductDetailPage() {
         const publicUrl = `${host}/${catalog.slug}/${productSlug}`;
 
         void navigator.clipboard.writeText(publicUrl);
-        toast.success("Link produk disalin!");
+        toast.success("Link kelas disalin!");
     };
 
     const Label = ({ children }: { children: React.ReactNode }) => (
@@ -74,7 +74,7 @@ export default function ProductDetailPage() {
             <h2 className="text-lg font-bold text-slate-800">{title}</h2>
             {showEdit && (
                 <Link
-                    href={`/produk-digital/${id}/edit`}
+                    href={`/kelas/${id}/edit`}
                     className="flex items-center gap-1.5 text-xs text-blue-500 hover:text-blue-700 font-medium transition-colors"
                 >
                     <Pencil className="w-3.5 h-3.5" />
@@ -125,9 +125,9 @@ export default function ProductDetailPage() {
     if (!product) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-                <p className="text-slate-500 text-lg">Produk tidak ditemukan.</p>
-                <Link href="/produk-digital" className="text-blue-500 hover:underline">
-                    ← Kembali ke Daftar Produk Digital
+                <p className="text-slate-500 text-lg">Kelas tidak ditemukan.</p>
+                <Link href="/kelas" className="text-blue-500 hover:underline">
+                    ← Kembali ke Daftar Kelas Online
                 </Link>
             </div>
         );
@@ -138,11 +138,11 @@ export default function ProductDetailPage() {
             {/* Header Back */}
             <div className="flex items-center justify-between">
                 <Link
-                    href="/produk-digital"
+                    href="/kelas"
                     className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 w-fit"
                 >
                     <ChevronLeft className="h-4 w-4" />
-                    <span>Kembali ke Daftar Produk Digital</span>
+                    <span>Kembali ke Daftar Kelas Online</span>
                 </Link>
 
                 <Button
@@ -151,7 +151,7 @@ export default function ProductDetailPage() {
                     onClick={handleCopyLink}
                 >
                     <Copy className="w-4 h-4" />
-                    Salin Link Produk
+                    Salin Link Kelas
                 </Button>
 
 
@@ -168,13 +168,13 @@ export default function ProductDetailPage() {
                             value="detail"
                             className="flex-1   rounded-none border-b-2 border-transparent py-4 data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 bg-transparent text-slate-500 font-medium cursor-pointer"
                         >
-                            Detail Produk
+                            Detail Kelas
                         </TabsTrigger>
                         <TabsTrigger
                             value="user"
                             className="flex-1 rounded-none border-b-2 border-transparent py-4 data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 bg-transparent text-slate-500 font-medium cursor-pointer"
                         >
-                            Pembeli ({buyerCount ?? 0})
+                            Peserta ({buyerCount ?? 0})
                         </TabsTrigger>
                         <TabsTrigger
                             value="form"
@@ -188,9 +188,9 @@ export default function ProductDetailPage() {
                 <TabsContent value="detail" className="space-y-8 bg-blue-50/50 p-6 rounded-b-xl">
                     {/* Informasi Produk */}
                     <section>
-                        <SectionHeader title="Informasi Produk" showEdit />
+                        <SectionHeader title="Informasi Kelas" showEdit />
 
-                        <Row label="Nama">{product.name}</Row>
+                        <Row label="Nama Kelas">{product.name}</Row>
 
                         <Row label="Deskripsi">
                             <div className="prose prose-sm prose-slate max-w-none text-slate-600 leading-relaxed">
@@ -200,7 +200,7 @@ export default function ProductDetailPage() {
 
                         <div className="flex flex-col md:flex-row gap-2 md:items-start mb-4">
                             <div className="md:pt-2.5">
-                                <Label>Gambar</Label>
+                                <Label>Gambar Thumbnail</Label>
                             </div>
                             <div className="flex-1">
                                 <div className="w-full rounded-lg border border-blue-200 bg-white p-4 min-h-[44px]">
@@ -222,7 +222,7 @@ export default function ProductDetailPage() {
                             </div>
                         </div>
 
-                        <Row label="Tipe">
+                        <Row label="Tipe Akses">
                             {Number(product.price) === 0 ? "Gratis" : "Berbayar"}
                         </Row>
                         <Row label="Harga">
@@ -231,7 +231,7 @@ export default function ProductDetailPage() {
                                 : `Rp ${Number(product.price).toLocaleString("id-ID")}`
                             }
                         </Row>
-                        <Row label="Link">
+                        <Row label="Link Akses">
                             {product.link ? (
                                 <a href={product.link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline break-all">
                                     {product.link}
@@ -262,7 +262,7 @@ export default function ProductDetailPage() {
                 </TabsContent>
 
                 <TabsContent value="user">
-                    <PurchaseList productId={id} label="Pembeli" />
+                    <PurchaseList productId={id} label="Peserta" />
                 </TabsContent>
                 <TabsContent value="form">
                     <FormCustomizer productId={id} />

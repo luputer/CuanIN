@@ -1,0 +1,42 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=e1219]:
+        - img [ref=e1221]
+        - generic [ref=e1223]:
+          - generic [ref=e1224]: Pendaftaran berhasil!
+          - generic [ref=e1225]: Kamu telah terdaftar untuk E-book Next.js
+  - button "Open Next.js Dev Tools" [ref=e329] [cursor=pointer]:
+    - img [ref=e330]
+  - alert [ref=e333]
+  - generic [ref=e334]: "25"
+  - generic [ref=e1227]:
+    - generic [ref=e1228]:
+      - generic [ref=e1230]: TU
+      - heading "Test User" [level=1] [ref=e1231]
+      - paragraph [ref=e1232]: Senior Developer & Trainer.
+      - generic [ref=e1234]: 2 Produk
+    - generic [ref=e1236]:
+      - button "Semua" [ref=e1237]: Semua
+      - button "Webinar" [ref=e1240]
+      - button "Kelas" [ref=e1241]
+      - button "Produk Digital" [ref=e1242]
+    - generic [ref=e1243]:
+      - link "E-book Next.js Produk Digital Rp 50.000" [ref=e1244] [cursor=pointer]:
+        - /url: /testuser/e-book-nextjs
+        - generic [ref=e1245]:
+          - img [ref=e1247]
+          - generic [ref=e1251]:
+            - generic [ref=e1252]:
+              - paragraph [ref=e1253]: E-book Next.js
+              - paragraph [ref=e1254]: Produk Digital
+            - generic [ref=e1256]: Rp 50.000
+      - link "Kelas React Dasar Kelas Rp 100.000" [ref=e1257] [cursor=pointer]:
+        - /url: /testuser/kelas-react-dasar
+        - generic [ref=e1258]:
+          - img [ref=e1260]
+          - generic [ref=e1264]:
+            - generic [ref=e1265]:
+              - paragraph [ref=e1266]: Kelas React Dasar
+              - paragraph [ref=e1267]: Kelas
+            - generic [ref=e1269]: Rp 100.000

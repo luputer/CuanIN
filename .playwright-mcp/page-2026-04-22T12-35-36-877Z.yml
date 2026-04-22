@@ -1,0 +1,11 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=e1035]:
+        - img [ref=e1037]
+        - generic [ref=e1040]: Catalog berhasil disimpan!
+  - button "Open Next.js Dev Tools" [ref=e329] [cursor=pointer]:
+    - img [ref=e330]
+  - alert [ref=e333]
+  - generic [ref=e334]: "25"
+  - img [ref=e1042]

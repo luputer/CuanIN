@@ -86,6 +86,7 @@ export const productsRouter = createTRPCRouter({
                 link: z.string().optional(),
                 benefit: z.array(z.string()).optional(),
                 image: z.string().optional(),
+                status: z.string().optional(),
             })
         )
         .mutation(async ({ ctx, input }) => {

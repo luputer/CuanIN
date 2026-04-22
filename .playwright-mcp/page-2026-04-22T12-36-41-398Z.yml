@@ -1,0 +1,131 @@
+- generic [ref=e1]:
+  - region "Notifications alt+T"
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - link "CuanIN" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - button "Collapse menu" [ref=e7]:
+          - img [ref=e8]
+      - generic [ref=e10]:
+        - generic [ref=e11]: MENU
+        - generic [ref=e12]:
+          - link "Dashboard" [ref=e13] [cursor=pointer]:
+            - /url: /dashboard
+            - generic [ref=e14]:
+              - img [ref=e15]
+              - generic [ref=e21]: Dashboard
+          - link "Webinar" [ref=e22] [cursor=pointer]:
+            - /url: /webinar
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Webinar
+          - link "Kelas" [active] [ref=e28] [cursor=pointer]:
+            - /url: /kelas
+            - generic [ref=e29]:
+              - img [ref=e30]
+              - generic [ref=e33]: Kelas
+          - link "Produk Digital" [ref=e34] [cursor=pointer]:
+            - /url: /produk-digital
+            - generic [ref=e35]:
+              - img [ref=e36]
+              - generic [ref=e39]: Produk Digital
+          - link "Peserta" [ref=e40] [cursor=pointer]:
+            - /url: /peserta
+            - generic [ref=e41]:
+              - img [ref=e42]
+              - generic [ref=e46]: Peserta
+          - link "Pembayaran" [ref=e47] [cursor=pointer]:
+            - /url: /pembayaran
+            - generic [ref=e48]:
+              - img [ref=e49]
+              - generic [ref=e52]: Pembayaran
+        - link "Katalog Saya" [ref=e54] [cursor=pointer]:
+          - /url: /testuser
+          - generic [ref=e55]:
+            - img [ref=e56]
+            - generic [ref=e59]: Katalog Saya
+    - generic [ref=e60]:
+      - banner [ref=e61]:
+        - generic [ref=e64] [cursor=pointer]:
+          - generic [ref=e65]:
+            - generic [ref=e66]: T
+            - generic [ref=e67]: Test User
+          - img [ref=e68]
+      - main [ref=e71]:
+        - generic [ref=e278]:
+          - generic [ref=e279]:
+            - heading "Daftar Kelas Online" [level=1] [ref=e280]
+            - paragraph [ref=e281]: Pantau semua kelas online yang tersedia di platform.
+          - generic [ref=e282]:
+            - generic [ref=e283]:
+              - img [ref=e284]
+              - textbox "Cari berdasarkan Nama Kelas" [ref=e287]
+            - generic [ref=e288]:
+              - 'button "Status: Semua" [ref=e289]':
+                - generic [ref=e290]: "Status: Semua"
+                - img [ref=e291]
+              - link "Tambah Kelas" [ref=e293] [cursor=pointer]:
+                - /url: /kelas/create
+                - generic [ref=e294]: Tambah Kelas
+                - img [ref=e295]
+          - table [ref=e298]:
+            - rowgroup [ref=e299]:
+              - row "Nama Thumbnail Tipe Harga Peserta Status Aksi" [ref=e300]:
+                - columnheader "Nama" [ref=e301]:
+                  - generic [ref=e302] [cursor=pointer]:
+                    - text: Nama
+                    - generic [ref=e303]:
+                      - img [ref=e304]
+                      - img [ref=e306]
+                - columnheader "Thumbnail" [ref=e308]
+                - columnheader "Tipe" [ref=e309]
+                - columnheader "Harga" [ref=e310]
+                - columnheader "Peserta" [ref=e311]
+                - columnheader "Status" [ref=e312]
+                - columnheader "Aksi" [ref=e313]
+            - rowgroup [ref=e314]:
+              - row "Kelas React Dasar No image Berbayar Rp 100.000 0 Lihat Published" [ref=e315]:
+                - cell "Kelas React Dasar" [ref=e316] [cursor=pointer]:
+                  - link "Kelas React Dasar" [ref=e317]:
+                    - /url: /kelas/257b73e2-5a70-482f-b983-3c97c5d9ff18
+                - cell "No image" [ref=e318]:
+                  - generic [ref=e320]: No image
+                - cell "Berbayar" [ref=e321]
+                - cell "Rp 100.000" [ref=e322]
+                - cell "0 Lihat" [ref=e323]:
+                  - generic [ref=e324]:
+                    - generic [ref=e325]: "0"
+                    - button "Lihat" [ref=e326] [cursor=pointer]
+                - cell "Published" [ref=e327]
+                - cell [ref=e328]:
+                  - generic [ref=e329]:
+                    - button "Detail Kelas" [ref=e330] [cursor=pointer]:
+                      - img [ref=e331]
+                    - button "Hapus Kelas" [ref=e334] [cursor=pointer]:
+                      - img [ref=e335]
+                    - button "Salin Link Kelas" [ref=e338] [cursor=pointer]:
+                      - img [ref=e339]
+          - generic [ref=e342]:
+            - generic [ref=e343]:
+              - generic [ref=e344]:
+                - combobox [ref=e345] [cursor=pointer]:
+                  - option "5"
+                  - option "10" [selected]
+                  - option "20"
+                  - option "50"
+                - img
+              - generic [ref=e346]: "Hasil: 1-1 dari 1"
+            - navigation "pagination" [ref=e348]:
+              - list [ref=e349]:
+                - listitem [ref=e350]:
+                  - button [disabled] [ref=e351]:
+                    - img [ref=e352]
+                - listitem [ref=e355]:
+                  - button "1" [ref=e356]
+                - listitem [ref=e357]:
+                  - button [disabled] [ref=e358]:
+                    - img [ref=e359]
+  - button "Open Next.js Dev Tools" [ref=e214] [cursor=pointer]:
+    - img [ref=e215]
+  - alert [ref=e218]

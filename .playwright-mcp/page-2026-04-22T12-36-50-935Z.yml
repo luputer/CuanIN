@@ -1,0 +1,58 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T"
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - link "CuanIN" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - button "Collapse menu" [ref=e7]:
+          - img [ref=e8]
+      - generic [ref=e10]:
+        - generic [ref=e11]: MENU
+        - generic [ref=e12]:
+          - link "Dashboard" [ref=e13] [cursor=pointer]:
+            - /url: /dashboard
+            - generic [ref=e14]:
+              - img [ref=e15]
+              - generic [ref=e21]: Dashboard
+          - link "Webinar" [ref=e22] [cursor=pointer]:
+            - /url: /webinar
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Webinar
+          - link "Kelas" [ref=e28] [cursor=pointer]:
+            - /url: /kelas
+            - generic [ref=e29]:
+              - img [ref=e30]
+              - generic [ref=e33]: Kelas
+          - link "Produk Digital" [ref=e34] [cursor=pointer]:
+            - /url: /produk-digital
+            - generic [ref=e35]:
+              - img [ref=e36]
+              - generic [ref=e39]: Produk Digital
+          - link "Peserta" [ref=e40] [cursor=pointer]:
+            - /url: /peserta
+            - generic [ref=e41]:
+              - img [ref=e42]
+              - generic [ref=e46]: Peserta
+          - link "Pembayaran" [ref=e47] [cursor=pointer]:
+            - /url: /pembayaran
+            - generic [ref=e48]:
+              - img [ref=e49]
+              - generic [ref=e52]: Pembayaran
+        - link "Katalog Saya" [ref=e54] [cursor=pointer]:
+          - /url: /testuser
+          - generic [ref=e55]:
+            - img [ref=e56]
+            - generic [ref=e59]: Katalog Saya
+    - generic [ref=e60]:
+      - banner [ref=e61]:
+        - generic [ref=e64] [cursor=pointer]:
+          - generic [ref=e65]:
+            - generic [ref=e66]: T
+            - generic [ref=e67]: Test User
+          - img [ref=e68]
+      - main [ref=e71]
+  - button "Open Next.js Dev Tools" [ref=e214] [cursor=pointer]:
+    - img [ref=e215]
+  - alert [ref=e218]

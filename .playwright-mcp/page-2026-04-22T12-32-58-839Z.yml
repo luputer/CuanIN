@@ -1,0 +1,77 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T"
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "CuanIN" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - button "Login" [ref=e8] [cursor=pointer]
+    - main [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - heading "Daftar" [level=1] [ref=e12]
+          - paragraph [ref=e13]:
+            - text: Selamat datang!
+            - text: Silahkan daftarkan akun Anda
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - generic [ref=e16]: Nama Lengkap
+            - generic [ref=e17]:
+              - generic:
+                - img
+              - textbox "Masukkan Nama Lengkap Anda" [ref=e18]: Test User
+          - generic [ref=e19]:
+            - generic [ref=e20]: Email
+            - generic [ref=e21]:
+              - generic:
+                - img
+              - textbox "Masukkan Email Anda" [ref=e22]: testuser@example.com
+          - generic [ref=e23]:
+            - generic [ref=e24]: Nomor HP
+            - generic [ref=e25]:
+              - generic:
+                - img
+              - 'textbox "Masukkan Nomor HP (contoh: 08123456789)" [ref=e26]': "08123456789"
+          - generic [ref=e27]:
+            - generic [ref=e28]: Password
+            - generic [ref=e29]:
+              - generic:
+                - img
+              - textbox "Buat Password (min. 8 karakter)" [ref=e30]: password123
+              - button [ref=e31]:
+                - img [ref=e32]
+          - generic [ref=e36]:
+            - generic [ref=e37]: Konfirmasi Password
+            - generic [ref=e38]:
+              - generic:
+                - img
+              - textbox "Ulangi Password" [ref=e39]: password123
+              - button [ref=e40]:
+                - img [ref=e41]
+          - button "Mendaftar..." [disabled] [ref=e91] [cursor=pointer]
+        - generic [ref=e46]: Atau Daftar dengan
+        - button "Google" [ref=e49] [cursor=pointer]:
+          - img [ref=e50]
+          - text: Google
+        - generic [ref=e55]:
+          - text: Sudah punya akun?
+          - link "Login Disini" [ref=e56] [cursor=pointer]:
+            - /url: /sign-in
+    - contentinfo [ref=e57]:
+      - generic [ref=e59]:
+        - generic [ref=e60]:
+          - heading "CuanIN" [level=3] [ref=e61]
+          - paragraph [ref=e62]: Ubah Keahlian Jadi Penghasilan
+        - generic [ref=e64]:
+          - heading "Kontak Kami" [level=4] [ref=e65]
+          - list [ref=e66]:
+            - listitem [ref=e67]:
+              - img [ref=e68]
+              - generic [ref=e71]: +62 8123 4567 890
+            - listitem [ref=e72]:
+              - img [ref=e73]
+              - generic [ref=e79]: cuanin9@gmail.com
+      - generic [ref=e80]: © 2026 CuanIN. All rights reserved.
+  - button "Open Next.js Dev Tools" [ref=e87] [cursor=pointer]:
+    - img [ref=e88]
+  - alert [ref=e81]

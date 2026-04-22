@@ -1,0 +1,71 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e329] [cursor=pointer]:
+    - img [ref=e330]
+  - alert [ref=e333]
+  - generic [ref=e334]: "25"
+  - generic [ref=e1153]:
+    - link "Kembali" [ref=e1156] [cursor=pointer]:
+      - /url: /testuser/e-book-nextjs
+      - img [ref=e1157]
+      - text: Kembali
+    - generic [ref=e1159]:
+      - heading "Daftar" [level=1] [ref=e1160]
+      - generic [ref=e1161]:
+        - generic [ref=e1162]:
+          - generic [ref=e1164]:
+            - generic [ref=e1165]:
+              - generic [ref=e1167]: Nama Lengkap*
+              - textbox "Nama Lengkap*" [ref=e1168]:
+                - /placeholder: Nama Lengkap
+            - generic [ref=e1169]:
+              - generic [ref=e1170]: Email*
+              - textbox "Email*" [ref=e1171]:
+                - /placeholder: Email
+            - generic [ref=e1172]:
+              - generic [ref=e1173]: Nomor Telepon*
+              - textbox "Nomor Telepon*" [ref=e1174]:
+                - /placeholder: "contoh: 6281234567801"
+            - generic [ref=e1175]:
+              - generic [ref=e1176]:
+                - text: Paket yang dipilih
+                - generic [ref=e1177]: E-book Next.js
+              - generic [ref=e1178]:
+                - text: Kode promo atau affiliate
+                - generic [ref=e1179]:
+                  - generic [ref=e1180]:
+                    - generic:
+                      - img
+                    - textbox "Masukkan kode promo atau affiliate" [ref=e1181]
+                  - button "Gunakan" [ref=e1182]
+          - generic [ref=e1183]:
+            - heading "E-book Next.js" [level=3] [ref=e1184]
+            - generic [ref=e1185]:
+              - generic [ref=e1186]:
+                - img [ref=e1187]
+                - text: Akses materi cepat
+              - generic [ref=e1190]:
+                - img [ref=e1191]
+                - text: QnA Langsung
+              - generic [ref=e1194]:
+                - img [ref=e1195]
+                - text: Benefit lainnya...
+            - generic [ref=e1198]: Rp50.000
+        - generic [ref=e1200]:
+          - heading "Tagihan" [level=2] [ref=e1201]
+          - generic [ref=e1202]:
+            - generic [ref=e1203]:
+              - generic [ref=e1204]: Item Awal
+              - generic [ref=e1205]: Rp50.000
+            - generic [ref=e1206]:
+              - generic [ref=e1207]:
+                - generic [ref=e1208]: 1x
+                - generic [ref=e1209]: E-book Next.js
+              - generic [ref=e1210]: Rp50.000
+          - generic [ref=e1211]:
+            - generic [ref=e1212]: Total
+            - generic [ref=e1213]: Rp50.000
+          - button "Daftar" [ref=e1214]
+          - generic [ref=e1215]:
+            - img [ref=e1216]
+            - text: Transaksi aman & terenkripsi

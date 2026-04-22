@@ -39,7 +39,7 @@ function Card({
 }: CardProps) {
 
     return (
-        <div className={`${bgColor ?? "bg-white"} gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(30,27,75)] p-4 flex flex-col`}>
+        <div className={`${bgColor ?? "bg-white"} gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col`}>
 
             {/* TOP ROW: ICON & ARROW */}
             <div className="flex justify-between items-start mb-3">
@@ -155,7 +155,7 @@ export default function DashboardPage() {
 
             {/* CHART ROW 1 */}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-4">
-                <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_2px_0px_rgba(30,27,75)] p-4 overflow-hidden">
+                <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
                     <h2 className="pl-2 font-semibold text-lg mb-6 text-slate-800">Pendapatan Mingguan</h2>
                     <ResponsiveContainer width="100%" height={300}>
                         <AreaChart data={weeklyRevenue}>
@@ -195,7 +195,7 @@ export default function DashboardPage() {
                     </ResponsiveContainer>
                 </div>
 
-                <div className="lg:col-span-1 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_2px_0px_rgba(30,27,75)] p-4 overflow-hidden">
+                <div className="lg:col-span-1 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
                     <h2 className="pl-2 font-semibold text-lg mb-6 text-slate-800">Total per Kategori</h2>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={categoryData} barCategoryGap="20%">
@@ -227,7 +227,7 @@ export default function DashboardPage() {
 
             {/* CHART ROW 2 */}
             <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
-                <div className="lg:col-span-1 xl:col-span-3 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_2px_0px_rgba(30,27,75)] p-4 overflow-hidden">
+                <div className="lg:col-span-1 xl:col-span-3 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
                     <h2 className="pl-2 font-semibold text-lg mb-6 text-slate-800">Traffic Website</h2>
                     <ResponsiveContainer width="100%" height={300}>
                         <AreaChart data={trafficData}>
@@ -267,7 +267,7 @@ export default function DashboardPage() {
                     </ResponsiveContainer>
                 </div>
 
-                <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_2px_0px_rgba(30,27,75)] p-4 overflow-hidden">
+                <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
                     <h2 className="pl-2 font-semibold text-lg mb-6 text-slate-800">Jumlah Pembeli</h2>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={buyerData} barCategoryGap="20%">

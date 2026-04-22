@@ -165,72 +165,98 @@ export default function ProductDetailPage() {
 
             {/* Tabs */}
             <div className="rounded-xl border border-slate-800 overflow-hidden">
-                <ProductDetailTabs className="bg-cyan-50" defaultTab={defaultTab} buyerCount={buyerCount ?? 0}>
-                    <ProductDetailTabContent value="detail" className="space-y-8 bg-white px-10 py-8">
-                        <section>
-                            <SectionHeader title="Informasi Produk" showEdit />
+                <ProductDetailTabs defaultTab={defaultTab} buyerCount={buyerCount ?? 0}>
+                    <ProductDetailTabContent value="detail" className="bg-transparent overflow-visible">
+                        <div className="flex flex-col lg:flex-row gap-4 items-start">
 
-                            <Row label="Nama">{product.name}</Row>
+                            {/* Kiri: Informasi Produk */}
+                            <div className="flex-1 min-w-0 bg-white rounded-xl px-10 py-8 space-y-8">
+                                <section>
+                                    <SectionHeader title="Informasi Produk" showEdit />
 
-                            {/* markdown */}
-                            <Row label="Deskripsi">
-                                <div className="pt-2.5 prose prose-sm prose-slate max-w-none text-slate-600 leading-relaxed [&>*:first-child]:mt-0">
-                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                        {product.description ?? "-"}
-                                    </ReactMarkdown>
+                                    <Row label="Nama">{product.name}</Row>
+
+                                    <Row label="Deskripsi">
+                                        <div className="pt-2.5 prose prose-sm prose-slate max-w-none text-slate-600 leading-relaxed [&>*:first-child]:mt-0">
+                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                {product.description ?? "-"}
+                                            </ReactMarkdown>
+                                        </div>
+                                    </Row>
+
+                                    <Row label="Link">
+                                        {product.link ? (
+                                            <a href={product.link} target="_blank" className="text-blue-500 hover:underline break-all">
+                                                {product.link}
+                                            </a>
+                                        ) : "-"}
+                                    </Row>
+                                </section>
+
+                                <div className="pt-2">
+                                    <p className="text-slate-400 text-sm italic">
+                                        Ditambahkan pada {format(new Date(product.createdAt), "d MMMM yyyy HH:mm", { locale: idLocale })}
+                                    </p>
                                 </div>
-                            </Row>
+                            </div>
 
-                            <Row label="Gambar">
-                                <div className="w-full pt-4 min-h-[44px]">
-                                    <div className="w-48 h-48 bg-slate-100 rounded-md overflow-hidden flex items-center justify-center border border-slate-200">
+                            {/* Kanan: Gambar + Info Ringkas */}
+                            <div className="flex-shrink-0 w-full lg:w-64 bg-white rounded-xl p-6 space-y-5">
+
+                                {/* Gambar */}
+                                <div>
+                                    <p className="text-sm font-medium text-slate-800 mb-3">Gambar Produk</p>
+                                    <div className="w-full aspect-square bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200">
                                         {product.image ? (
                                             <Image
                                                 src={product.image}
                                                 alt={product.name}
-                                                width={200}
-                                                height={200}
+                                                width={256}
+                                                height={256}
                                                 unoptimized
                                                 className="w-full h-full object-cover"
                                             />
                                         ) : (
-                                            <ImageIcon className="w-12 h-12 text-slate-300" />
+                                            <div className="flex flex-col items-center gap-2 text-slate-400">
+                                                <ImageIcon className="w-12 h-12" />
+                                                <span className="text-xs">Belum ada gambar</span>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
-                            </Row>
 
-                            <Row label="Tipe">
-                                {Number(product.price) === 0 ? "Gratis" : "Berbayar"}
-                            </Row>
+                                <div className="border-t border-slate-100 pt-4 space-y-4">
+                                    {/* Tipe */}
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-800 mb-1">Tipe</p>
+                                        <p className="text-sm font-medium text-slate-800">
+                                            {Number(product.price) === 0 ? "Gratis" : "Berbayar"}
+                                        </p>
+                                    </div>
 
-                            <Row label="Harga">
-                                {Number(product.price) === 0
-                                    ? "Rp 0"
-                                    : `Rp ${Number(product.price).toLocaleString("id-ID")}`}
-                            </Row>
+                                    {/* Harga */}
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-800 mb-1">Harga</p>
+                                        <p className="text-sm font-medium text-slate-800">
+                                            {Number(product.price) === 0
+                                                ? "Rp 0"
+                                                : `Rp ${Number(product.price).toLocaleString("id-ID")}`}
+                                        </p>
+                                    </div>
 
-                            <Row label="Link">
-                                {product.link ? (
-                                    <a href={product.link} target="_blank" className="text-blue-500 hover:underline break-all">
-                                        {product.link}
-                                    </a>
-                                ) : "-"}
-                            </Row>
+                                    {/* Status */}
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-800 mb-1">Status</p>
+                                        <p className={`text-sm font-semibold ${getStatusColor(product.status ?? "draft")}`}>
+                                            {product.status
+                                                ? product.status.charAt(0).toUpperCase() + product.status.slice(1)
+                                                : "Draft"}
+                                        </p>
+                                    </div>
+                                </div>
 
-                            <Row label="Status">
-                                <span className={`font-semibold ${getStatusColor(product.status ?? "draft")}`}>
-                                    {product.status
-                                        ? product.status.charAt(0).toUpperCase() + product.status.slice(1)
-                                        : "Draft"}
-                                </span>
-                            </Row>
-                        </section>
+                            </div>
 
-                        <div className="flex justify-end pt-2">
-                            <p className="text-slate-400 text-sm italic">
-                                Ditambahkan pada {format(new Date(product.createdAt), "d MMMM yyyy HH:mm", { locale: idLocale })}
-                            </p>
                         </div>
                     </ProductDetailTabContent>
 

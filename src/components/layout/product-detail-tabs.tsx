@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useState } from "react";
 import { cn } from "~/lib/utils";
 
+const ACTIVE_TAB_CLASSES = "border-t-cyan-600 text-slate-800";
+
 interface TabsContextProps {
     activeTab: string;
     setActiveTab: (value: string) => void;
@@ -26,10 +28,10 @@ export function ProductDetailTabs({ defaultTab, buyerCount, children, className 
             <button
                 onClick={() => setActiveTab(value)}
                 className={cn(
-                    "flex-1 relative py-3.5 px-4 transition-all cursor-pointer text-center text-sm min-w-[120px]",
+                    "relative py-3.5 px-10 transition-all cursor-pointer text-center text-sm min-w-[120px]",
                     isActive
-                        ? "bg-white border-t border-x border-slate-800 rounded-t-lg font-semibold text-slate-800 -mb-[1px] z-20"
-                        : "border-b border-slate-800 text-slate-500 hover:text-slate-800 font-medium hover:bg-white rounded-t-lg"
+                        ? cn("bg-cyan-50 border-t-4 border-l border-r border-slate-800 rounded-t-lg font-semibold -mb-[1px] z-20", ACTIVE_TAB_CLASSES)
+                        : "border-b border-slate-800 text-slate-500 hover:text-slate-800 font-medium hover:bg-cyan-50 rounded-t-lg"
                 )}
             >
                 {label} {count !== undefined && `(${count})`}
@@ -40,7 +42,7 @@ export function ProductDetailTabs({ defaultTab, buyerCount, children, className 
     return (
         <TabsContext.Provider value={{ activeTab, setActiveTab }}>
             <div className="flex flex-col">
-                <div className={cn("border-b border-slate-800 px-6 pt-4", className)}>
+                <div className={cn("bg-white border-b border-slate-800 px-6 pt-4", className)}>
                     <div className="flex gap-1 items-end -mb-[1px]">
                         <TabButton value="detail" label="Detail Produk" />
                         <TabButton value="user" label="Pembeli" count={buyerCount} />
@@ -62,8 +64,10 @@ export function ProductDetailTabContent({ value, children, className }: { value:
     if (context.activeTab !== value) return null;
 
     return (
-        <div className={className}>
-            {children}
+        <div className="p-6 bg-cyan-50">
+            <div className={cn("bg-white rounded-xl overflow-hidden", className)}>
+                {children}
+            </div>
         </div>
     );
 }

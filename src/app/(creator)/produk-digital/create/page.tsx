@@ -24,6 +24,7 @@ import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { productDigitalSchema } from "~/lib/validation";
 import MarkdownPreview from "~/components/MarkdownPreview";
+import { useImageUpload } from "~/hooks/use-upload";
 
 // Import MDEditor secara dynamic karena tidak support SSR
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
@@ -84,10 +85,7 @@ export default function CreateDigitalProductPage() {
 
     const utils = api.useUtils();
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [uploading, setUploading] = useState(false);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-    const getPresignedUrl = api.s3.getUploadPresignedUrl.useMutation();
 
     const createProduct = api.products.create.useMutation({
         onSuccess: () => {
@@ -100,45 +98,16 @@ export default function CreateDigitalProductPage() {
         },
     });
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+    const { uploading, previewUrl, handleFileUpload } = useImageUpload("products");
 
-        const localUrl = URL.createObjectURL(file);
-        setPreviewUrl(localUrl);
-        setUploading(true);
-
-        try {
-            const key = `products/${Date.now()}-${file.name}`;
-            const url = await getPresignedUrl.mutateAsync({
-                key,
-                fileType: file.type,
-            });
-
-            const res = await fetch(url, {
-                method: "PUT",
-                body: file,
-                headers: { "Content-Type": file.type },
-            });
-
-            if (!res.ok) throw new Error("Gagal upload ke storage");
-
-            const publicUrl = `https://pub-3098f58e584244c8bf48888938b34bae.r2.dev/${key}`;
-            setValue("image", publicUrl, { shouldValidate: true });
-            toast.success("Gambar berhasil diunggah");
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Terjadi kesalahan";
-            toast.error(`Gagal unggah gambar: ${errorMessage}`);
-            setPreviewUrl(null);
-        } finally {
-            setUploading(false);
-        }
+    const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const url = await handleFileUpload(e);
+        if (url) setValue("image", url, { shouldValidate: true });
     };
 
     const onSubmit = (data: DigitalProductFormValues) => {
         createProduct.mutate({
             name: data.name,
-            shortDescription: data.shortDescription,
             description: data.description,
             price: data.priceType === "free" ? 0 : (data.price ?? 0),
             type: "DIGITAL_PRODUCT",
@@ -176,11 +145,11 @@ export default function CreateDigitalProductPage() {
                             />
                         </FormGroup>
 
-                        <FormGroup label="Deskripsi Singkat" error={errors.shortDescription?.message}>
+                        <FormGroup label="Deskripsi Singkat" error={errors.notes?.message}>
                             <Textarea
                                 placeholder="Masukkan Deskripsi Singkat"
                                 className="min-h-[100px] bg-white border-blue-200 focus-visible:ring-blue-500"
-                                {...register("shortDescription")}
+                                {...register("notes")}
                             />
                         </FormGroup>
 
@@ -243,7 +212,7 @@ export default function CreateDigitalProductPage() {
                                     ref={fileInputRef}
                                     className="hidden"
                                     accept="image/*"
-                                    onChange={handleFileUpload}
+                                    onChange={onFileChange}
                                 />
                             </div>
                         </FormGroup>
@@ -380,7 +349,7 @@ export default function CreateDigitalProductPage() {
                     </>
                 )}
             </Button>
-            <footer />
+
         </div>
     );
 }

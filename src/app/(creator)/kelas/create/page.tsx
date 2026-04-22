@@ -54,7 +54,7 @@ const SectionHeader = ({ title }: { title: string }) => (
 	</div>
 );
 
-export default function CreateDigitalProductPage() {
+export default function CreateKelasPage() {
 	const router = useRouter();
 
 	const {
@@ -144,7 +144,6 @@ export default function CreateDigitalProductPage() {
 			type: "KELAS_ONLINE",
 			link: data.link ?? undefined,
 			image: data.image,
-			benefit: data.benefit?.filter(b => b.trim() !== ""),
 			status: data.status,
 		});
 	};

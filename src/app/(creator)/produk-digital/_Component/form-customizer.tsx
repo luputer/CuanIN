@@ -34,9 +34,12 @@ export function FormCustomizer({ productId }: { productId: string }) {
         { enabled: !!productId }
     );
 
+    const utils = api.useUtils();
+
     // Save mutation
     const saveMutation = api.formFields.save.useMutation({
         onSuccess: () => {
+            void utils.formFields.getByProductId.invalidate();
             toast.success("Form berhasil disimpan!");
         },
         onError: (error) => {
@@ -255,7 +258,7 @@ export function FormCustomizer({ productId }: { productId: string }) {
                                             {field.type === "DROPDOWN" && (
                                                 <div className="text-slate-400 text-[15px] w-5 flex-shrink-0">{field.options ? field.options.length + 1 : 1}.</div>
                                             )}
-                                            <button 
+                                            <button
                                                 onClick={() => addOption(field.id)}
                                                 className="text-[#00B4D8] hover:text-[#009bc2] font-medium text-[15px] py-1 transition-colors"
                                             >
@@ -264,7 +267,7 @@ export function FormCustomizer({ productId }: { productId: string }) {
                                         </div>
                                     </div>
                                 )}
-                                
+
                                 <div className="flex justify-end mt-6 items-center border-t border-slate-100 pt-4">
                                     <label className="relative inline-flex items-center cursor-pointer">
                                         <input

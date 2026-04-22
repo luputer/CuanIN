@@ -32,6 +32,7 @@ export type LoginFormData = z.infer<typeof loginSchema>;
 export const webinarSchema = z
     .object({
         name: z.string().min(1, "Nama webinar wajib diisi"),
+        shortDescription: z.string().optional(),
         description: z.string().min(1, "Deskripsi wajib diisi"),
         priceType: z.enum(["free", "paid"]),
         price: z.number().min(0, "Harga tidak boleh negatif").optional(),
@@ -75,6 +76,7 @@ export const webinarSchema = z
 export const productDigitalSchema = z
     .object({
         name: z.string().min(1, "Nama produk wajib diisi"),
+        shortDescription: z.string().optional(),
         description: z.string().min(1, "Deskripsi wajib diisi"),
         priceType: z.enum(["free", "paid"]),
         price: z.number().min(0, "Harga tidak boleh negatif").optional(),
@@ -85,6 +87,7 @@ export const productDigitalSchema = z
         notes: z.string().optional(),
         status: z.string().min(1, "Status wajib dipilih"),
         image: z.string().optional(),
+        benefit: z.array(z.string()).optional(),
     })
     .refine(
         (data) => {

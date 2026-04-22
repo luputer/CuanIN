@@ -1,13 +1,13 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Plus, Loader2 } from "lucide-react";
+import { ChevronLeft, Plus, Loader2, Trash2 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -62,6 +62,7 @@ export default function CreateDigitalProductPage() {
         handleSubmit,
         watch,
         setValue,
+        control,
         formState: { errors },
     } = useForm<DigitalProductFormValues>({
         resolver: zodResolver(productDigitalSchema),
@@ -69,7 +70,13 @@ export default function CreateDigitalProductPage() {
             priceType: "free",
             status: "published",
             price: 0,
+            benefit: ["", "", ""], // Default 3 empty benefits
         },
+    });
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "benefit" as never,
     });
 
     const priceType = watch("priceType");
@@ -131,11 +138,13 @@ export default function CreateDigitalProductPage() {
     const onSubmit = (data: DigitalProductFormValues) => {
         createProduct.mutate({
             name: data.name,
+            shortDescription: data.shortDescription,
             description: data.description,
             price: data.priceType === "free" ? 0 : (data.price ?? 0),
             type: "DIGITAL_PRODUCT",
             link: data.link ?? undefined,
             image: data.image,
+            benefit: data.benefit?.filter(b => b.trim() !== ""),
         });
     };
 
@@ -166,6 +175,15 @@ export default function CreateDigitalProductPage() {
                                 {...register("name")}
                             />
                         </FormGroup>
+
+                        <FormGroup label="Deskripsi Singkat" error={errors.shortDescription?.message}>
+                            <Textarea
+                                placeholder="Masukkan Deskripsi Singkat"
+                                className="min-h-[100px] bg-white border-blue-200 focus-visible:ring-blue-500"
+                                {...register("shortDescription")}
+                            />
+                        </FormGroup>
+
 
                         {/* Deskripsi — MDEditor */}
                         <FormGroup label="Deskripsi" error={errors.description?.message}>
@@ -276,11 +294,47 @@ export default function CreateDigitalProductPage() {
                             />
                         </FormGroup>
 
+                        {/* Benefit */}
+                        <FormGroup label="Keuntungan / Benefit" error={errors.benefit?.message}>
+                            <div className="space-y-3">
+                                {fields.map((field, index) => (
+                                    <div key={field.id} className="flex gap-2">
+                                        <Input
+                                            placeholder={`Benefit ${index + 1}`}
+                                            className="bg-white border-blue-200 focus-visible:ring-blue-500"
+                                            {...register(`benefit.${index}` as const)}
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                            onClick={() => remove(index)}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                ))}
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    className="border-blue-300 text-blue-600 hover:bg-blue-50 mt-2"
+                                    onClick={() => append("")}
+                                >
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Tambah Benefit
+                                </Button>
+                            </div>
+                        </FormGroup>
+
+
+
                         {/* Catatan */}
                         <FormGroup label="Catatan" error={errors.notes?.message}>
                             <Textarea
                                 placeholder="Masukkan catatan (opsional)"
-                                className="min-h-[120px] bg-white border-blue-200 focus-visible:ring-blue-500"
+                                className="min-h-[100px] bg-white border-blue-200 focus-visible:ring-blue-500"
                                 {...register("notes")}
                             />
                         </FormGroup>
@@ -326,6 +380,7 @@ export default function CreateDigitalProductPage() {
                     </>
                 )}
             </Button>
+            <footer />
         </div>
     );
 }

@@ -138,19 +138,21 @@ exports.Prisma.ProfileScalarFieldEnum = {
 
 exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
-  slug: 'slug',
   name: 'name',
+  shortDescription: 'shortDescription',
   description: 'description',
   price: 'price',
   type: 'type',
-  image: 'image',
   startDate: 'startDate',
   endDate: 'endDate',
   link: 'link',
   status: 'status',
   userId: 'userId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  image: 'image',
+  slug: 'slug',
+  benefit: 'benefit'
 };
 
 exports.Prisma.FormFieldScalarFieldEnum = {

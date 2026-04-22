@@ -63,25 +63,20 @@ export const catalogRouter = createTRPCRouter({
                 },
                 include: {
                     user: {
-                        select: {
-                            id: true,
-                            name: true,
-                            image: true,
+                        include: {
+                            products: {
+                                where: { status: "published" },
+                                orderBy: { price: "asc" },
+                            },
                         },
                     },
                     formFields: {
                         orderBy: { order: "asc" },
-                        select: {
-                            id: true,
-                            label: true,
-                            type: true,
-                            options: true,
-                            required: true,
-                            order: true,
-                        },
                     },
                 },
             });
+
+            console.log("Fetched product user products count:", product?.user?.products?.length);
 
             return product;
         }),

@@ -77,12 +77,14 @@ export const productsRouter = createTRPCRouter({
         .input(
             z.object({
                 name: z.string().min(1, "Product name is required"),
+                shortDescription: z.string().optional(),
                 price: z.number().min(0, "Price must be >= 0"),
                 description: z.string().optional(),
                 type: ProductType.optional(),
                 startDate: z.date().optional(),
                 endDate: z.date().optional(),
                 link: z.string().optional(),
+                benefit: z.array(z.string()).optional(),
                 image: z.string().optional(),
             })
         )
@@ -118,12 +120,14 @@ export const productsRouter = createTRPCRouter({
             z.object({
                 id: z.string(),
                 name: z.string().min(1, "Product name is required").optional(),
+                shortDescription: z.string().optional(),
                 price: z.number().min(0).optional(),
                 description: z.string().optional(),
                 type: ProductType.optional(),
                 startDate: z.date().optional(),
                 endDate: z.date().optional(),
                 link: z.string().optional(),
+                benefit: z.array(z.string()).optional(),
                 image: z.string().optional(),
                 status: z.string().optional(),
             })

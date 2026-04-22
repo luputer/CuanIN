@@ -5,14 +5,13 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronLeft, Loader2, Save, Plus } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { ChevronLeft, Loader2, Save, Plus, Trash2 } from "lucide-react";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { Textarea } from "~/components/ui/textarea";
 
 import {
     Select,
@@ -77,6 +76,7 @@ export default function EditProductPage() {
         setValue,
         watch,
         reset,
+        control,
         formState: { errors },
     } = useForm<ProductFormValues>({
         resolver: zodResolver(productDigitalSchema),
@@ -84,7 +84,13 @@ export default function EditProductPage() {
             priceType: "free",
             status: "published",
             price: 0,
+            benefit: [],
         },
+    });
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "benefit" as never,
     });
 
     const priceType = watch("priceType");
@@ -95,6 +101,7 @@ export default function EditProductPage() {
             const priceVal = Number(product.price);
             reset({
                 name: product.name,
+                shortDescription: product.shortDescription ?? "",
                 description: product.description ?? "",
                 priceType: priceVal === 0 ? "free" : "paid",
                 price: priceVal,
@@ -102,6 +109,7 @@ export default function EditProductPage() {
                 status: product.status ?? "published",
                 notes: "",
                 image: product.image ?? undefined,
+                benefit: (product.benefit as string[]) || [],
             });
             if (product.image) setPreviewUrl(product.image);
         }
@@ -161,11 +169,13 @@ export default function EditProductPage() {
         updateProduct.mutate({
             id,
             name: data.name,
+            shortDescription: data.shortDescription,
             description: data.description,
             price: data.priceType === "free" ? 0 : (data.price ?? 0),
             link: data.link,
             status: data.status,
             image: data.image,
+            benefit: data.benefit?.filter(b => b.trim() !== ""),
         });
     };
 
@@ -215,6 +225,14 @@ export default function EditProductPage() {
                                 placeholder="Masukkan nama produk"
                                 className="bg-white h-[52px] border-blue-200 focus-visible:ring-blue-500"
                                 {...register("name")}
+                            />
+                        </FormGroup>
+
+                        <FormGroup label="Deskripsi Singkat" error={errors.shortDescription?.message}>
+                            <Input
+                                placeholder="Masukkan deskripsi singkat"
+                                className="bg-white h-[52px] border-blue-200 focus-visible:ring-blue-500"
+                                {...register("shortDescription")}
                             />
                         </FormGroup>
 
@@ -315,6 +333,39 @@ export default function EditProductPage() {
                                 className="bg-white h-[52px] border-blue-200 focus-visible:ring-blue-500"
                                 {...register("link")}
                             />
+                        </FormGroup>
+
+                        <FormGroup label="Keuntungan / Benefit" error={errors.benefit?.message}>
+                            <div className="space-y-3">
+                                {fields.map((field, index) => (
+                                    <div key={field.id} className="flex gap-2">
+                                        <Input
+                                            placeholder={`Benefit ${index + 1}`}
+                                            className="bg-white h-[52px] border-blue-200 focus-visible:ring-blue-500"
+                                            {...register(`benefit.${index}` as const)}
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-red-500 hover:text-red-700 hover:bg-red-50 h-[52px] w-[52px]"
+                                            onClick={() => remove(index)}
+                                        >
+                                            <Trash2 className="h-5 w-5" />
+                                        </Button>
+                                    </div>
+                                ))}
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    className="border-blue-300 text-blue-600 hover:bg-blue-50 mt-2"
+                                    onClick={() => append("")}
+                                >
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Tambah Benefit
+                                </Button>
+                            </div>
                         </FormGroup>
 
                         <FormGroup label="Status" error={errors.status?.message}>

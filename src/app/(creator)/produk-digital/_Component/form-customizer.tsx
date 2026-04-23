@@ -1,11 +1,12 @@
 "use client";
 
-import { DotsSixVerticalIcon, CircleNotchIcon, PlusIcon, TrashIcon, XIcon } from "@phosphor-icons/react";
+import { DotsSixVerticalIcon, CircleNotchIcon, PlusIcon, TrashIcon, XIcon, CheckCircleIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
 import ButtonSave from "~/components/ui/button-save";
 import { Skeleton } from "~/components/ui/skeleton";
+import { useDebounce } from "~/hooks/use-debounce";
 
 // --- IMPORT DND KIT ---
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
@@ -163,10 +164,9 @@ export function FormCustomizer({ productId }: { productId: string }) {
     const saveMutation = api.formFields.save.useMutation({
         onSuccess: () => {
             void utils.formFields.getByProductId.invalidate();
-            toast.success("Form berhasil disimpan!");
         },
         onError: (error) => {
-            toast.error(`Gagal menyimpan: ${error.message}`);
+            toast.error(`Gagal menyimpan otomatis: ${error.message}`);
         },
     });
 
@@ -182,6 +182,20 @@ export function FormCustomizer({ productId }: { productId: string }) {
             setHasLoaded(true);
         }
     }, [savedFields, hasLoaded]);
+
+    const debouncedFields = useDebounce(fields, 1000);
+
+    useEffect(() => {
+        if (hasLoaded && debouncedFields.length > 0) {
+            // Cek apakah ada label yang kosong sebelum simpan
+            if (debouncedFields.some(f => !f.label.trim())) return;
+
+            saveMutation.mutate({
+                productId,
+                fields: debouncedFields.map((f, index) => ({ ...f, order: index })),
+            });
+        }
+    }, [debouncedFields, productId, hasLoaded]);
 
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
@@ -202,14 +216,6 @@ export function FormCustomizer({ productId }: { productId: string }) {
     const updateOption = (fId: string, idx: number, val: string) => setFields(fields.map(f => f.id === fId && f.options ? { ...f, options: f.options.map((o, i) => i === idx ? val : o) } : f));
     const removeOption = (fId: string, idx: number) => setFields(fields.map(f => f.id === fId && f.options ? { ...f, options: f.options.filter((_, i) => i !== idx) } : f));
     const handleTypeChange = (id: string, type: FieldType) => setFields(fields.map(f => f.id === id ? { ...f, type, options: ["MULTIPLE_CHOICE", "CHECKBOX", "DROPDOWN"].includes(type) ? (f.options?.length ? f.options : ["Opsi 1"]) : undefined } : f));
-
-    const handleSave = () => {
-        if (fields.some(f => !f.label.trim())) return toast.error("Semua field harus memiliki label");
-        saveMutation.mutate({
-            productId,
-            fields: fields.map((f, index) => ({ ...f, order: index })),
-        });
-    };
 
     if (isLoading) {
         return (
@@ -244,9 +250,24 @@ export function FormCustomizer({ productId }: { productId: string }) {
     }
     return (
         <div className="bg-white px-10 py-8">
-            <h2 className="text-md font-semibold text-cyan-600 border-b-1 border-cyan-600 pb-4">
-                Kustomisasi Isian Form
-            </h2>
+            <div className="flex justify-between items-center border-b border-slate-200 pb-4">
+                <h2 className="text-md font-semibold text-cyan-600">
+                    Kustomisasi Isian Form
+                </h2>
+                <div className="text-xs font-medium">
+                    {saveMutation.isPending ? (
+                        <span className="flex items-center gap-1.5 text-slate-400">
+                            <CircleNotchIcon className="animate-spin w-4 h-4" /> 
+                            Menyimpan...
+                        </span>
+                    ) : saveMutation.isSuccess ? (
+                        <span className="flex items-center gap-1.5 text-emerald-500">
+                            <CheckCircleIcon className="w-4 h-4" weight="fill" />
+                            Tersimpan
+                        </span>
+                    ) : null}
+                </div>
+            </div>
 
             <div className="py-8">
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -272,7 +293,6 @@ export function FormCustomizer({ productId }: { productId: string }) {
 
             <div className="flex flex-col gap-3">
                 <ButtonSave label="Tambah Field" icon={PlusIcon} weight="bold" onClick={addField} className="w-full justify-center" />
-                <ButtonSave label="Simpan" weight="fill" onClick={handleSave} disabled={saveMutation.isPending} className="w-full justify-center text-slate-800 bg-yellow-200" />
             </div>
         </div>
     );

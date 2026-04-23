@@ -58,9 +58,9 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
                 price: priceVal,
                 link: product.link ?? "",
                 status: product.status ?? "published",
-                notes: product.notes ?? "",
+                notes: "",
                 image: product.image ?? undefined,
-                benefit: (product.benefit as string[]) || [],
+                benefit: (product.benefit as string[]) ?? [],
             });
             if (product.image) setPreviewUrl(product.image);
         }

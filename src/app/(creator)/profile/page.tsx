@@ -38,15 +38,15 @@ export default function ProfilePage() {
 
     useEffect(() => {
         if (user) {
-            setName(user.name || "");
-            setEmail(user.email || "");
-            setPhoneNumber(user.phoneNumber || "");
-            setBio(user.bio || "");
+            setName(user.name ?? "");
+            setEmail(user.email ?? "");
+            setPhoneNumber(user.phoneNumber ?? "");
+            setBio(user.bio ?? "");
             if (user.image && !previewUrl) {
                 setPreviewUrl(user.image);
             }
         }
-    }, [user]);
+    }, [user, previewUrl, setPreviewUrl]);
 
     const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         await handleFileUpload(e);

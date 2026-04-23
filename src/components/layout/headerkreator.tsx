@@ -16,7 +16,7 @@ export default function HeaderKreator() {
         enabled: !!session?.user,
     });
 
-    const user = userProfile || session?.user;
+    const user = userProfile ?? session?.user;
 
     const router = useRouter();
     const dropdownRef = useRef<HTMLDivElement>(null);

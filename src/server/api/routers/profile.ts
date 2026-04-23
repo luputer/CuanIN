@@ -24,7 +24,7 @@ export const profileRouter = createTRPCRouter({
         if (!user) throw new Error("User not found");
         return {
             ...user,
-            bio: user.catalog?.bio || "",
+            bio: user.catalog?.bio ?? "",
         };
     }),
 
@@ -41,7 +41,14 @@ export const profileRouter = createTRPCRouter({
         .mutation(async ({ ctx, input }) => {
             const { name, phoneNumber, image, password, bio } = input;
 
-            const updateData: any = {
+            type UserUpdateData = {
+                name: string;
+                phoneNumber?: string | null;
+                image?: string | null;
+                password?: string;
+            };
+
+            const updateData: UserUpdateData = {
                 name,
                 phoneNumber,
                 image,

@@ -54,17 +54,40 @@ export const authConfig = {
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {
             const isLoggedIn = !!auth;
+            const role = auth?.user?.role;
+
             const isAuthPage =
                 nextUrl.pathname.startsWith("/sign-in") ||
                 nextUrl.pathname.startsWith("/sign-up") ||
                 nextUrl.pathname === "/";
 
-            // If trying to access public auth/landing pages while logged in, redirect to dashboard
+            const isAdminPage = nextUrl.pathname.startsWith("/admin");
+
+            // 1. If trying to access public auth/landing pages while logged in
             if (isAuthPage && isLoggedIn) {
+                if (role === "ADMIN") {
+                    return Response.redirect(new URL("/admin/dashboard", nextUrl));
+                }
                 return Response.redirect(new URL("/dashboard", nextUrl));
             }
-            
-            // If trying to access any OTHER matched path (like /setup, /dashboard, etc) while logged out, block access
+
+            // 2. Protect Admin Pages
+            if (isAdminPage) {
+                if (!isLoggedIn) return false;
+                if (role !== "ADMIN") {
+                    return Response.redirect(new URL("/dashboard", nextUrl));
+                }
+            }
+
+            // 3. Protect Creator/User Pages (dashboard, webinar, etc)
+            // If they are logged in as ADMIN, they shouldn't necessarily be blocked from these, 
+            // but usually they go to admin dashboard.
+            if (!isAuthPage && !isAdminPage && isLoggedIn && role === "ADMIN") {
+                // Optional: Redirect admins away from creator pages to admin dashboard
+                return Response.redirect(new URL("/admin/dashboard", nextUrl));
+            }
+
+            // 4. If trying to access any OTHER matched path while logged out, block access
             if (!isAuthPage && !isLoggedIn) {
                 return false; // Automatically redirects to signIn page
             }

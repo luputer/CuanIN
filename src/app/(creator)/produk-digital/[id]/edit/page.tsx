@@ -1,10 +1,10 @@
 "use client";
 
-import { useForm, Controller } from "react-hook-form";
-import { useEffect, useRef, useState } from "react";
+import { Controller } from "react-hook-form";
+import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 import {
     PlusIcon,
@@ -16,10 +16,7 @@ import {
 } from "@phosphor-icons/react";
 
 import dynamic from "next/dynamic";
-import MarkdownPreview from "~/components/MarkdownPreview";
 
-import { api } from "~/trpc/react";
-import { toast } from "sonner";
 import { formatNumberWithDots, parseDotsToNumber } from "~/lib/utils";
 import {
     FormGroup,
@@ -110,18 +107,18 @@ export default function EditProductPage() {
                     <div>
 
                         {/* Nama */}
-                        <FormGroup label="Nama" error={errors.name?.message}>
+                        <FormGroup label="Nama" error={(errors.name as unknown as { message?: string })?.message}>
                             <FormInput {...register("name")} />
                         </FormGroup>
 
-                        <FormGroup label="Deskripsi Singkat" error={errors.shortDescription?.message}>
+                        <FormGroup label="Deskripsi Singkat" error={(errors.shortDescription as unknown as { message?: string })?.message}>
                             <FormTextarea
                                 placeholder="Masukkan deskripsi singkat"
                                 {...register("shortDescription")}
                             />
                         </FormGroup>
 
-                        <FormGroup label="Deskripsi" error={errors.description?.message}>
+                        <FormGroup label="Deskripsi" error={(errors.description as unknown as { message?: string })?.message}>
                             <div data-color-mode="light" className="w-full">
                                 <Controller
                                     name="description"
@@ -184,7 +181,7 @@ export default function EditProductPage() {
 
                         {/* Harga */}
                         {priceType === "paid" && (
-                            <FormGroup label="Harga" error={errors.price?.message}>
+                            <FormGroup label="Harga" error={(errors.price as unknown as { message?: string })?.message}>
                                 <FormInput
                                     id="price-input-edit"
                                     prefix="Rp"
@@ -199,18 +196,18 @@ export default function EditProductPage() {
                                         </div>
                                     }
                                     {...register("price", {
-                                        setValueAs: (v) => parseDotsToNumber(v),
+                                        setValueAs: (v) => parseDotsToNumber(v as string),
                                     })}
                                 />
                             </FormGroup>
                         )}
 
                         {/* Link */}
-                        <FormGroup label="Link">
+                        <FormGroup label="Link" error={(errors.link as unknown as { message?: string })?.message}>
                             <FormInput {...register("link")} />
                         </FormGroup>
 
-                        <FormGroup label="Keuntungan / Benefit" error={errors.benefit?.message}>
+                        <FormGroup label="Keuntungan / Benefit" error={(errors.benefit as unknown as { message?: string })?.message}>
                             <div className="space-y-3 flex flex-col">
                                 {fields.map((field, index) => (
                                     <div key={field.id} className="flex gap-2">

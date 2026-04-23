@@ -216,13 +216,13 @@ exports.Prisma.UserScalarFieldEnum = {
   emailVerified: 'emailVerified',
   image: 'image',
   password: 'password',
-  role: 'role',
   status: 'status',
   statusPayment: 'statusPayment',
   googleId: 'googleId',
   phoneNumber: 'phoneNumber',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  role: 'role'
 };
 
 exports.Prisma.VerificationTokenScalarFieldEnum = {
@@ -277,6 +277,12 @@ exports.FieldType = exports.$Enums.FieldType = {
   MULTIPLE_CHOICE: 'MULTIPLE_CHOICE',
   CHECKBOX: 'CHECKBOX',
   DROPDOWN: 'DROPDOWN'
+};
+
+exports.RoleType = exports.$Enums.RoleType = {
+  CREATOR: 'CREATOR',
+  ADMIN: 'ADMIN',
+  USER: 'USER'
 };
 
 exports.Prisma.ModelName = {

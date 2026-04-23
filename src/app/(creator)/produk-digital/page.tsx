@@ -1,15 +1,10 @@
 "use client";
 
 import {
-	MagnifyingGlassIcon,
 	CaretUpIcon,
 	CaretDownIcon,
-	PlusIcon,
 	EyeIcon,
 	TrashIcon,
-	CaretLeftIcon,
-	CaretRightIcon,
-	CircleNotchIcon,
 	CopyIcon,
 } from "@phosphor-icons/react";
 import { cn } from "~/lib/utils";

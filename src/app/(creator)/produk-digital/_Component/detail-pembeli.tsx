@@ -3,7 +3,6 @@
 import { ArrowLeft } from "lucide-react";
 import { api } from "~/trpc/react";
 import { Skeleton } from "~/components/ui/skeleton";
-import { cn } from "~/lib/utils"; // Pastikan path utility ini benar
 
 export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBack: () => void }) {
     const { data: purchase, isLoading } = api.purchases.getDetail.useQuery(

@@ -128,7 +128,7 @@ export default function CreateDigitalProductPage() {
                     <div className="space-y-0">
 
                         {/* Nama */}
-                        <FormGroup label="Nama" error={errors.name?.message}>
+                        <FormGroup label="Nama" error={(errors.name as unknown as { message?: string })?.message}>
                             <FormInput
                                 placeholder="Masukkan Nama Produk"
                                 {...register("name")}
@@ -136,7 +136,7 @@ export default function CreateDigitalProductPage() {
                         </FormGroup>
 
                         {/* Deskripsi */}
-                        <FormGroup label="Deskripsi" error={errors.description?.message}>
+                        <FormGroup label="Deskripsi" error={(errors.description as unknown as { message?: string })?.message}>
                             <div data-color-mode="light" className="w-full">
                                 <Controller
                                     name="description"
@@ -208,7 +208,7 @@ export default function CreateDigitalProductPage() {
                         {/* Harga */}
                         {
                             priceType === "paid" && (
-                                <FormGroup label="Harga" error={errors.price?.message}>
+                                <FormGroup label="Harga" error={(errors.price as unknown as { message?: string })?.message}>
                                     <FormInput
                                         id="price-input-create"
                                         type="text"
@@ -225,7 +225,7 @@ export default function CreateDigitalProductPage() {
                                             </div>
                                         }
                                         {...register("price", {
-                                            setValueAs: (v) => parseDotsToNumber(v),
+                                            setValueAs: (v) => parseDotsToNumber(v as string),
                                         })}
                                     />
                                 </FormGroup>
@@ -233,7 +233,7 @@ export default function CreateDigitalProductPage() {
                         }
 
                         {/* Link */}
-                        <FormGroup label="Link Produk (Google Drive, Dropbox, dll)" error={errors.link?.message}>
+                        <FormGroup label="Link Produk (Google Drive, Dropbox, dll)" error={(errors.link as unknown as { message?: string })?.message}>
                             <FormInput
                                 placeholder="https://drive.google.com/..."
                                 {...register("link")}
@@ -241,7 +241,7 @@ export default function CreateDigitalProductPage() {
                         </FormGroup>
 
                         {/* Benefit */}
-                        <FormGroup label="Keuntungan / Benefit" error={errors.benefit?.message}>
+                        <FormGroup label="Keuntungan / Benefit" error={(errors.benefit as unknown as { message?: string })?.message}>
                             <div className="space-y-3 flex flex-col">
                                 {fields.map((field, index) => (
                                     <div key={field.id} className="flex gap-2">
@@ -271,7 +271,7 @@ export default function CreateDigitalProductPage() {
                         </FormGroup>
 
                         {/* Catatan */}
-                        <FormGroup label="Catatan" error={errors.notes?.message}>
+                        <FormGroup label="Catatan" error={(errors.notes as unknown as { message?: string })?.message}>
                             <FormTextarea
                                 placeholder="Masukkan catatan (opsional)"
                                 {...register("notes")}

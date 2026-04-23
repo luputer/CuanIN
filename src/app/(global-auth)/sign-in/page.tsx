@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { EnvelopeIcon, LockKeyIcon, EyeIcon, EyeSlashIcon } from "@phosphor-icons/react"
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { LoginFormData } from "~/lib/validation";
@@ -35,7 +35,13 @@ export default function LoginPage() {
         if (result?.error) {
             setServerError("Email atau password salah. Silakan coba lagi.");
         } else {
-            window.location.href = "/dashboard";
+            // Get session to check role
+            const session = await getSession();
+            if (session?.user?.role === "ADMIN") {
+                window.location.href = "/admin/dashboard";
+            } else {
+                window.location.href = "/dashboard";
+            }
         }
     };
 

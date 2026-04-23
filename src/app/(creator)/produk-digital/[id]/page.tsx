@@ -16,7 +16,6 @@ import remarkGfm from "remark-gfm";
 import { FormCustomizer } from "../_Component/form-customizer";
 import Pembeli from "../_Component/pembeli";
 import { Skeleton } from "~/components/ui/skeleton";
-import remarkBreaks from "remark-breaks";
 import { useState } from "react";
 
 export default function ProductDetailPage() {
@@ -65,12 +64,12 @@ export default function ProductDetailPage() {
     );
 
     const SectionHeader = ({ title, showEdit }: { title: string; showEdit?: boolean }) => (
-        <div className="flex items-center justify-between border-b-1 border-cyan-600 pb-4 mb-8">
+        <div className="flex items-center justify-between border-b border-cyan-600 pb-4 mb-8">
             <h2 className="text-md font-semibold text-cyan-600">{title}</h2>
             {showEdit && (
                 <Link
                     href={`/produk-digital/${id}/edit`}
-                    className="flex items-center gap-1.5 text-sm text-cyan-600 hover:text-cyan-700 font-medium transition-colors"
+                    className="flex items-center gap-1.5 text-sm text-cyan-600 font-medium transition-colors"
                 >
                     <PencilIcon className="w-4 h-4" />
                     Edit
@@ -230,7 +229,7 @@ export default function ProductDetailPage() {
 
                                 {/* Gambar */}
                                 <div>
-                                    <Row label="Gambar Produk" children={undefined} />
+                                    <Row label="Gambar Produk">{null}</Row>
                                     <div className="w-full aspect-square bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200">
                                         {product.image ? (
                                             <Image

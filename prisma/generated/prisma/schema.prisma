@@ -126,7 +126,6 @@ model User {
   emailVerified DateTime? @map("email_verified_at")
   image         String?
   password      String?
-  role          String    @default("creator")
   status        String    @default("active")
   statusPayment String    @default("free")
   googleId      String?   @map("google_id")
@@ -136,6 +135,7 @@ model User {
   accounts      Account[]
   catalog       Catalog?
   products      Product[]
+  role          RoleType  @default(CREATOR)
   sessions      Session[]
 }
 
@@ -161,6 +161,12 @@ enum ProductType {
   WEBINAR
   DIGITAL_PRODUCT
   KELAS_ONLINE
+}
+
+enum RoleType {
+  CREATOR
+  ADMIN
+  USER
 }
 
 enum FieldType {

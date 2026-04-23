@@ -78,7 +78,7 @@ export default function Pembeli({ productId }: { productId: string }) {
     const deleteMutation = api.purchases.delete.useMutation({
         onSuccess: () => {
             toast.success("Data berhasil dihapus");
-            utils.purchases.getByProductId.invalidate();
+            void utils.purchases.getByProductId.invalidate();
         },
         onError: () => {
             toast.error("Gagal menghapus data");

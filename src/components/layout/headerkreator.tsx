@@ -38,7 +38,7 @@ export default function HeaderKreator() {
     }, []);
 
     return (
-        <header className="sticky top-0 z-50 bg-white px-12 py-3 flex items-center justify-end border-b-1 border-slate-800">
+        <header className="sticky top-0 z-50 bg-white px-12 py-3 flex items-center justify-end border-b border-slate-800">
 
             <div className="flex items-center gap-4">
 
@@ -47,7 +47,7 @@ export default function HeaderKreator() {
                     {/* Profile */}
                     <div
                         onClick={() => setOpen(!open)}
-                        className="flex items-center justify-between cursor-pointer border-1 border-slate-800 rounded-full py-2 px-4 w-full gap-3 shadow-[0px_1px_0px_rgba(30,27,75)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition duration-200 ease-out"
+                        className="flex items-center justify-between cursor-pointer border border-slate-800 rounded-full py-2 px-4 w-full gap-3 shadow-[0px_1px_0px_rgba(30,27,75)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition duration-200 ease-out"
                     >
                         <div className="flex items-center gap-2">
                             {user?.image ? (
@@ -79,7 +79,7 @@ export default function HeaderKreator() {
 
                             {/* Akun Saya */}
                             <button
-                                onClick={() => router.push('profile')}
+                                onClick={() => router.push('/profile')}
                                 className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition"
                             >
                                 <UserIcon size={20} />

@@ -13,6 +13,7 @@ export const config = {
         "/peserta/:path*", 
         "/pembayaran/:path*", 
         "/setup/:path*", 
+        "/admin/:path*",
         "/sign-in", 
         "/sign-up", 
         "/"

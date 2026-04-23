@@ -195,7 +195,7 @@ export function FormCustomizer({ productId }: { productId: string }) {
                 fields: debouncedFields.map((f, index) => ({ ...f, order: index })),
             });
         }
-    }, [debouncedFields, productId, hasLoaded]);
+    }, [debouncedFields, productId, hasLoaded, saveMutation]);
 
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;

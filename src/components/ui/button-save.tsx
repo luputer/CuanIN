@@ -28,7 +28,7 @@ export default function ButtonSave({
             className={cn(
                 "w-fit flex items-center justify-center gap-2 px-6 py-4",
                 "border border-slate-800 rounded-lg",
-                "text-sm font-semibold text-slate-800 bg-yellow-200 cursor-pointer",
+                "text-sm font-semibold text-white bg-cyan-600 cursor-pointer",
                 "shadow-[2px_2px_0px_rgba(30,27,75)]",
                 "transition-all duration-200 ease-out",
                 "hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none",

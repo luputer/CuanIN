@@ -140,7 +140,7 @@ export default function CreateDigitalProductPage() {
                             <div className="space-y-3">
 
                                 {/* Editor */}
-                                <div className="border border-slate-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-cyan-500">
+                                <div className="border border-slate-400 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-cyan-500">
                                     <MDEditor
                                         value={descriptionValue ?? ""}
                                         onChange={(val) =>
@@ -298,6 +298,7 @@ export default function CreateDigitalProductPage() {
                         isLoading={createProduct.isPending}
                         label="Tambah Produk Digital"
                         icon={PlusIcon}
+                        weight="bold"
                     />
                 </div>
             </div>

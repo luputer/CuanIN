@@ -6,8 +6,8 @@
       "name": "cuanin",
       "dependencies": {
         "@auth/prisma-adapter": "^2.7.2",
-        "@aws-sdk/client-s3": "^3.1030.0",
-        "@aws-sdk/s3-request-presigner": "^3.1030.0",
+        "@aws-sdk/client-s3": "^3.893.0",
+        "@aws-sdk/s3-request-presigner": "^3.893.0",
         "@dnd-kit/core": "^6.3.1",
         "@dnd-kit/sortable": "^10.0.0",
         "@dnd-kit/utilities": "^3.2.2",
@@ -33,6 +33,7 @@
         "next-auth": "^5.0.0-beta.30",
         "npm": "^11.12.1",
         "pg": "^8.20.0",
+        "phosphor-react": "^1.4.1",
         "radix-ui": "^1.4.3",
         "react": "^19.0.0",
         "react-day-picker": "^9.14.0",
@@ -1417,6 +1418,8 @@
     "pg-types": ["pg-types@2.2.0", "", { "dependencies": { "pg-int8": "1.0.1", "postgres-array": "~2.0.0", "postgres-bytea": "~1.0.0", "postgres-date": "~1.0.4", "postgres-interval": "^1.1.0" } }, "sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA=="],
 
     "pgpass": ["pgpass@1.0.5", "", { "dependencies": { "split2": "^4.1.0" } }, "sha512-FdW9r/jQZhSeohs1Z3sI1yxFQNFvMcnmfuj4WBMUTxOrAyLMaTcE1aAMBiTlbMNaXvBCQuVi0R7hd8udDSP7ug=="],
+
+    "phosphor-react": ["phosphor-react@1.4.1", "", { "peerDependencies": { "react": ">=16" } }, "sha512-gO5j7U0xZrdglTAYDYPACU4xDOFBTJmptrrB/GeR+tHhCZF3nUMyGmV/0hnloKjuTrOmpSFlbfOY78H39rgjUQ=="],
 
     "picocolors": ["picocolors@1.1.1", "", {}, "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA=="],
 

@@ -1,0 +1,209 @@
+- generic:
+  - region "Notifications alt+T"
+  - generic:
+    - complementary:
+      - generic:
+        - generic:
+          - link:
+            - /url: /
+            - text: CuanIN
+        - button:
+          - img
+      - generic:
+        - generic: MENU
+        - generic:
+          - link:
+            - /url: /dashboard
+            - generic:
+              - img
+              - generic: Dashboard
+          - link:
+            - /url: /webinar
+            - generic:
+              - img
+              - generic: Webinar
+          - link:
+            - /url: /kelas
+            - generic:
+              - img
+              - generic: Kelas
+          - link:
+            - /url: /produk-digital
+            - generic:
+              - img
+              - generic: Produk Digital
+          - link:
+            - /url: /peserta
+            - generic:
+              - img
+              - generic: Peserta
+          - link:
+            - /url: /pembayaran
+            - generic:
+              - img
+              - generic: Pembayaran
+        - generic:
+          - link:
+            - /url: /setup
+            - generic:
+              - img
+              - generic: Katalog Saya
+    - generic:
+      - banner:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic: T
+                - generic: Test User
+              - img
+      - main:
+        - generic:
+          - generic:
+            - generic:
+              - link:
+                - /url: /kelas
+                - img
+                - generic: Kembali ke Daftar Kelas Online
+              - heading [level=1]: Tambah Kelas Baru
+            - generic:
+              - generic:
+                - generic:
+                  - heading [level=2]: Informasi Kelas
+                - generic:
+                  - generic:
+                    - generic: Nama Kelas
+                    - generic:
+                      - textbox:
+                        - /placeholder: Masukkan Nama Kelas
+                  - generic:
+                    - generic: Deskripsi Singkat
+                    - generic:
+                      - textbox:
+                        - /placeholder: Masukkan Deskripsi Singkat
+                  - generic:
+                    - generic: Deskripsi
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - list:
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem
+                              - listitem:
+                                - button:
+                                  - img
+                            - list:
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem:
+                                - button:
+                                  - img
+                              - listitem
+                              - listitem:
+                                - button:
+                                  - img
+                          - generic:
+                            - generic:
+                              - generic:
+                                - textbox
+                  - generic:
+                    - generic: Gambar Thumbnail
+                    - generic:
+                      - generic:
+                        - img
+                        - generic: Upload
+                  - generic:
+                    - generic: Tipe Akses
+                    - generic:
+                      - combobox [expanded]:
+                        - generic: Gratis
+                        - img
+                  - generic:
+                    - generic: Link Akses (Google Drive, Zoom, dll)
+                    - generic:
+                      - textbox:
+                        - /placeholder: https://zoom.us/j/...
+                  - generic:
+                    - generic: Keuntungan / Benefit
+                    - generic:
+                      - generic:
+                        - button:
+                          - img
+                          - text: Tambah Benefit
+                  - generic:
+                    - generic: Catatan
+                    - generic:
+                      - textbox:
+                        - /placeholder: Masukkan catatan (opsional)
+                  - generic:
+                    - generic: Status
+                    - generic:
+                      - combobox:
+                        - generic: Published
+                        - img
+            - button:
+              - text: Tambah
+              - img
+  - button "Open Next.js Dev Tools" [ref=e329] [cursor=pointer]:
+    - img [ref=e330]
+  - alert
+  - generic: "25"
+  - listbox [ref=e635]:
+    - option "Gratis" [active] [selected] [ref=e636]:
+      - generic:
+        - generic:
+          - img
+      - generic [ref=e637]: Gratis
+    - option "Berbayar" [ref=e638]:
+      - generic [ref=e639]: Berbayar

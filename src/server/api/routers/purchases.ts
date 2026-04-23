@@ -165,6 +165,83 @@ export const purchasesRouter = createTRPCRouter({
             return countMap;
         }),
 
+    // Get all unique participants across all products owned by the creator
+    getAllParticipants: protectedProcedure
+        .input(
+            z.object({
+                page: z.number().min(1).default(1),
+                limit: z.number().min(1).max(100).default(10),
+                search: z.string().optional(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const skip = (input.page - 1) * input.limit;
+
+            // Get all product IDs owned by this creator
+            const products = await ctx.db.product.findMany({
+                where: { userId: ctx.session.user.id },
+                select: { id: true },
+            });
+            const productIds = products.map((p) => p.id);
+
+            if (productIds.length === 0) {
+                return {
+                    items: [],
+                    total: 0,
+                    page: input.page,
+                    limit: input.limit,
+                    totalPages: 0,
+                };
+            }
+
+            // Define base where clause
+            const whereClause = {
+                productId: { in: productIds },
+                ...(input.search
+                    ? {
+                          OR: [
+                              { buyerName: { contains: input.search, mode: "insensitive" as const } },
+                              { buyerEmail: { contains: input.search, mode: "insensitive" as const } },
+                          ],
+                      }
+                    : {}),
+            };
+
+            // First, get unique emails to handle pagination correctly
+            // Prisma doesn't support easy pagination on groupBy yet for all fields
+            // So we'll get the aggregate data first
+            const participantsAggregate = await ctx.db.purchase.groupBy({
+                by: ["buyerEmail", "buyerName", "buyerPhone"],
+                where: whereClause,
+                _count: {
+                    id: true,
+                },
+                _sum: {
+                    amount: true,
+                },
+                orderBy: {
+                    buyerName: "asc",
+                },
+            });
+
+            const total = participantsAggregate.length;
+            const paginatedItems = participantsAggregate.slice(skip, skip + input.limit);
+
+            return {
+                items: paginatedItems.map((p) => ({
+                    email: p.buyerEmail,
+                    name: p.buyerName,
+                    phone: p.buyerPhone,
+                    productsBought: p._count.id,
+                    totalTransaction: Number(p._sum.amount ?? 0),
+                })),
+                total,
+                page: input.page,
+                limit: input.limit,
+                totalPages: Math.ceil(total / input.limit),
+            };
+        }),
+
     // Delete single purchase (creator dashboard)
     delete: protectedProcedure
         .input(z.object({ id: z.string() }))

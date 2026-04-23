@@ -13,10 +13,10 @@ import { toast } from "sonner";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { FormCustomizer } from "../_Component/form-customizer";
-import Pembeli from "../_Component/pembeli";
+import PurchaseList from "~/components/PurchaseList";
 import { Skeleton } from "~/components/ui/skeleton";
 import remarkBreaks from "remark-breaks";
+import FormCustomizer from "~/components/FormCustomizer";
 
 export default function ProductDetailPage() {
     const params = useParams();
@@ -235,7 +235,7 @@ export default function ProductDetailPage() {
                     </ProductDetailTabContent>
 
                     <ProductDetailTabContent value="user">
-                        <Pembeli productId={id} />
+                        <PurchaseList productId={id} label="Pembeli" />
                     </ProductDetailTabContent>
 
                     <ProductDetailTabContent value="form">

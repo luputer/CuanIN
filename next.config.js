@@ -12,6 +12,10 @@ const config = {
                 protocol: "https",
                 hostname: "pub-3098f58e584244c8bf48888938b34bae.r2.dev",
             },
+            {
+                protocol: "https",
+                hostname: "lh3.googleusercontent.com",
+            },
         ],
     },
 };

@@ -1,0 +1,108 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=e604]:
+        - img [ref=e606]
+        - generic [ref=e609]: Kelas Online berhasil diperbarui
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - link "CuanIN" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - button "Collapse menu" [ref=e7]:
+          - img [ref=e8]
+      - generic [ref=e10]:
+        - generic [ref=e11]: MENU
+        - generic [ref=e12]:
+          - link "Dashboard" [ref=e13] [cursor=pointer]:
+            - /url: /dashboard
+            - generic [ref=e14]:
+              - img [ref=e15]
+              - generic [ref=e21]: Dashboard
+          - link "Webinar" [ref=e22] [cursor=pointer]:
+            - /url: /webinar
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Webinar
+          - link "Kelas" [ref=e28] [cursor=pointer]:
+            - /url: /kelas
+            - generic [ref=e29]:
+              - img [ref=e30]
+              - generic [ref=e33]: Kelas
+          - link "Produk Digital" [ref=e34] [cursor=pointer]:
+            - /url: /produk-digital
+            - generic [ref=e35]:
+              - img [ref=e36]
+              - generic [ref=e39]: Produk Digital
+          - link "Peserta" [ref=e40] [cursor=pointer]:
+            - /url: /peserta
+            - generic [ref=e41]:
+              - img [ref=e42]
+              - generic [ref=e46]: Peserta
+          - link "Pembayaran" [ref=e47] [cursor=pointer]:
+            - /url: /pembayaran
+            - generic [ref=e48]:
+              - img [ref=e49]
+              - generic [ref=e52]: Pembayaran
+        - link "Katalog Saya" [ref=e54] [cursor=pointer]:
+          - /url: /testuser
+          - generic [ref=e55]:
+            - img [ref=e56]
+            - generic [ref=e59]: Katalog Saya
+    - generic [ref=e60]:
+      - banner [ref=e61]:
+        - generic [ref=e64] [cursor=pointer]:
+          - generic [ref=e65]:
+            - generic [ref=e66]: T
+            - generic [ref=e67]: Test User
+          - img [ref=e68]
+      - main [ref=e71]:
+        - generic [ref=e610]:
+          - generic [ref=e611]:
+            - link "Kembali ke Daftar Kelas Online" [ref=e612] [cursor=pointer]:
+              - /url: /kelas
+              - img [ref=e613]
+              - generic [ref=e615]: Kembali ke Daftar Kelas Online
+            - button "Salin Link Kelas" [ref=e616]:
+              - img
+              - text: Salin Link Kelas
+          - heading "Kelas React Dasar" [level=1] [ref=e617]
+          - generic [ref=e618]:
+            - tablist [ref=e620]:
+              - tab "Detail Kelas" [selected] [ref=e621] [cursor=pointer]
+              - tab "Peserta (0)" [ref=e622] [cursor=pointer]
+              - tab "Kustomisasi Form" [ref=e623] [cursor=pointer]
+            - tabpanel "Detail Kelas" [ref=e624]:
+              - generic [ref=e625]:
+                - generic [ref=e626]:
+                  - heading "Informasi Kelas" [level=2] [ref=e627]
+                  - link "Edit" [ref=e628] [cursor=pointer]:
+                    - /url: /kelas/257b73e2-5a70-482f-b983-3c97c5d9ff18/edit
+                    - img [ref=e629]
+                    - text: Edit
+                - generic [ref=e632]:
+                  - generic [ref=e634]: Nama Kelas
+                  - generic [ref=e636]: Kelas React Dasar
+                - generic [ref=e637]:
+                  - generic [ref=e639]: Deskripsi
+                  - paragraph [ref=e643]: Ini adalah deskripsi lengkap kelas React Dasar. Belajar Hooks, Component, dan State.
+                - generic [ref=e644]:
+                  - generic [ref=e646]: Gambar Thumbnail
+                  - img [ref=e650]
+                - generic [ref=e654]:
+                  - generic [ref=e656]: Tipe Akses
+                  - generic [ref=e658]: Berbayar
+                - generic [ref=e659]:
+                  - generic [ref=e661]: Harga
+                  - generic [ref=e663]: Rp 100.000
+                - generic [ref=e664]:
+                  - generic [ref=e666]: Link Akses
+                  - link "https://example.com/akses-kelas" [ref=e669] [cursor=pointer]:
+                    - /url: https://example.com/akses-kelas
+                - generic [ref=e670]:
+                  - generic [ref=e672]: Status
+                  - generic [ref=e675]: Published
+              - paragraph [ref=e677]: Ditambahkan pada 22 April 2026 20:34
+  - button "Open Next.js Dev Tools" [ref=e214] [cursor=pointer]:
+    - img [ref=e215]
+  - alert [ref=e218]

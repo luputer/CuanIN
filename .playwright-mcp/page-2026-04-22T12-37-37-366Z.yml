@@ -1,0 +1,151 @@
+- generic:
+  - region "Notifications alt+T"
+  - generic:
+    - complementary:
+      - generic:
+        - generic:
+          - link:
+            - /url: /
+            - text: CuanIN
+        - button:
+          - img
+      - generic:
+        - generic: MENU
+        - generic:
+          - link:
+            - /url: /dashboard
+            - generic:
+              - img
+              - generic: Dashboard
+          - link:
+            - /url: /webinar
+            - generic:
+              - img
+              - generic: Webinar
+          - link:
+            - /url: /kelas
+            - generic:
+              - img
+              - generic: Kelas
+          - link:
+            - /url: /produk-digital
+            - generic:
+              - img
+              - generic: Produk Digital
+          - link:
+            - /url: /peserta
+            - generic:
+              - img
+              - generic: Peserta
+          - link:
+            - /url: /pembayaran
+            - generic:
+              - img
+              - generic: Pembayaran
+        - generic:
+          - link:
+            - /url: /testuser
+            - generic:
+              - img
+              - generic: Katalog Saya
+    - generic:
+      - banner:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic: T
+                - generic: Test User
+              - img
+      - main:
+        - generic:
+          - generic:
+            - generic:
+              - heading [level=1]: Daftar Kelas Online
+              - paragraph: Pantau semua kelas online yang tersedia di platform.
+            - generic:
+              - generic:
+                - img
+                - textbox:
+                  - /placeholder: Cari berdasarkan Nama Kelas
+              - generic:
+                - button:
+                  - generic: "Status: Semua"
+                  - img
+                - link:
+                  - /url: /kelas/create
+                  - generic: Tambah Kelas
+                  - img
+            - generic:
+              - generic:
+                - table:
+                  - rowgroup:
+                    - row:
+                      - columnheader:
+                        - generic:
+                          - text: Nama
+                          - generic:
+                            - img
+                            - img
+                      - columnheader: Thumbnail
+                      - columnheader: Tipe
+                      - columnheader: Harga
+                      - columnheader: Peserta
+                      - columnheader: Status
+                      - columnheader: Aksi
+                  - rowgroup:
+                    - row:
+                      - cell:
+                        - link:
+                          - /url: /kelas/257b73e2-5a70-482f-b983-3c97c5d9ff18
+                          - text: Kelas React Dasar - Updated
+                      - cell:
+                        - generic:
+                          - generic: No image
+                      - cell: Berbayar
+                      - cell: Rp 100.000
+                      - cell:
+                        - generic:
+                          - generic: "0"
+                          - button: Lihat
+                      - cell: Published
+                      - cell:
+                        - generic:
+                          - button:
+                            - img
+                          - button:
+                            - img
+                          - button:
+                            - img
+            - generic:
+              - generic:
+                - generic:
+                  - combobox
+                  - img
+                - generic: "Hasil: 1-1 dari 1"
+              - generic:
+                - navigation:
+                  - list:
+                    - listitem:
+                      - button [disabled]:
+                        - img
+                    - generic:
+                      - listitem:
+                        - button: "1"
+                    - listitem:
+                      - button [disabled]:
+                        - img
+  - button "Open Next.js Dev Tools" [ref=e214] [cursor=pointer]:
+    - img [ref=e215]
+  - alert
+  - alertdialog "Hapus Kelas Online?" [ref=e802]:
+    - generic [ref=e803]:
+      - heading "Hapus Kelas Online?" [level=2] [ref=e804]
+      - paragraph [ref=e805]:
+        - text: Kamu yakin ingin menghapus kelas
+        - generic [ref=e806]: "\"Kelas React Dasar - Updated\""
+        - text: "?"
+        - text: Tindakan ini tidak bisa dibatalkan.
+    - generic [ref=e807]:
+      - button "Batal" [active] [ref=e808]
+      - button "Ya, Hapus" [ref=e809]

@@ -1,10 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import type { z } from "zod";
-
 import Link from "next/link";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
@@ -15,6 +11,7 @@ import {
     CircleNotchIcon,
     CaretUpIcon,
     CaretDownIcon,
+    TrashIcon,
 } from "@phosphor-icons/react";
 
 import dynamic from "next/dynamic";
@@ -22,109 +19,42 @@ import MarkdownPreview from "~/components/MarkdownPreview";
 
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
-import { productDigitalSchema } from "~/lib/validation";
 import { formatNumberWithDots, parseDotsToNumber } from "~/lib/utils";
-
-import ButtonSave from "~/components/ui/button-save";
 import {
     FormGroup,
     SectionHeader,
     FormInput,
     FormSelect,
+    FormTextarea,
 } from "~/components/ui/form-layout";
+import { useProductDigital } from "~/hooks/use-product-digital";
 
 // Markdown Editor
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
-type ProductFormValues = z.infer<typeof productDigitalSchema>;
-
 export default function EditProductPage() {
-    const router = useRouter();
     const params = useParams();
     const id = params.id as string;
-
-    const { data: product, isLoading } = api.products.getById.useQuery({ id });
-    const utils = api.useUtils();
-
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [uploading, setUploading] = useState(false);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-    const getPresignedUrl = api.s3.getUploadPresignedUrl.useMutation();
 
     const {
-        register,
-        handleSubmit,
-        watch,
-        setValue,
-        getValues,
-        reset,
-        formState: { errors },
-    } = useForm<ProductFormValues>({
-        resolver: zodResolver(productDigitalSchema),
-        defaultValues: {
-            priceType: "free",
-            status: "published",
-            price: 0,
-        },
-    });
+        form,
+        fields,
+        append,
+        remove,
+        uploading,
+        previewUrl,
+        onFileChange,
+        onSubmit,
+        isPending,
+        isLoadingProduct,
+        product
+    } = useProductDigital({ id, isEdit: true });
+
+    const { register, watch, setValue, getValues, formState: { errors } } = form;
 
     const priceType = watch("priceType");
     const descriptionValue = watch("description");
-
-    // Prefill
-    useEffect(() => {
-        if (product) {
-            const priceVal = Number(product.price);
-
-            reset({
-                name: product.name,
-                description: product.description ?? "",
-                priceType: priceVal === 0 ? "free" : "paid",
-                price: priceVal,
-                link: product.link ?? "",
-                status: product.status ?? "published",
-                image: product.image ?? undefined,
-            });
-
-            if (product.image) setPreviewUrl(product.image);
-        }
-    }, [product, reset]);
-
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        const localUrl = URL.createObjectURL(file);
-        setPreviewUrl(localUrl);
-        setUploading(true);
-
-        try {
-            const key = `products/${Date.now()}-${file.name}`;
-            const url = await getPresignedUrl.mutateAsync({
-                key,
-                fileType: file.type,
-            });
-
-            const res = await fetch(url, {
-                method: "PUT",
-                body: file,
-                headers: { "Content-Type": file.type },
-            });
-
-            if (!res.ok) throw new Error("Gagal upload");
-
-            const publicUrl = `https://pub-3098f58e584244c8bf48888938b34bae.r2.dev/${key}`;
-            setValue("image", publicUrl, { shouldValidate: true });
-
-            toast.success("Gambar berhasil diunggah");
-        } catch (err) {
-            toast.error("Gagal upload gambar");
-            setPreviewUrl(product?.image ?? null);
-        } finally {
-            setUploading(false);
-        }
-    };
 
     const handlePriceAdjust = (amount: number) => {
         const current = parseDotsToNumber(getValues("price")?.toString() ?? "0");
@@ -138,30 +68,7 @@ export default function EditProductPage() {
         }
     };
 
-    const updateProduct = api.products.update.useMutation({
-        onSuccess: () => {
-            void utils.products.getAll.invalidate();
-            toast.success("Produk berhasil diperbarui");
-            router.push(`/produk-digital/${id}`);
-        },
-        onError: (err) => {
-            toast.error(err.message);
-        },
-    });
-
-    const onSubmit = (data: ProductFormValues) => {
-        updateProduct.mutate({
-            id,
-            name: data.name,
-            description: data.description,
-            price: data.priceType === "free" ? 0 : (data.price ?? 0),
-            link: data.link,
-            status: data.status,
-            image: data.image,
-        });
-    };
-
-    if (isLoading) {
+    if (isLoadingProduct) {
         return (
             <div className="flex justify-center py-20">
                 <CircleNotchIcon className="animate-spin text-cyan-500" size={32} />
@@ -207,7 +114,13 @@ export default function EditProductPage() {
                             <FormInput {...register("name")} />
                         </FormGroup>
 
-                        {/* Deskripsi */}
+                        <FormGroup label="Deskripsi Singkat" error={errors.shortDescription?.message}>
+                            <FormTextarea
+                                placeholder="Masukkan deskripsi singkat"
+                                {...register("shortDescription")}
+                            />
+                        </FormGroup>
+
                         <FormGroup label="Deskripsi" error={errors.description?.message}>
                             <div className="space-y-3">
 
@@ -239,7 +152,13 @@ export default function EditProductPage() {
                             >
                                 {previewUrl ? (
                                     <>
-                                        <Image src={previewUrl} alt="Preview" fill className="object-cover" unoptimized />
+                                        <Image
+                                            src={previewUrl}
+                                            alt="Preview"
+                                            fill
+                                            unoptimized
+                                            className="object-cover"
+                                        />
                                         {uploading && (
                                             <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                                                 <CircleNotchIcon className="animate-spin text-white" size={24} />
@@ -254,7 +173,8 @@ export default function EditProductPage() {
                                     ref={fileInputRef}
                                     type="file"
                                     className="hidden"
-                                    onChange={handleFileUpload}
+                                    accept="image/*"
+                                    onChange={onFileChange}
                                 />
                             </div>
                         </FormGroup>
@@ -295,7 +215,35 @@ export default function EditProductPage() {
                             <FormInput {...register("link")} />
                         </FormGroup>
 
-                        {/* Status */}
+                        <FormGroup label="Keuntungan / Benefit" error={errors.benefit?.message}>
+                            <div className="space-y-3 flex flex-col">
+                                {fields.map((field, index) => (
+                                    <div key={field.id} className="flex gap-2">
+                                        <FormInput
+                                            placeholder={`Benefit ${index + 1}`}
+                                            className="flex-1"
+                                            {...register(`benefit.${index}` as const)}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="flex h-[52px] w-[52px] items-center justify-center bg-red-50 text-red-500 hover:text-red-700 hover:bg-red-100 rounded-lg transition-colors border border-transparent shrink-0"
+                                            onClick={() => remove(index)}
+                                        >
+                                            <TrashIcon className="h-5 w-5" weight="bold" />
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    className="flex items-center justify-center gap-2 px-4 h-[52px] text-sm font-medium text-cyan-600 bg-cyan-50 border border-cyan-200 rounded-lg hover:bg-cyan-100 transition-colors w-fit"
+                                    onClick={() => append("")}
+                                >
+                                    <PlusIcon className="h-5 w-5" weight="bold" />
+                                    Tambah Benefit
+                                </button>
+                            </div>
+                        </FormGroup>
+
                         <FormGroup label="Status">
                             <FormSelect {...register("status")}>
                                 <option value="published">Published</option>
@@ -308,11 +256,23 @@ export default function EditProductPage() {
                 </div>
 
                 <div className="px-10 pb-8 flex justify-end">
-                    <ButtonSave
-                        onClick={handleSubmit(onSubmit)}
-                        isLoading={updateProduct.isPending}
-                        label="Simpan Perubahan"
-                    />
+                    <button
+                        onClick={onSubmit}
+                        disabled={isPending}
+                        className="flex items-center justify-center gap-2 px-6 py-3 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 disabled:opacity-50 transition-colors font-semibold"
+                    >
+                        {isPending ? (
+                            <>
+                                <CircleNotchIcon className="animate-spin" size={20} />
+                                Menyimpan...
+                            </>
+                        ) : (
+                            <>
+                                <PlusIcon size={20} weight="bold" />
+                                Simpan Perubahan
+                            </>
+                        )}
+                    </button>
                 </div>
             </div>
         </div>

@@ -1,0 +1,109 @@
+- generic [ref=e1]:
+  - region "Notifications alt+T"
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - link "CuanIN" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - button "Collapse menu" [ref=e7]:
+          - img [ref=e8]
+      - generic [ref=e10]:
+        - generic [ref=e11]: MENU
+        - generic [ref=e12]:
+          - link "Dashboard" [ref=e13] [cursor=pointer]:
+            - /url: /dashboard
+            - generic [ref=e14]:
+              - img [ref=e15]
+              - generic [ref=e21]: Dashboard
+          - link "Webinar" [ref=e22] [cursor=pointer]:
+            - /url: /webinar
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Webinar
+          - link "Kelas" [ref=e28] [cursor=pointer]:
+            - /url: /kelas
+            - generic [ref=e29]:
+              - img [ref=e30]
+              - generic [ref=e33]: Kelas
+          - link "Produk Digital" [ref=e34] [cursor=pointer]:
+            - /url: /produk-digital
+            - generic [ref=e35]:
+              - img [ref=e36]
+              - generic [ref=e39]: Produk Digital
+          - link "Peserta" [active] [ref=e40] [cursor=pointer]:
+            - /url: /peserta
+            - generic [ref=e41]:
+              - img [ref=e42]
+              - generic [ref=e46]: Peserta
+          - link "Pembayaran" [ref=e47] [cursor=pointer]:
+            - /url: /pembayaran
+            - generic [ref=e48]:
+              - img [ref=e49]
+              - generic [ref=e52]: Pembayaran
+        - link "Katalog Saya" [ref=e54] [cursor=pointer]:
+          - /url: /testuser
+          - generic [ref=e55]:
+            - img [ref=e56]
+            - generic [ref=e59]: Katalog Saya
+    - generic [ref=e60]:
+      - banner [ref=e61]:
+        - generic [ref=e64] [cursor=pointer]:
+          - generic [ref=e65]:
+            - generic [ref=e66]: T
+            - generic [ref=e67]: Test User
+          - img [ref=e68]
+      - main [ref=e71]:
+        - generic [ref=e219]:
+          - generic [ref=e220]:
+            - heading "Daftar Peserta" [level=1] [ref=e221]
+            - paragraph [ref=e222]: Pantau semua peserta yang membeli produkmu.
+          - generic [ref=e224]:
+            - img [ref=e225]
+            - textbox "Cari berdasarkan Nama atau Email" [ref=e228]
+          - table [ref=e231]:
+            - rowgroup [ref=e232]:
+              - row "Nama Email Phone Total Produk Dibeli Total Transaksi Action" [ref=e233]:
+                - columnheader "Nama" [ref=e234]:
+                  - generic [ref=e235] [cursor=pointer]:
+                    - text: Nama
+                    - generic [ref=e236]:
+                      - img [ref=e237]
+                      - img [ref=e239]
+                - columnheader "Email" [ref=e241]
+                - columnheader "Phone" [ref=e242]
+                - columnheader "Total Produk Dibeli" [ref=e243]
+                - columnheader "Total Transaksi" [ref=e244]
+                - columnheader "Action" [ref=e245]
+            - rowgroup [ref=e246]:
+              - row "Buyer User buyer@example.com 6281234567890 1 Rp 50.000" [ref=e247]:
+                - cell "Buyer User" [ref=e248]
+                - cell "buyer@example.com" [ref=e249]
+                - cell "6281234567890" [ref=e250]
+                - cell "1" [ref=e251]
+                - cell "Rp 50.000" [ref=e252]
+                - cell [ref=e253]:
+                  - button [ref=e255] [cursor=pointer]:
+                    - img [ref=e256]
+          - generic [ref=e259]:
+            - generic [ref=e260]:
+              - generic [ref=e261]:
+                - combobox [ref=e262] [cursor=pointer]:
+                  - option "5"
+                  - option "10" [selected]
+                  - option "20"
+                  - option "50"
+                - img
+              - generic [ref=e263]: "Hasil: 1-1 dari 1"
+            - navigation "pagination" [ref=e265]:
+              - list [ref=e266]:
+                - listitem [ref=e267]:
+                  - button [disabled] [ref=e268]:
+                    - img [ref=e269]
+                - listitem [ref=e272]:
+                  - button "1" [ref=e273]
+                - listitem [ref=e274]:
+                  - button [disabled] [ref=e275]:
+                    - img [ref=e276]
+  - button "Open Next.js Dev Tools" [ref=e214] [cursor=pointer]:
+    - img [ref=e215]
+  - alert [ref=e218]

@@ -156,9 +156,18 @@ export function FormCustomizer({ productId }: { productId: string }) {
         { productId }, { enabled: !!productId }
     );
 
+
+    const utils = api.useUtils();
+
+    // Save mutation
     const saveMutation = api.formFields.save.useMutation({
-        onSuccess: () => toast.success("Form berhasil disimpan!"),
-        onError: (e) => toast.error(`Gagal: ${e.message}`),
+        onSuccess: () => {
+            void utils.formFields.getByProductId.invalidate();
+            toast.success("Form berhasil disimpan!");
+        },
+        onError: (error) => {
+            toast.error(`Gagal menyimpan: ${error.message}`);
+        },
     });
 
     useEffect(() => {
@@ -259,11 +268,10 @@ export function FormCustomizer({ productId }: { productId: string }) {
                     </SortableContext>
                 </DndContext>
             </div>
-
-            <div className="flex flex-col gap-3">
-                <ButtonSave label="Tambah Field" icon={PlusIcon} weight="bold" onClick={addField} className="w-full justify-center" />
-                <ButtonSave label="Simpan" weight="fill" onClick={handleSave} disabled={saveMutation.isPending} className="w-full justify-center bg-green-300" />
-            </div>
+        <div className="flex flex-col gap-3">
+            <ButtonSave label="Tambah Field" icon={PlusIcon} weight="bold" onClick={addField} className="w-full justify-center" />
+            <ButtonSave label="Simpan" weight="fill" onClick={handleSave} disabled={saveMutation.isPending} className="w-full justify-center bg-green-300" />
         </div>
+        </div >
     );
 }

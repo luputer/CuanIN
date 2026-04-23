@@ -1,12 +1,13 @@
 "use client";
 
-import { ArrowLeft, Clock, Calendar, MapPin, Share2, ImageIcon, Loader2, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Clock, Calendar, MapPin, Share2, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
 import { api } from "~/trpc/react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import MarkdownPreview from "~/components/MarkdownPreview";
+import Footer from "~/components/layout/footer";
 
 const TYPE_MAP: Record<string, string> = {
     WEBINAR: "Webinar",
@@ -59,166 +60,141 @@ export default function ProductDetailPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-24">
-            {/* Header Navigation */}
-            <div className="bg-white border-b border-slate-200 sticky top-0 z-10">
-                <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-                    <Link
-                        href={`/${slug}`}
-                        className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-slate-100 transition-colors"
-                    >
-                        <ArrowLeft className="w-5 h-5 text-slate-600" />
-                    </Link>
+        <div >
+            <div className="min-h-screen bg-white pb-24">
+                {/* Header Navigation */}
+                <div className="bg-white border-b border-slate-200 sticky top-0 z-10">
+                    <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+                        <Link
+                            href={`/${slug}`}
+                            className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-slate-100 transition-colors"
+                        >
+                            <ArrowLeft className="w-5 h-5 text-slate-600" />
+                        </Link>
 
-                    <button
-                        onClick={handleShare}
-                        className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-slate-100 text-slate-600 transition-colors"
-                    >
-                        <Share2 className="w-5 h-5" />
-                    </button>
+                        <button
+                            onClick={handleShare}
+                            className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-slate-100 text-slate-600 transition-colors"
+                        >
+                            <Share2 className="w-5 h-5" />
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div className="max-w-4xl mx-auto px-4 py-8">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="max-w-4xl mx-auto px-4 py-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                    {/* Main Content Area */}
-                    <div className="lg:col-span-2 space-y-6">
+                        {/* Main Content Area */}
+                        <div className="lg:col-span-2 ">
 
-                        {/* Image Banner */}
-                        <div className="w-full aspect-video bg-slate-200 rounded-2xl overflow-hidden relative border border-slate-100">
-                            {product.image ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
-                            ) : (
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <ImageIcon className="w-12 h-12 text-slate-400" strokeWidth={1} />
+                            {/* Image Banner */}
+                            <div className="w-full aspect-video bg-[#1A1A1A] rounded-3xl overflow-hidden relative border border-slate-100 p-8 flex flex-col justify-between font-sans">
+                                <div className="flex flex-col gap-2">
+                                    <div className="self-start bg-white px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
+                                        <div className="w-6 h-6 rounded-full bg-slate-200 overflow-hidden shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-500">
+                                            {product.user.name?.charAt(0).toUpperCase()}
+                                        </div>
+                                        <p className="font-semibold text-slate-900 text-[12px]">{product.user.name}</p>
+                                    </div>
+                                    <h1 className="text-2xl md:text-4xl font-bold text-white leading-tight">
+                                        {product.name}
+                                    </h1>
+                                    <p className="text-sm text-slate-200">
+                                        {product.shortDescription}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Descripticatalogon */}
+                            {product.description && (
+                                <div className="rounded-2xl mt-3">
+                                    <MarkdownPreview content={product.description} />
                                 </div>
                             )}
-                            <div className="absolute top-4 left-4">
-                                <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-slate-700 text-sm font-medium rounded-full shadow-sm">
-                                    {categoryLabel}
-                                </span>
-                            </div>
+
+                            {/* Event Details (If Webinar/Class) */}
+                            {isWebinarOrClass && product.startDate && (
+                                <div className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8">
+                                    <h3 className="font-semibold text-slate-800 mb-4">Tentang {categoryLabel}</h3>
+                                    <div className="space-y-4 divide-y divide-slate-100">
+                                        <div className="flex items-center justify-between py-3">
+                                            <div className="flex items-center gap-3 text-slate-600">
+                                                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                                                    <MapPin className="w-4 h-4" />
+                                                </div>
+                                                <span className="font-medium">Platform / Lokasi</span>
+                                            </div>
+                                            <span className="text-slate-800 font-medium">Online</span>
+                                        </div>
+                                        <div className="flex items-center justify-between py-3">
+                                            <div className="flex items-center gap-3 text-slate-600">
+                                                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                                                    <Calendar className="w-4 h-4" />
+                                                </div>
+                                                <span className="font-medium">Tanggal Pelaksanaan</span>
+                                            </div>
+                                            <span className="text-slate-800 font-medium">
+                                                {format(new Date(product.startDate), "dd MMMM yyyy", { locale: idLocale })}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center justify-between py-3">
+                                            <div className="flex items-center gap-3 text-slate-600">
+                                                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                                                    <Clock className="w-4 h-4" />
+                                                </div>
+                                                <span className="font-medium">Waktu</span>
+                                            </div>
+                                            <span className="text-slate-800 font-medium">
+                                                {format(new Date(product.startDate), "HH:mm")}
+                                                {product.endDate && ` - ${format(new Date(product.endDate), "HH:mm")} WIB`}
+                                                {!product.endDate && " WIB"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
-                        {/* Title & Creator */}
-                        <div>
-                            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 leading-tight">
-                                {product.name}
-                            </h1>
-                            <div className="flex items-center gap-3 mt-4 text-slate-600">
-                                <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden flex-shrink-0">
-                                    {product.user.image ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img src={product.user.image} alt={product.user.name ?? ""} className="w-full h-full object-cover" />
+                        {/* Sidebar Pricing / CTA */}
+                        <div className="lg:col-span-1">
+                            <div className="bg-white rounded-2xl border border-slate-200 p-6 sticky top-24 shadow-sm">
+                                <div className="mb-6">
+                                    <h3 className="text-sm font-medium text-slate-500 mb-2"> {product.name}</h3>
+                                    <div className="space-y-3  mb-2">
+                                        {(product.benefit as string[])?.length > 0 ? (
+                                            (product.benefit as string[]).map((item, idx) => (
+                                                <div key={idx} className="flex items-start gap-3 text-slate-600 text-sm">
+                                                    <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                                                    <span>{item}</span>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <span className="text-slate-400">Belum ada benefit</span>
+                                        )}
+                                    </div>
+                                    {isGratis ? (
+                                        <div className="text-xl font-bold text-green-600">Gratis</div>
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600 font-bold text-sm">
-                                            {product.user.name?.charAt(0).toUpperCase()}
+                                        <div className="text-xl font-bold text-slate-900">
+                                            Rp {price.toLocaleString("id-ID")}
                                         </div>
                                     )}
                                 </div>
-                                <div>
-                                    <p className="text-sm text-slate-500">Kreator</p>
-                                    <p className="font-medium text-slate-800">{product.user.name}</p>
-                                </div>
-                            </div>
-                        </div>
+                                <Link href={`/${slug}/${productSlug}/checkout`} className="">
+                                    <button className="w-full py-3 px-4 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-xl transition-all active:scale-[0.98] shadow-sm hover:shadow text-center">
+                                        {isGratis ? "Daftar Sekarang" : "Beli Sekarang"}
+                                    </button>
+                                </Link>
 
-                        {/* Descripticatalogon */}
-                        {product.description && (
-                            <div className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8">
-                                <MarkdownPreview content={product.description} />
-                            </div>
-                        )}
-
-                        {/* Event Details (If Webinar/Class) */}
-                        {isWebinarOrClass && product.startDate && (
-                            <div className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8">
-                                <h3 className="font-semibold text-slate-800 mb-4">Tentang {categoryLabel}</h3>
-                                <div className="space-y-4 divide-y divide-slate-100">
-                                    <div className="flex items-center justify-between py-3">
-                                        <div className="flex items-center gap-3 text-slate-600">
-                                            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                                                <MapPin className="w-4 h-4" />
-                                            </div>
-                                            <span className="font-medium">Platform / Lokasi</span>
-                                        </div>
-                                        <span className="text-slate-800 font-medium">Online</span>
-                                    </div>
-                                    <div className="flex items-center justify-between py-3">
-                                        <div className="flex items-center gap-3 text-slate-600">
-                                            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                                                <Calendar className="w-4 h-4" />
-                                            </div>
-                                            <span className="font-medium">Tanggal Pelaksanaan</span>
-                                        </div>
-                                        <span className="text-slate-800 font-medium">
-                                            {format(new Date(product.startDate), "dd MMMM yyyy", { locale: idLocale })}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center justify-between py-3">
-                                        <div className="flex items-center gap-3 text-slate-600">
-                                            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                                                <Clock className="w-4 h-4" />
-                                            </div>
-                                            <span className="font-medium">Waktu</span>
-                                        </div>
-                                        <span className="text-slate-800 font-medium">
-                                            {format(new Date(product.startDate), "HH:mm")}
-                                            {product.endDate && ` - ${format(new Date(product.endDate), "HH:mm")} WIB`}
-                                            {!product.endDate && " WIB"}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Sidebar Pricing / CTA */}
-                    <div className="lg:col-span-1">
-                        <div className="bg-white rounded-2xl border border-slate-200 p-6 sticky top-24 shadow-sm">
-                            <div className="mb-6">
-                                <h3 className="text-sm font-medium text-slate-500 mb-2">Pendaftaran {categoryLabel}</h3>
-                                {isGratis ? (
-                                    <div className="text-3xl font-bold text-green-600">Gratis</div>
-                                ) : (
-                                    <div className="text-3xl font-bold text-slate-900">
-                                        Rp {price.toLocaleString("id-ID")}
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="space-y-3 mb-6">
-                                <div className="flex items-start gap-3 text-slate-600 text-sm">
-                                    <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                                    <span>Akses ke materi {categoryLabel.toLowerCase()}</span>
-                                </div>
-                                {isWebinarOrClass && (
-                                    <div className="flex items-start gap-3 text-slate-600 text-sm">
-                                        <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                                        <span>Bergabung di sesi langsung (Live)</span>
-                                    </div>
-                                )}
-                                <div className="flex items-start gap-3 text-slate-600 text-sm">
-                                    <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                                    <span>Dukungan langsung dari platform</span>
-                                </div>
-                            </div>
-
-                            <Link href={`/${slug}/${productSlug}/checkout`} className="block w-full">
-                                <button className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all active:scale-[0.98] shadow-sm hover:shadow text-center">
-                                    {isGratis ? "Daftar Sekarang" : "Beli Sekarang"}
-                                </button>
-                            </Link>
-
-                            <p className="text-xs text-center text-slate-400 mt-4 leading-relaxed">
+                                {/* <p className="text-xs text-center text-slate-400 mt-4 leading-relaxed">
                                 Dengan mendaftar, kamu menyetujui Syarat & Ketentuan yang berlaku.
-                            </p>
+                            </p> */}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }

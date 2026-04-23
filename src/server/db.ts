@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
+// Triggering reload for new Prisma schema
 import { PrismaClient } from "../../prisma/generated/prisma";
 import { env } from "~/env";
 

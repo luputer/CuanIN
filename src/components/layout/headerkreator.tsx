@@ -5,11 +5,19 @@ import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useEffect } from "react";
+import { api } from "~/trpc/react";
 
 export default function HeaderKreator() {
     const [open, setOpen] = useState(false);
     const { data: session } = useSession();
-    const user = session?.user;
+
+    // Sync with the latest database info to reflect manual profile changes
+    const { data: userProfile } = api.profile.get.useQuery(undefined, {
+        enabled: !!session?.user,
+    });
+
+    const user = userProfile ?? session?.user;
+
     const router = useRouter();
     const dropdownRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -49,6 +57,7 @@ export default function HeaderKreator() {
                                     width={32}
                                     height={32}
                                     className="rounded-full object-cover"
+                                    unoptimized
                                 />
                             ) : (
                                 <div className="w-8 h-8 p-1 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xs uppercase">

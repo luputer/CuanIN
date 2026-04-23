@@ -1,0 +1,178 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T"
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - link "CuanIN" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - button "Collapse menu" [ref=e7]:
+          - img [ref=e8]
+      - generic [ref=e10]:
+        - generic [ref=e11]: MENU
+        - generic [ref=e12]:
+          - link "Dashboard" [ref=e13] [cursor=pointer]:
+            - /url: /dashboard
+            - generic [ref=e14]:
+              - img [ref=e15]
+              - generic [ref=e21]: Dashboard
+          - link "Webinar" [ref=e22] [cursor=pointer]:
+            - /url: /webinar
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Webinar
+          - link "Kelas" [ref=e28] [cursor=pointer]:
+            - /url: /kelas
+            - generic [ref=e29]:
+              - img [ref=e30]
+              - generic [ref=e33]: Kelas
+          - link "Produk Digital" [ref=e34] [cursor=pointer]:
+            - /url: /produk-digital
+            - generic [ref=e35]:
+              - img [ref=e36]
+              - generic [ref=e39]: Produk Digital
+          - link "Peserta" [ref=e40] [cursor=pointer]:
+            - /url: /peserta
+            - generic [ref=e41]:
+              - img [ref=e42]
+              - generic [ref=e46]: Peserta
+          - link "Pembayaran" [ref=e47] [cursor=pointer]:
+            - /url: /pembayaran
+            - generic [ref=e48]:
+              - img [ref=e49]
+              - generic [ref=e52]: Pembayaran
+        - link "Katalog Saya" [ref=e54] [cursor=pointer]:
+          - /url: /setup
+          - generic [ref=e55]:
+            - img [ref=e56]
+            - generic [ref=e59]: Katalog Saya
+    - generic [ref=e60]:
+      - banner [ref=e61]:
+        - generic [ref=e64] [cursor=pointer]:
+          - generic [ref=e65]:
+            - generic [ref=e66]: U
+            - generic [ref=e67]: User
+          - img [ref=e68]
+      - main [ref=e71]:
+        - generic [ref=e73]:
+          - generic [ref=e74]:
+            - heading "Daftar Transaksi" [level=1] [ref=e75]
+            - paragraph [ref=e76]: Lihat pemasukan, saldo tersedia, dan tarik dana kapan saja.
+          - generic [ref=e77]:
+            - generic [ref=e78]:
+              - generic [ref=e79]:
+                - img [ref=e80]
+                - generic [ref=e83]: Saldo saat ini
+              - generic [ref=e84]:
+                - heading "Rp 1.500.000" [level=2] [ref=e85]
+                - button "Tarik Saldo" [ref=e86]:
+                  - text: Tarik Saldo
+                  - img [ref=e87]
+            - generic [ref=e90]:
+              - paragraph [ref=e91]: Total Penghasilan
+              - heading "Rp 1.500.000" [level=3] [ref=e92]
+              - generic [ref=e93]:
+                - generic [ref=e94]: 30 hari terakhir
+                - generic [ref=e95]: + 30%
+            - generic [ref=e96]:
+              - paragraph [ref=e97]: Total Transaksi
+              - heading "65" [level=3] [ref=e98]
+              - generic [ref=e99]:
+                - generic [ref=e100]: 30 hari terakhir
+                - generic [ref=e101]: + 30%
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - img [ref=e104]
+              - textbox "Cari berdasarkan ID Transaksi atau Creator" [ref=e107]
+            - 'button "Status: Semua" [ref=e109]':
+              - generic [ref=e110]: "Status: Semua"
+              - img [ref=e111]
+          - table [ref=e114]:
+            - rowgroup [ref=e115]:
+              - row "ID Transaksi Total Metode Nama Produk Tanggal Status" [ref=e116]:
+                - columnheader "ID Transaksi" [ref=e117]
+                - columnheader "Total" [ref=e118]
+                - columnheader "Metode" [ref=e119]
+                - columnheader "Nama" [ref=e120] [cursor=pointer]:
+                  - generic [ref=e121]:
+                    - text: Nama
+                    - generic [ref=e122]:
+                      - img [ref=e123]
+                      - img [ref=e125]
+                - columnheader "Produk" [ref=e127] [cursor=pointer]:
+                  - generic [ref=e128]:
+                    - text: Produk
+                    - generic [ref=e129]:
+                      - img [ref=e130]
+                      - img [ref=e132]
+                - columnheader "Tanggal" [ref=e134] [cursor=pointer]:
+                  - generic [ref=e135]:
+                    - text: Tanggal
+                    - generic [ref=e136]:
+                      - img [ref=e137]
+                      - img [ref=e139]
+                - columnheader "Status" [ref=e141]
+            - rowgroup [ref=e142]:
+              - row "1 Rp 259.000 Transfer Bank Sophia Lee Webinar UI/UX Dasar 22 Maret 2026 09:00 Sudah Bayar" [ref=e143]:
+                - cell "1" [ref=e144]
+                - cell "Rp 259.000" [ref=e145]
+                - cell "Transfer Bank" [ref=e146]
+                - cell "Sophia Lee" [ref=e147]
+                - cell "Webinar UI/UX Dasar" [ref=e148]
+                - cell "22 Maret 2026 09:00" [ref=e149]
+                - cell "Sudah Bayar" [ref=e150]
+              - row "2 Rp 149.000 Transfer Bank Sophia Lee Kelas React untuk Pemula 22 Maret 2026 09:00 Sudah Bayar" [ref=e151]:
+                - cell "2" [ref=e152]
+                - cell "Rp 149.000" [ref=e153]
+                - cell "Transfer Bank" [ref=e154]
+                - cell "Sophia Lee" [ref=e155]
+                - cell "Kelas React untuk Pemula" [ref=e156]
+                - cell "22 Maret 2026 09:00" [ref=e157]
+                - cell "Sudah Bayar" [ref=e158]
+              - row "3 Rp 259.000 Transfer Bank Sophia Lee Template CV ATS Friendly 22 Maret 2026 09:00 Sudah Bayar" [ref=e159]:
+                - cell "3" [ref=e160]
+                - cell "Rp 259.000" [ref=e161]
+                - cell "Transfer Bank" [ref=e162]
+                - cell "Sophia Lee" [ref=e163]
+                - cell "Template CV ATS Friendly" [ref=e164]
+                - cell "22 Maret 2026 09:00" [ref=e165]
+                - cell "Sudah Bayar" [ref=e166]
+              - row "4 Rp 149.000 Transfer Bank Sophia Lee Webinar Personal Branding 22 Maret 2026 09:00 Sudah Bayar" [ref=e167]:
+                - cell "4" [ref=e168]
+                - cell "Rp 149.000" [ref=e169]
+                - cell "Transfer Bank" [ref=e170]
+                - cell "Sophia Lee" [ref=e171]
+                - cell "Webinar Personal Branding" [ref=e172]
+                - cell "22 Maret 2026 09:00" [ref=e173]
+                - cell "Sudah Bayar" [ref=e174]
+              - row "5 Rp 149.000 Transfer Bank Sophia Lee Bootcamp Laravel 7 Hari 22 Maret 2026 09:00 Sudah Bayar" [ref=e175]:
+                - cell "5" [ref=e176]
+                - cell "Rp 149.000" [ref=e177]
+                - cell "Transfer Bank" [ref=e178]
+                - cell "Sophia Lee" [ref=e179]
+                - cell "Bootcamp Laravel 7 Hari" [ref=e180]
+                - cell "22 Maret 2026 09:00" [ref=e181]
+                - cell "Sudah Bayar" [ref=e182]
+              - row "6 Rp 259.000 Transfer Bank Sophia Lee Bundle Icon Pack Premium 22 Maret 2026 09:00 Sudah Bayar" [ref=e183]:
+                - cell "6" [ref=e184]
+                - cell "Rp 259.000" [ref=e185]
+                - cell "Transfer Bank" [ref=e186]
+                - cell "Sophia Lee" [ref=e187]
+                - cell "Bundle Icon Pack Premium" [ref=e188]
+                - cell "22 Maret 2026 09:00" [ref=e189]
+                - cell "Sudah Bayar" [ref=e190]
+          - generic [ref=e191]:
+            - generic [ref=e192]:
+              - button "7" [ref=e193]:
+                - text: "7"
+                - img [ref=e194]
+              - generic [ref=e196]: "Hasil: 1-7 dari 300"
+            - generic [ref=e197]:
+              - button [ref=e198]:
+                - img [ref=e199]
+              - button "1" [ref=e201]
+              - button "2" [ref=e202]
+              - button "3" [ref=e203]
+              - generic [ref=e204]: ...
+              - button "100" [ref=e205]
+              - button [ref=e206]:
+                - img [ref=e207]

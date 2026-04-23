@@ -1,22 +1,23 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { useRef, useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { PlusIcon, ArrowLeftIcon, CircleNotchIcon, CaretUpIcon, CaretDownIcon } from "@phosphor-icons/react";
+import { PlusIcon, ArrowLeftIcon, CircleNotchIcon, CaretUpIcon, CaretDownIcon, TrashIcon } from "@phosphor-icons/react";
 import ButtonSave from "~/components/ui/button-save";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { productDigitalSchema } from "~/lib/validation";
 import { formatNumberWithDots, parseDotsToNumber } from "~/lib/utils";
-import { FormGroup, SectionHeader, FormInput, FormSelect } from "~/components/ui/form-layout";
+import { FormGroup, SectionHeader, FormInput, FormSelect, FormTextarea } from "~/components/ui/form-layout";
 
 import dynamic from "next/dynamic";
 import MarkdownPreview from "~/components/MarkdownPreview";
+import { useImageUpload } from "~/hooks/use-upload";
 
 // Markdown Editor (SSR off)
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
@@ -31,7 +32,7 @@ export default function CreateDigitalProductPage() {
         handleSubmit,
         watch,
         setValue,
-        getValues,
+        getValues, control,
         formState: { errors },
     } = useForm<DigitalProductFormValues>({
         resolver: zodResolver(productDigitalSchema),
@@ -39,7 +40,13 @@ export default function CreateDigitalProductPage() {
             priceType: "free",
             status: "published",
             price: 0,
+            benefit: ["", "", ""], // Default 3 empty benefits
         },
+    });
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "benefit" as never,
     });
 
     const priceType = watch("priceType");
@@ -47,10 +54,7 @@ export default function CreateDigitalProductPage() {
 
     const utils = api.useUtils();
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [uploading, setUploading] = useState(false);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-    const getPresignedUrl = api.s3.getUploadPresignedUrl.useMutation();
 
     const createProduct = api.products.create.useMutation({
         onSuccess: () => {
@@ -63,39 +67,12 @@ export default function CreateDigitalProductPage() {
         },
     });
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+    const { uploading, previewUrl, handleFileUpload } = useImageUpload("products");
 
-        const localUrl = URL.createObjectURL(file);
-        setPreviewUrl(localUrl);
-        setUploading(true);
 
-        try {
-            const key = `products/${Date.now()}-${file.name}`;
-            const url = await getPresignedUrl.mutateAsync({
-                key,
-                fileType: file.type,
-            });
-
-            const res = await fetch(url, {
-                method: "PUT",
-                body: file,
-                headers: { "Content-Type": file.type },
-            });
-
-            if (!res.ok) throw new Error("Gagal upload ke storage");
-
-            const publicUrl = `https://pub-3098f58e584244c8bf48888938b34bae.r2.dev/${key}`;
-            setValue("image", publicUrl, { shouldValidate: true });
-            toast.success("Gambar berhasil diunggah");
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Terjadi kesalahan";
-            toast.error(`Gagal unggah gambar: ${message}`);
-            setPreviewUrl(null);
-        } finally {
-            setUploading(false);
-        }
+    const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const url = await handleFileUpload(e);
+        if (url) setValue("image", url, { shouldValidate: true });
     };
 
     const handlePriceAdjust = (amount: number) => {
@@ -117,6 +94,7 @@ export default function CreateDigitalProductPage() {
             type: "DIGITAL_PRODUCT",
             link: data.link ?? undefined,
             image: data.image,
+            benefit: data.benefit?.filter(b => b.trim() !== ""),
         });
     };
 
@@ -215,7 +193,7 @@ export default function CreateDigitalProductPage() {
                                     ref={fileInputRef}
                                     className="hidden"
                                     accept="image/*"
-                                    onChange={handleFileUpload}
+                                    onChange={onFileChange}
                                 />
                             </div>
                         </FormGroup>
@@ -229,33 +207,77 @@ export default function CreateDigitalProductPage() {
                         </FormGroup>
 
                         {/* Harga */}
-                        {priceType === "paid" && (
-                            <FormGroup label="Harga" error={errors.price?.message}>
-                                <FormInput
-                                    id="price-input-create"
-                                    type="text"
-                                    prefix="Rp"
-                                    placeholder="0"
-                                    suffix={
-                                        <div className="flex flex-col">
-                                            <button type="button" onClick={() => handlePriceAdjust(1000)}>
-                                                <CaretUpIcon weight="fill" />
-                                            </button>
-                                            <button type="button" onClick={() => handlePriceAdjust(-1000)}>
-                                                <CaretDownIcon weight="fill" />
-                                            </button>
-                                        </div>
-                                    }
-                                    {...register("price", {
-                                        setValueAs: (v) => parseDotsToNumber(v),
-                                    })}
-                                />
-                            </FormGroup>
-                        )}
+                        {
+                            priceType === "paid" && (
+                                <FormGroup label="Harga" error={errors.price?.message}>
+                                    <FormInput
+                                        id="price-input-create"
+                                        type="text"
+                                        prefix="Rp"
+                                        placeholder="0"
+                                        suffix={
+                                            <div className="flex flex-col">
+                                                <button type="button" onClick={() => handlePriceAdjust(1000)}>
+                                                    <CaretUpIcon weight="fill" />
+                                                </button>
+                                                <button type="button" onClick={() => handlePriceAdjust(-1000)}>
+                                                    <CaretDownIcon weight="fill" />
+                                                </button>
+                                            </div>
+                                        }
+                                        {...register("price", {
+                                            setValueAs: (v) => parseDotsToNumber(v),
+                                        })}
+                                    />
+                                </FormGroup>
+                            )
+                        }
 
                         {/* Link */}
-                        <FormGroup label="Link" error={errors.link?.message}>
-                            <FormInput {...register("link")} placeholder="https://..." />
+                        {/* Link */}
+                        <FormGroup label="Link Produk (Google Drive, Dropbox, dll)" error={errors.link?.message}>
+                            <FormInput
+                                placeholder="https://drive.google.com/..."
+                                {...register("link")}
+                            />
+                        </FormGroup>
+
+                        {/* Benefit */}
+                        <FormGroup label="Keuntungan / Benefit" error={errors.benefit?.message}>
+                            <div className="space-y-3 flex flex-col">
+                                {fields.map((field, index) => (
+                                    <div key={field.id} className="flex gap-2">
+                                        <FormInput
+                                            placeholder={`Benefit ${index + 1}`}
+                                            className="flex-1"
+                                            {...register(`benefit.${index}` as const)}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="flex h-[52px] w-[52px] items-center justify-center bg-red-50 text-red-500 hover:text-red-700 hover:bg-red-100 rounded-lg transition-colors border border-transparent shrink-0"
+                                            onClick={() => remove(index)}
+                                        >
+                                            <TrashIcon className="h-5 w-5" weight="bold" />
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    className="flex items-center justify-center gap-2 px-4 h-[52px] text-sm font-medium text-cyan-600 bg-cyan-50 border border-cyan-200 rounded-lg hover:bg-cyan-100 transition-colors w-fit"
+                                    onClick={() => append("")}
+                                >
+                                    <PlusIcon className="h-5 w-5" weight="bold" />
+                                    Tambah Benefit
+                                </button>
+                            </div>
+                        </FormGroup>
+
+                        {/* Catatan */}
+                        <FormGroup label="Catatan" error={errors.notes?.message}>
+                            <FormTextarea
+                                placeholder="Masukkan catatan (opsional)"
+                                {...register("notes")}
+                            />
                         </FormGroup>
 
                         {/* Status */}
@@ -268,7 +290,7 @@ export default function CreateDigitalProductPage() {
                         </FormGroup>
 
                     </div>
-                </div>
+                </div >
 
                 <div className="px-10 pb-8 flex justify-end">
                     <ButtonSave
@@ -279,6 +301,6 @@ export default function CreateDigitalProductPage() {
                     />
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

@@ -1,0 +1,27 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e329] [cursor=pointer]:
+    - img [ref=e330]
+  - alert [ref=e333]
+  - generic [ref=e334]: "25"
+  - generic [ref=e1002]:
+    - generic [ref=e1003]:
+      - img [ref=e1005]
+      - heading "Setup Catalog" [level=1] [ref=e1009]
+      - paragraph [ref=e1010]: Buat halaman publik untuk semua produkmu.
+    - generic [ref=e1011]:
+      - generic [ref=e1012]:
+        - generic [ref=e1013]:
+          - text: Slug
+          - generic [ref=e1014]: "*"
+        - generic [ref=e1015]:
+          - generic [ref=e1016]: /
+          - textbox "nama-kamu" [ref=e1017]
+        - paragraph [ref=e1018]: Huruf kecil, angka, dan tanda hubung saja. Min. 3 karakter.
+      - generic [ref=e1019]:
+        - generic [ref=e1020]: Bio (opsional)
+        - textbox "Ceritakan sedikit tentang dirimu..." [ref=e1021]
+        - paragraph [ref=e1022]: 0/200
+    - button "Simpan & Lihat Catalog" [disabled]:
+      - img
+      - text: Simpan & Lihat Catalog

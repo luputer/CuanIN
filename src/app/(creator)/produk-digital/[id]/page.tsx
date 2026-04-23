@@ -17,6 +17,7 @@ import { FormCustomizer } from "../_Component/form-customizer";
 import Pembeli from "../_Component/pembeli";
 import { Skeleton } from "~/components/ui/skeleton";
 import remarkBreaks from "remark-breaks";
+import { useState } from "react";
 
 export default function ProductDetailPage() {
     const params = useParams();
@@ -47,28 +48,24 @@ export default function ProductDetailPage() {
     };
 
     const Label = ({ children }: { children: React.ReactNode }) => (
-        <div className="w-[200px] text-sm text-slate-800 font-medium">{children}</div>
+        <div className="w-[200px] text-slate-800 text-sm font-semibold">{children}</div>
     );
 
     const Value = ({ children }: { children: React.ReactNode }) => (
-        <div className="flex-1">
-            <div className="w-full text-sm font-regular text-slate-800 min-h-[44px] flex items-center">
-                {children}
-            </div>
+        <div className="w-full text-md text-slate-800 min-h-[44px]">
+            {children}
         </div>
     );
 
     const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
-        <div className="flex flex-col md:flex-row gap-10 md:items-start mb-2">
-            <div className="md:pt-2.5">
-                <Label>{label}</Label>
-            </div>
+        <div className="flex flex-col gap-1 mb-2">
+            <Label>{label}</Label>
             <Value>{children}</Value>
         </div>
     );
 
     const SectionHeader = ({ title, showEdit }: { title: string; showEdit?: boolean }) => (
-        <div className="flex items-center justify-between border-b-1 border-cyan-600 pb-4 mb-4">
+        <div className="flex items-center justify-between border-b-1 border-cyan-600 pb-4 mb-8">
             <h2 className="text-md font-semibold text-cyan-600">{title}</h2>
             {showEdit && (
                 <Link
@@ -84,13 +81,15 @@ export default function ProductDetailPage() {
 
     const getStatusColor = (status: string) => {
         switch (status?.toLowerCase()) {
-            case "published": return "text-amber-500";
-            case "selesai": return "text-green-600";
-            case "draft": return "text-slate-500";
-            case "archived": return "text-slate-400";
-            default: return "text-slate-500";
+            case "published": return "bg-amber-100 rounded-full px-4 py-1 w-fit text-amber-500";
+            case "selesai": return "bg-green-100 rounded-full px-4 py-1 w-fit text-green-600";
+            case "draft": return "bg-slate-100 rounded-full px-4 py-1 w-fit text-slate-500";
+            case "archived": return "bg-slate-100 rounded-full px-4 py-1 w-fit text-slate-400";
+            default: return "bg-slate-100 rounded-full px-4 py-1 w-fit text-slate-500";
         }
     };
+
+    const [expanded, setExpanded] = useState(false);
 
     // ✅ Skeleton loading
     if (isLoading) {
@@ -174,13 +173,39 @@ export default function ProductDetailPage() {
                                 <section>
                                     <SectionHeader title="Informasi Produk" showEdit />
 
-                                    <Row label="Nama">{product.name}</Row>
+                                    <Row label="Nama">
+                                        {product.name}
+                                    </Row>
 
                                     <Row label="Deskripsi">
-                                        <div className="pt-2.5 prose prose-sm prose-slate max-w-none text-slate-600 leading-relaxed [&>*:first-child]:mt-0">
-                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                {product.description ?? "-"}
-                                            </ReactMarkdown>
+                                        <div className="pt-2.5 mb-4">
+                                            <div
+                                                className={`
+                                                    prose prose-sm prose-slate max-w-none text-slate-600 leading-relaxed 
+                                                    [&>*:first-child]:mt-0
+                                                    transition-all duration-300
+                                                    ${!expanded ? "max-h-[120px] overflow-hidden relative" : ""}
+                                                `}
+                                            >
+                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                    {product.description ?? "-"}
+                                                </ReactMarkdown>
+
+                                                {/* Fade effect */}
+                                                {!expanded && (
+                                                    <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-white to-transparent" />
+                                                )}
+                                            </div>
+
+                                            {/* Button */}
+                                            {product.description && product.description.length > 150 && (
+                                                <button
+                                                    onClick={() => setExpanded(!expanded)}
+                                                    className="mt-2 text-sm text-cyan-600 hover:underline cursor-pointer"
+                                                >
+                                                    {expanded ? "Tampilkan lebih sedikit" : "Baca selengkapnya"}
+                                                </button>
+                                            )}
                                         </div>
                                     </Row>
 
@@ -193,7 +218,7 @@ export default function ProductDetailPage() {
                                     </Row>
                                 </section>
 
-                                <div className="pt-2">
+                                <div className="">
                                     <p className="text-slate-400 text-sm italic">
                                         Ditambahkan pada {format(new Date(product.createdAt), "d MMMM yyyy HH:mm", { locale: idLocale })}
                                     </p>
@@ -201,11 +226,11 @@ export default function ProductDetailPage() {
                             </div>
 
                             {/* Kanan: Gambar + Info Ringkas */}
-                            <div className="flex-shrink-0 w-full lg:w-64 bg-white rounded-xl p-6 space-y-5">
+                            <div className="flex-shrink-0 w-full lg:w-80 bg-white rounded-xl p-6 space-y-5">
 
                                 {/* Gambar */}
                                 <div>
-                                    <p className="text-sm font-medium text-slate-800 mb-3">Gambar Produk</p>
+                                    <Row label="Gambar Produk" children={undefined} />
                                     <div className="w-full aspect-square bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200">
                                         {product.image ? (
                                             <Image
@@ -225,39 +250,33 @@ export default function ProductDetailPage() {
                                     </div>
                                 </div>
 
-                                <div className="border-t border-slate-100 pt-4 space-y-4">
+                                <div className="border-t border-slate-200 pt-4">
                                     {/* Tipe */}
-                                    <div>
-                                        <p className="text-sm font-medium text-slate-800 mb-1">Tipe</p>
-                                        <p className="text-sm font-medium text-slate-800">
-                                            {Number(product.price) === 0 ? "Gratis" : "Berbayar"}
-                                        </p>
-                                    </div>
+                                    <Row label="Tipe">
+                                        {Number(product.price) === 0 ? "Gratis" : "Berbayar"}
+                                    </Row>
 
                                     {/* Harga */}
-                                    <div>
-                                        <p className="text-sm font-medium text-slate-800 mb-1">Harga</p>
-                                        <p className="text-sm font-medium text-slate-800">
-                                            {Number(product.price) === 0
-                                                ? "Rp 0"
-                                                : `Rp ${Number(product.price).toLocaleString("id-ID")}`}
-                                        </p>
-                                    </div>
-
-                                    {/* Status */}
-                                    <div>
-                                        <p className="text-sm font-medium text-slate-800 mb-1">Status</p>
-                                        <p className={`text-sm font-semibold ${getStatusColor(product.status ?? "draft")}`}>
-                                            {product.status
-                                                ? product.status.charAt(0).toUpperCase() + product.status.slice(1)
-                                                : "Draft"}
-                                        </p>
-                                    </div>
+                                    <Row label="Harga">
+                                        {Number(product.price) === 0
+                                            ? "Rp 0"
+                                            : `Rp ${Number(product.price).toLocaleString("id-ID")}`}
+                                    </Row>
                                 </div>
 
+                                {/* Status */}
+                                <Row label="Status">
+                                    <p className={`text-sm font-semibold ${getStatusColor(product.status ?? "draft")}`}>
+                                        {product.status
+                                            ? product.status.charAt(0).toUpperCase() + product.status.slice(1)
+                                            : "Draft"}
+                                    </p>
+                                </Row>
                             </div>
 
                         </div>
+
+
                     </ProductDetailTabContent>
 
                     <ProductDetailTabContent value="user">
@@ -269,6 +288,6 @@ export default function ProductDetailPage() {
                     </ProductDetailTabContent>
                 </ProductDetailTabs>
             </div>
-        </div>
+        </div >
     );
 }

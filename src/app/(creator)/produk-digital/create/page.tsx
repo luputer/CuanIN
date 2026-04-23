@@ -276,6 +276,7 @@ export default function CreateDigitalProductPage() {
                         isLoading={createProduct.isPending}
                         label="Tambah Produk Digital"
                         icon={PlusIcon}
+                        weight="bold"
                     />
                 </div>
             </div>

@@ -262,7 +262,7 @@ export function FormCustomizer({ productId }: { productId: string }) {
 
             <div className="flex flex-col gap-3">
                 <ButtonSave label="Tambah Field" icon={PlusIcon} weight="bold" onClick={addField} className="w-full justify-center" />
-                <ButtonSave label="Simpan" weight="fill" onClick={handleSave} disabled={saveMutation.isPending} className="w-full justify-center bg-green-300" />
+                <ButtonSave label="Simpan" weight="fill" onClick={handleSave} disabled={saveMutation.isPending} className="w-full justify-center text-slate-800 bg-yellow-200" />
             </div>
         </div>
     );

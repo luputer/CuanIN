@@ -18,8 +18,8 @@ export default function ActionButton({ href, label }: ActionButtonProps) {
         border border-slate-800
         rounded-lg
         text-sm font-semibold
-        text-slate-800
-        bg-yellow-200
+        text-white
+        bg-cyan-600
 
         shadow-[1px_1px_0px_rgba(30,27,75)]
         transition-all duration-200 ease-out

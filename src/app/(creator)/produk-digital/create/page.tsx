@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -32,7 +32,8 @@ export default function CreateDigitalProductPage() {
         handleSubmit,
         watch,
         setValue,
-        getValues, control,
+        getValues,
+        control,
         formState: { errors },
     } = useForm<DigitalProductFormValues>({
         resolver: zodResolver(productDigitalSchema),
@@ -50,7 +51,6 @@ export default function CreateDigitalProductPage() {
     });
 
     const priceType = watch("priceType");
-    const descriptionValue = watch("description");
 
     const utils = api.useUtils();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -137,32 +137,31 @@ export default function CreateDigitalProductPage() {
 
                         {/* Deskripsi */}
                         <FormGroup label="Deskripsi" error={errors.description?.message}>
-                            <div className="space-y-3">
-
-                                {/* Editor */}
-                                <div className="border border-slate-400 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-cyan-500">
-                                    <MDEditor
-                                        value={descriptionValue ?? ""}
-                                        onChange={(val) =>
-                                            setValue("description", val ?? "", { shouldValidate: true })
-                                        }
-                                        preview="edit"
-                                        height={250}
-                                        visibleDragbar={false}
-                                        textareaProps={{
-                                            placeholder: "Masukkan deskripsi produk...",
-                                        }}
-                                    />
-                                </div>
-
-                                {/* Preview */}
-                                {descriptionValue && (
-                                    <div className="p-4 border border-slate-200 rounded-lg bg-slate-50">
-                                        <p className="text-xs text-slate-500 mb-2">Preview</p>
-                                        <MarkdownPreview content={descriptionValue} />
-                                    </div>
-                                )}
-
+                            <div data-color-mode="light" className="w-full">
+                                <Controller
+                                    name="description"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <MDEditor
+                                            value={field.value ?? ""}
+                                            onChange={(val) => field.onChange(val ?? "")}
+                                            preview="live"
+                                            height={400}
+                                            visibleDragbar={false}
+                                            className="w-full border-blue-200"
+                                            previewOptions={{
+                                                className: "p-4",
+                                            }}
+                                            components={{
+                                                preview: (source: string) => (
+                                                    <div className="p-4 bg-white min-h-full">
+                                                        <MarkdownPreview content={source} />
+                                                    </div>
+                                                )
+                                            }}
+                                        />
+                                    )}
+                                />
                             </div>
                         </FormGroup>
 
@@ -233,7 +232,6 @@ export default function CreateDigitalProductPage() {
                             )
                         }
 
-                        {/* Link */}
                         {/* Link */}
                         <FormGroup label="Link Produk (Google Drive, Dropbox, dll)" error={errors.link?.message}>
                             <FormInput

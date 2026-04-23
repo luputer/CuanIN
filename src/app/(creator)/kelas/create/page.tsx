@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -80,7 +80,6 @@ export default function CreateKelasPage() {
 	});
 
 	const priceType = watch("priceType");
-	const descriptionValue = watch("description");
 
 	const utils = api.useUtils();
 	const fileInputRef = useRef<HTMLInputElement>(null);
@@ -188,25 +187,29 @@ export default function CreateKelasPage() {
 						{/* Deskripsi — MDEditor */}
 						<FormGroup label="Deskripsi" error={errors.description?.message}>
 							<div data-color-mode="light" className="w-full">
-								<MDEditor
-									value={descriptionValue ?? ""}
-									onChange={(val) =>
-										setValue("description", val ?? "", { shouldValidate: true })
-									}
-									preview="live"
-									height={400}
-									visibleDragbar={false}
-									className="w-full border-blue-200"
-									previewOptions={{
-										className: "p-4",
-									}}
-									components={{
-										preview: (source: string) => (
-											<div className="p-4 bg-white min-h-full">
-												<MarkdownPreview content={source} />
-											</div>
-										)
-									}}
+								<Controller
+									name="description"
+									control={control}
+									render={({ field }) => (
+										<MDEditor
+											value={field.value ?? ""}
+											onChange={(val) => field.onChange(val ?? "")}
+											preview="live"
+											height={400}
+											visibleDragbar={false}
+											className="w-full border-blue-200"
+											previewOptions={{
+												className: "p-4",
+											}}
+											components={{
+												preview: (source: string) => (
+													<div className="p-4 bg-white min-h-full">
+														<MarkdownPreview content={source} />
+													</div>
+												)
+											}}
+										/>
+									)}
 								/>
 							</div>
 						</FormGroup>

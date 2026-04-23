@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronLeft, Loader2, Save, Plus, Trash2 } from "lucide-react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
 import { Button } from "~/components/ui/button";
@@ -238,25 +238,29 @@ export default function EditProductPage() {
 
                         <FormGroup label="Deskripsi" error={errors.description?.message}>
                             <div data-color-mode="light" className="w-full">
-                                <MDEditor
-                                    value={watch("description") ?? ""}
-                                    onChange={(val) =>
-                                        setValue("description", val ?? "", { shouldValidate: true })
-                                    }
-                                    preview="live"
-                                    height={400}
-                                    visibleDragbar={false}
-                                    className="w-full border-blue-200"
-                                    previewOptions={{
-                                        className: "p-4",
-                                    }}
-                                    components={{
-                                        preview: (source: string) => (
-                                            <div className="p-4 bg-white min-h-full">
-                                                <MarkdownPreview content={source} />
-                                            </div>
-                                        )
-                                    }}
+                                <Controller
+                                    name="description"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <MDEditor
+                                            value={field.value ?? ""}
+                                            onChange={(val) => field.onChange(val ?? "")}
+                                            preview="live"
+                                            height={400}
+                                            visibleDragbar={false}
+                                            className="w-full border-blue-200"
+                                            previewOptions={{
+                                                className: "p-4",
+                                            }}
+                                            components={{
+                                                preview: (source: string) => (
+                                                    <div className="p-4 bg-white min-h-full">
+                                                        <MarkdownPreview content={source} />
+                                                    </div>
+                                                )
+                                            }}
+                                        />
+                                    )}
                                 />
                             </div>
                         </FormGroup>

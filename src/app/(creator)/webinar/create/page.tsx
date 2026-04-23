@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import Link from "next/link";
@@ -71,6 +71,7 @@ export default function CreateWebinarPage() {
         handleSubmit,
         watch,
         setValue,
+        control,
         formState: { errors },
     } = useForm<WebinarFormValues>({
         resolver: zodResolver(webinarSchema),
@@ -143,21 +144,25 @@ export default function CreateWebinarPage() {
 
                         <FormGroup label="Deskripsi" error={errors.description?.message}>
                             <div data-color-mode="light">
-                                <MDEditor
-                                    value={watch("description") ?? ""}
-                                    onChange={(val) =>
-                                        setValue("description", val ?? "", { shouldValidate: true })
-                                    }
-                                    preview="live"
-                                    height={300}
-                                    visibleDragbar={false}
-                                    previewOptions={{
-                                        remarkPlugins: [[remarkGfm]],
-                                        className: "prose prose-sm prose-slate max-w-none text-slate-600",
-                                        wrapperElement: {
-                                            "data-color-mode": "light",
-                                        },
-                                    }}
+                                <Controller
+                                    name="description"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <MDEditor
+                                            value={field.value ?? ""}
+                                            onChange={(val) => field.onChange(val ?? "")}
+                                            preview="live"
+                                            height={300}
+                                            visibleDragbar={false}
+                                            previewOptions={{
+                                                remarkPlugins: [[remarkGfm]],
+                                                className: "prose prose-sm prose-slate max-w-none text-slate-600",
+                                                wrapperElement: {
+                                                    "data-color-mode": "light",
+                                                },
+                                            }}
+                                        />
+                                    )}
                                 />
                             </div>
                         </FormGroup>

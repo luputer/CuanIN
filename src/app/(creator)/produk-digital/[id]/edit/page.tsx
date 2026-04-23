@@ -1,5 +1,6 @@
 "use client";
 
+import { useForm, Controller } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -51,10 +52,9 @@ export default function EditProductPage() {
         product
     } = useProductDigital({ id, isEdit: true });
 
-    const { register, watch, setValue, getValues, formState: { errors } } = form;
+    const { register, watch, setValue, getValues, control, formState: { errors } } = form;
 
     const priceType = watch("priceType");
-    const descriptionValue = watch("description");
 
     const handlePriceAdjust = (amount: number) => {
         const current = parseDotsToNumber(getValues("price")?.toString() ?? "0");
@@ -122,25 +122,20 @@ export default function EditProductPage() {
                         </FormGroup>
 
                         <FormGroup label="Deskripsi" error={errors.description?.message}>
-                            <div className="space-y-3">
-
-                                <div className="border border-slate-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-cyan-500">
-                                    <MDEditor
-                                        value={descriptionValue ?? ""}
-                                        onChange={(val) =>
-                                            setValue("description", val ?? "", { shouldValidate: true })
-                                        }
-                                        preview="edit"
-                                        height={250}
-                                        visibleDragbar={false}
-                                    />
-                                </div>
-
-                                {descriptionValue && (
-                                    <div className="p-4 border rounded-lg bg-slate-50">
-                                        <MarkdownPreview content={descriptionValue} />
-                                    </div>
-                                )}
+                            <div data-color-mode="light" className="w-full">
+                                <Controller
+                                    name="description"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <MDEditor
+                                            value={field.value ?? ""}
+                                            onChange={(val) => field.onChange(val ?? "")}
+                                            height={400}
+                                            visibleDragbar={false}
+                                            className="w-full border-blue-200"
+                                        />
+                                    )}
+                                />
                             </div>
                         </FormGroup>
 

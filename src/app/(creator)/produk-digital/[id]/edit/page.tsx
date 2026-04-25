@@ -101,8 +101,8 @@ export default function EditProductPage() {
 
             {/* Header */}
             <div className="bg-slate-50">
-                <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
-                    <div className="max-w-7xl mx-auto flex flex-col gap-1">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 pt-2">
+                    <div className="flex-1 flex flex-col gap-1">
                         <Link
                             href={`/produk-digital/${id}`}
                             className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
@@ -119,7 +119,7 @@ export default function EditProductPage() {
             </div>
 
 
-            <div className="bg-white rounded-xl border border-slate-800 overflow-hidden">
+            <div className="bg-cyan-50 rounded-xl border border-slate-800 overflow-hidden">
                 <div className="bg-cyan-50 px-4 sm:px-10 py-6 border-b border-slate-800">
                     <h2 className="text-lg font-semibold text-cyan-900">{product.name}</h2>
                 </div>

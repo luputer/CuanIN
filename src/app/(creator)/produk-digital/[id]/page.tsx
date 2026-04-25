@@ -170,7 +170,7 @@ export default function ProductDetailPage() {
                         >
                             <CopyIcon className="w-4 h-4 text-cyan-600" />
                             <span className="text-sm font-regular text-cyan-600 whitespace-nowrap">
-                                Salin Link
+                                Salin Link Produk
                             </span>
                         </Button>
                         <Button

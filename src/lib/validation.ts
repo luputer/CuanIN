@@ -46,8 +46,8 @@ export const webinarSchema = z
         status: z.string().min(1, "Status wajib dipilih"),
         dateStart: z.date({ required_error: "Waktu mulai wajib diisi" }),
         dateEnd: z.date({ required_error: "Waktu selesai wajib diisi" }),
-        dateDeadline: z.date().optional(),
-        quota: z.number().min(1, "Kuota minimal 1").optional(),
+        dateDeadline: z.date({ required_error: "Batas pendaftaran wajib diisi" }),
+        quota: z.number({ required_error: "Kuota wajib diisi" }).min(0, "Kuota tidak boleh negatif"),
         benefit: z.array(z.string()).optional(),
     })
     .refine(
@@ -72,6 +72,18 @@ export const webinarSchema = z
         {
             message: "Waktu selesai harus setelah waktu mulai",
             path: ["dateEnd"],
+        }
+    )
+    .refine(
+        (data) => {
+            if (data.dateStart && data.dateDeadline) {
+                return data.dateDeadline <= data.dateStart;
+            }
+            return true;
+        },
+        {
+            message: "Batas pendaftaran tidak boleh setelah waktu mulai",
+            path: ["dateDeadline"],
         }
     );
 

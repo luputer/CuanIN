@@ -119,8 +119,8 @@ export default function CreateDigitalProductPage() {
 
             {/* Header */}
             <div className="bg-slate-50">
-                <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
-                    <div className="max-w-7xl mx-auto flex flex-col gap-1">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 pt-2">
+                    <div className="flex-1 flex flex-col gap-1">
                         <Link
                             href="/produk-digital"
                             className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
@@ -136,7 +136,7 @@ export default function CreateDigitalProductPage() {
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-800 overflow-hidden">
+            <div className="bg-cyan-50 rounded-xl border border-slate-800 overflow-hidden">
                 <div className="px-4 sm:px-10 py-6 sm:py-8">
 
                     <SectionHeader title="Informasi Produk" />

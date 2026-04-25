@@ -344,7 +344,7 @@ export default function DigitalProductPage() {
 											</TableCell>
 
 											<TableCell className="px-6 py-4 text-right">
-												<div className="flex justify-end items-center gap-3">
+												<div className="flex justify-start items-center gap-3">
 													<Tooltip>
 														<TooltipTrigger asChild>
 															<button onClick={() => router.push(`/produk-digital/${item.id}`)}>

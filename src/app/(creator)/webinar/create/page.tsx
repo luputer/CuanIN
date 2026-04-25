@@ -5,16 +5,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeftIcon, ImageIcon, PlusIcon, PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, ImageIcon, PlusIcon, PencilSimpleIcon, TrashIcon, CaretUpIcon, CaretDownIcon } from "@phosphor-icons/react";
 import dynamic from "next/dynamic";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { DateTimePicker } from "~/components/ui/date-time-picker";
+import { isBefore, startOfDay } from "date-fns";
 import { webinarSchema } from "~/lib/validation";
+import { formatNumberWithDots, parseDotsToNumber } from "~/lib/utils";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     FormGroup,
     SectionHeader,
@@ -39,6 +41,7 @@ export default function CreateWebinarPage() {
         handleSubmit,
         watch,
         setValue,
+        getValues,
         control,
         formState: { errors },
     } = useForm<WebinarFormValues>({
@@ -46,18 +49,49 @@ export default function CreateWebinarPage() {
         defaultValues: {
             priceType: "free",
             platform: "zoom",
-            status: "published",
+            status: "unpublished",
             price: 0,
+            quota: 0,
             benefit: ["", "", ""], // Default 3 empty benefits
         },
     });
+
+    const priceType = watch("priceType");
+    const priceValue = watch("price");
+
+    // Format initial price value or when priceType changes to paid
+    useEffect(() => {
+        if (priceType === "paid") {
+            const input = document.getElementById("price-input-webinar") as HTMLInputElement;
+            if (input) {
+                const currentVal = getValues("price")?.toString() ?? "0";
+                input.value = formatNumberWithDots(currentVal);
+            }
+        }
+    }, [priceType, getValues]);
+
+    const handlePriceAdjust = (amount: number) => {
+        const currentPrice = parseDotsToNumber(getValues("price")?.toString() ?? "0");
+        const newPrice = Math.max(0, currentPrice + amount);
+        setValue("price", newPrice, { shouldValidate: true });
+
+        const input = document.getElementById("price-input-webinar") as HTMLInputElement;
+        if (input) {
+            input.value = formatNumberWithDots(newPrice.toString());
+        }
+    };
+
+    const handleQuotaAdjust = (amount: number) => {
+        const currentQuota = Number(getValues("quota") || 0);
+        const newQuota = Math.max(0, currentQuota + amount);
+        setValue("quota", newQuota, { shouldValidate: true });
+    };
 
     const { fields, append, remove } = useFieldArray({
         control,
         name: "benefit" as never,
     });
 
-    const priceType = watch("priceType");
     const dateStart = watch("dateStart");
     const dateEnd = watch("dateEnd");
     const dateDeadline = watch("dateDeadline");
@@ -178,15 +212,18 @@ export default function CreateWebinarPage() {
                                 </div>
                             </div>
                         </FormGroup>
-                        <FormGroup label="Deskripsi Singkat" align="start" error={errors.shortDescription?.message}>
+                        <FormGroup label="Ringkasan" align="start" error={errors.shortDescription?.message}>
                             <FormTextarea
-                                placeholder="Masukkan deskripsi singkat webinar"
+                                placeholder="Masukkan ringkasan tentang webinar"
                                 {...register("shortDescription")}
                             />
                         </FormGroup>
-                        <FormGroup label="Deskripsi" align="start" error={(errors.description as any)?.message}>
+                        <FormGroup label="Deskripsi Lengkap" align="start" error={(errors.description as any)?.message}>
                             <div data-color-mode="light" className="border border-slate-400 rounded-lg overflow-hidden">
                                 <MDEditor
+                                    textareaProps={{
+                                        placeholder: "Masukkan deskripsi lengkap tentang webinar"
+                                    }}
                                     value={watch("description") ?? ""}
                                     onChange={(val) => setValue("description", val ?? "")}
                                     height={400}
@@ -245,15 +282,32 @@ export default function CreateWebinarPage() {
                         {/* Harga */}
                         {priceType === "paid" && (
                             <FormGroup label="Harga" error={errors.price?.message}>
-                                <div className="relative group">
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium group-focus-within:text-cyan-600 transition-colors">Rp</div>
-                                    <FormInput
-                                        type="number"
-                                        placeholder="0"
-                                        className="pl-12"
-                                        {...register("price", { valueAsNumber: true })}
-                                    />
-                                </div>
+                                <Controller
+                                    control={control}
+                                    name="price"
+                                    render={({ field: { onChange, value, ref } }) => (
+                                        <FormInput
+                                            ref={ref}
+                                            id="price-input-webinar"
+                                            prefix="Rp"
+                                            value={formatNumberWithDots(value)}
+                                            onChange={(e) => {
+                                                const val = parseDotsToNumber(e.target.value);
+                                                onChange(val);
+                                            }}
+                                            suffix={
+                                                <div className="flex flex-col">
+                                                    <button onClick={() => handlePriceAdjust(1000)} type="button" className="cursor-pointer">
+                                                        <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                    </button>
+                                                    <button onClick={() => handlePriceAdjust(-1000)} type="button" className="cursor-pointer">
+                                                        <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                    </button>
+                                                </div>
+                                            }
+                                        />
+                                    )}
+                                />
                             </FormGroup>
                         )}
 
@@ -299,8 +353,8 @@ export default function CreateWebinarPage() {
                                 {...register("status")}
                             >
                                 <option value="published">Published</option>
-                                <option value="draft">Draft</option>
-                                <option value="archived">Archived</option>
+                                <option value="unpublished">Unpublished</option>
+                                <option value="archived">Selesai</option>
                             </FormSelect>
                         </FormGroup>
                     </div>
@@ -318,6 +372,13 @@ export default function CreateWebinarPage() {
                                         setValue("dateStart", date, { shouldValidate: true })
                                     }
                                     placeholder="Pilih Tanggal & Waktu Mulai"
+                                    disabled={(date) => {
+                                        const now = new Date();
+                                        if (date.getHours() === 0 && date.getMinutes() === 0) {
+                                            return isBefore(date, startOfDay(now));
+                                        }
+                                        return isBefore(date, now);
+                                    }}
                                 />
                             </FormGroup>
 
@@ -329,6 +390,16 @@ export default function CreateWebinarPage() {
                                         setValue("dateEnd", date, { shouldValidate: true })
                                     }
                                     placeholder="Pilih Tanggal & Waktu Selesai"
+                                    disabled={(date) => {
+                                        const now = new Date();
+                                        const reference = dateStart && isBefore(now, dateStart) ? dateStart : now;
+                                        // Untuk kalender (cek per hari)
+                                        if (date.getHours() === 0 && date.getMinutes() === 0) {
+                                            return isBefore(date, startOfDay(reference));
+                                        }
+                                        // Untuk pilihan jam (cek waktu penuh)
+                                        return isBefore(date, reference);
+                                    }}
                                 />
                             </FormGroup>
                         </div>
@@ -338,10 +409,30 @@ export default function CreateWebinarPage() {
                         <SectionHeader title="Pendaftaran" />
                         {/* Kuota */}
                         <FormGroup label="Kuota" error={errors.quota?.message}>
-                            <FormInput
-                                type="number"
-                                placeholder="0 (Isi 0 jika tidak terbatas)"
-                                {...register("quota", { valueAsNumber: true })}
+                            <Controller
+                                control={control}
+                                name="quota"
+                                render={({ field: { onChange, value, ref } }) => (
+                                    <FormInput
+                                        ref={ref}
+                                        placeholder="0 (Isi 0 jika tidak terbatas)"
+                                        value={value ?? ""}
+                                        onChange={(e) => {
+                                            const val = e.target.value.replace(/[^0-9]/g, "");
+                                            onChange(val === "" ? undefined : Number(val));
+                                        }}
+                                        suffix={
+                                            <div className="flex flex-col">
+                                                <button onClick={() => handleQuotaAdjust(1)} type="button" className="cursor-pointer">
+                                                    <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                </button>
+                                                <button onClick={() => handleQuotaAdjust(-1)} type="button" className="cursor-pointer">
+                                                    <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                </button>
+                                            </div>
+                                        }
+                                    />
+                                )}
                             />
                         </FormGroup>
 
@@ -353,6 +444,24 @@ export default function CreateWebinarPage() {
                                     setValue("dateDeadline", date, { shouldValidate: true })
                                 }
                                 placeholder="Pilih Batas Waktu Pendaftaran"
+                                disabled={(date) => {
+                                    const now = new Date();
+                                    // Harus setelah sekarang
+                                    if (date.getHours() === 0 && date.getMinutes() === 0) {
+                                        if (isBefore(date, startOfDay(now))) return true;
+                                    } else {
+                                        if (isBefore(date, now)) return true;
+                                    }
+
+                                    // DAN tidak boleh setelah waktu mulai
+                                    if (dateStart) {
+                                        if (date.getHours() === 0 && date.getMinutes() === 0) {
+                                            return date > startOfDay(dateStart);
+                                        }
+                                        return date > dateStart;
+                                    }
+                                    return false;
+                                }}
                             />
                         </FormGroup>
                     </section>

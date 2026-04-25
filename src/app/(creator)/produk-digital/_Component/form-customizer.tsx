@@ -210,13 +210,14 @@ export function FormCustomizer({ productId }: { productId: string }) {
 
     useEffect(() => {
         if (hasLoaded) {
-            // Cek apakah ada label yang kosong sebelum simpan
-            if (debouncedFields.length > 0 && debouncedFields.some(f => !f.label.trim())) return;
+            // Filter fields yang sedang diketik (label kosong) agar tidak auto-save saat nanggung
+            const validFields = debouncedFields.filter(f => f.label.trim() !== "");
 
+            // Payload yang akan dikirim ke backend
             const payload = {
                 productId,
                 fields: debouncedFields.map((f, index) => ({
-                    label: f.label,
+                    label: f.label.trim() || "Pertanyaan Tanpa Judul",
                     type: f.type,
                     required: f.required,
                     options: f.options,
@@ -226,8 +227,12 @@ export function FormCustomizer({ productId }: { productId: string }) {
 
             const payloadString = JSON.stringify(payload);
 
-            // JANGAN simpan jika data sama dengan yang terakhir disimpan
+            // JANGAN simpan jika data sama dengan yang terakhir disimpan (mencegah loop/redundant)
             if (payloadString === lastSavedRef.current) return;
+
+            // PENGAMAN: Jangan simpan jika debouncedFields kosong tapi fields asli ada isinya
+            // Ini biasanya terjadi saat baru load data, dimana debounce belum catch-up
+            if (debouncedFields.length === 0 && fields.length > 0) return;
 
             saveMutation.mutate(payload, {
                 onSuccess: () => {
@@ -250,14 +255,55 @@ export function FormCustomizer({ productId }: { productId: string }) {
         }
     };
 
-    // Fungsi-fungsi pembantu (Tetap sama)
-    const addField = () => setFields([...fields, { id: crypto.randomUUID(), label: "Pertanyaan Tanpa Judul", type: "SHORT", required: false }]);
-    const updateField = (id: string, updates: Partial<FormField>) => setFields(fields.map(f => f.id === id ? { ...f, ...updates } : f));
-    const removeField = (id: string) => setFields(fields.filter(f => f.id !== id));
-    const addOption = (fId: string) => setFields(fields.map(f => f.id === fId ? { ...f, options: [...(f.options ?? ["Opsi 1"]), `Opsi ${(f.options?.length ?? 0) + 1}`] } : f));
-    const updateOption = (fId: string, idx: number, val: string) => setFields(fields.map(f => f.id === fId && f.options ? { ...f, options: f.options.map((o, i) => i === idx ? val : o) } : f));
-    const removeOption = (fId: string, idx: number) => setFields(fields.map(f => f.id === fId && f.options ? { ...f, options: f.options.filter((_, i) => i !== idx) } : f));
-    const handleTypeChange = (id: string, type: FieldType) => setFields(fields.map(f => f.id === id ? { ...f, type, options: ["MULTIPLE_CHOICE", "CHECKBOX", "DROPDOWN"].includes(type) ? (f.options?.length ? f.options : ["Opsi 1"]) : undefined } : f));
+    // Fungsi-fungsi pembantu dengan functional updates
+    const addField = () => {
+        const newField: FormField = {
+            id: crypto.randomUUID(),
+            label: "Pertanyaan Tanpa Judul",
+            type: "SHORT",
+            required: false
+        };
+        setFields(prev => [...prev, newField]);
+    };
+
+    const updateField = (id: string, updates: Partial<FormField>) => {
+        setFields(prev => prev.map(f => f.id === id ? { ...f, ...updates } : f));
+    };
+
+    const removeField = (id: string) => {
+        setFields(prev => prev.filter(f => f.id !== id));
+    };
+
+    const addOption = (fId: string) => {
+        setFields(prev => prev.map(f => f.id === fId ? {
+            ...f,
+            options: [...(f.options ?? ["Opsi 1"]), `Opsi ${(f.options?.length ?? 0) + 1}`]
+        } : f));
+    };
+
+    const updateOption = (fId: string, idx: number, val: string) => {
+        setFields(prev => prev.map(f => f.id === fId && f.options ? {
+            ...f,
+            options: f.options.map((o, i) => i === idx ? val : o)
+        } : f));
+    };
+
+    const removeOption = (fId: string, idx: number) => {
+        setFields(prev => prev.map(f => f.id === fId && f.options ? {
+            ...f,
+            options: f.options.filter((_, i) => i !== idx)
+        } : f));
+    };
+
+    const handleTypeChange = (id: string, type: FieldType) => {
+        setFields(prev => prev.map(f => f.id === id ? {
+            ...f,
+            type,
+            options: ["MULTIPLE_CHOICE", "CHECKBOX", "DROPDOWN"].includes(type)
+                ? (f.options?.length ? f.options : ["Opsi 1"])
+                : undefined
+        } : f));
+    };
 
     if (isLoading) {
         return (

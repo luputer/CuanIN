@@ -101,7 +101,6 @@ function SortableFieldItem({
                         </button>
                     </div>
                 </div>
-
                 <div className="pt-2">
                     <h4 className="text-[15px] font-medium text-slate-700 mb-2">Jawaban</h4>
                     {field.type === "SHORT" ? (
@@ -153,6 +152,7 @@ export function FormCustomizer({ productId }: { productId: string }) {
     const [fields, setFields] = useState<FormField[]>([]);
     const [hasLoaded, setHasLoaded] = useState(false);
     const lastSavedRef = useRef<string>("");
+    const isSavingRef = useRef(false); // ← tambah ini di atas, sejajar lastSavedRef
 
     // Setup Sensors
     const sensors = useSensors(
@@ -208,39 +208,37 @@ export function FormCustomizer({ productId }: { productId: string }) {
 
     const debouncedFields = useDebounce(fields, 1000);
 
+
     useEffect(() => {
-        if (hasLoaded) {
-            // Filter fields yang sedang diketik (label kosong) agar tidak auto-save saat nanggung
-            const validFields = debouncedFields.filter(f => f.label.trim() !== "");
+        if (!hasLoaded) return;
+        if (debouncedFields.length === 0 && fields.length > 0) return;
+        if (isSavingRef.current) return; // ← skip kalau masih ada request berjalan
 
-            // Payload yang akan dikirim ke backend
-            const payload = {
-                productId,
-                fields: debouncedFields.map((f, index) => ({
-                    label: f.label.trim() || "Pertanyaan Tanpa Judul",
-                    type: f.type,
-                    required: f.required,
-                    options: f.options,
-                    order: index,
-                })),
-            };
+        const fieldsPayload = debouncedFields.map((f, index) => ({
+            id: f.id,
+            label: f.label.trim() || "Pertanyaan Tanpa Judul",
+            type: f.type,
+            required: f.required,
+            options: f.options,
+            order: index,
+        }));
 
-            const payloadString = JSON.stringify(payload);
+        const payload = { productId, fields: fieldsPayload };
+        const payloadString = JSON.stringify(payload);
 
-            // JANGAN simpan jika data sama dengan yang terakhir disimpan (mencegah loop/redundant)
-            if (payloadString === lastSavedRef.current) return;
+        if (payloadString === lastSavedRef.current) return; // ← skip kalau data sama
 
-            // PENGAMAN: Jangan simpan jika debouncedFields kosong tapi fields asli ada isinya
-            // Ini biasanya terjadi saat baru load data, dimana debounce belum catch-up
-            if (debouncedFields.length === 0 && fields.length > 0) return;
+        isSavingRef.current = true;
 
-            saveMutation.mutate(payload, {
-                onSuccess: () => {
-                    lastSavedRef.current = payloadString;
-                    void utils.formFields.getByProductId.invalidate();
-                },
-            });
-        }
+        saveMutation.mutate(payload, {
+            onSuccess: () => {
+                lastSavedRef.current = payloadString;
+                // ← TIDAK invalidate, state lokal sudah benar
+            },
+            onSettled: () => {
+                isSavingRef.current = false; // ← reset setelah selesai (sukses/error)
+            },
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedFields, productId, hasLoaded]);
 

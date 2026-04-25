@@ -5,15 +5,18 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 const FieldTypeEnum = z.enum(["SHORT", "LONG", "MULTIPLE_CHOICE", "CHECKBOX", "DROPDOWN"]);
 
 export const formFieldsRouter = createTRPCRouter({
-    // Get all form fields for a product (creator dashboard)
+
+    // ----------------------------------------------------------------
+    // GET — Ambil semua field milik produk (untuk creator dashboard)
+    // ----------------------------------------------------------------
     getByProductId: protectedProcedure
         .input(z.object({ productId: z.string() }))
         .query(async ({ ctx, input }) => {
-            // Verify product belongs to user
             const product = await ctx.db.product.findUnique({
                 where: { id: input.productId, userId: ctx.session.user.id },
                 select: { id: true },
             });
+
             if (!product) throw new Error("Produk tidak ditemukan atau bukan milikmu");
 
             return await ctx.db.formField.findMany({
@@ -22,7 +25,9 @@ export const formFieldsRouter = createTRPCRouter({
             });
         }),
 
-    // Get form fields for public checkout page (no auth required)
+    // ----------------------------------------------------------------
+    // GET PUBLIC — Ambil field untuk halaman checkout (tanpa auth)
+    // ----------------------------------------------------------------
     getPublicByProductId: publicProcedure
         .input(z.object({ productId: z.string() }))
         .query(async ({ ctx, input }) => {
@@ -40,13 +45,16 @@ export const formFieldsRouter = createTRPCRouter({
             });
         }),
 
-    // Bulk save form fields (delete existing + create new)
+    // ----------------------------------------------------------------
+    // SAVE — Bulk save (delete lama + insert baru dalam 1 transaction)
+    // ----------------------------------------------------------------
     save: protectedProcedure
         .input(
             z.object({
                 productId: z.string(),
                 fields: z.array(
                     z.object({
+                        id: z.string(),       // ← ID dikirim dari frontend
                         label: z.string().min(1, "Label wajib diisi"),
                         type: FieldTypeEnum,
                         options: z.array(z.string()).optional(),
@@ -57,24 +65,24 @@ export const formFieldsRouter = createTRPCRouter({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            // Verify product belongs to user
             const product = await ctx.db.product.findUnique({
                 where: { id: input.productId, userId: ctx.session.user.id },
                 select: { id: true },
             });
+
             if (!product) throw new Error("Produk tidak ditemukan atau bukan milikmu");
 
-            // Transaction: delete all existing fields, then create new ones
             await ctx.db.$transaction(async (tx) => {
-                // Delete existing form fields (cascade will delete answers too)
+                // Hapus semua field lama milik produk ini
                 await tx.formField.deleteMany({
                     where: { productId: input.productId },
                 });
 
-                // Create new fields
+                // Insert field baru (hanya kalau ada)
                 if (input.fields.length > 0) {
                     await tx.formField.createMany({
                         data: input.fields.map((field) => ({
+                            id: field.id,                        // ← pakai ID dari frontend
                             productId: input.productId,
                             label: field.label,
                             type: field.type,

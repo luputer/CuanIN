@@ -4030,10 +4030,12 @@ export namespace Prisma {
 
   export type ProductAvgAggregateOutputType = {
     price: Decimal | null
+    quota: number | null
   }
 
   export type ProductSumAggregateOutputType = {
     price: Decimal | null
+    quota: number | null
   }
 
   export type ProductMinAggregateOutputType = {
@@ -4046,6 +4048,9 @@ export namespace Prisma {
     startDate: Date | null
     endDate: Date | null
     link: string | null
+    platform: string | null
+    dateDeadline: Date | null
+    quota: number | null
     status: string | null
     userId: string | null
     createdAt: Date | null
@@ -4064,6 +4069,9 @@ export namespace Prisma {
     startDate: Date | null
     endDate: Date | null
     link: string | null
+    platform: string | null
+    dateDeadline: Date | null
+    quota: number | null
     status: string | null
     userId: string | null
     createdAt: Date | null
@@ -4082,6 +4090,9 @@ export namespace Prisma {
     startDate: number
     endDate: number
     link: number
+    platform: number
+    dateDeadline: number
+    quota: number
     status: number
     userId: number
     createdAt: number
@@ -4095,10 +4106,12 @@ export namespace Prisma {
 
   export type ProductAvgAggregateInputType = {
     price?: true
+    quota?: true
   }
 
   export type ProductSumAggregateInputType = {
     price?: true
+    quota?: true
   }
 
   export type ProductMinAggregateInputType = {
@@ -4111,6 +4124,9 @@ export namespace Prisma {
     startDate?: true
     endDate?: true
     link?: true
+    platform?: true
+    dateDeadline?: true
+    quota?: true
     status?: true
     userId?: true
     createdAt?: true
@@ -4129,6 +4145,9 @@ export namespace Prisma {
     startDate?: true
     endDate?: true
     link?: true
+    platform?: true
+    dateDeadline?: true
+    quota?: true
     status?: true
     userId?: true
     createdAt?: true
@@ -4147,6 +4166,9 @@ export namespace Prisma {
     startDate?: true
     endDate?: true
     link?: true
+    platform?: true
+    dateDeadline?: true
+    quota?: true
     status?: true
     userId?: true
     createdAt?: true
@@ -4253,6 +4275,9 @@ export namespace Prisma {
     startDate: Date | null
     endDate: Date | null
     link: string | null
+    platform: string | null
+    dateDeadline: Date | null
+    quota: number | null
     status: string
     userId: string
     createdAt: Date
@@ -4291,6 +4316,9 @@ export namespace Prisma {
     startDate?: boolean
     endDate?: boolean
     link?: boolean
+    platform?: boolean
+    dateDeadline?: boolean
+    quota?: boolean
     status?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -4314,6 +4342,9 @@ export namespace Prisma {
     startDate?: boolean
     endDate?: boolean
     link?: boolean
+    platform?: boolean
+    dateDeadline?: boolean
+    quota?: boolean
     status?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -4334,6 +4365,9 @@ export namespace Prisma {
     startDate?: boolean
     endDate?: boolean
     link?: boolean
+    platform?: boolean
+    dateDeadline?: boolean
+    quota?: boolean
     status?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -4354,6 +4388,9 @@ export namespace Prisma {
     startDate?: boolean
     endDate?: boolean
     link?: boolean
+    platform?: boolean
+    dateDeadline?: boolean
+    quota?: boolean
     status?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -4363,7 +4400,7 @@ export namespace Prisma {
     benefit?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "shortDescription" | "description" | "price" | "type" | "startDate" | "endDate" | "link" | "status" | "userId" | "createdAt" | "updatedAt" | "image" | "slug" | "benefit", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "shortDescription" | "description" | "price" | "type" | "startDate" | "endDate" | "link" | "platform" | "dateDeadline" | "quota" | "status" | "userId" | "createdAt" | "updatedAt" | "image" | "slug" | "benefit", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     formFields?: boolean | Product$formFieldsArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -4394,6 +4431,9 @@ export namespace Prisma {
       startDate: Date | null
       endDate: Date | null
       link: string | null
+      platform: string | null
+      dateDeadline: Date | null
+      quota: number | null
       status: string
       userId: string
       createdAt: Date
@@ -4836,6 +4876,9 @@ export namespace Prisma {
     readonly startDate: FieldRef<"Product", 'DateTime'>
     readonly endDate: FieldRef<"Product", 'DateTime'>
     readonly link: FieldRef<"Product", 'String'>
+    readonly platform: FieldRef<"Product", 'String'>
+    readonly dateDeadline: FieldRef<"Product", 'DateTime'>
+    readonly quota: FieldRef<"Product", 'Int'>
     readonly status: FieldRef<"Product", 'String'>
     readonly userId: FieldRef<"Product", 'String'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
@@ -14281,6 +14324,9 @@ export namespace Prisma {
     startDate: 'startDate',
     endDate: 'endDate',
     link: 'link',
+    platform: 'platform',
+    dateDeadline: 'dateDeadline',
+    quota: 'quota',
     status: 'status',
     userId: 'userId',
     createdAt: 'createdAt',
@@ -14700,6 +14746,9 @@ export namespace Prisma {
     startDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     endDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     link?: StringNullableFilter<"Product"> | string | null
+    platform?: StringNullableFilter<"Product"> | string | null
+    dateDeadline?: DateTimeNullableFilter<"Product"> | Date | string | null
+    quota?: IntNullableFilter<"Product"> | number | null
     status?: StringFilter<"Product"> | string
     userId?: StringFilter<"Product"> | string
     createdAt?: DateTimeFilter<"Product"> | Date | string
@@ -14722,6 +14771,9 @@ export namespace Prisma {
     startDate?: SortOrderInput | SortOrder
     endDate?: SortOrderInput | SortOrder
     link?: SortOrderInput | SortOrder
+    platform?: SortOrderInput | SortOrder
+    dateDeadline?: SortOrderInput | SortOrder
+    quota?: SortOrderInput | SortOrder
     status?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -14748,6 +14800,9 @@ export namespace Prisma {
     startDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     endDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     link?: StringNullableFilter<"Product"> | string | null
+    platform?: StringNullableFilter<"Product"> | string | null
+    dateDeadline?: DateTimeNullableFilter<"Product"> | Date | string | null
+    quota?: IntNullableFilter<"Product"> | number | null
     status?: StringFilter<"Product"> | string
     userId?: StringFilter<"Product"> | string
     createdAt?: DateTimeFilter<"Product"> | Date | string
@@ -14769,6 +14824,9 @@ export namespace Prisma {
     startDate?: SortOrderInput | SortOrder
     endDate?: SortOrderInput | SortOrder
     link?: SortOrderInput | SortOrder
+    platform?: SortOrderInput | SortOrder
+    dateDeadline?: SortOrderInput | SortOrder
+    quota?: SortOrderInput | SortOrder
     status?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -14796,6 +14854,9 @@ export namespace Prisma {
     startDate?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
     endDate?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
     link?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    platform?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    dateDeadline?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
+    quota?: IntNullableWithAggregatesFilter<"Product"> | number | null
     status?: StringWithAggregatesFilter<"Product"> | string
     userId?: StringWithAggregatesFilter<"Product"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
@@ -15482,6 +15543,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    platform?: string | null
+    dateDeadline?: Date | string | null
+    quota?: number | null
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -15503,6 +15567,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    platform?: string | null
+    dateDeadline?: Date | string | null
+    quota?: number | null
     status?: string
     userId: string
     createdAt?: Date | string
@@ -15524,6 +15591,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15545,6 +15615,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15566,6 +15639,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    platform?: string | null
+    dateDeadline?: Date | string | null
+    quota?: number | null
     status?: string
     userId: string
     createdAt?: Date | string
@@ -15585,6 +15661,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15603,6 +15682,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16438,6 +16520,17 @@ export namespace Prisma {
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
   export type JsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
@@ -16497,6 +16590,9 @@ export namespace Prisma {
     startDate?: SortOrder
     endDate?: SortOrder
     link?: SortOrder
+    platform?: SortOrder
+    dateDeadline?: SortOrder
+    quota?: SortOrder
     status?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -16508,6 +16604,7 @@ export namespace Prisma {
 
   export type ProductAvgOrderByAggregateInput = {
     price?: SortOrder
+    quota?: SortOrder
   }
 
   export type ProductMaxOrderByAggregateInput = {
@@ -16520,6 +16617,9 @@ export namespace Prisma {
     startDate?: SortOrder
     endDate?: SortOrder
     link?: SortOrder
+    platform?: SortOrder
+    dateDeadline?: SortOrder
+    quota?: SortOrder
     status?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -16538,6 +16638,9 @@ export namespace Prisma {
     startDate?: SortOrder
     endDate?: SortOrder
     link?: SortOrder
+    platform?: SortOrder
+    dateDeadline?: SortOrder
+    quota?: SortOrder
     status?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -16548,6 +16651,7 @@ export namespace Prisma {
 
   export type ProductSumOrderByAggregateInput = {
     price?: SortOrder
+    quota?: SortOrder
   }
 
   export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
@@ -16588,6 +16692,22 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
   export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -16781,17 +16901,6 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type AccountProviderProviderAccountIdCompoundUniqueInput = {
     provider: string
     providerAccountId: string
@@ -16848,22 +16957,6 @@ export namespace Prisma {
 
   export type AccountSumOrderByAggregateInput = {
     expires_at?: SortOrder
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type SessionCountOrderByAggregateInput = {
@@ -17107,6 +17200,14 @@ export namespace Prisma {
     set?: Date | string | null
   }
 
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type FormFieldUpdateManyWithoutProductNestedInput = {
     create?: XOR<FormFieldCreateWithoutProductInput, FormFieldUncheckedCreateWithoutProductInput> | FormFieldCreateWithoutProductInput[] | FormFieldUncheckedCreateWithoutProductInput[]
     connectOrCreate?: FormFieldCreateOrConnectWithoutProductInput | FormFieldCreateOrConnectWithoutProductInput[]
@@ -17323,14 +17424,6 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutAccountsInput, UserUncheckedCreateWithoutAccountsInput>
     connectOrCreate?: UserCreateOrConnectWithoutAccountsInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type UserUpdateOneRequiredWithoutAccountsNestedInput = {
@@ -17735,6 +17828,33 @@ export namespace Prisma {
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
   export type NestedJsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
@@ -17787,33 +17907,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedEnumRoleTypeFilter<$PrismaModel = never> = {
@@ -18089,6 +18182,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    platform?: string | null
+    dateDeadline?: Date | string | null
+    quota?: number | null
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18109,6 +18205,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    platform?: string | null
+    dateDeadline?: Date | string | null
+    quota?: number | null
     status?: string
     userId: string
     createdAt?: Date | string
@@ -18172,6 +18271,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18192,6 +18294,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18236,6 +18341,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    platform?: string | null
+    dateDeadline?: Date | string | null
+    quota?: number | null
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18256,6 +18364,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    platform?: string | null
+    dateDeadline?: Date | string | null
+    quota?: number | null
     status?: string
     userId: string
     createdAt?: Date | string
@@ -18308,6 +18419,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18328,6 +18442,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18719,6 +18836,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    platform?: string | null
+    dateDeadline?: Date | string | null
+    quota?: number | null
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18739,6 +18859,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    platform?: string | null
+    dateDeadline?: Date | string | null
+    quota?: number | null
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18871,6 +18994,9 @@ export namespace Prisma {
     startDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     endDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     link?: StringNullableFilter<"Product"> | string | null
+    platform?: StringNullableFilter<"Product"> | string | null
+    dateDeadline?: DateTimeNullableFilter<"Product"> | Date | string | null
+    quota?: IntNullableFilter<"Product"> | number | null
     status?: StringFilter<"Product"> | string
     userId?: StringFilter<"Product"> | string
     createdAt?: DateTimeFilter<"Product"> | Date | string
@@ -19170,6 +19296,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    platform?: string | null
+    dateDeadline?: Date | string | null
+    quota?: number | null
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -19236,6 +19365,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19256,6 +19388,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19276,6 +19411,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

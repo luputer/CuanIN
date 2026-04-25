@@ -15,7 +15,7 @@ export const productsRouter = createTRPCRouter({
                 page: z.number().min(1).default(1),
                 limit: z.number().min(1).max(100).default(10),
                 search: z.string().optional(),
-                sortBy: z.enum(["name", "createdAt"]).optional().default("createdAt"),
+                sortBy: z.enum(["name", "createdAt", "startDate"]).optional().default("createdAt"),
                 sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
                 priceType: z.enum(["ALL", "FREE", "PAID"]).optional().default("ALL"),
                 status: z.string().optional().default("ALL"),
@@ -98,6 +98,9 @@ export const productsRouter = createTRPCRouter({
                 startDate: z.date().optional(),
                 endDate: z.date().optional(),
                 link: z.string().optional(),
+                platform: z.string().optional(),
+                dateDeadline: z.date().optional(),
+                quota: z.number().optional(),
                 benefit: z.array(z.string()).optional(),
                 image: z.string().optional(),
                 status: z.string().optional(),
@@ -142,12 +145,14 @@ export const productsRouter = createTRPCRouter({
                 startDate: z.date().optional(),
                 endDate: z.date().optional(),
                 link: z.string().optional(),
+                platform: z.string().optional(),
+                dateDeadline: z.date().optional(),
+                quota: z.number().optional(),
                 benefit: z.array(z.string()).optional(),
                 image: z.string().optional(),
                 status: z.string().optional(),
             })
         )
-
         .mutation(async ({ ctx, input }) => {
             const { id, name, ...rest } = input;
             // Pastikan produk milik user yang login

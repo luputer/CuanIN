@@ -10,6 +10,7 @@ interface FormGroupProps {
     children: React.ReactNode;
     error?: string;
     className?: string;
+    align?: "start" | "center";
 }
 
 export const FormGroup = ({
@@ -17,9 +18,19 @@ export const FormGroup = ({
     children,
     error,
     className,
+    align = "center",
 }: FormGroupProps) => (
-    <div className={cn("flex flex-col md:flex-row gap-10 md:items-start py-4 last:border-0", className)}>
-        <Label className="md:pt-1 text-sm text-slate-800 font-medium w-[200px]">{label}</Label>
+    <div className={cn(
+        "flex flex-col md:flex-row gap-10 py-4 last:border-0",
+        align === "center" ? "md:items-center" : "md:items-start",
+        className
+    )}>
+        <Label className={cn(
+            "text-sm text-slate-600 font-medium w-[200px]",
+            align === "start" && "md:pt-1"
+        )}>
+            {label}
+        </Label>
         <div className="flex-1">
             {children}
             {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
@@ -56,7 +67,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
         if (prefix || Icon || suffix) {
             return (
                 <div className={cn(
-                    "flex items-center bg-cyan-50 h-[52px] rounded-lg border border-slate-400 focus-within:ring-2 focus-within:ring-cyan-600/50 transition-all px-4 gap-2",
+                    "flex items-center bg-white h-[52px] rounded-lg border border-slate-400 focus-within:ring-2 focus-within:ring-cyan-600/50 transition-all px-4 gap-2",
                     className
                 )}>
                     {Icon && (
@@ -85,7 +96,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             <input
                 ref={ref}
                 className={cn(
-                    "w-full px-4 bg-cyan-50 h-[52px] rounded-lg border border-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-600/50 text-sm placeholder:text-slate-400 placeholder:text-sm transition-all",
+                    "w-full px-4 bg-white h-[52px] rounded-lg border border-slate-400 text-slate-800 font-regular focus:outline-none focus:ring-2 focus:ring-cyan-600/50 text-sm placeholder:text-slate-400 placeholder:text-sm transition-all",
                     className
                 )}
                 {...props}
@@ -105,7 +116,7 @@ export const FormTextarea = React.forwardRef<HTMLTextAreaElement, React.Componen
             <textarea
                 ref={ref}
                 className={cn(
-                    "w-full px-4 py-3 min-h-[120px] bg-cyan-50 rounded-lg border border-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-600/50 text-sm placeholder:text-slate-400 placeholder:text-sm leading-relaxed transition-all",
+                    "w-full px-4 py-3 min-h-[120px] bg-white rounded-lg text-slate-800 font-regular border border-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-600/50 text-sm placeholder:text-slate-400 placeholder:text-sm leading-relaxed transition-all",
                     className
                 )}
                 {...props}
@@ -125,7 +136,7 @@ export const FormSelect = React.forwardRef<HTMLSelectElement, React.ComponentPro
             <select
                 ref={ref}
                 className={cn(
-                    "w-full px-4 bg-cyan-50 h-[52px] rounded-lg border border-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-600/50 text-sm appearance-none cursor-pointer transition-all",
+                    "w-full px-4 bg-white h-[52px] rounded-lg text-slate-800 font-regular border border-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-600/50 text-sm appearance-none cursor-pointer transition-all",
                     className
                 )}
                 {...props}

@@ -37,6 +37,7 @@ export const webinarSchema = z
         priceType: z.enum(["free", "paid"]),
         price: z.number().min(0, "Harga tidak boleh negatif").optional(),
         platform: z.string().min(1, "Platform wajib dipilih"),
+        platformCustom: z.string().optional(),
         link: z
             .string()
             .min(1, "Link webinar wajib diisi")
@@ -47,6 +48,7 @@ export const webinarSchema = z
         dateEnd: z.date({ required_error: "Waktu selesai wajib diisi" }),
         dateDeadline: z.date().optional(),
         quota: z.number().min(1, "Kuota minimal 1").optional(),
+        benefit: z.array(z.string()).optional(),
     })
     .refine(
         (data) => {

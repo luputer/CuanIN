@@ -1,70 +1,38 @@
 "use client";
 
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Plus, Loader2 } from "lucide-react";
+import { ArrowLeftIcon, ImageIcon, PlusIcon, PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
 import dynamic from "next/dynamic";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Textarea } from "~/components/ui/textarea";
-
-// Import MDEditor secara dynamic karena tidak support SSR
-const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "~/components/ui/select";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { DateTimePicker } from "~/components/ui/date-time-picker";
 import { webinarSchema } from "~/lib/validation";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
+import Image from "next/image";
+import { useState } from "react";
+import {
+    FormGroup,
+    SectionHeader,
+    FormInput,
+    FormTextarea,
+    FormSelect
+} from "~/components/ui/form-layout";
+import ButtonAdd from "~/components/ui/button-add";
+import ButtonCancel from "~/components/ui/button-cancel";
 
-// ============================================================
-// Schema Zod
-// ============================================================
+// Import MDEditor secara dynamic karena tidak support SSR
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 type WebinarFormValues = z.infer<typeof webinarSchema>;
 
-// ============================================================
-// Sub-components
-// ============================================================
-const FormGroup = ({
-    label,
-    children,
-    error,
-}: {
-    label: string;
-    children: React.ReactNode;
-    error?: string;
-}) => (
-    <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4 items-start">
-        <Label className="mt-2 text-slate-700 font-medium text-base">{label}</Label>
-        <div className="w-full">
-            {children}
-            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-        </div>
-    </div>
-);
-
-const SectionHeader = ({ title }: { title: string }) => (
-    <div className="border-b-2 border-blue-500 pb-2 mb-6">
-        <h2 className="text-lg font-bold text-slate-700">{title}</h2>
-    </div>
-);
-
-// ============================================================
-// Main Page
-// ============================================================
 export default function CreateWebinarPage() {
     const router = useRouter();
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
 
     const {
         register,
@@ -80,7 +48,13 @@ export default function CreateWebinarPage() {
             platform: "zoom",
             status: "published",
             price: 0,
+            benefit: ["", "", ""], // Default 3 empty benefits
         },
+    });
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "benefit" as never,
     });
 
     const priceType = watch("priceType");
@@ -92,7 +66,6 @@ export default function CreateWebinarPage() {
 
     const createWebinar = api.products.create.useMutation({
         onSuccess: () => {
-            // Invalidate di background — tidak blocking navigasi
             void utils.products.getAll.invalidate();
             toast.success("Webinar berhasil dibuat");
             router.push("/webinar");
@@ -103,246 +76,305 @@ export default function CreateWebinarPage() {
     });
 
     const onSubmit = (data: WebinarFormValues) => {
+        const actualPlatform = data.platform === "other" ? data.platformCustom : data.platform;
+
         createWebinar.mutate({
             name: data.name,
+            shortDescription: data.shortDescription,
             description: data.description,
             price: data.priceType === "free" ? 0 : (data.price ?? 0),
             type: "WEBINAR",
             startDate: data.dateStart,
             endDate: data.dateEnd,
+            dateDeadline: data.dateDeadline,
             link: data.link ?? undefined,
+            status: data.status,
+            platform: actualPlatform,
+            quota: data.quota,
+            benefit: data.benefit?.filter(b => b.trim() !== ""),
         });
+    };
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64String = reader.result as string;
+                setImagePreview(base64String);
+                // setValue("image", base64String); // Jika schema mendukung base64
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex flex-col gap-2 mb-8">
-                <Link
-                    href="/webinar"
-                    className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 w-fit"
-                >
-                    <ChevronLeft className="h-4 w-4" />
-                    <span>Kembali ke Daftar Webinar</span>
-                </Link>
-                <h1 className="text-2xl font-bold text-blue-600">Tambah Webinar Baru</h1>
+            <div className="bg-slate-50">
+                <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
+                    <Link
+                        href="/webinar"
+                        className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
+                    >
+                        <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                        <span className="leading-none">Kembali ke Daftar</span>
+                    </Link>
+                    <h1 className="text-2xl font-semibold text-slate-800">Tambah Webinar Baru</h1>
+                </div>
             </div>
 
-            <div className="bg-blue-50 p-6 rounded-xl space-y-8 border-2 border-blue-200">
-                {/* ─── Informasi Produk ─── */}
-                <section>
-                    <SectionHeader title="Informasi Produk" />
-                    <div className="space-y-5">
+            <div className="bg-white rounded-xl border border-slate-800 overflow-hidden">
+                <div className="px-4 sm:px-10 py-6 sm:py-8">
+
+                    <SectionHeader title="Informasi Webinar" />
+
+                    <div>
                         {/* Nama */}
                         <FormGroup label="Nama" error={errors.name?.message}>
-                            <Input
+                            <FormInput
                                 placeholder="Masukkan nama webinar"
-                                className="bg-white h-[52px] border-blue-200 focus-visible:ring-blue-500"
                                 {...register("name")}
                             />
                         </FormGroup>
 
-                        <FormGroup label="Deskripsi" error={errors.description?.message}>
-                            <div data-color-mode="light">
-                                <Controller
-                                    name="description"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <MDEditor
-                                            value={field.value ?? ""}
-                                            onChange={(val) => field.onChange(val ?? "")}
-                                            preview="live"
-                                            height={300}
-                                            visibleDragbar={false}
-                                            previewOptions={{
-                                                remarkPlugins: [[remarkGfm]],
-                                                className: "prose prose-sm prose-slate max-w-none text-slate-600",
-                                                wrapperElement: {
-                                                    "data-color-mode": "light",
-                                                },
-                                            }}
-                                        />
-                                    )}
+                        {/* Gambar */}
+                        <FormGroup label="Gambar" align="start">
+                            <div className="flex flex-col gap-3">
+                                <div className="relative group shrink-0 w-48 h-48">
+                                    <div className="w-full h-full bg-slate-50 border-2 border-dashed border-slate-400 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-slate-400 group-hover:bg-slate-100">
+                                        {imagePreview ? (
+                                            <>
+                                                <Image
+                                                    src={imagePreview}
+                                                    alt="Preview"
+                                                    fill
+                                                    className="object-cover rounded-xl group-hover:opacity-80 transition-opacity"
+                                                />
+                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10">
+                                                    <div className="bg-white/90 p-2 rounded-full shadow-md text-slate-800">
+                                                        <PencilSimpleIcon size={24} weight="bold" />
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="flex flex-col items-center gap-2 text-slate-400">
+                                                <ImageIcon size={32} weight="light" />
+                                                <span className="text-xs font-medium">Upload Gambar</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <input
+                                        type="file"
+                                        className="absolute inset-0 opacity-0 cursor-pointer"
+                                        onChange={handleImageChange}
+                                        accept="image/*"
+                                    />
+                                </div>
+                                <div className="text-xs text-slate-500 leading-relaxed">
+                                    <ul className="list-inside space-y-1 ml-1">
+                                        <li>JPG/PNG, 1:1 (square) direkomendasikan</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </FormGroup>
+                        <FormGroup label="Deskripsi Singkat" align="start" error={errors.shortDescription?.message}>
+                            <FormTextarea
+                                placeholder="Masukkan deskripsi singkat webinar"
+                                {...register("shortDescription")}
+                            />
+                        </FormGroup>
+                        <FormGroup label="Deskripsi" align="start" error={(errors.description as any)?.message}>
+                            <div data-color-mode="light" className="border border-slate-400 rounded-lg overflow-hidden">
+                                <MDEditor
+                                    value={watch("description") ?? ""}
+                                    onChange={(val) => setValue("description", val ?? "")}
+                                    height={400}
+                                    preview="live"
+                                    visibleDragbar={false}
+                                    style={{ border: 'none', boxShadow: 'none' }}
+                                    previewOptions={{
+                                        remarkPlugins: [remarkGfm, remarkBreaks],
+                                    }}
                                 />
                             </div>
                         </FormGroup>
-
-                        {/* Gambar */}
-                        <FormGroup label="Gambar">
-                            <div className="flex h-32 w-32 cursor-pointer flex-col items-center justify-center border border-blue-300 bg-white hover:bg-blue-50 text-blue-500 transition-colors">
-                                <Plus className="h-8 w-8" />
-                                <span className="text-xs mt-1">Upload</span>
-                                <input type="file" className="hidden" accept="image/*" />
+                        <FormGroup label="Manfaat" align="start" error={(errors.benefit as any)?.message}>
+                            <div className="space-y-3 flex flex-col">
+                                {fields.map((field, index) => (
+                                    <div key={field.id} className="flex gap-2">
+                                        <FormInput
+                                            placeholder={`Manfaat ${index + 1}`}
+                                            className="flex-1"
+                                            {...register(`benefit.${index}` as const)}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="flex h-[52px] w-[52px] items-center justify-center rounded-lg bg-red-50 text-red-500 hover:text-red-700 hover:bg-red-100 transition-colors border border-transparent shrink-0 cursor-pointer"
+                                            onClick={() => remove(index)}
+                                        >
+                                            <TrashIcon className="h-5 w-5 translate-y-[0.5px]" weight="bold" />
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    onClick={() => append("")}
+                                    className="flex justify-center items-center gap-2 bg-white border border-slate-400 rounded-lg py-2 px-4 text-sm font-regular text-slate-800 hover:bg-slate-100 w-fit cursor-pointer"
+                                >
+                                    <PlusIcon className="h-4 w-4" weight="regular" />
+                                    <span>Tambah Manfaat</span>
+                                </button>
                             </div>
                         </FormGroup>
-
-                        {/* Tipe (free / paid) */}
+                        {/* Tipe Harga */}
                         <FormGroup label="Tipe" error={errors.priceType?.message}>
-                            <Select
+                            <FormSelect
                                 value={priceType}
-                                onValueChange={(val) =>
-                                    setValue("priceType", val as "free" | "paid", {
+                                onChange={(e) =>
+                                    setValue("priceType", e.target.value as "free" | "paid", {
                                         shouldValidate: true,
                                     })
                                 }
                             >
-                                <SelectTrigger className="bg-white w-full border-blue-200 focus:ring-blue-500">
-                                    <SelectValue placeholder="Pilih Salah Satu" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="free">Gratis</SelectItem>
-                                    <SelectItem value="paid">Berbayar</SelectItem>
-                                </SelectContent>
-                            </Select>
+                                <option value="free">Gratis</option>
+                                <option value="paid">Berbayar</option>
+                            </FormSelect>
                         </FormGroup>
 
-                        {/* Harga — hanya muncul kalau paid */}
+                        {/* Harga */}
                         {priceType === "paid" && (
                             <FormGroup label="Harga" error={errors.price?.message}>
-                                <div className="relative">
-                                    <span className="absolute left-3 top-2.5 text-slate-500">Rp</span>
-                                    <Input
+                                <div className="relative group">
+                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium group-focus-within:text-cyan-600 transition-colors">Rp</div>
+                                    <FormInput
                                         type="number"
                                         placeholder="0"
-                                        className="pl-10 bg-white border-blue-200 focus-visible:ring-blue-500"
+                                        className="pl-12"
                                         {...register("price", { valueAsNumber: true })}
                                     />
                                 </div>
                             </FormGroup>
                         )}
 
-                        {/* Platform */}
                         <FormGroup label="Platform" error={errors.platform?.message}>
-                            <Select
-                                defaultValue="zoom"
-                                onValueChange={(val) =>
-                                    setValue("platform", val, { shouldValidate: true })
-                                }
-                            >
-                                <SelectTrigger className="bg-white w-full h-[52px] border-blue-200 focus:ring-blue-500">
-                                    <SelectValue placeholder="Pilih Platform" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="zoom">Zoom</SelectItem>
-                                    <SelectItem value="google-meet">Google Meet</SelectItem>
-                                    <SelectItem value="other">Lainnya</SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <div className="space-y-3">
+                                <FormSelect
+                                    {...register("platform")}
+                                >
+                                    <option value="zoom">Zoom</option>
+                                    <option value="google-meet">Google Meet</option>
+                                    <option value="other">Lainnya</option>
+                                </FormSelect>
+
+                                {watch("platform") === "other" && (
+                                    <FormInput
+                                        placeholder="Sebutkan nama platform (misal: Youtube Live, dsb)"
+                                        {...register("platformCustom")}
+                                        className="animate-in fade-in slide-in-from-top-1 duration-200"
+                                    />
+                                )}
+                            </div>
                         </FormGroup>
 
                         {/* Link */}
                         <FormGroup label="Link" error={errors.link?.message}>
-                            <Input
+                            <FormInput
                                 placeholder="https://zoom.us/j/..."
-                                className="bg-white border-blue-200 focus-visible:ring-blue-500"
                                 {...register("link")}
                             />
                         </FormGroup>
 
                         {/* Catatan */}
-                        <FormGroup label="Catatan" error={errors.notes?.message}>
-                            <Textarea
-                                placeholder="Masukkan catatan (opsional)"
-                                className="min-h-[120px] bg-white border-blue-200 focus-visible:ring-blue-500"
+                        <FormGroup label="Catatan" error={errors.notes?.message} align="start">
+                            <FormTextarea
+                                placeholder="Masukkan catatan untuk pembeli setelah membayar"
                                 {...register("notes")}
                             />
                         </FormGroup>
 
                         {/* Status */}
                         <FormGroup label="Status" error={errors.status?.message}>
-                            <Select
-                                defaultValue="published"
-                                onValueChange={(val) =>
-                                    setValue("status", val, { shouldValidate: true })
-                                }
+                            <FormSelect
+                                {...register("status")}
                             >
-                                <SelectTrigger className="bg-white w-full h-[52px] border-blue-200 focus:ring-blue-500">
-                                    <SelectValue placeholder="Pilih Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="published" className="text-amber-600 font-medium">
-                                        Published
-                                    </SelectItem>
-                                    <SelectItem value="draft">Draft</SelectItem>
-                                    <SelectItem value="archived">Archived</SelectItem>
-                                </SelectContent>
-                            </Select>
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                                <option value="archived">Archived</option>
+                            </FormSelect>
                         </FormGroup>
                     </div>
-                </section>
 
-                {/* ─── Jadwal ─── */}
-                <section>
-                    <SectionHeader title="Jadwal" />
-                    <div className="space-y-5">
-                        {/* Waktu Mulai */}
-                        <FormGroup label="Waktu Mulai" error={errors.dateStart?.message}>
-                            <DateTimePicker
-                                date={dateStart}
-                                setDate={(date) =>
-                                    setValue("dateStart", date, { shouldValidate: true })
-                                }
-                                placeholder="Pilih Tanggal Mulai"
+                    {/* ─── Jadwal & Harga ─── */}
+                    <section className="mt-6">
+                        <SectionHeader title="Jadwal" />
+
+                        <div>
+                            {/* Waktu Mulai */}
+                            <FormGroup label="Waktu Mulai" error={errors.dateStart?.message}>
+                                <DateTimePicker
+                                    date={dateStart}
+                                    setDate={(date) =>
+                                        setValue("dateStart", date, { shouldValidate: true })
+                                    }
+                                    placeholder="Pilih Tanggal & Waktu Mulai"
+                                />
+                            </FormGroup>
+
+                            {/* Waktu Selesai */}
+                            <FormGroup label="Waktu Selesai" error={errors.dateEnd?.message}>
+                                <DateTimePicker
+                                    date={dateEnd}
+                                    setDate={(date) =>
+                                        setValue("dateEnd", date, { shouldValidate: true })
+                                    }
+                                    placeholder="Pilih Tanggal & Waktu Selesai"
+                                />
+                            </FormGroup>
+                        </div>
+                    </section>
+
+                    <section className="mt-6">
+                        <SectionHeader title="Pendaftaran" />
+                        {/* Kuota */}
+                        <FormGroup label="Kuota" error={errors.quota?.message}>
+                            <FormInput
+                                type="number"
+                                placeholder="0 (Isi 0 jika tidak terbatas)"
+                                {...register("quota", { valueAsNumber: true })}
                             />
                         </FormGroup>
 
-                        {/* Waktu Selesai */}
-                        <FormGroup label="Waktu Selesai" error={errors.dateEnd?.message}>
-                            <DateTimePicker
-                                date={dateEnd}
-                                setDate={(date) =>
-                                    setValue("dateEnd", date, { shouldValidate: true })
-                                }
-                                placeholder="Pilih Tanggal Selesai"
-                            />
-                        </FormGroup>
-
-                        {/* Waktu Deadline */}
-                        <FormGroup label="Waktu Deadline" error={errors.dateDeadline?.message}>
+                        {/* Batas Pendaftaran */}
+                        <FormGroup label="Batas Pendaftaran" error={errors.dateDeadline?.message}>
                             <DateTimePicker
                                 date={dateDeadline}
                                 setDate={(date) =>
                                     setValue("dateDeadline", date, { shouldValidate: true })
                                 }
-                                placeholder="Pilih Tanggal Deadline"
+                                placeholder="Pilih Batas Waktu Pendaftaran"
                             />
                         </FormGroup>
-                    </div>
-                </section>
+                    </section>
 
-                {/* ─── Pendaftaran ─── */}
-                <section>
-                    <SectionHeader title="Pendaftaran" />
-                    <div className="space-y-5">
-                        {/* Kuota */}
-                        <FormGroup label="Kuota" error={errors.quota?.message}>
-                            <Input
-                                type="number"
-                                placeholder="0"
-                                className="bg-white border-blue-200 focus-visible:ring-blue-500"
-                                {...register("quota", { valueAsNumber: true })}
-                            />
-                        </FormGroup>
-                    </div>
-                </section>
-            </div>
 
-            <Button
-                onClick={handleSubmit(onSubmit)}
-                disabled={createWebinar.isPending}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-6 text-lg shadow-md shadow-blue-200"
-            >
-                {createWebinar.isPending ? (
-                    <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Menyimpan...
-                    </>
-                ) : (
-                    <>
-                        Tambah <Plus className="ml-2 h-5 w-5" />
-                    </>
-                )}
-            </Button>
-        </div>
+
+                </div>
+
+                {/* Footer Actions */}
+                <div className="px-4 sm:px-10 pb-8 flex justify-end gap-4">
+                    <ButtonCancel
+                        type="button"
+                        onClick={() => router.push("/webinar")}
+                    />
+                    <ButtonAdd
+                        label="Buat Webinar"
+                        weight="bold"
+                        onClick={handleSubmit(onSubmit)}
+                        isLoading={createWebinar.isPending}
+                    />
+                </div>
+            </div >
+        </div >
     );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { CircleNotchIcon, FloppyDiskIcon } from "@phosphor-icons/react";
+import { CircleNotchIcon, CheckIcon } from "@phosphor-icons/react";
 import { cn } from "~/lib/utils";
 
 interface ButtonSaveProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -16,7 +16,7 @@ export default function ButtonSave({
     isLoading,
     label = "Simpan Perubahan",
     loadingLabel = "Menyimpan...",
-    icon: Icon = FloppyDiskIcon,
+    icon: Icon = CheckIcon,
     className,
     weight,
     ...props
@@ -32,7 +32,7 @@ export default function ButtonSave({
                 "shadow-[2px_2px_0px_rgba(30,27,75)]",
                 "transition-all duration-200 ease-out",
                 "hover:translate-x-px hover:translate-y-px hover:shadow-none",
-                "disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[2px_2px_0px_rgba(30,27,75)]",
+                "disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[2px_1px_0px_rgba(30,27,75)]",
                 className
             )}
         >

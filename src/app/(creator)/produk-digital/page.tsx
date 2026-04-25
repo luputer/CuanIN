@@ -108,8 +108,7 @@ export default function DigitalProductPage() {
 	const getStatusColor = (status: string) => {
 		const s = status.toLowerCase();
 		switch (s) {
-			case "selesai": return "bg-green-100 text-green-700";
-			case "published": return "bg-yellow-100 text-yellow-600";
+			case "published": return "bg-green-100 text-green-700";
 			case "unpublished": return "bg-slate-200 text-slate-500";
 			default: return "bg-slate-100 text-slate-600";
 		}
@@ -118,7 +117,6 @@ export default function DigitalProductPage() {
 	const getStatusLabel = (status: string) => {
 		const s = status.toLowerCase();
 		switch (s) {
-			case "selesai": return "Selesai";
 			case "published": return "Published";
 			case "unpublished": return "Unpublished";
 			default: return status;
@@ -267,8 +265,13 @@ export default function DigitalProductPage() {
 								))
 							) : products?.length === 0 ? (
 								<TableRow className="text-center">
-									<TableCell colSpan={8}>
-										Belum ada produk digital.
+									<TableCell colSpan={8} className="py-20">
+										<div className="flex flex-col items-center gap-1">
+											<span className="text-slate-500">Belum ada produk digital.</span>
+											<Link href="/produk-digital/create" className="text-cyan-600 font-medium hover:underline">
+												Buat produk digital pertamamu
+											</Link>
+										</div>
 									</TableCell>
 								</TableRow>
 							) : (

@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { cn } from "~/lib/utils";
 
-const ACTIVE_TAB_CLASSES = "border-t-cyan-600 text-slate-800";
+const ACTIVE_TAB_CLASSES = "border-cyan-600 text-cyan-600";
 
 interface TabsContextProps {
     activeTab: string;
@@ -28,10 +28,10 @@ export function ProductDetailTabs({ defaultTab, buyerCount, children, className 
             <button
                 onClick={() => setActiveTab(value)}
                 className={cn(
-                    "relative py-3.5 px-10 transition-all cursor-pointer text-center text-sm min-w-[120px]",
+                    "relative pt-6 pb-4 px-4 transition-all cursor-pointer text-center text-md border-b-3 -mb-[1px]",
                     isActive
-                        ? cn("bg-cyan-50 border-t-4 border-l border-r border-slate-800 rounded-t-lg font-semibold -mb-[1px] z-20", ACTIVE_TAB_CLASSES)
-                        : "border-b border-slate-800 text-slate-500 hover:text-slate-800 font-medium hover:bg-cyan-50 rounded-t-lg"
+                        ? cn("z-20 font-semibold", ACTIVE_TAB_CLASSES)
+                        : "font-normal text-slate-500 hover:text-slate-800 border-transparent"
                 )}
             >
                 {label} {count !== undefined && `(${count})`}
@@ -42,8 +42,8 @@ export function ProductDetailTabs({ defaultTab, buyerCount, children, className 
     return (
         <TabsContext.Provider value={{ activeTab, setActiveTab }}>
             <div className="flex flex-col">
-                <div className={cn("bg-white border-b border-slate-800 px-6 pt-4", className)}>
-                    <div className="flex gap-1 items-end -mb-[1px]">
+                <div className={cn("bg-cyan-50 border-b border-cyan-200 px-4 sm:px-10", className)}>
+                    <div className="flex gap-6 sm:gap-10 items-end -mb-[1px] overflow-x-auto no-scrollbar">
                         <TabButton value="detail" label="Detail Produk" />
                         <TabButton value="user" label="Pembeli" count={buyerCount} />
                         <TabButton value="form" label="Kustomisasi Form" />
@@ -64,7 +64,7 @@ export function ProductDetailTabContent({ value, children, className }: { value:
     if (context.activeTab !== value) return null;
 
     return (
-        <div className="p-6 bg-cyan-50">
+        <div className="p-2 bg-white">
             <div className={cn("bg-white rounded-xl overflow-hidden", className)}>
                 {children}
             </div>

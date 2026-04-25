@@ -2,7 +2,6 @@
 
 import {
     EyeIcon,
-    TrashIcon,
 } from "@phosphor-icons/react";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
@@ -33,18 +32,7 @@ import {
     DropdownMenuRadioGroup,
     DropdownMenuRadioItem,
 } from "~/components/ui/dropdown-menu";
-import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogCancel,
-    AlertDialogAction,
-} from "~/components/ui/alert-dialog";
 import { Skeleton } from "~/components/ui/skeleton";
-import { toast } from "sonner";
 
 export default function Pembeli({ productId }: { productId: string }) {
     const [view, setView] = useState<"list" | "detail">("list");
@@ -56,10 +44,6 @@ export default function Pembeli({ productId }: { productId: string }) {
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("ALL");
 
-    // ✅ delete state
-    const [deleteId, setDeleteId] = useState<string | null>(null);
-    const [isDeleting, setIsDeleting] = useState(false);
-
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(search);
@@ -68,32 +52,10 @@ export default function Pembeli({ productId }: { productId: string }) {
         return () => clearTimeout(timer);
     }, [search]);
 
-    const utils = api.useUtils();
-
     const { data, isLoading } = api.purchases.getByProductId.useQuery(
         { productId, page, limit, search: debouncedSearch, status: statusFilter },
         { enabled: !!productId, placeholderData: (prev) => prev }
     );
-
-    const deleteMutation = api.purchases.delete.useMutation({
-        onSuccess: () => {
-            toast.success("Data berhasil dihapus");
-            void utils.purchases.getByProductId.invalidate();
-        },
-        onError: () => {
-            toast.error("Gagal menghapus data");
-        },
-        onSettled: () => {
-            setIsDeleting(false);
-            setDeleteId(null);
-        },
-    });
-
-    const handleDelete = () => {
-        if (!deleteId) return;
-        setIsDeleting(true);
-        deleteMutation.mutate({ id: deleteId });
-    };
 
     const items = data?.items ?? [];
     const total = data?.total ?? 0;
@@ -129,7 +91,7 @@ export default function Pembeli({ productId }: { productId: string }) {
 
     return (
         <TooltipProvider>
-            <div className="bg-white space-y-6 p-6">
+            <div className="bg-white space-y-6 p-4 sm:p-6">
 
                 {/* Toolbar */}
                 <div className="flex flex-col md:flex-row justify-between gap-4">
@@ -168,32 +130,36 @@ export default function Pembeli({ productId }: { productId: string }) {
                 >
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="text-center">No</TableHead>
-                            <TableHead>Nama</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Nomor Hp</TableHead>
-                            <TableHead>Tanggal Beli</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-center">Aksi</TableHead>
+                            <TableHead className="w-[5%] text-center">No</TableHead>
+                            <TableHead className="w-[20%]">Nama</TableHead>
+                            <TableHead className="w-[20%]">Email</TableHead>
+                            <TableHead className="w-[15%]">Nomor Hp</TableHead>
+                            <TableHead className="w-[15%]">Tanggal Beli</TableHead>
+                            <TableHead className="w-[15%]">Status</TableHead>
+                            <TableHead className="text-left w-[10%]">Aksi</TableHead>
                         </TableRow>
                     </TableHeader>
 
                     <TableBody>
                         {isLoading ? (
                             Array.from({ length: 5 }).map((_, i) => (
-                                <TableRow key={i}>
+                                <TableRow data-type="body" key={i}>
                                     <TableCell><Skeleton className="h-4 w-4 mx-auto" /></TableCell>
                                     <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                                     <TableCell><Skeleton className="h-4 w-40" /></TableCell>
                                     <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                                     <TableCell><Skeleton className="h-4 w-28" /></TableCell>
                                     <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-                                    <TableCell><Skeleton className="h-5 w-5 mx-auto" /></TableCell>
+                                    <TableCell>
+                                        <div className="flex justify-center">
+                                            <Skeleton className="h-5 w-5" />
+                                        </div>
+                                    </TableCell>
                                 </TableRow>
                             ))
                         ) : items.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={7} className="text-center">
+                            <TableRow className="text-center">
+                                <TableCell colSpan={7} className="py-8">
                                     Belum ada pembeli untuk produk ini.
                                 </TableCell>
                             </TableRow>
@@ -201,37 +167,53 @@ export default function Pembeli({ productId }: { productId: string }) {
                             items.map((item, index) => {
                                 const rowNumber = (page - 1) * limit + index + 1;
                                 return (
-                                    <TableRow key={item.id}>
-                                        <TableCell className="text-center">{rowNumber}</TableCell>
+                                    <TableRow key={item.id} data-type="body">
+                                        <TableCell className="text-center font-medium whitespace-nowrap">
+                                            {rowNumber}
+                                        </TableCell>
 
-                                        <TableCell>
+                                        <TableCell className="whitespace-nowrap">
                                             <button
                                                 onClick={() => {
                                                     setSelectedPurchaseId(item.id);
                                                     setView("detail");
                                                 }}
-                                                className="hover:text-cyan-600"
+                                                className="hover:text-cyan-600 transition-colors"
                                             >
-                                                {item.buyerName}
+                                                <div className="flex items-center min-h-[48px]">
+                                                    {item.buyerName}
+                                                </div>
                                             </button>
                                         </TableCell>
 
-                                        <TableCell>{item.buyerEmail}</TableCell>
-                                        <TableCell>{item.buyerPhone}</TableCell>
-
-                                        <TableCell>
-                                            {format(new Date(item.createdAt), "d MMM yyyy", { locale: idLocale })}
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                {item.buyerEmail}
+                                            </div>
                                         </TableCell>
 
-                                        <TableCell>
-                                            <span className={`px-3 py-1 rounded-full text-xs ${getStatusColor(item.status)}`}>
-                                                {getStatusLabel(item.status)}
-                                            </span>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                {item.buyerPhone}
+                                            </div>
                                         </TableCell>
 
-                                        <TableCell className="text-center">
-                                            <div className="flex justify-center gap-2">
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                {format(new Date(item.createdAt), "d MMM yyyy", { locale: idLocale })}
+                                            </div>
+                                        </TableCell>
 
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                <span className={`px-4 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.status)}`}>
+                                                    {getStatusLabel(item.status)}
+                                                </span>
+                                            </div>
+                                        </TableCell>
+
+                                        <TableCell className="px-6 py-4 text-right">
+                                            <div className="flex items-center gap-3">
                                                 {/* detail */}
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
@@ -239,22 +221,11 @@ export default function Pembeli({ productId }: { productId: string }) {
                                                             setSelectedPurchaseId(item.id);
                                                             setView("detail");
                                                         }}>
-                                                            <EyeIcon size={20} />
+                                                            <EyeIcon className="w-[24px] h-[24px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
                                                         </button>
                                                     </TooltipTrigger>
                                                     <TooltipContent>Detail</TooltipContent>
                                                 </Tooltip>
-
-                                                {/* delete */}
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <button onClick={() => setDeleteId(item.id)}>
-                                                            <TrashIcon size={20} className="text-red-500" />
-                                                        </button>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>Hapus</TooltipContent>
-                                                </Tooltip>
-
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -264,29 +235,6 @@ export default function Pembeli({ productId }: { productId: string }) {
                     </TableBody>
                 </Table>
             </div>
-
-            {/* ALERT DELETE */}
-            <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Hapus Data?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Data yang sudah dihapus tidak bisa dikembalikan.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Batal</AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={handleDelete}
-                            disabled={isDeleting}
-                            className="bg-red-500 hover:bg-red-600"
-                        >
-                            {isDeleting ? "Menghapus..." : "Hapus"}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
         </TooltipProvider>
     );
 }

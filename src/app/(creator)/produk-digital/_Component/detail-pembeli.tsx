@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
 import { Skeleton } from "~/components/ui/skeleton";
+import { FormGroup, SectionHeader, FormInput, FormTextarea } from "~/components/ui/form-layout";
 
 export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBack: () => void }) {
     const { data: purchase, isLoading } = api.purchases.getDetail.useQuery(
@@ -12,24 +13,31 @@ export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBa
 
     if (isLoading) {
         return (
-            <div className="bg-[#f0f9fa] p-4 md:p-6 rounded-b-xl border border-slate-200 animate-pulse">
-                {/* Back button skeleton */}
-                <Skeleton className="h-6 w-32 mb-6" />
+            <div className="space-y-6">
+                <div className="bg-slate-50">
+                    <div className="bg-slate-50 -mx-4 px-4 mb-2">
+                        <div className="flex flex-col gap-1">
+                            <Skeleton className="h-4 w-32 mb-2" />
+                            <Skeleton className="h-8 w-64" />
+                        </div>
+                    </div>
+                </div>
 
-                <div className="space-y-8">
-                    <section>
-                        <Skeleton className="h-6 w-32 mb-2" />
-                        <div className="h-[2px] bg-[#00B4D8] opacity-20 w-full mb-6"></div>
-
+                <div className="bg-white rounded-xl border border-slate-800 overflow-hidden">
+                    <div className="bg-cyan-50 px-10 py-6 border-b border-slate-800">
+                        <Skeleton className="h-7 w-48" />
+                    </div>
+                    <div className="px-10 py-8 space-y-6">
+                        <Skeleton className="h-6 w-40 border-b border-cyan-600 pb-4 mb-4" />
                         <div className="space-y-4">
                             {[1, 2, 3].map((i) => (
-                                <div key={i} className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                                    <Skeleton className="h-5 w-24 md:w-32" />
-                                    <Skeleton className="flex-1 h-[46px] rounded-lg" />
+                                <div key={i} className="flex flex-col md:flex-row gap-10">
+                                    <Skeleton className="h-5 w-[200px]" />
+                                    <Skeleton className="flex-1 h-[52px] rounded-lg" />
                                 </div>
                             ))}
                         </div>
-                    </section>
+                    </div>
                 </div>
             </div>
         );
@@ -37,79 +45,77 @@ export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBa
 
     if (!purchase) {
         return (
-            <div className="bg-white p-6 border-x border-b border-slate-800 rounded-b-xl">
-                <button
-                    onClick={onBack}
-                    className="flex items-center gap-2 text-slate-500 font-semibold text-[16px] mb-6 hover:text-slate-800 transition-colors"
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                    Kembali
-                </button>
-                <p className="text-center text-slate-500 py-10">Data tidak ditemukan.</p>
+            <div className="space-y-6">
+                <div className="bg-slate-50">
+                    <div className="bg-slate-50 -mx-4 px-4 mb-2">
+                        <button
+                            onClick={onBack}
+                            className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2 cursor-pointer"
+                        >
+                            <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                            <span className="leading-none">Kembali</span>
+                        </button>
+                    </div>
+                </div>
+                <div className="bg-white rounded-xl border border-slate-800 p-10 text-center text-slate-500">
+                    Data tidak ditemukan.
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="bg-white p-6 md:p-8 border-x border-b border-slate-800 rounded-b-xl">
-            {/* Header / Back Button */}
+        <div className="px-4 sm:px-6 py-4 sm:py-6">
+            {/* Header */}
             <button
                 onClick={onBack}
-                className="flex items-center gap-2 cursor-pointer text-slate-800 font-bold text-lg mb-8 hover:opacity-70 transition-opacity"
-                title="Kembali"
+                className="group flex items-center gap-2 text-lg sm:text-xl font-semibold text-slate-800 hover:text-slate-800 transition-colors w-fit mb-2 cursor-pointer"
             >
-                <ArrowLeft className="w-5 h-5" />
-                {purchase.buyerName}
+                <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                <h1 className="">
+                    {purchase.buyerName}
+                </h1>
             </button>
 
-            <div className="space-y-10">
-                {/* Informasi User Section */}
-                <section>
-                    <div className="flex items-center gap-3 mb-4">
-                        <h3 className="text-[16px] font-bold text-slate-800 uppercase tracking-tight">Informasi User</h3>
-                        <div className="h-[1px] bg-slate-800 flex-1 opacity-20"></div>
-                    </div>
+            <div className="bg-white overflow-hidden">
+                <div className="py-4 sm:py-6 px-0 sm:px-6">
+                    {/* Informasi User Section */}
+                    <SectionHeader title="Informasi User" />
 
-                    <div className="grid gap-5">
-                        {[
-                            { label: "Nama", value: purchase.buyerName },
-                            { label: "Email", value: purchase.buyerEmail },
-                            { label: "Nomor Hp", value: purchase.buyerPhone },
-                        ].map((item, i) => (
-                            <div key={i} className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
-                                <span className="text-sm font-bold text-slate-500 md:w-40 uppercase tracking-wider">
-                                    {item.label}
-                                </span>
-                                <div className="flex-1 bg-slate-50 border border-slate-800 rounded-lg p-3.5 text-[15px] text-slate-800 font-semibold shadow-[2px_2px_0px_0px_rgba(30,41,59,1)]">
-                                    {item.value}
-                                </div>
+
+                    <FormGroup label="Nama">
+                        <FormInput value={purchase.buyerName} readOnly className="bg-slate-50 cursor-default" />
+                    </FormGroup>
+
+                    <FormGroup label="Email">
+                        <FormInput value={purchase.buyerEmail} readOnly className="bg-slate-50 cursor-default" />
+                    </FormGroup>
+
+                    <FormGroup label="Nomor Hp">
+                        <FormInput value={purchase.buyerPhone} readOnly className="bg-slate-50 cursor-default" />
+                    </FormGroup>
+
+
+                    {/* Jawaban Form Section */}
+                    <div className="mt-6">
+                        <SectionHeader title="Jawaban Form" />
+                        {purchase.answers.length > 0 ? (
+                            <div className="divide-y divide-slate-100">
+                                {purchase.answers.map((answer) => (
+                                    <FormGroup key={answer.id} label={answer.formField.label} align={answer.answer.length > 50 ? "start" : "center"}>
+                                        {answer.answer.length > 50 ? (
+                                            <FormTextarea value={answer.answer} readOnly className="bg-slate-50 cursor-default min-h-[100px]" />
+                                        ) : (
+                                            <FormInput value={answer.answer} readOnly className="bg-slate-50 cursor-default" />
+                                        )}
+                                    </FormGroup>
+                                ))}
                             </div>
-                        ))}
+                        ) : (
+                            <p className="pt-4 text-slate-500 text-sm">Tidak ada data form</p>
+                        )}
                     </div>
-                </section>
-
-                {/* Jawaban Form Section */}
-                {purchase.answers.length > 0 && (
-                    <section>
-                        <div className="flex items-center gap-3 mb-4">
-                            <h3 className="text-[16px] font-bold text-slate-800 uppercase tracking-tight">Jawaban Form</h3>
-                            <div className="h-[1px] bg-slate-800 flex-1 opacity-20"></div>
-                        </div>
-
-                        <div className="grid gap-6">
-                            {purchase.answers.map((answer) => (
-                                <div key={answer.id} className="space-y-2">
-                                    <label className="text-sm font-bold text-slate-500 block uppercase tracking-wider">
-                                        {answer.formField.label}
-                                    </label>
-                                    <div className="w-full bg-slate-50 border border-slate-800 rounded-lg p-3.5 text-[15px] text-slate-800 font-semibold min-h-[48px] shadow-[2px_2px_0px_0px_rgba(30,41,59,1)]">
-                                        {answer.answer}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
+                </div>
             </div>
         </div>
     );

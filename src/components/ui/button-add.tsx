@@ -1,35 +1,71 @@
+import React from "react";
 import Link from "next/link";
-import { PlusIcon } from "@phosphor-icons/react";
+import { PlusIcon, CircleNotchIcon } from "@phosphor-icons/react";
+import { cn } from "~/lib/utils";
 
-interface ActionButtonProps {
-    href: string;
+interface ButtonAddProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    href?: string;
     label: string;
+    className?: string;
+    weight?: "regular" | "bold" | "fill" | "light" | "thin";
+    isLoading?: boolean;
+    loadingLabel?: string;
 }
 
-export default function ActionButton({ href, label }: ActionButtonProps) {
+export default function ButtonAdd({
+    href,
+    label,
+    className,
+    weight = "bold",
+    isLoading,
+    loadingLabel = "Menyimpan...",
+    onClick,
+    ...props
+}: ButtonAddProps) {
+    const content = (
+        <>
+            {isLoading ? (
+                <>
+                    <CircleNotchIcon className="h-5 w-5 animate-spin" />
+                    <span>{loadingLabel}</span>
+                </>
+            ) : (
+                <>
+                    <PlusIcon className="h-5 w-5" weight={weight} />
+                    <span>{label}</span>
+                </>
+            )}
+        </>
+    );
+
+    const classes = cn(
+        "w-fit flex items-center justify-center gap-2 px-6 py-3",
+        "border border-slate-800 rounded-lg",
+        "text-sm font-semibold text-white bg-cyan-600 cursor-pointer",
+        "shadow-[2px_2px_0px_rgba(30,27,75)]",
+        "transition-all duration-200 ease-out",
+        "hover:translate-x-px hover:translate-y-px hover:shadow-none",
+        "disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[2px_1px_0px_rgba(30,27,75)]",
+        className
+    );
+
+    if (href && !onClick) {
+        return (
+            <Link href={href} className={classes}>
+                {content}
+            </Link>
+        );
+    }
+
     return (
-        <Link
-            href={href}
-            className="
-        flex-1 sm:flex-none
-        flex items-center justify-between sm:justify-start gap-2
-        pl-4 pr-6 py-2
-
-        border border-slate-800
-        rounded-lg
-        text-sm font-semibold
-        text-white
-        bg-cyan-600
-
-        shadow-[1px_1px_0px_rgba(30,27,75)]
-        transition-all duration-200 ease-out
-
-        hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none
-        focus:translate-x-[1px] focus:translate-y-[1px] focus:shadow-none
-      "
+        <button
+            {...props}
+            type={props.type || "button"}
+            onClick={onClick}
+            disabled={!!isLoading || !!props.disabled}
+            className={classes}
         >
-            <PlusIcon className="w-4 h-4" weight="bold" />
-            <span>{label}</span>
-        </Link>
+            {content}
+        </button>
     );
 }

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { sendProductEmail } from "../../nodemailer";
 
 export const purchasesRouter = createTRPCRouter({
     // Create a purchase (public — called from checkout page)
@@ -19,10 +20,10 @@ export const purchasesRouter = createTRPCRouter({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            // Get the product to determine amount
+            // Get the product to determine amount and link
             const product = await ctx.db.product.findUnique({
                 where: { id: input.productId, status: "published" },
-                select: { id: true, price: true },
+                select: { id: true, name: true, price: true, link: true },
             });
             if (!product) throw new Error("Produk tidak ditemukan atau tidak tersedia");
 
@@ -52,6 +53,11 @@ export const purchasesRouter = createTRPCRouter({
 
                 return newPurchase;
             });
+            // Send Email Notification if product link exists
+            if (product.link) {
+                // Execute sending email asynchronously without blocking the user response
+                void sendProductEmail(input.buyerEmail, product.name, product.link);
+            }
 
             return purchase;
         }),

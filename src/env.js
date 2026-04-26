@@ -23,6 +23,11 @@ export const env = createEnv({
     BUCKET_ACCESS_KEY: z.string(),
     BUCKET_SECRET_KEY: z.string(),
     BUCKET_PUBLIC_URL: z.string().url(),
+    SMTP_HOST: z.string(),
+    SMTP_PORT: z.coerce.number(),
+    SMTP_USER: z.string(),
+    SMTP_PASS: z.string(),
+    SMTP_FROM: z.string().email(),
   },
 
   /**
@@ -49,6 +54,11 @@ export const env = createEnv({
     BUCKET_ACCESS_KEY: process.env.BUCKET_ACCESS_KEY,
     BUCKET_SECRET_KEY: process.env.BUCKET_SECRET_KEY,
     BUCKET_PUBLIC_URL: process.env.BUCKET_PUBLIC_URL,
+    SMTP_HOST: process.env.SMTP_HOST,
+    SMTP_PORT: process.env.SMTP_PORT,
+    SMTP_USER: process.env.SMTP_USER,
+    SMTP_PASS: process.env.SMTP_PASS,
+    SMTP_FROM: process.env.SMTP_FROM,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

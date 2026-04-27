@@ -129,7 +129,7 @@ export default function EditKelasPage() {
                     <div>
 
                         {/* Nama */}
-                        <FormGroup label="Nama Kelas" error={(errors.name as unknown as { message?: string })?.message}>
+                        <FormGroup label="Nama Kelas" error={errors.name?.message}>
                             <FormInput {...register("name")} />
                         </FormGroup>
 
@@ -238,7 +238,7 @@ export default function EditKelasPage() {
 
                         {/* Harga */}
                         {priceType === "paid" && (
-                            <FormGroup label="Harga" error={(errors.price as unknown as { message?: string })?.message}>
+                            <FormGroup label="Harga" error={errors.price?.message}>
                                 <Controller
                                     control={control}
                                     name="price"

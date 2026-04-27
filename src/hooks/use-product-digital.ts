@@ -6,11 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
-import { productDigitalSchema } from "~/lib/validation";
-import type { z } from "zod";
 import { useImageUpload } from "./use-upload";
-
-export type DigitalProductFormValues = z.infer<typeof productDigitalSchema>;
+import { productDigitalSchema, type DigitalProductFormValues } from "../lib/validation";
 
 interface UseProductDigitalProps {
     id?: string;

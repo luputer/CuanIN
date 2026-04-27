@@ -3,7 +3,6 @@
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { z } from "zod";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -11,10 +10,9 @@ import { PlusIcon, ArrowLeftIcon, CircleNotchIcon, CaretUpIcon, CaretDownIcon, T
 import ButtonCancel from "~/components/ui/button-cancel";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
-import { productDigitalSchema } from "~/lib/validation";
+import { productDigitalSchema, type DigitalProductFormValues } from "~/lib/validation";
 import { formatNumberWithDots, parseDotsToNumber } from "~/lib/utils";
-import { FormGroup, SectionHeader, FormInput, FormSelect, FormTextarea } from "~/components/ui/form-layout";
-
+import { FormGroup, SectionHeader, FormInput, FormSelect, FormTextarea, FormCombobox } from "~/components/ui/form-layout";
 import dynamic from "next/dynamic";
 import { useImageUpload } from "~/hooks/use-upload";
 import remarkBreaks from "remark-breaks";
@@ -24,8 +22,6 @@ import ButtonAdd from "~/components/ui/button-add";
 
 // Markdown Editor (SSR off)
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
-
-type DigitalProductFormValues = z.infer<typeof productDigitalSchema>;
 
 export default function CreateDigitalProductPage() {
     const router = useRouter();
@@ -284,7 +280,19 @@ export default function CreateDigitalProductPage() {
 
                         {/* Format */}
                         <FormGroup label="Format" error={(errors.format as unknown as { message?: string })?.message}>
-                            <FormInput {...register("format")} placeholder="Contoh: PDF, Video, Template" />
+                            <Controller
+                                control={control}
+                                name="format"
+                                render={({ field: { onChange, value, ref } }) => (
+                                    <FormCombobox
+                                        ref={ref}
+                                        options={["PDF", "Video", "Template", "E-book", "ZIP"]}
+                                        value={value}
+                                        onValueChange={onChange}
+                                        placeholder="Contoh: PDF, Video, Template"
+                                    />
+                                )}
+                            />
                         </FormGroup>
 
                         {/* Link */}

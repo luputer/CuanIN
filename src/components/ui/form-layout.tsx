@@ -150,3 +150,104 @@ export const FormSelect = React.forwardRef<HTMLSelectElement, React.ComponentPro
     )
 );
 FormSelect.displayName = "FormSelect";
+
+/**
+ * Custom Combobox for forms (Select + Custom Input)
+ */
+interface FormComboboxProps extends Omit<FormInputProps, "onChange"> {
+    options: string[];
+    onValueChange?: (value: string) => void;
+    value?: string;
+}
+
+export const FormCombobox = React.forwardRef<HTMLInputElement, FormComboboxProps>(
+    ({ options, onValueChange, value, className, ...props }, ref) => {
+        const [inputValue, setInputValue] = React.useState(value ?? "");
+        const [isCustomMode, setIsCustomMode] = React.useState(false);
+
+        React.useEffect(() => {
+            if (value !== undefined) {
+                setInputValue(value);
+                // Jika value dari luar tidak ada di opsi, otomatis masuk mode custom
+                if (value !== "" && !options.includes(value)) {
+                    setIsCustomMode(true);
+                }
+            }
+        }, [value, options]);
+
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            const newValue = e.target.value;
+            setInputValue(newValue);
+            onValueChange?.(newValue);
+        };
+
+        const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+            const newValue = e.target.value;
+            if (newValue === "custom") {
+                setIsCustomMode(true);
+                setInputValue("");
+                onValueChange?.("");
+            } else {
+                setIsCustomMode(false);
+                setInputValue(newValue);
+                onValueChange?.(newValue);
+            }
+        };
+
+        const toggleCustomMode = () => {
+            setIsCustomMode(!isCustomMode);
+            if (isCustomMode) {
+                // Jika keluar dari custom mode, reset ke kosong
+                setInputValue("");
+                onValueChange?.("");
+            }
+        };
+
+        return (
+            <div className="flex flex-col gap-2">
+                {!isCustomMode ? (
+                    <div className="relative group">
+                        <select
+                            className={cn(
+                                "w-full px-4 bg-white h-[52px] rounded-lg text-slate-800 font-regular border border-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-600/50 text-sm appearance-none cursor-pointer transition-all",
+                                className
+                            )}
+                            value={options.includes(inputValue) ? inputValue : ""}
+                            onChange={handleSelectChange}
+                        >
+                            <option value="" disabled>Pilih format...</option>
+                            {options.map((opt) => (
+                                <option key={opt} value={opt}>{opt}</option>
+                            ))}
+                            <option value="custom" className="font-semibold text-cyan-600">+ Input Custom...</option>
+                        </select>
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-800 group-focus-within:text-cyan-600 transition-colors">
+                            <CaretDownIcon size={18} weight="regular" />
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex gap-2">
+                        <div className="flex-1">
+                            <FormInput
+                                {...props}
+                                ref={ref}
+                                value={inputValue}
+                                onChange={handleChange}
+                                placeholder="Masukkan format custom..."
+                                autoFocus
+                            />
+                        </div>
+                        <button
+                            type="button"
+                            onClick={toggleCustomMode}
+                            className="px-4 text-xs font-medium text-slate-500 hover:text-red-500 transition-colors border border-slate-300 rounded-lg bg-slate-50"
+                        >
+                            Batal
+                        </button>
+                    </div>
+                )}
+            </div>
+        );
+    }
+);
+FormCombobox.displayName = "FormCombobox";

@@ -4,7 +4,6 @@ import { ArrowLeftIcon, CopyIcon, ImageIcon, PencilIcon, TrashIcon } from "@phos
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { ProductDetailTabs, ProductDetailTabContent } from "../../../../components/layout/product-detail-tabs";
-
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { Button } from "~/components/ui/button";
@@ -158,7 +157,7 @@ export default function ProductDetailPage() {
                             <span className="leading-none">Kembali ke Daftar</span>
                         </Link>
 
-                        <h1 className="text-xl font-semibold text-slate-800 break-words">{product.name}</h1>
+                        <h1 className="text-xl font-semibold text-slate-800 wrap-break-word">{product.name}</h1>
                     </div>
 
                     <div className="flex items-center gap-2 sm:gap-3">
@@ -282,8 +281,6 @@ export default function ProductDetailPage() {
                                                 : "Draft"}
                                         </p>
                                     </Row>
-
-
                                     <p className="text-slate-500 text-sm">
                                         Ditambahkan pada {format(new Date(product.createdAt), "d MMMM yyyy HH:mm", { locale: idLocale })}
                                     </p>

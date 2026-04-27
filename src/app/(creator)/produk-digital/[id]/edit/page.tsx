@@ -27,6 +27,7 @@ import {
     FormInput,
     FormSelect,
     FormTextarea,
+    FormCombobox,
 } from "~/components/ui/form-layout";
 import { useProductDigital } from "~/hooks/use-product-digital";
 import ButtonSave from "~/components/ui/button-save";
@@ -269,8 +270,20 @@ export default function EditProductPage() {
                         )}
 
                         {/* Format */}
-                        <FormGroup label="Format" error={(errors.format as unknown as { message?: string })?.message}>
-                            <FormInput {...register("format")} placeholder="Contoh: PDF, Video, Template" />
+                        <FormGroup label="Format" error={errors.format?.message}>
+                            <Controller
+                                control={control}
+                                name="format"
+                                render={({ field: { onChange, value, ref } }) => (
+                                    <FormCombobox
+                                        ref={ref}
+                                        options={["PDF", "Video", "Template", "E-book", "ZIP"]}
+                                        value={value ?? ""}
+                                        onValueChange={onChange}
+                                        placeholder="Contoh: PDF, Video, Template"
+                                    />
+                                )}
+                            />
                         </FormGroup>
 
                         {/* Link */}

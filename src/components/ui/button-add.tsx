@@ -39,7 +39,7 @@ export default function ButtonAdd({
     );
 
     const classes = cn(
-        "h-10 w-fit flex items-center justify-center gap-2 px-6",
+        "w-fit flex items-center justify-center gap-2 px-6",
         "border border-slate-800 rounded-lg",
         "text-sm font-semibold text-white bg-cyan-600 hover:bg-cyan-700 cursor-pointer",
         "shadow-[1.5px_1.5px_0px_rgba(29,41,61)]",

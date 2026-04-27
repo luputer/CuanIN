@@ -11,7 +11,7 @@ import { PlusIcon, ArrowLeftIcon, CircleNotchIcon, CaretUpIcon, CaretDownIcon, T
 import ButtonCancel from "~/components/ui/button-cancel";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
-import { productDigitalSchema } from "~/lib/validation";
+import { productKelasOnlineSchema } from "~/lib/validation";
 import { formatNumberWithDots, parseDotsToNumber } from "~/lib/utils";
 import { FormGroup, SectionHeader, FormInput, FormSelect, FormTextarea } from "~/components/ui/form-layout";
 
@@ -24,7 +24,7 @@ import ButtonAdd from "~/components/ui/button-add";
 // Markdown Editor (SSR off)
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
-type DigitalProductFormValues = z.infer<typeof productDigitalSchema>;
+type KelasOnlineFormValues = z.infer<typeof productKelasOnlineSchema>;
 
 export default function CreateKelasPage() {
     const router = useRouter();
@@ -37,8 +37,8 @@ export default function CreateKelasPage() {
         getValues,
         control,
         formState: { errors },
-    } = useForm<DigitalProductFormValues>({
-        resolver: zodResolver(productDigitalSchema),
+    } = useForm<KelasOnlineFormValues>({
+        resolver: zodResolver(productKelasOnlineSchema),
         defaultValues: {
             priceType: "free",
             status: "published",
@@ -99,7 +99,7 @@ export default function CreateKelasPage() {
         }
     };
 
-    const onSubmit = (data: DigitalProductFormValues) => {
+    const onSubmit = (data: KelasOnlineFormValues) => {
         createProduct.mutate({
             name: data.name,
             shortDescription: data.shortDescription,
@@ -212,7 +212,7 @@ export default function CreateKelasPage() {
                             </div>
                         </FormGroup>
 
-                        <FormGroup label="Keuntungan / Benefit" align="start" error={(errors.benefit as unknown as { message?: string })?.message}>
+                        <FormGroup label="Keuntungan / Benefit" align="start" error={errors.benefit?.message}>
                             <div className="space-y-3 flex flex-col">
                                 {fields.map((field, index) => (
                                     <div key={field.id} className="flex gap-2">
@@ -282,7 +282,7 @@ export default function CreateKelasPage() {
                         )}
 
                         {/* Link */}
-                        <FormGroup label="Link Akses" error={(errors.link as unknown as { message?: string })?.message}>
+                        <FormGroup label="Link Akses" error={errors.link?.message}>
                             <FormInput {...register("link")} placeholder="https://..." />
                         </FormGroup>
 

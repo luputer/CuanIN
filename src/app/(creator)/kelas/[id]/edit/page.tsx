@@ -1,413 +1,302 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
+import { Controller } from "react-hook-form";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronLeft, Loader2, Save, Plus, Trash2 } from "lucide-react";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import dynamic from "next/dynamic";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "~/components/ui/select";
-import { api } from "~/trpc/react";
-import { toast } from "sonner";
-import { productDigitalSchema } from "~/lib/validation";
-import type { z } from "zod";
-import MarkdownPreview from "~/components/MarkdownPreview";
+    PlusIcon,
+    ArrowLeftIcon,
+    CircleNotchIcon,
+    CaretUpIcon,
+    CaretDownIcon,
+    TrashIcon,
+    PencilSimpleIcon,
+} from "@phosphor-icons/react";
 
-// Import MDEditor secara dynamic karena tidak support SSR
+import dynamic from "next/dynamic";
+
+import { formatNumberWithDots, parseDotsToNumber } from "~/lib/utils";
+import remarkBreaks from "remark-breaks";
+import remarkGfm from "remark-gfm";
+import {
+    FormGroup,
+    SectionHeader,
+    FormInput,
+    FormSelect,
+    FormTextarea,
+} from "~/components/ui/form-layout";
+import { useProductDigital } from "~/hooks/use-product-digital";
+import ButtonSave from "~/components/ui/button-save";
+import ButtonCancel from "~/components/ui/button-cancel";
+
+// Markdown Editor
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
-
-type ProductFormValues = z.infer<typeof productDigitalSchema>;
-
-const FormGroup = ({
-    label,
-    children,
-    error,
-}: {
-    label: string;
-    children: React.ReactNode;
-    error?: string;
-}) => (
-    <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4 items-start">
-        <Label className="mt-2 text-slate-700 font-medium text-base">{label}</Label>
-        <div className="w-full">
-            {children}
-            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-        </div>
-    </div>
-);
-
-const SectionHeader = ({ title }: { title: string }) => (
-    <div className="border-b-2 border-blue-500 pb-2 mb-6">
-        <h2 className="text-lg font-bold text-slate-700">{title}</h2>
-    </div>
-);
-
-export default function EditProductPage() {
-    const router = useRouter();
+export default function EditKelasPage() {
     const params = useParams();
+    const router = useRouter();
     const id = params.id as string;
-
-    const { data: product, isLoading } = api.products.getById.useQuery({ id });
-    const utils = api.useUtils();
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [uploading, setUploading] = useState(false);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-    const getPresignedUrl = api.s3.getUploadPresignedUrl.useMutation();
-
 
     const {
-        register,
-        handleSubmit,
-        setValue,
-        watch,
-        reset,
-        control,
-        formState: { errors },
-    } = useForm<ProductFormValues>({
-        resolver: zodResolver(productDigitalSchema),
-        defaultValues: {
-            priceType: "free",
-            status: "published",
-            price: 0,
-            benefit: [],
-        },
-    });
+        form,
+        fields,
+        append,
+        remove,
+        uploading,
+        previewUrl,
+        onFileChange,
+        onSubmit,
+        isPending,
+        isLoadingProduct,
+        product
+    } = useProductDigital({ id, isEdit: true });
 
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "benefit" as never,
-    });
+    const { register, watch, setValue, getValues, control, formState: { errors } } = form;
+    const description = watch("description");
 
     const priceType = watch("priceType");
 
-    // Pre-fill form when data loads
+    // Format initial price value or when priceType changes to paid
     useEffect(() => {
-        if (product) {
-            const priceVal = Number(product.price);
-            reset({
-                name: product.name,
-                shortDescription: product.shortDescription ?? "",
-                description: product.description ?? "",
-                priceType: priceVal === 0 ? "free" : "paid",
-                price: priceVal,
-                link: product.link ?? "",
-                status: product.status ?? "published",
-                notes: "",
-                image: product.image ?? undefined,
-                benefit: (product.benefit as string[]) || [],
-            });
-            if (product.image) setPreviewUrl(product.image);
+        if (priceType === "paid") {
+            const input = document.getElementById("price-input-edit") as HTMLInputElement;
+            if (input) {
+                const currentVal = getValues("price")?.toString() ?? "0";
+                input.value = formatNumberWithDots(currentVal);
+            }
         }
-    }, [product, reset]);
+    }, [priceType, getValues]);
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+    const handlePriceAdjust = (amount: number) => {
+        const current = parseDotsToNumber(getValues("price")?.toString() ?? "0");
+        const newPrice = Math.max(0, current + amount);
 
-        const localUrl = URL.createObjectURL(file);
-        setPreviewUrl(localUrl);
-        setUploading(true);
+        setValue("price", newPrice, { shouldValidate: true });
 
-        try {
-            const key = `products/${Date.now()}-${file.name}`;
-            const url = await getPresignedUrl.mutateAsync({
-                key,
-                fileType: file.type,
-            });
-
-            const res = await fetch(url, {
-                method: "PUT",
-                body: file,
-                headers: {
-                    "Content-Type": file.type,
-                },
-            });
-
-            if (!res.ok) throw new Error("Gagal upload ke storage");
-
-            const publicUrl = `https://pub-3098f58e584244c8bf48888938b34bae.r2.dev/${key}`;
-            setValue("image", publicUrl, { shouldValidate: true });
-            toast.success("Gambar berhasil diunggah");
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Gagal unggah gambar";
-            toast.error(`Gagal unggah gambar: ${errorMessage}`);
-            setPreviewUrl(product?.image ?? null);
-        } finally {
-            setUploading(false);
+        const input = document.getElementById("price-input-edit") as HTMLInputElement;
+        if (input) {
+            input.value = formatNumberWithDots(newPrice.toString());
         }
     };
 
-
-    const updateProduct = api.products.update.useMutation({
-        onSuccess: () => {
-            void utils.products.getById.invalidate({ id });
-            void utils.products.getAll.invalidate();
-            toast.success("Kelas Online berhasil diperbarui");
-            router.push(`/kelas/${id}`);
-        },
-        onError: (error) => {
-            toast.error(`Gagal memperbarui kelas: ${error.message}`);
-        },
-    });
-
-    const onSubmit = (data: ProductFormValues) => {
-        updateProduct.mutate({
-            id,
-            name: data.name,
-            shortDescription: data.shortDescription,
-            description: data.description,
-            price: data.priceType === "free" ? 0 : (data.price ?? 0),
-            link: data.link,
-            status: data.status,
-            image: data.image,
-            benefit: data.benefit?.filter(b => b.trim() !== ""),
-        });
-    };
-
-    if (isLoading) {
+    if (isLoadingProduct) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+            <div className="flex justify-center py-20">
+                <CircleNotchIcon className="animate-spin text-cyan-500" size={32} />
             </div>
         );
     }
 
     if (!product) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-                <p className="text-slate-500 text-lg">Kelas tidak ditemukan.</p>
-                <Link href="/kelas" className="text-blue-500 hover:underline">
-                    ← Kembali ke Daftar Kelas Online
-                </Link>
-            </div>
-        );
+        return <p className="text-center py-20">Kelas tidak ditemukan</p>;
     }
 
     return (
         <div className="space-y-6">
+
             {/* Header */}
-            <div className="flex flex-col gap-2 mb-8">
-                <Link
-                    href={`/kelas/${id}`}
-                    className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 w-fit"
-                >
-                    <ChevronLeft className="h-4 w-4" />
-                    <span>Kembali ke Detail Kelas</span>
-                </Link>
-                <h1 className="text-2xl font-bold text-blue-600">
-                    Edit Kelas Online
-                </h1>
-                <p className="text-slate-500 text-sm">{product.name}</p>
+            <div className="bg-slate-50">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 pt-2">
+                    <div className="flex-1 flex flex-col gap-1">
+                        <Link
+                            href={`/kelas/${id}`}
+                            className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
+                        >
+                            <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                            <span className="leading-none">Kembali ke Detail Kelas</span>
+                        </Link>
+
+                        <h1 className="text-xl font-semibold text-slate-800">
+                            Edit Kelas Online
+                        </h1>
+                    </div>
+                </div>
             </div>
 
-            <div className="bg-blue-50 p-6 rounded-xl space-y-8">
-                {/* Informasi Produk */}
-                <section>
+
+            <div className="bg-cyan-50 rounded-xl border border-slate-800 overflow-hidden">
+                <div className="bg-cyan-50 px-4 sm:px-10 py-6 border-b border-slate-800">
+                    <h2 className="text-lg font-semibold text-cyan-900">{product.name}</h2>
+                </div>
+                <div className="px-4 sm:px-10 py-6 sm:py-8">
+
                     <SectionHeader title="Informasi Kelas" />
-                    <div className="space-y-5">
-                        <FormGroup label="Nama Kelas" error={errors.name?.message}>
-                            <Input
-                                placeholder="Masukkan nama kelas"
-                                className="bg-white h-[52px] border-blue-200 focus-visible:ring-blue-500"
-                                {...register("name")}
-                            />
+
+                    <div>
+
+                        {/* Nama */}
+                        <FormGroup label="Nama Kelas" error={(errors.name as unknown as { message?: string })?.message}>
+                            <FormInput {...register("name")} />
                         </FormGroup>
 
-                        <FormGroup label="Deskripsi Singkat" error={errors.shortDescription?.message}>
-                            <Input
-                                placeholder="Masukkan deskripsi singkat"
-                                className="bg-white h-[52px] border-blue-200 focus-visible:ring-blue-500"
-                                {...register("shortDescription")}
-                            />
-                        </FormGroup>
-
-                        <FormGroup label="Deskripsi" error={errors.description?.message}>
-                            <div data-color-mode="light" className="w-full">
-                                <Controller
-                                    name="description"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <MDEditor
-                                            value={field.value ?? ""}
-                                            onChange={(val) => field.onChange(val ?? "")}
-                                            preview="live"
-                                            height={400}
-                                            visibleDragbar={false}
-                                            className="w-full border-blue-200"
-                                            previewOptions={{
-                                                className: "p-4",
-                                            }}
-                                            components={{
-                                                preview: (source: string) => (
-                                                    <div className="p-4 bg-white min-h-full">
-                                                        <MarkdownPreview content={source} />
-                                                    </div>
-                                                )
-                                            }}
-                                        />
-                                    )}
-                                />
-                            </div>
-                        </FormGroup>
-
-                        <FormGroup label="Gambar Thumbnail">
+                        {/* Gambar */}
+                        <FormGroup label="Gambar Thumbnail" align="start">
                             <div
                                 onClick={() => fileInputRef.current?.click()}
-                                className="flex h-32 w-32 cursor-pointer flex-col items-center justify-center border border-blue-300 bg-white hover:bg-blue-50 text-blue-500 transition-colors rounded-lg overflow-hidden relative"
+                                className="flex h-48 w-48 cursor-pointer items-center justify-center border border-slate-400 rounded-xl bg-slate-50 hover:bg-slate-100 relative group overflow-hidden transition-all shadow-sm"
                             >
                                 {previewUrl ? (
                                     <>
-                                        <Image 
-                                            src={previewUrl} 
-                                            alt="Preview" 
-                                            fill 
+                                        <Image
+                                            src={previewUrl}
+                                            alt="Preview"
+                                            fill
                                             unoptimized
-                                            className="object-cover" 
+                                            className="object-cover group-hover:opacity-75 transition-opacity"
                                         />
+                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10">
+                                            <div className="bg-white/90 p-2 rounded-full shadow-md text-slate-800">
+                                                <PencilSimpleIcon size={24} weight="bold" />
+                                            </div>
+                                        </div>
                                         {uploading && (
-                                            <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                                                <Loader2 className="h-6 w-6 animate-spin text-white" />
+                                            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                                                <CircleNotchIcon className="animate-spin text-white" size={32} />
                                             </div>
                                         )}
                                     </>
                                 ) : (
-                                    <>
-                                        <Plus className="h-8 w-8" />
-                                        <span className="text-xs mt-1">Upload</span>
-                                    </>
+                                    <div className="flex flex-col items-center gap-2 text-slate-400 group-hover:text-cyan-600 transition-colors">
+                                        <PlusIcon size={32} weight="bold" />
+                                        <span className="text-xs font-medium">Unggah Gambar</span>
+                                    </div>
                                 )}
+
                                 <input
-                                    type="file"
                                     ref={fileInputRef}
+                                    type="file"
                                     className="hidden"
                                     accept="image/*"
-                                    onChange={handleFileUpload}
+                                    onChange={onFileChange}
                                 />
                             </div>
                         </FormGroup>
 
-
-                        <FormGroup label="Tipe Akses" error={errors.priceType?.message}>
-                            <Select
-                                value={priceType}
-                                onValueChange={(val) => setValue("priceType", val as "free" | "paid", { shouldValidate: true })}
-                            >
-                                <SelectTrigger className="bg-white w-full h-[52px] border-blue-200 focus:ring-blue-500">
-                                    <SelectValue placeholder="Pilih Salah Satu" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="free">Gratis</SelectItem>
-                                    <SelectItem value="paid">Berbayar</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </FormGroup>
-
-                        {priceType === "paid" && (
-                            <FormGroup label="Harga" error={errors.price?.message}>
-                                <div className="relative">
-                                    <span className="absolute left-3 top-3.5 text-slate-500">Rp</span>
-                                    <Input
-                                        type="number"
-                                        placeholder="0"
-                                        className="pl-10 bg-white h-[52px] border-blue-200 focus-visible:ring-blue-500"
-                                        {...register("price", { valueAsNumber: true })}
-                                    />
-                                </div>
-                            </FormGroup>
-                        )}
-
-                        <FormGroup label="Link Akses" error={errors.link?.message}>
-                            <Input
-                                placeholder="https://..."
-                                className="bg-white h-[52px] border-blue-200 focus-visible:ring-blue-500"
-                                {...register("link")}
+                        <FormGroup label="Deskripsi Singkat" align="start" error={errors.shortDescription?.message}>
+                            <FormTextarea
+                                placeholder="Masukkan deskripsi singkat"
+                                {...register("shortDescription")}
                             />
                         </FormGroup>
 
-                        <FormGroup label="Keuntungan / Benefit" error={errors.benefit?.message}>
-                            <div className="space-y-3">
-                                {fields.map((field, index) => (
-                                    <div key={field.id} className="flex gap-2">
-                                        <Input
-                                            placeholder={`Benefit ${index + 1}`}
-                                            className="bg-white h-[52px] border-blue-200 focus-visible:ring-blue-500"
-                                            {...register(`benefit.${index}` as const)}
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="icon"
-                                            className="text-red-500 hover:text-red-700 hover:bg-red-50 h-[52px] w-[52px]"
-                                            onClick={() => remove(index)}
-                                        >
-                                            <Trash2 className="h-5 w-5" />
-                                        </Button>
-                                    </div>
-                                ))}
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    className="border-blue-300 text-blue-600 hover:bg-blue-50 mt-2"
-                                    onClick={() => append("")}
-                                >
-                                    <Plus className="h-4 w-4 mr-2" />
-                                    Tambah Benefit
-                                </Button>
+                        <FormGroup label="Deskripsi" align="start" error={errors.description?.message}>
+                            <div data-color-mode="light" className="border border-slate-400 rounded-lg overflow-hidden">
+                                <MDEditor
+                                    value={description ?? ""}
+                                    onChange={(val) => setValue("description", val ?? "")}
+                                    height={400}
+                                    preview="live"
+                                    visibleDragbar={false}
+                                    style={{ border: 'none', boxShadow: 'none' }}
+                                    previewOptions={{
+                                        remarkPlugins: [remarkGfm, remarkBreaks],
+                                    }}
+                                />
                             </div>
                         </FormGroup>
 
-                        <FormGroup label="Status" error={errors.status?.message}>
-                            <Select
-                                value={watch("status")}
-                                onValueChange={(val) => setValue("status", val, { shouldValidate: true })}
-                            >
-                                <SelectTrigger className="bg-white w-full h-[52px] border-blue-200 focus:ring-blue-500">
-                                    <SelectValue placeholder="Pilih Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="published" className="text-amber-600 font-medium">Published</SelectItem>
-                                    <SelectItem value="draft">Draft</SelectItem>
-                                    <SelectItem value="archived">Archived</SelectItem>
-                                </SelectContent>
-                            </Select>
+                        <FormGroup label="Keuntungan / Benefit" align="start" error={errors.benefit?.message}>
+                            <div className="space-y-3 flex flex-col">
+                                {fields.map((field, index) => (
+                                    <div key={field.id} className="flex gap-2">
+                                        <FormInput
+                                            placeholder={`Benefit ${index + 1}`}
+                                            className="flex-1"
+                                            {...register(`benefit.${index}` as const)}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="flex h-[52px] w-[52px] items-center justify-center rounded-lg bg-red-50 text-red-500 hover:text-red-700 hover:bg-red-100 transition-colors border border-transparent shrink-0 cursor-pointer"
+                                            onClick={() => remove(index)}
+                                        >
+                                            <TrashIcon className="h-5 w-5 translate-y-[0.5px]" weight="bold" />
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    onClick={() => append("")}
+                                    className="flex justify-center items-center gap-2 bg-white border border-slate-400 rounded-lg py-2 px-4 text-sm font-regular text-slate-800 hover:bg-slate-100 w-fit cursor-pointer"
+                                >
+                                    <PlusIcon className="h-4 w-4" weight="regular" />
+                                    <span>Tambah Benefit</span>
+                                </button>
+                            </div>
                         </FormGroup>
-                    </div>
-                </section>
-            </div>
 
-            <Button
-                onClick={handleSubmit(onSubmit)}
-                disabled={updateProduct.isPending}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-6 text-lg shadow-md shadow-blue-200"
-            >
-                {updateProduct.isPending ? (
-                    <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Menyimpan...
-                    </>
-                ) : (
-                    <>
-                        <Save className="mr-2 h-5 w-5" />
-                        Simpan Perubahan
-                    </>
-                )}
-            </Button>
+                        {/* Tipe */}
+                        <FormGroup label="Tipe Akses">
+                            <FormSelect {...register("priceType")}>
+                                <option value="free">Gratis</option>
+                                <option value="paid">Berbayar</option>
+                            </FormSelect>
+                        </FormGroup>
+
+                        {/* Harga */}
+                        {priceType === "paid" && (
+                            <FormGroup label="Harga" error={(errors.price as unknown as { message?: string })?.message}>
+                                <Controller
+                                    control={control}
+                                    name="price"
+                                    render={({ field: { onChange, value, ref } }) => (
+                                        <FormInput
+                                            ref={ref}
+                                            id="price-input-edit"
+                                            prefix="Rp"
+                                            value={formatNumberWithDots(value)}
+                                            onChange={(e) => {
+                                                const val = parseDotsToNumber(e.target.value);
+                                                onChange(val);
+                                            }}
+                                            suffix={
+                                                <div className="flex flex-col">
+                                                    <button onClick={() => handlePriceAdjust(1000)} type="button">
+                                                        <CaretUpIcon weight="fill" />
+                                                    </button>
+                                                    <button onClick={() => handlePriceAdjust(-1000)} type="button">
+                                                        <CaretDownIcon weight="fill" />
+                                                    </button>
+                                                </div>
+                                            }
+                                        />
+                                    )}
+                                />
+                            </FormGroup>
+                        )}
+
+                        {/* Link */}
+                        <FormGroup label="Link Akses" error={errors.link?.message}>
+                            <FormInput {...register("link")} placeholder="https://..." />
+                        </FormGroup>
+
+                        <FormGroup label="Status">
+                            <FormSelect {...register("status")}>
+                                <option value="published">Published</option>
+                                <option value="unpublished">Unpublished</option>
+                            </FormSelect>
+                        </FormGroup>
+
+                    </div>
+                </div>
+
+                <div className="px-4 sm:px-10 pb-8 flex justify-end gap-4">
+                    <ButtonCancel
+                        type="button"
+                        onClick={() => router.push(`/kelas/${id}`)}
+                    />
+                    <ButtonSave
+                        onClick={onSubmit}
+                        isLoading={isPending}
+                        label="Simpan Perubahan"
+                        loadingLabel="Menyimpan..."
+                        weight="bold"
+                    />
+                </div>
+            </div>
         </div>
     );
 }

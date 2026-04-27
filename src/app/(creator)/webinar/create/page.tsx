@@ -16,7 +16,7 @@ import { formatNumberWithDots, parseDotsToNumber } from "~/lib/utils";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
     FormGroup,
     SectionHeader,
@@ -57,7 +57,6 @@ export default function CreateWebinarPage() {
     });
 
     const priceType = watch("priceType");
-    const priceValue = watch("price");
 
     // Format initial price value or when priceType changes to paid
     useEffect(() => {
@@ -218,7 +217,7 @@ export default function CreateWebinarPage() {
                                 {...register("shortDescription")}
                             />
                         </FormGroup>
-                        <FormGroup label="Deskripsi Lengkap" align="start" error={(errors.description as any)?.message}>
+                        <FormGroup label="Deskripsi Lengkap" align="start" error={errors.description?.message}>
                             <div data-color-mode="light" className="border border-slate-400 rounded-lg overflow-hidden">
                                 <MDEditor
                                     textareaProps={{
@@ -236,7 +235,7 @@ export default function CreateWebinarPage() {
                                 />
                             </div>
                         </FormGroup>
-                        <FormGroup label="Manfaat" align="start" error={(errors.benefit as any)?.message}>
+                        <FormGroup label="Manfaat" align="start" error={errors.benefit?.message}>
                             <div className="space-y-3 flex flex-col">
                                 {fields.map((field, index) => (
                                     <div key={field.id} className="flex gap-2">

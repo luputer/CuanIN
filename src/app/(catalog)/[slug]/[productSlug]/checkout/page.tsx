@@ -11,6 +11,7 @@ import {
 } from "@phosphor-icons/react";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
@@ -193,7 +194,7 @@ export default function CheckoutPage() {
                 return (
                     <div className="space-y-2">
                         {options.map((opt, i) => {
-                            const current = (form.watch(`custom.${field.id}`) as string) ?? "";
+                            const current = form.watch(`custom.${field.id}`)! ?? "";
                             const values = current.split(",").filter(Boolean);
                             const checked = values.includes(opt);
 
@@ -272,9 +273,11 @@ export default function CheckoutPage() {
 
                         {/* PRODUCT CARD */}
                         <div className="bg-white border border-slate-300 rounded-xl p-5 flex gap-5">
-                            <div className="w-50 h-50 bg-slate-100 rounded-xl overflow-hidden shrink-0">
+                            <div className="w-50 h-50 relative bg-slate-100 rounded-xl overflow-hidden shrink-0">
                                 {product.image ? (
-                                    <img src={product.image} className="w-full h-full object-cover" />
+                                    <Image src={product.image} alt={product.name}
+                                        unoptimized
+                                        fill className="object-cover" />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-slate-400">
                                         No Image
@@ -358,7 +361,7 @@ export default function CheckoutPage() {
 
                                             {errors?.custom?.[field.id] && (
                                                 <p className="text-xs text-red-500">
-                                                    {errors.custom[field.id]?.message as string}
+                                                    {errors.custom[field.id]?.message?.toString()}
                                                 </p>
                                             )}
                                         </div>
@@ -366,13 +369,13 @@ export default function CheckoutPage() {
                                 </div>
                             )}
                         </form>
-                    </div>
+                    </div >
 
                     {/* RIGHT */}
-                    <div className="space-y-6 lg:sticky lg:top-24 lg:self-start lg:h-fit lg:col-span-2">
+                    < div className="space-y-6 lg:sticky lg:top-24 lg:self-start lg:h-fit lg:col-span-2" >
 
                         {/* VOUCHER */}
-                        <div className="bg-white border border-slate-300 rounded-xl p-5">
+                        < div className="bg-white border border-slate-300 rounded-xl p-5" >
                             <label className="text-sm text-slate-700">Voucher</label>
 
                             <div className="flex gap-3 mt-2">
@@ -389,10 +392,10 @@ export default function CheckoutPage() {
                                     Pakai
                                 </button>
                             </div>
-                        </div>
+                        </div >
 
                         {/* SUMMARY */}
-                        <div className="bg-white border border-slate-300 rounded-xl p-6">
+                        < div className="bg-white border border-slate-300 rounded-xl p-6" >
                             <h3 className="font-semibold text-slate-800 border-b border-slate-300 pb-3 mb-4">
                                 Detail Pembayaran
                             </h3>
@@ -416,11 +419,11 @@ export default function CheckoutPage() {
                                 <ShieldCheckIcon className="w-4 h-4" />
                                 Aman & terenkripsi
                             </div>
-                        </div>
+                        </div >
 
-                    </div>
-                </div>
-            </div>
-        </div>
+                    </div >
+                </div >
+            </div >
+        </div >
     );
 }

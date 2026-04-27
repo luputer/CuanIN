@@ -11,11 +11,17 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-export const sendProductEmail = async (
-    buyerEmail: string,
-    productName: string,
-    productLink: string
-) => {
+type SendProductEmailParams = {
+    buyerEmail: string;
+    productName: string;
+    productLink: string;
+};
+
+export const sendProductEmail = async ({
+    buyerEmail,
+    productName,
+    productLink,
+}: SendProductEmailParams) => {
     try {
         const info = await transporter.sendMail({
             from: `"Tim CuanIN" <${env.SMTP_FROM}>`,

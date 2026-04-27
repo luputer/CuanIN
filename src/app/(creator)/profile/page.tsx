@@ -110,7 +110,7 @@ export default function ProfilePage() {
                                         unoptimized
                                     />
                                 ) : (
-                                    <div className="w-full h-full bg-blue-500 text-white flex items-center justify-center font-bold text-4xl uppercase">
+                                    <div className="w-full  h-full bg-blue-500 text-white flex items-center justify-center font-bold text-4xl uppercase">
                                         {name ? name[0] : "U"}
                                     </div>
                                 )}
@@ -139,7 +139,7 @@ export default function ProfilePage() {
                         <Input
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="bg-white h-[46px] border-[#00B4D8]/30 focus-visible:ring-[#00B4D8] text-slate-700"
+                            className="bg-white rounded-xl h-[46px] border-[#00B4D8]/30 focus-visible:ring-[#00B4D8] text-slate-700"
                         />
                     </div>
 
@@ -149,7 +149,7 @@ export default function ProfilePage() {
                         <Input
                             value={email}
                             disabled
-                            className="bg-slate-100 h-[46px] border-[#00B4D8]/30 focus-visible:ring-0 text-slate-500 cursor-not-allowed"
+                            className="bg-slate-100 rounded-xl h-[46px] border-[#00B4D8]/30 focus-visible:ring-0 text-slate-500 cursor-not-allowed"
                         />
                     </div>
 
@@ -159,7 +159,7 @@ export default function ProfilePage() {
                         <Input
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
-                            className="bg-white h-[46px] border-[#00B4D8]/30 focus-visible:ring-[#00B4D8] text-slate-700"
+                            className="bg-white rounded-xl h-[46px] border-[#00B4D8]/30 focus-visible:ring-[#00B4D8] text-slate-700"
                         />
                     </div>
 
@@ -171,7 +171,7 @@ export default function ProfilePage() {
                             onChange={(e) => setBio(e.target.value)}
                             rows={3}
                             placeholder="Ceritakan sedikit tentang dirimu..."
-                            className="bg-white border-[#00B4D8]/30 focus-visible:ring-[#00B4D8] text-slate-700 min-h-[100px]"
+                            className="bg-white rounded-xl border-[#00B4D8]/30 focus-visible:ring-[#00B4D8] text-slate-700 min-h-[100px]"
                         />
                     </div>
                 </div>
@@ -191,7 +191,7 @@ export default function ProfilePage() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="Biarkan kosong jika tidak ingin mengubah password"
-                            className="bg-white h-[46px] border-[#00B4D8]/30 focus-visible:ring-[#00B4D8] text-slate-700 placeholder:font-normal placeholder:tracking-normal placeholder:text-sm font-medium tracking-widest text-lg"
+                            className=" rounded-xl not-only-of-type:bg-white h-[46px] border-[#00B4D8]/30 focus-visible:ring-[#00B4D8] text-slate-700 placeholder:font-normal placeholder:tracking-normal placeholder:text-sm font-medium tracking-widest text-lg"
                         />
                     </div>
                 </div>

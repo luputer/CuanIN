@@ -8,7 +8,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { PlusIcon, ArrowLeftIcon, CircleNotchIcon, CaretUpIcon, CaretDownIcon, TrashIcon, PencilSimpleIcon } from "@phosphor-icons/react";
-import ButtonSave from "~/components/ui/button-save";
 import ButtonCancel from "~/components/ui/button-cancel";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
@@ -55,7 +54,6 @@ export default function CreateDigitalProductPage() {
     });
 
     const priceType = watch("priceType");
-    const priceValue = watch("price");
 
     // Format initial price value or when priceType changes to paid
     useEffect(() => {
@@ -145,7 +143,7 @@ export default function CreateDigitalProductPage() {
                     <div>
 
                         {/* Nama */}
-                        <FormGroup label="Nama" error={(errors.name as unknown as { message?: string })?.message}>
+                        <FormGroup label="Nama" error={errors.name?.message}>
                             <FormInput {...register("name")} placeholder="Masukkan nama produk" />
                         </FormGroup>
 
@@ -192,14 +190,14 @@ export default function CreateDigitalProductPage() {
                             </div>
                         </FormGroup>
 
-                        <FormGroup label="Deskripsi Singkat" align="start" error={(errors.shortDescription as unknown as { message?: string })?.message}>
+                        <FormGroup label="Deskripsi Singkat" align="start" error={errors.shortDescription?.message}>
                             <FormTextarea
                                 placeholder="Masukkan deskripsi singkat"
                                 {...register("shortDescription")}
                             />
                         </FormGroup>
 
-                        <FormGroup label="Deskripsi" align="start" error={(errors.description as any)?.message}>
+                        <FormGroup label="Deskripsi" align="start" error={errors.description?.message}>
                             <div data-color-mode="light" className="border border-slate-400 rounded-lg overflow-hidden">
                                 <MDEditor
                                     value={watch("description") ?? ""}
@@ -215,7 +213,7 @@ export default function CreateDigitalProductPage() {
                             </div>
                         </FormGroup>
 
-                        <FormGroup label="Benefit" align="start" error={(errors.benefit as unknown as { message?: string })?.message}>
+                        <FormGroup label="Benefit" align="start" error={errors.benefit?.message}>
                             <div className="space-y-3 flex flex-col">
                                 {fields.map((field, index) => (
                                     <div key={field.id} className="flex gap-2">
@@ -254,7 +252,7 @@ export default function CreateDigitalProductPage() {
 
                         {/* Harga */}
                         {priceType === "paid" && (
-                            <FormGroup label="Harga" error={(errors.price as unknown as { message?: string })?.message}>
+                            <FormGroup label="Harga" error={errors.price?.message}>
                                 <Controller
                                     control={control}
                                     name="price"
@@ -290,7 +288,7 @@ export default function CreateDigitalProductPage() {
                         </FormGroup>
 
                         {/* Link */}
-                        <FormGroup label="Link" error={(errors.link as unknown as { message?: string })?.message}>
+                        <FormGroup label="Link" error={errors.link?.message}>
                             <FormInput {...register("link")} placeholder="https://example.com" />
                         </FormGroup>
 
@@ -320,4 +318,4 @@ export default function CreateDigitalProductPage() {
             </div>
         </div >
     );
-}
+}   

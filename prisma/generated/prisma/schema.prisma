@@ -36,7 +36,9 @@ model Product {
   startDate        DateTime?
   endDate          DateTime?
   link             String?
+  format           String?
   platform         String?
+  duration         String?
   dateDeadline     DateTime?
   quota            Int?
   status           String      @default("published")

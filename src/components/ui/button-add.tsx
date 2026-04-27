@@ -60,7 +60,7 @@ export default function ButtonAdd({
     return (
         <button
             {...props}
-            type={props.type || "button"}
+            type={props.type ?? "button"}
             onClick={onClick}
             disabled={!!isLoading || !!props.disabled}
             className={classes}

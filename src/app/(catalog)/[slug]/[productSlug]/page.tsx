@@ -11,6 +11,7 @@ import {
     FileIcon
 } from "@phosphor-icons/react";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams, notFound } from "next/navigation";
 import { api } from "~/trpc/react";
 import { format } from "date-fns";
@@ -151,7 +152,7 @@ export default function ProductDetailPage() {
                                 {product.shortDescription}
                             </p>
 
-                            {(metaLabel || isWebinarOrClass) && (
+                            {(metaLabel ?? isWebinarOrClass) && (
                                 <div className="flex flex-wrap gap-6 text-sm text-slate-700 py-2">
 
                                     {/* FORMAT / DURASI */}
@@ -224,13 +225,15 @@ export default function ProductDetailPage() {
                     <div className="lg:col-span-2 flex flex-col gap-6">
 
                         {/* IMAGE (TOP SIDEBAR) */}
-                        <div className="w-full aspect-square bg-slate-100 rounded-3xl overflow-hidden border border-slate-300">
+                        <div className="w-full aspect-square relative bg-slate-100 rounded-3xl overflow-hidden border border-slate-300">
 
                             {product.image ? (
-                                <img
+                                <Image
                                     src={product.image}
                                     alt={product.name}
-                                    className="w-full h-full object-cover"
+                                    fill
+                                    unoptimized
+                                    className="object-cover"
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center text-slate-400">

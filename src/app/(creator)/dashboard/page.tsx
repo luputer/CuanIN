@@ -116,7 +116,7 @@ export default function DashboardPage() {
             {/* Header */}
             <div className="bg-slate-50">
                 <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
-                    <div className="text-2xl font-semibold mb-2 text-slate-800">Dashboard</div>
+                    <div className="text-2xl font-semibold mb-2 text-blue-600">Dashboard</div>
                     <div className="text-sm font-regular text-slate-600">Selamat datang, Mason Brooks. Kelola produk dan pantau penjualan Anda di sini.</div>
                 </div>
             </div>
@@ -268,7 +268,7 @@ export default function DashboardPage() {
                     </ResponsiveContainer>
                 </div>
 
-                <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
+                <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
                     <h2 className="pl-2 font-semibold text-lg mb-6 text-slate-800">Jumlah Pembeli</h2>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={buyerData} barCategoryGap="20%">

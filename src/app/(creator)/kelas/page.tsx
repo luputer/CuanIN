@@ -1,28 +1,16 @@
 "use client";
 
 import {
-	Search,
-	ChevronDown,
-	Plus,
-	Eye,
-	Trash2,
-	ChevronLeft,
-	ChevronRight,
-	Loader2,
-	Copy
-} from "lucide-react";
+	CaretUpIcon,
+	CaretDownIcon,
+	EyeIcon,
+	TrashIcon,
+	CopyIcon,
+} from "@phosphor-icons/react";
+import { cn } from "~/lib/utils";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-} from "~/components/ui/alert-dialog";
+import ConfirmDialog from "~/components/ui/confirm-dialog";
 import {
 	Table,
 	TableHead,
@@ -30,20 +18,31 @@ import {
 	TableRow,
 	TableBody,
 	TableCell,
+	TablePagination,
 } from "~/components/ui/table";
-import {
-	Pagination,
-	PaginationContent,
-	PaginationEllipsis,
-	PaginationItem,
-} from "~/components/ui/pagination";
 import { Skeleton } from "~/components/ui/skeleton";
 import Link from "next/link";
 import { api } from "~/trpc/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import SearchInput from "~/components/ui/search";
+import ButtonFilter from "~/components/ui/filter";
+import ActionButton from "~/components/ui/button-add";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "~/components/ui/tooltip";
+import {
+	DropdownMenu,
+	DropdownMenuTrigger,
+	DropdownMenuContent,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
+} from "~/components/ui/dropdown-menu";
 
-export default function DigitalProductPage() {
+export default function KelasOnlinePage() {
 	const utils = api.useUtils();
 	const router = useRouter();
 
@@ -51,6 +50,11 @@ export default function DigitalProductPage() {
 	const [limit, setLimit] = useState(10);
 	const [search, setSearch] = useState("");
 	const [debouncedSearch, setDebouncedSearch] = useState("");
+	const [sortBy, setSortBy] = useState<"name" | "createdAt">("createdAt");
+	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
+	const [priceTypeFilter, setPriceTypeFilter] = useState<"ALL" | "FREE" | "PAID">("ALL");
+	const [statusFilter, setStatusFilter] = useState<string>("ALL");
 
 	// Debounce search
 	useEffect(() => {
@@ -63,9 +67,15 @@ export default function DigitalProductPage() {
 
 	const { data, isLoading } = api.products.getAll.useQuery({
 		type: "KELAS_ONLINE",
-		page,
-		limit,
-		search: debouncedSearch
+		page: page || 1,
+		limit: limit || 10,
+		search: debouncedSearch || undefined,
+		sortBy,
+		sortOrder,
+		priceType: priceTypeFilter,
+		status: statusFilter,
+	}, {
+		placeholderData: (prev) => prev,
 	});
 
 	const products = data?.items;
@@ -98,8 +108,7 @@ export default function DigitalProductPage() {
 	const getStatusColor = (status: string) => {
 		const s = status.toLowerCase();
 		switch (s) {
-			case "selesai": return "bg-green-100 text-green-700";
-			case "published": return "bg-yellow-100 text-yellow-600";
+			case "published": return "bg-green-100 text-green-700";
 			case "unpublished": return "bg-slate-200 text-slate-500";
 			default: return "bg-slate-100 text-slate-600";
 		}
@@ -108,7 +117,6 @@ export default function DigitalProductPage() {
 	const getStatusLabel = (status: string) => {
 		const s = status.toLowerCase();
 		switch (s) {
-			case "selesai": return "Selesai";
 			case "published": return "Published";
 			case "unpublished": return "Unpublished";
 			default: return status;
@@ -129,270 +137,271 @@ export default function DigitalProductPage() {
 	};
 
 	return (
-		<div className="space-y-6">
-			{/* Header */}
-			<div>
-				<h1 className="text-2xl font-bold text-blue-600">Daftar Kelas Online</h1>
-				<p className="text-slate-500 mt-1 text-sm">
-					Pantau semua kelas online yang tersedia di platform.
-				</p>
-			</div>
+		<TooltipProvider>
+			<div className="space-y-6">
+				{/* Header */}
+				<div className="bg-slate-50">
+					<div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
+						<div className="text-2xl font-semibold mb-2 text-blue-600">Kelas Online</div>
+						<div className="text-sm font-regular text-slate-600">Pantau semua kelas online yang kamu kelola.</div>
+					</div>
+				</div>
 
-			{/* Toolbar */}
-			<div className="flex flex-col md:flex-row justify-between gap-4">
-				{/* Search */}
-				<div className="relative w-full md:w-96">
-					<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
-					<input
-						type="text"
-						placeholder="Cari berdasarkan Nama Kelas"
+				{/* Toolbar */}
+				<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+					{/* Search */}
+					<SearchInput
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
-						className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+						placeholder="Cari berdasarkan Nama Kelas"
 					/>
+
+					{/* Actions */}
+					<div className="flex gap-3">
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<ButtonFilter label={`Tipe: ${priceTypeFilter === "ALL" ? "Semua" : priceTypeFilter === "FREE" ? "Gratis" : "Berbayar"}`} />
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end" className="w-[160px]">
+								<DropdownMenuRadioGroup value={priceTypeFilter} onValueChange={(v) => setPriceTypeFilter(v as "ALL" | "FREE" | "PAID")}>
+									<DropdownMenuRadioItem value="ALL">Semua Tipe</DropdownMenuRadioItem>
+									<DropdownMenuRadioItem value="FREE">Gratis</DropdownMenuRadioItem>
+									<DropdownMenuRadioItem value="PAID">Berbayar</DropdownMenuRadioItem>
+								</DropdownMenuRadioGroup>
+							</DropdownMenuContent>
+						</DropdownMenu>
+
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<ButtonFilter label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "published" ? "Published" : statusFilter === "unpublished" ? "Unpublished" : "Selesai"}`} />
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end" className="w-[160px]">
+								<DropdownMenuRadioGroup value={statusFilter} onValueChange={setStatusFilter}>
+									<DropdownMenuRadioItem value="ALL">Semua Status</DropdownMenuRadioItem>
+									<DropdownMenuRadioItem value="published">Published</DropdownMenuRadioItem>
+									<DropdownMenuRadioItem value="unpublished">Unpublished</DropdownMenuRadioItem>
+									<DropdownMenuRadioItem value="selesai">Selesai</DropdownMenuRadioItem>
+								</DropdownMenuRadioGroup>
+							</DropdownMenuContent>
+						</DropdownMenu>
+
+						<ActionButton
+							href="/kelas/create"
+							label="Tambah Kelas"
+						/>
+					</div>
 				</div>
 
-				{/* Actions */}
-				<div className="flex gap-3">
-					<button className="flex items-center gap-2 px-4 py-2.5 border border-slate-200 rounded-lg text-sm text-slate-600 bg-white hover:bg-slate-50">
-						<span>Status: Semua</span>
-						<ChevronDown className="w-4 h-4" />
-					</button>
-					<Link
-						href="/kelas/create"
-						className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm shadow-blue-200"
+				{/* Table */}
+				<div className="">
+					<Table
+						pagination={
+							<TablePagination
+								page={page}
+								totalPages={totalPages}
+								limit={limit}
+								total={total}
+								onPageChange={setPage}
+								onLimitChange={setLimit}
+							/>
+						}
 					>
-						<span>Tambah Kelas</span>
-						<Plus className="w-4 h-4" />
-					</Link>
-				</div>
-			</div>
-
-			{/* Table */}
-			<div className="bg-white border-t border-b border-slate-200">
-				<Table className="w-full text-sm text-left">
-					<TableHeader className="bg-cyan-50/60 border-b border-t border-cyan-100">
-						<TableRow className="hover:bg-cyan-50/60 border-none">
-							<TableHead className="py-4 px-6 text-slate-700 font-bold whitespace-normal">
-								<div className="flex items-center gap-2 cursor-pointer hover:text-blue-600">
-									Nama
-									<div className="flex flex-col text-slate-400">
-										<ChevronDown className="w-3 h-3 rotate-180 -mb-1" />
-										<ChevronDown className="w-3 h-3" />
-									</div>
-								</div>
-							</TableHead>
-							<TableHead className="py-4 px-6 text-slate-700 font-bold whitespace-normal">Thumbnail</TableHead>
-							<TableHead className="py-4 px-6 text-slate-700 font-bold whitespace-normal">Tipe</TableHead>
-							<TableHead className="py-4 px-6 text-slate-700 font-bold whitespace-normal">Harga</TableHead>
-							<TableHead className="py-4 px-6 text-slate-700 font-bold whitespace-normal">Peserta</TableHead>
-							<TableHead className="py-4 px-6 text-slate-700 font-bold whitespace-normal">Status</TableHead>
-							<TableHead className="py-4 px-6 text-slate-700 font-bold text-center whitespace-normal">Aksi</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody className="divide-y divide-slate-100">
-						{isLoading ? (
-							Array.from({ length: 5 }).map((_, i) => (
-								<TableRow key={i}>
-									<TableCell className="py-4 px-6"><Skeleton className="h-4 w-32" /></TableCell>
-									<TableCell className="py-4 px-6"><Skeleton className="h-12 w-12" /></TableCell>
-									<TableCell className="py-4 px-6"><Skeleton className="h-4 w-16" /></TableCell>
-									<TableCell className="py-4 px-6"><Skeleton className="h-4 w-20" /></TableCell>
-									<TableCell className="py-4 px-6"><Skeleton className="h-4 w-12" /></TableCell>
-									<TableCell className="py-4 px-6"><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-									<TableCell className="py-4 px-6"><div className="flex justify-center gap-3"><Skeleton className="h-5 w-5" /><Skeleton className="h-5 w-5" /><Skeleton className="h-5 w-5" /></div></TableCell>
-								</TableRow>
-							))
-						) : products?.length === 0 ? (
+						<TableHeader>
 							<TableRow>
-								<TableCell colSpan={7} className="py-10 text-center text-slate-500">
-									Belum ada Kelas
-								</TableCell>
+								<TableHead className="w-[5%] text-center">No</TableHead>
+								<TableHead
+									className="w-[18%] cursor-pointer select-none hover:text-slate-900 transition-colors group"
+									onClick={() => {
+										if (sortBy === "name") {
+											setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+										} else {
+											setSortBy("name");
+											setSortOrder("asc");
+										}
+									}}
+								>
+									<div className="flex items-center gap-2">
+										Nama
+										<div className="flex flex-col h-4 justify-center">
+											<CaretUpIcon
+												weight={sortBy === "name" && sortOrder === "asc" ? "bold" : "regular"}
+												className={cn("w-4 h-4 -mb-1", sortBy === "name" && sortOrder === "asc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
+											/>
+											<CaretDownIcon
+												weight={sortBy === "name" && sortOrder === "desc" ? "bold" : "regular"}
+												className={cn("w-4 h-4", sortBy === "name" && sortOrder === "desc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
+											/>
+										</div>
+									</div>
+								</TableHead>
+								<TableHead className="w-[14%]">Thumbnail</TableHead>
+								<TableHead className="w-[10%]">Tipe</TableHead>
+								<TableHead className="w-[13%]">Harga</TableHead>
+								<TableHead className="w-[14%]">Peserta</TableHead>
+								<TableHead className="w-[16%]">Status</TableHead>
+								<TableHead className="text-left w-[10%]">Aksi</TableHead>
 							</TableRow>
-						) : (
-							products?.map((item) => {
-								const priceNum = Number(item.price);
-								return (
-									<TableRow key={item.id} className="hover:bg-slate-50 transition-colors group">
-										<TableCell className="py-4 px-6 text-slate-600 font-medium hover:underline cursor-pointer ">
-											<Link href={`/kelas/${item.id}`}>
-												{item.name}
-											</Link>
-										</TableCell>
-										<TableCell className="py-4 px-6 whitespace-normal">
-											<div className="w-12 h-12 bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
-												{item.image ? (
-													<Image
-														src={item.image}
-														alt={item.name}
-														width={48}
-														height={48}
-														unoptimized
-														className="w-full h-full object-cover"
-													/>
-												) : (
-													<div className="w-full h-full flex items-center justify-center text-[10px] text-slate-400 italic">
-														No image
-													</div>
-												)}
-											</div>
-										</TableCell>
-										<TableCell className="py-4 px-6 text-slate-600">
-											{priceNum > 0 ? "Berbayar" : "Gratis"}
-										</TableCell>
-										<TableCell className="py-4 px-6 text-slate-600 font-medium">
-											{priceNum === 0 ? "Rp 0" : `Rp ${priceNum.toLocaleString("id-ID")}`}
-										</TableCell>
-										<TableCell className="py-4 px-6">
-											<div className="flex items-center gap-2">
-												<span className="text-slate-600">{buyerCounts?.[item.id] ?? 0}</span>
-												<button
-													onClick={() => router.push(`/kelas/${item.id}?tab=user`)}
-													className="px-3 py-1 text-xs font-medium text-blue-500 border border-blue-400 rounded-md hover:bg-blue-50 transition-colors cursor-pointer"
-												>
-													Lihat
-												</button>
-											</div>
-										</TableCell>
-										<TableCell className="py-4 px-6 whitespace-normal">
-											<span className={`px-4 py-1 rounded-full text-[13px] font-medium ${getStatusColor(item.status)}`}>
-												{getStatusLabel(item.status)}
-											</span>
-										</TableCell>
-										<TableCell className="py-4 px-6 whitespace-normal">
+						</TableHeader>
+
+						<TableBody>
+							{isLoading ? (
+								Array.from({ length: 5 }).map((_, i) => (
+									<TableRow data-type="body" key={i}>
+										<TableCell><Skeleton className="h-4 w-4 mx-auto" /></TableCell>
+										<TableCell><Skeleton className="h-4 w-32" /></TableCell>
+										<TableCell><Skeleton className="h-12 w-12 rounded-md" /></TableCell>
+										<TableCell><Skeleton className="h-4 w-16" /></TableCell>
+										<TableCell><Skeleton className="h-4 w-20" /></TableCell>
+										<TableCell><Skeleton className="h-4 w-12" /></TableCell>
+										<TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+										<TableCell>
 											<div className="flex justify-center gap-3">
-												<button
-													onClick={() => router.push(`/kelas/${item.id}`)}
-													title="Detail Kelas"
-													className="text-[#00B4D8] cursor-pointer hover:text-[#008ba8] transition-colors">
-													<Eye className="w-[18px] h-[18px]" strokeWidth={2} />
-												</button>
-												<button
-													onClick={() => setDeleteId(item.id)}
-													className="text-rose-400 cursor-pointer hover:text-rose-600 transition-colors"
-													title="Hapus Kelas"
-												>
-													<Trash2 className="w-[18px] h-[18px]" strokeWidth={2} />
-												</button>
-												<button
-													onClick={() => handleCopyLink(item.id, item.slug ?? null)}
-													className="text-amber-400 cursor-pointer hover:text-amber-600 transition-colors"
-													title="Salin Link Kelas"
-												>
-													<Copy className="w-[18px] h-[18px]" strokeWidth={2} />
-												</button>
+												<Skeleton className="h-5 w-5" />
+												<Skeleton className="h-5 w-5" />
+												<Skeleton className="h-5 w-5" />
 											</div>
 										</TableCell>
 									</TableRow>
-								);
-							})
-						)}
-					</TableBody>
-				</Table>
-			</div>
-
-			{/* Pagination */}
-			<div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[13px] text-slate-500 pt-2 w-full">
-				<div className="flex items-center gap-3">
-					<div className="relative">
-						<select
-							value={limit}
-							onChange={(e) => {
-								setLimit(Number(e.target.value));
-								setPage(1);
-							}}
-							className="appearance-none bg-white border border-slate-200 rounded px-3 py-1.5 pr-8 text-slate-600 hover:bg-slate-50 focus:outline-none cursor-pointer w-20"
-						>
-							<option value={5}>5</option>
-							<option value={10}>10</option>
-							<option value={20}>20</option>
-							<option value={50}>50</option>
-						</select>
-						<ChevronDown className="w-3 h-3 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-					</div>
-					<span className="text-slate-500 whitespace-nowrap">
-						Hasil: {total > 0 ? (page - 1) * limit + 1 : 0}-{Math.min(page * limit, total)} dari {total}
-					</span>
-				</div>
-				<div className="flex items-center">
-					<Pagination className="justify-center sm:justify-end">
-						<PaginationContent className="gap-1">
-							<PaginationItem>
-								<button
-									onClick={() => setPage(p => Math.max(1, p - 1))}
-									disabled={page === 1}
-									className="flex items-center justify-center p-2 text-slate-400 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
-								>
-									<ChevronLeft className="w-4 h-4" />
-								</button>
-							</PaginationItem>
-
-							{Array.from({ length: totalPages }, (_, i) => i + 1)
-								.filter(p => p === 1 || p === totalPages || (p >= page - 1 && p <= page + 1))
-								.map((p, index, array) => {
-									const prev = array[index - 1];
-									const showEllipsis = index > 0 && prev !== undefined && p - prev > 1;
-									return (
-										<div key={p} className="flex items-center gap-1">
-											{showEllipsis && <PaginationEllipsis />}
-											<PaginationItem>
-												<button
-													onClick={() => setPage(p)}
-													className={`h-7 w-7 rounded-[4px] flex items-center justify-center font-medium text-xs transition-colors ${page === p
-														? "bg-[#00B4D8] text-white hover:bg-[#009bc2]"
-														: "text-slate-500 hover:bg-slate-100"
-														}`}
-												>
-													{p}
-												</button>
-											</PaginationItem>
+								))
+							) : products?.length === 0 ? (
+								<TableRow className="text-center">
+									<TableCell colSpan={8} className="py-20">
+										<div className="flex flex-col items-center gap-1">
+											<span className="text-slate-500">Belum ada kelas online.</span>
+											<Link href="/kelas/create" className="text-cyan-600 font-medium hover:underline">
+												Buat kelas online pertamamu
+											</Link>
 										</div>
+									</TableCell>
+								</TableRow>
+							) : (
+								products?.map((item, index) => {
+									const priceNum = Number(item.price);
+									const rowNumber = (page - 1) * limit + index + 1;
+									return (
+										<TableRow key={item.id} data-type="body">
+											<TableCell className="text-center font-medium">
+												{rowNumber}
+											</TableCell>
+
+											<TableCell className="whitespace-nowrap">
+												<div className="flex items-center min-h-[48px]">
+													<Link href={`/kelas/${item.id}`} className="hover:text-cyan-600 transition-colors">
+														{item.name}
+													</Link>
+												</div>
+											</TableCell>
+
+											<TableCell className="whitespace-nowrap">
+												<div className="w-12 h-12 bg-slate-100 overflow-hidden border border-slate-200 rounded-lg">
+													{item.image ? (
+														<Image
+															src={item.image}
+															alt={item.name}
+															width={48}
+															height={48}
+															unoptimized
+															className="w-full h-full object-cover"
+														/>
+													) : (
+														<div className="w-full h-full flex items-center justify-center text-[10px] text-slate-400 italic">
+															No image
+														</div>
+													)}
+												</div>
+											</TableCell>
+
+											<TableCell className="whitespace-nowrap">
+												<div className="flex items-center min-h-[48px]">
+													{priceNum > 0 ? "Berbayar" : "Gratis"}
+												</div>
+											</TableCell>
+
+											<TableCell className="whitespace-nowrap">
+												<div className="flex items-center min-h-[48px]">
+													{priceNum === 0 ? "Rp 0" : `Rp ${priceNum.toLocaleString("id-ID")}`}
+												</div>
+											</TableCell>
+
+											<TableCell className="whitespace-nowrap">
+												<div className="flex items-center gap-3 min-h-[48px]">
+													<span>{buyerCounts?.[item.id] ?? 0}</span>
+													<button
+														onClick={() => router.push(`/kelas/${item.id}?tab=user`)}
+														className="text-sm text-cyan-600 px-4 py-1 border border-cyan-600 rounded-lg hover:bg-cyan-50 font-medium transition-colors cursor-pointer"
+													>
+														Lihat
+													</button>
+												</div>
+											</TableCell>
+
+											<TableCell className="whitespace-nowrap">
+												<div className="flex items-center min-h-[48px]">
+													<span className={`px-4 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.status)}`}>
+														{getStatusLabel(item.status)}
+													</span>
+												</div>
+											</TableCell>
+
+											<TableCell className="px-6 py-4 text-right">
+												<div className="flex justify-start items-center gap-3">
+													<Tooltip>
+														<TooltipTrigger asChild>
+															<button onClick={() => router.push(`/kelas/${item.id}`)}>
+																<EyeIcon className="w-[24px] h-[24px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
+															</button>
+														</TooltipTrigger>
+														<TooltipContent>Lihat Detail</TooltipContent>
+													</Tooltip>
+
+													<Tooltip>
+														<TooltipTrigger asChild>
+															<button onClick={() => setDeleteId(item.id)}>
+																<TrashIcon className="w-[24px] h-[24px] text-red-600 cursor-pointer hover:text-red-700" />
+															</button>
+														</TooltipTrigger>
+														<TooltipContent>Hapus Kelas</TooltipContent>
+													</Tooltip>
+
+													<Tooltip>
+														<TooltipTrigger asChild>
+															<button onClick={() => handleCopyLink(item.id, item.slug ?? null)}>
+																<CopyIcon className="w-[24px] h-[24px] text-yellow-500 cursor-pointer hover:text-yellow-600" />
+															</button>
+														</TooltipTrigger>
+														<TooltipContent>Salin Link Kelas</TooltipContent>
+													</Tooltip>
+												</div>
+											</TableCell>
+										</TableRow>
 									);
 								})
-							}
-
-							<PaginationItem>
-								<button
-									onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-									disabled={page === totalPages}
-									className="flex items-center justify-center p-2 text-slate-400 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
-								>
-									<ChevronRight className="w-4 h-4" />
-								</button>
-							</PaginationItem>
-						</PaginationContent>
-					</Pagination>
+							)}
+						</TableBody>
+					</Table>
 				</div>
-			</div>
 
-			{/* Delete Confirmation Dialog */}
-			<AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
-				<AlertDialogContent>
-					<AlertDialogHeader>
-						<AlertDialogTitle>Hapus Kelas Online?</AlertDialogTitle>
-						<AlertDialogDescription>
-							Kamu yakin ingin menghapus kelas{" "}
+				<ConfirmDialog
+					open={!!deleteId}
+					onOpenChange={(open) => !open && setDeleteId(null)}
+					icon={<TrashIcon size={52} className="bg-red-100 rounded-full p-3 text-red-500" weight="regular" />}
+					title="Hapus Kelas Online?"
+					description={
+						<>
+							Kamu yakin ingin menghapus {" "}
 							<span className="font-semibold text-slate-800">&quot;{productToDelete?.name}&quot;</span>?
 							<br />
 							Tindakan ini tidak bisa dibatalkan.
-						</AlertDialogDescription>
-					</AlertDialogHeader>
-					<AlertDialogFooter>
-						<AlertDialogCancel>Batal</AlertDialogCancel>
-						<AlertDialogAction
-							className="bg-rose-600 hover:bg-rose-700 text-white"
-							onClick={() => {
-								if (deleteId) deleteProduct.mutate({ id: deleteId });
-							}}
-							disabled={deleteProduct.isPending}
-						>
-							{deleteProduct.isPending ? (
-								<><Loader2 className="w-4 h-4 animate-spin mr-2" /> Menghapus...</>
-							) : "Ya, Hapus"}
-						</AlertDialogAction>
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</AlertDialog>
-		</div>
+						</>
+					}
+					confirmText="Ya, Hapus"
+					confirmClassName="bg-red-500 hover:bg-red-600 text-white"
+					loading={deleteProduct.isPending}
+					onConfirm={() => {
+						if (deleteId) deleteProduct.mutate({ id: deleteId });
+					}}
+				/>
+			</div>
+		</TooltipProvider>
 	);
 }

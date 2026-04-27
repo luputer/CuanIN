@@ -56,7 +56,12 @@ export const purchasesRouter = createTRPCRouter({
             // Send Email Notification if product link exists
             if (product.link) {
                 // Execute sending email asynchronously without blocking the user response
-                void sendProductEmail(input.buyerEmail, product.name, product.link);
+                void sendProductEmail({
+                    buyerEmail: input.buyerEmail,
+                    productName: product.name,
+                    productLink: product.link
+                });
+
             }
 
             return purchase;
@@ -205,11 +210,11 @@ export const purchasesRouter = createTRPCRouter({
                 productId: { in: productIds },
                 ...(input.search
                     ? {
-                          OR: [
-                              { buyerName: { contains: input.search, mode: "insensitive" as const } },
-                              { buyerEmail: { contains: input.search, mode: "insensitive" as const } },
-                          ],
-                      }
+                        OR: [
+                            { buyerName: { contains: input.search, mode: "insensitive" as const } },
+                            { buyerEmail: { contains: input.search, mode: "insensitive" as const } },
+                        ],
+                    }
                     : {}),
             };
 

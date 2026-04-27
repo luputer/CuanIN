@@ -1,10 +1,9 @@
-
 "use client"
-import { ChevronLeft, Copy, Image as ImageIcon, Pencil } from "lucide-react";
+import { ArrowLeftIcon, CopyIcon, ImageIcon, PencilIcon, TrashIcon } from "@phosphor-icons/react";
 
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../components/ui/tabs";
+import { ProductDetailTabs, ProductDetailTabContent } from "../../../../components/layout/product-detail-tabs";
 
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
@@ -14,14 +13,21 @@ import { toast } from "sonner";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import FormCustomizer from "~/components/FormCustomizer";
-import PurchaseList from "~/components/PurchaseList";
+import remarkBreaks from "remark-breaks";
 import { Skeleton } from "~/components/ui/skeleton";
+import ConfirmDialog from "~/components/ui/confirm-dialog";
+import { useState, useRef, useEffect } from "react";
+import { SectionHeader } from "~/components/ui/form-layout";
+import { useRouter } from "next/navigation";
+import Pembeli from "~/components/pembeli";
+import { FormCustomizer } from "~/components/form-customizer";
 
-export default function ProductDetailPage() {
+export default function KelasDetailPage() {
     const params = useParams();
     const id = params.id as string;
+    const router = useRouter();
     const searchParams = useSearchParams();
+    const utils = api.useUtils();
     const defaultTab = searchParams.get("tab") ?? "detail";
 
     const { data: catalog } = api.catalog.getMine.useQuery();
@@ -31,6 +37,20 @@ export default function ProductDetailPage() {
         { productId: id },
         { enabled: !!id }
     );
+
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+    const deleteProduct = api.products.delete.useMutation({
+        onSuccess: () => {
+            void utils.products.getAll.invalidate();
+            toast.success("Kelas Online berhasil dihapus");
+            router.push("/kelas");
+        },
+        onError: (error) => {
+            toast.error(`Gagal menghapus kelas: ${error.message}`);
+            setShowDeleteConfirm(false);
+        },
+    });
 
     const handleCopyLink = () => {
         if (!product || !catalog?.slug) {
@@ -47,53 +67,46 @@ export default function ProductDetailPage() {
     };
 
     const Label = ({ children }: { children: React.ReactNode }) => (
-        <div className="w-[200px] text-slate-700 font-semibold">{children}</div>
+        <div className="w-full sm:w-48 md:w-60 shrink-0 text-slate-500 text-sm font-medium leading-6">{children}</div>
     );
 
     const Value = ({ children }: { children: React.ReactNode }) => (
-        <div className="flex-1">
-            <div className="w-full rounded-lg border border-blue-200 bg-white px-4 py-2.5 text-slate-600 min-h-[44px] flex items-center">
-                {children}
-            </div>
+        <div className="flex-1 text-slate-800 text-sm font-medium leading-6">
+            {children}
         </div>
     );
 
     const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
-        <div className="flex flex-col md:flex-row gap-2 md:items-start mb-4">
-            <div className="md:pt-2.5">
-                <Label>{label}</Label>
-            </div>
-            <Value>
-                {children}
-            </Value>
+        <div className="flex flex-col sm:flex-row items-start pb-6 sm:pb-8 gap-1 sm:gap-8">
+            <Label>{label}</Label>
+            <Value>{children}</Value>
         </div>
     );
 
-    const SectionHeader = ({ title, showEdit }: { title: string; showEdit?: boolean }) => (
-        <div className="flex items-center justify-between border-b-2 border-blue-500 pb-2 mb-6">
-            <h2 className="text-lg font-bold text-slate-800">{title}</h2>
-            {showEdit && (
-                <Link
-                    href={`/kelas/${id}/edit`}
-                    className="flex items-center gap-1.5 text-xs text-blue-500 hover:text-blue-700 font-medium transition-colors"
-                >
-                    <Pencil className="w-3.5 h-3.5" />
-                    Edit
-                </Link>
-            )}
-        </div>
-    );
 
     const getStatusColor = (status: string) => {
         switch (status?.toLowerCase()) {
-            case "published": return "text-amber-500";
-            case "selesai": return "text-green-600";
-            case "draft": return "text-slate-500";
-            case "archived": return "text-slate-400";
-            default: return "text-slate-500";
+            case "published": return "bg-green-100 rounded-full px-4 py-1 w-fit text-green-700";
+            case "unpublished": return "bg-slate-200 rounded-full px-4 py-1 w-fit text-slate-500";
+            default: return "bg-slate-200 rounded-full px-4 py-1 w-fit text-slate-500";
         }
     };
 
+    const [expanded, setExpanded] = useState(false);
+    const [isOverflowing, setIsOverflowing] = useState(false);
+    const descriptionRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (descriptionRef.current && product?.description) {
+            // Cek apakah konten melebihi batas (clamped) saat pertama kali render
+            const isClamped = descriptionRef.current.scrollHeight > descriptionRef.current.clientHeight;
+            if (isClamped) {
+                setIsOverflowing(true);
+            }
+        }
+    }, [product?.description]);
+
+    // ✅ Skeleton loading
     if (isLoading) {
         return (
             <div className="w-full space-y-6">
@@ -105,17 +118,15 @@ export default function ProductDetailPage() {
 
                 <div className="bg-white rounded-xl overflow-hidden border border-slate-200">
                     <div className="flex border-b border-slate-200">
-                        <Skeleton className="h-14 flex-1 rounded-none border-r border-slate-100" />
-                        <Skeleton className="h-14 flex-1 rounded-none border-r border-slate-100" />
-                        <Skeleton className="h-14 flex-1 rounded-none" />
+                        <Skeleton className="h-14 flex-1" />
+                        <Skeleton className="h-14 flex-1" />
+                        <Skeleton className="h-14 flex-1" />
                     </div>
-                    <div className="p-6 space-y-8 min-h-[400px]">
-                        <Skeleton className="h-6 w-40 mb-6" />
-                        <div className="space-y-4">
-                            <Skeleton className="h-12 w-full" />
-                            <Skeleton className="h-12 w-full" />
-                            <Skeleton className="h-48 w-full md:w-3/4" />
-                        </div>
+                    <div className="p-6 space-y-6">
+                        <Skeleton className="h-6 w-40" />
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-40 w-full" />
                     </div>
                 </div>
             </div>
@@ -134,140 +145,208 @@ export default function ProductDetailPage() {
     }
 
     return (
-        <div className="w-full space-y-6">
-            {/* Header Back */}
-            <div className="flex items-center justify-between">
-                <Link
-                    href="/kelas"
-                    className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 w-fit"
-                >
-                    <ChevronLeft className="h-4 w-4" />
-                    <span>Kembali ke Daftar Kelas Online</span>
-                </Link>
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="bg-slate-50">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 pt-2">
+                    <div className="flex-1 flex flex-col gap-1">
+                        <Link
+                            href="/kelas"
+                            className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
+                        >
+                            <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                            <span className="leading-none">Kembali ke Daftar</span>
+                        </Link>
 
-                <Button
-                    variant={"outline"}
-                    className="flex items-center gap-2"
-                    onClick={handleCopyLink}
-                >
-                    <Copy className="w-4 h-4" />
-                    Salin Link Kelas
-                </Button>
+                        <h1 className="text-xl font-semibold text-slate-800 break-words">{product.name}</h1>
+                    </div>
 
-
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border-cyan-600 hover:bg-cyan-50 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
+                            onClick={handleCopyLink}
+                        >
+                            <CopyIcon className="w-4 h-4 text-cyan-600" />
+                            <span className="text-sm font-regular text-cyan-600 whitespace-nowrap">
+                                Salin Link Kelas
+                            </span>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center justify-center h-10 w-10 p-0 bg-white border-red-500 hover:bg-red-100 hover:shadow-sm rounded-lg transition-all cursor-pointer shrink-0"
+                            onClick={() => setShowDeleteConfirm(true)}
+                        >
+                            <TrashIcon className="w-4 h-4 text-red-500" />
+                        </Button>
+                    </div>
+                </div>
             </div>
 
-            {/* Title */}
-            <h1 className="text-2xl font-bold text-blue-600">{product.name}</h1>
-
             {/* Tabs */}
-            <Tabs defaultValue={defaultTab}>
-                <div className="bg-white rounded-t-xl overflow-hidden border-b border-slate-200">
-                    <TabsList className="w-full flex h-auto p-0 bg-transparent ">
-                        <TabsTrigger
-                            value="detail"
-                            className="flex-1   rounded-none border-b-2 border-transparent py-4 data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 bg-transparent text-slate-500 font-medium cursor-pointer"
-                        >
-                            Detail Kelas
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="user"
-                            className="flex-1 rounded-none border-b-2 border-transparent py-4 data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 bg-transparent text-slate-500 font-medium cursor-pointer"
-                        >
-                            Peserta ({buyerCount ?? 0})
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="form"
-                            className="flex-1 rounded-none border-b-2 border-transparent py-4 data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 bg-transparent text-slate-500 font-medium cursor-pointer"
-                        >
-                            Kustomisasi Form
-                        </TabsTrigger>
-                    </TabsList>
-                </div>
+            <div className="rounded-xl border border-slate-800 overflow-hidden">
+                <ProductDetailTabs defaultTab={defaultTab} buyerCount={buyerCount ?? 0}>
+                    <ProductDetailTabContent value="detail" className="bg-transparent overflow-visible">
+                        {/* Main Content Area */}
+                        <div className="flex-1 min-w-0 bg-white rounded-xl px-4 py-2 sm:px-8 sm:py-8">
+                            <SectionHeader title="Informasi Kelas">
+                                <Link
+                                    href={`/kelas/${id}/edit`}
+                                    className="flex items-center gap-1.5 text-sm text-cyan-600 font-medium transition-colors hover:text-cyan-700 cursor-pointer"
+                                >
+                                    <PencilIcon className="w-4 h-4" />
+                                    Edit
+                                </Link>
+                            </SectionHeader>
 
-                <TabsContent value="detail" className="space-y-8 bg-blue-50/50 p-6 rounded-b-xl">
-                    {/* Informasi Produk */}
-                    <section>
-                        <SectionHeader title="Informasi Kelas" showEdit />
+                            <div className="flex flex-col lg:flex-row gap-10 items-start pt-4">
+                                {/* Kiri: Informasi Produk */}
+                                <div className="flex-1 min-w-0 space-y-0">
+                                    <Row label="Nama">
+                                        {product.name}
+                                    </Row>
 
-                        <Row label="Nama Kelas">{product.name}</Row>
+                                    <Row label="Deskripsi Singkat">
+                                        {product.shortDescription ?? "-"}
+                                    </Row>
 
-                        <Row label="Deskripsi">
-                            <div className="prose prose-sm prose-slate max-w-none text-slate-600 leading-relaxed">
-                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{product.description ?? "-"}</ReactMarkdown>
-                            </div>
-                        </Row>
+                                    <Row label="Deskripsi">
+                                        <div className="">
+                                            {product.description ? (
+                                                <>
+                                                    <div
+                                                        ref={descriptionRef}
+                                                        className={`
+                                                            prose prose-sm prose-slate max-w-none text-slate-800 leading-relaxed 
+                                                            [&>*:first-child]:mt-0
+                                                            ${!expanded ? "line-clamp-4" : ""}
+                                                        `}
+                                                    >
+                                                        <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
+                                                            {product.description}
+                                                        </ReactMarkdown>
+                                                    </div>
 
-                        <div className="flex flex-col md:flex-row gap-2 md:items-start mb-4">
-                            <div className="md:pt-2.5">
-                                <Label>Gambar Thumbnail</Label>
-                            </div>
-                            <div className="flex-1">
-                                <div className="w-full rounded-lg border border-blue-200 bg-white p-4 min-h-[44px]">
-                                    <div className="w-48 h-48 bg-slate-100 rounded-md overflow-hidden flex items-center justify-center border border-slate-200">
+                                                    {/* Button */}
+                                                    {(isOverflowing || expanded) && (
+                                                        <button
+                                                            onClick={() => setExpanded(!expanded)}
+                                                            className="sm:justify-start mt-2 text-sm text-slate-600 hover:underline cursor-pointer font-regular"
+                                                        >
+                                                            {expanded ? "Tampilkan lebih sedikit" : "Baca selengkapnya"}
+                                                        </button>
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <span className="text-slate-400">-</span>
+                                            )}
+                                        </div>
+                                    </Row>
+
+                                    <Row label="Benefit">
+                                        {Array.isArray(product.benefit) && product.benefit.length > 0 ? (
+                                            <ul className="list-disc list-inside space-y-1">
+                                                {(product.benefit as string[]).map((item, index) => (
+                                                    <li key={index} className="text-slate-800 font-medium">
+                                                        {item}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        ) : "-"}
+                                    </Row>
+
+                                    <Row label="Link">
+                                        {product.link ? (
+                                            <a href={product.link} target="_blank" className="text-blue-500 hover:underline break-all">
+                                                {product.link}
+                                            </a>
+                                        ) : "-"}
+                                    </Row>
+
+                                    <Row label="Tipe">
+                                        {Number(product.price) === 0 ? "Gratis" : "Berbayar"}
+                                    </Row>
+
+                                    <Row label="Harga">
+                                        {Number(product.price) === 0
+                                            ? "Rp 0"
+                                            : `Rp ${Number(product.price).toLocaleString("id-ID")}`}
+                                    </Row>
+
+                                    <Row label="Status">
+                                        <p className={`w-fit font-medium ${getStatusColor(product.status ?? "draft")}`}>
+                                            {product.status
+                                                ? product.status.charAt(0).toUpperCase() + product.status.slice(1)
+                                                : "Draft"}
+                                        </p>
+                                    </Row>
+
+
+                                    <p className="text-slate-500 text-sm">
+                                        Ditambahkan pada {format(new Date(product.createdAt), "d MMMM yyyy HH:mm", { locale: idLocale })}
+                                    </p>
+
+                                </div>
+
+                                {/* Kanan: Gambar */}
+                                <div className="shrink-0 w-full lg:w-90 bg-slate-100 p-4 rounded-xl border border-slate-100">
+                                    <p className="text-slate-700 text-sm font-medium mb-4">Gambar Thumbnail</p>
+                                    <div className="w-full aspect-square bg-white rounded-xl overflow-hidden flex items-center justify-center border border-slate-200">
                                         {product.image ? (
                                             <Image
                                                 src={product.image}
                                                 alt={product.name}
-                                                width={200}
-                                                height={200}
+                                                width={256}
+                                                height={256}
                                                 unoptimized
                                                 className="w-full h-full object-cover"
                                             />
                                         ) : (
-                                            <ImageIcon className="w-12 h-12 text-slate-300" />
+                                            <div className="flex flex-col items-center gap-2 text-slate-400">
+                                                <ImageIcon className="w-12 h-12" />
+                                                <span className="text-xs">Belum ada gambar</span>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <Row label="Tipe Akses">
-                            {Number(product.price) === 0 ? "Gratis" : "Berbayar"}
-                        </Row>
-                        <Row label="Harga">
-                            {Number(product.price) === 0
-                                ? "Rp 0"
-                                : `Rp ${Number(product.price).toLocaleString("id-ID")}`
-                            }
-                        </Row>
-                        <Row label="Link Akses">
-                            {product.link ? (
-                                <a href={product.link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline break-all">
-                                    {product.link}
-                                </a>
-                            ) : "-"}
-                        </Row>
 
-                        <div className="flex flex-col md:flex-row gap-2 md:items-start mb-4">
-                            <div className="md:pt-2.5">
-                                <Label>Status</Label>
-                            </div>
-                            <Value>
-                                <span className={`font-semibold ${getStatusColor(product.status ?? "draft")}`}>
-                                    {product.status
-                                        ? product.status.charAt(0).toUpperCase() + product.status.slice(1)
-                                        : "Draft"}
-                                </span>
-                            </Value>
-                        </div>
-                    </section>
+                    </ProductDetailTabContent>
 
-                    {/* Timestamp */}
-                    <div className="flex justify-end pt-4">
-                        <p className="text-slate-400 text-sm italic">
-                            Ditambahkan pada {format(new Date(product.createdAt), "d MMMM yyyy HH:mm", { locale: idLocale })}
-                        </p>
-                    </div>
-                </TabsContent>
+                    <ProductDetailTabContent value="user">
+                        <Pembeli productId={id} />
+                    </ProductDetailTabContent>
 
-                <TabsContent value="user">
-                    <PurchaseList productId={id} label="Peserta" />
-                </TabsContent>
-                <TabsContent value="form">
-                    <FormCustomizer productId={id} />
-                </TabsContent>
-            </Tabs>
-        </div>
+                    <ProductDetailTabContent value="form">
+                        <FormCustomizer productId={id} />
+                    </ProductDetailTabContent>
+                </ProductDetailTabs>
+            </div>
+
+            <ConfirmDialog
+                open={showDeleteConfirm}
+                onOpenChange={setShowDeleteConfirm}
+                icon={<TrashIcon size={52} className="bg-red-100 rounded-full p-3 text-red-500" weight="regular" />}
+                title="Hapus Kelas Online?"
+                description={
+                    <>
+                        Kamu yakin ingin menghapus {" "}
+                        <span className="font-semibold text-slate-800">&quot;{product.name}&quot;</span>?
+                        <br />
+                        Tindakan ini tidak bisa dibatalkan.
+                    </>
+                }
+                confirmText="Ya, Hapus"
+                confirmClassName="bg-red-500 hover:bg-red-600 text-white"
+                loading={deleteProduct.isPending}
+                onConfirm={() => {
+                    deleteProduct.mutate({ id });
+                }}
+            />
+        </div >
     );
 }

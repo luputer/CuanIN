@@ -4048,7 +4048,9 @@ export namespace Prisma {
     startDate: Date | null
     endDate: Date | null
     link: string | null
+    format: string | null
     platform: string | null
+    duration: string | null
     dateDeadline: Date | null
     quota: number | null
     status: string | null
@@ -4069,7 +4071,9 @@ export namespace Prisma {
     startDate: Date | null
     endDate: Date | null
     link: string | null
+    format: string | null
     platform: string | null
+    duration: string | null
     dateDeadline: Date | null
     quota: number | null
     status: string | null
@@ -4090,7 +4094,9 @@ export namespace Prisma {
     startDate: number
     endDate: number
     link: number
+    format: number
     platform: number
+    duration: number
     dateDeadline: number
     quota: number
     status: number
@@ -4124,7 +4130,9 @@ export namespace Prisma {
     startDate?: true
     endDate?: true
     link?: true
+    format?: true
     platform?: true
+    duration?: true
     dateDeadline?: true
     quota?: true
     status?: true
@@ -4145,7 +4153,9 @@ export namespace Prisma {
     startDate?: true
     endDate?: true
     link?: true
+    format?: true
     platform?: true
+    duration?: true
     dateDeadline?: true
     quota?: true
     status?: true
@@ -4166,7 +4176,9 @@ export namespace Prisma {
     startDate?: true
     endDate?: true
     link?: true
+    format?: true
     platform?: true
+    duration?: true
     dateDeadline?: true
     quota?: true
     status?: true
@@ -4275,7 +4287,9 @@ export namespace Prisma {
     startDate: Date | null
     endDate: Date | null
     link: string | null
+    format: string | null
     platform: string | null
+    duration: string | null
     dateDeadline: Date | null
     quota: number | null
     status: string
@@ -4316,7 +4330,9 @@ export namespace Prisma {
     startDate?: boolean
     endDate?: boolean
     link?: boolean
+    format?: boolean
     platform?: boolean
+    duration?: boolean
     dateDeadline?: boolean
     quota?: boolean
     status?: boolean
@@ -4342,7 +4358,9 @@ export namespace Prisma {
     startDate?: boolean
     endDate?: boolean
     link?: boolean
+    format?: boolean
     platform?: boolean
+    duration?: boolean
     dateDeadline?: boolean
     quota?: boolean
     status?: boolean
@@ -4365,7 +4383,9 @@ export namespace Prisma {
     startDate?: boolean
     endDate?: boolean
     link?: boolean
+    format?: boolean
     platform?: boolean
+    duration?: boolean
     dateDeadline?: boolean
     quota?: boolean
     status?: boolean
@@ -4388,7 +4408,9 @@ export namespace Prisma {
     startDate?: boolean
     endDate?: boolean
     link?: boolean
+    format?: boolean
     platform?: boolean
+    duration?: boolean
     dateDeadline?: boolean
     quota?: boolean
     status?: boolean
@@ -4400,7 +4422,7 @@ export namespace Prisma {
     benefit?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "shortDescription" | "description" | "price" | "type" | "startDate" | "endDate" | "link" | "platform" | "dateDeadline" | "quota" | "status" | "userId" | "createdAt" | "updatedAt" | "image" | "slug" | "benefit", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "shortDescription" | "description" | "price" | "type" | "startDate" | "endDate" | "link" | "format" | "platform" | "duration" | "dateDeadline" | "quota" | "status" | "userId" | "createdAt" | "updatedAt" | "image" | "slug" | "benefit", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     formFields?: boolean | Product$formFieldsArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -4431,7 +4453,9 @@ export namespace Prisma {
       startDate: Date | null
       endDate: Date | null
       link: string | null
+      format: string | null
       platform: string | null
+      duration: string | null
       dateDeadline: Date | null
       quota: number | null
       status: string
@@ -4876,7 +4900,9 @@ export namespace Prisma {
     readonly startDate: FieldRef<"Product", 'DateTime'>
     readonly endDate: FieldRef<"Product", 'DateTime'>
     readonly link: FieldRef<"Product", 'String'>
+    readonly format: FieldRef<"Product", 'String'>
     readonly platform: FieldRef<"Product", 'String'>
+    readonly duration: FieldRef<"Product", 'String'>
     readonly dateDeadline: FieldRef<"Product", 'DateTime'>
     readonly quota: FieldRef<"Product", 'Int'>
     readonly status: FieldRef<"Product", 'String'>
@@ -14324,7 +14350,9 @@ export namespace Prisma {
     startDate: 'startDate',
     endDate: 'endDate',
     link: 'link',
+    format: 'format',
     platform: 'platform',
+    duration: 'duration',
     dateDeadline: 'dateDeadline',
     quota: 'quota',
     status: 'status',
@@ -14746,7 +14774,9 @@ export namespace Prisma {
     startDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     endDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     link?: StringNullableFilter<"Product"> | string | null
+    format?: StringNullableFilter<"Product"> | string | null
     platform?: StringNullableFilter<"Product"> | string | null
+    duration?: StringNullableFilter<"Product"> | string | null
     dateDeadline?: DateTimeNullableFilter<"Product"> | Date | string | null
     quota?: IntNullableFilter<"Product"> | number | null
     status?: StringFilter<"Product"> | string
@@ -14771,7 +14801,9 @@ export namespace Prisma {
     startDate?: SortOrderInput | SortOrder
     endDate?: SortOrderInput | SortOrder
     link?: SortOrderInput | SortOrder
+    format?: SortOrderInput | SortOrder
     platform?: SortOrderInput | SortOrder
+    duration?: SortOrderInput | SortOrder
     dateDeadline?: SortOrderInput | SortOrder
     quota?: SortOrderInput | SortOrder
     status?: SortOrder
@@ -14800,7 +14832,9 @@ export namespace Prisma {
     startDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     endDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     link?: StringNullableFilter<"Product"> | string | null
+    format?: StringNullableFilter<"Product"> | string | null
     platform?: StringNullableFilter<"Product"> | string | null
+    duration?: StringNullableFilter<"Product"> | string | null
     dateDeadline?: DateTimeNullableFilter<"Product"> | Date | string | null
     quota?: IntNullableFilter<"Product"> | number | null
     status?: StringFilter<"Product"> | string
@@ -14824,7 +14858,9 @@ export namespace Prisma {
     startDate?: SortOrderInput | SortOrder
     endDate?: SortOrderInput | SortOrder
     link?: SortOrderInput | SortOrder
+    format?: SortOrderInput | SortOrder
     platform?: SortOrderInput | SortOrder
+    duration?: SortOrderInput | SortOrder
     dateDeadline?: SortOrderInput | SortOrder
     quota?: SortOrderInput | SortOrder
     status?: SortOrder
@@ -14854,7 +14890,9 @@ export namespace Prisma {
     startDate?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
     endDate?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
     link?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    format?: StringNullableWithAggregatesFilter<"Product"> | string | null
     platform?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    duration?: StringNullableWithAggregatesFilter<"Product"> | string | null
     dateDeadline?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
     quota?: IntNullableWithAggregatesFilter<"Product"> | number | null
     status?: StringWithAggregatesFilter<"Product"> | string
@@ -15543,7 +15581,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    format?: string | null
     platform?: string | null
+    duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
     status?: string
@@ -15567,7 +15607,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    format?: string | null
     platform?: string | null
+    duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
     status?: string
@@ -15591,7 +15633,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     platform?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
@@ -15615,7 +15659,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     platform?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
@@ -15639,7 +15685,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    format?: string | null
     platform?: string | null
+    duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
     status?: string
@@ -15661,7 +15709,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     platform?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
@@ -15682,7 +15732,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     platform?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
@@ -16590,7 +16642,9 @@ export namespace Prisma {
     startDate?: SortOrder
     endDate?: SortOrder
     link?: SortOrder
+    format?: SortOrder
     platform?: SortOrder
+    duration?: SortOrder
     dateDeadline?: SortOrder
     quota?: SortOrder
     status?: SortOrder
@@ -16617,7 +16671,9 @@ export namespace Prisma {
     startDate?: SortOrder
     endDate?: SortOrder
     link?: SortOrder
+    format?: SortOrder
     platform?: SortOrder
+    duration?: SortOrder
     dateDeadline?: SortOrder
     quota?: SortOrder
     status?: SortOrder
@@ -16638,7 +16694,9 @@ export namespace Prisma {
     startDate?: SortOrder
     endDate?: SortOrder
     link?: SortOrder
+    format?: SortOrder
     platform?: SortOrder
+    duration?: SortOrder
     dateDeadline?: SortOrder
     quota?: SortOrder
     status?: SortOrder
@@ -18182,7 +18240,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    format?: string | null
     platform?: string | null
+    duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
     status?: string
@@ -18205,7 +18265,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    format?: string | null
     platform?: string | null
+    duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
     status?: string
@@ -18271,7 +18333,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     platform?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
@@ -18294,7 +18358,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     platform?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
@@ -18341,7 +18407,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    format?: string | null
     platform?: string | null
+    duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
     status?: string
@@ -18364,7 +18432,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    format?: string | null
     platform?: string | null
+    duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
     status?: string
@@ -18419,7 +18489,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     platform?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
@@ -18442,7 +18514,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     platform?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
@@ -18836,7 +18910,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    format?: string | null
     platform?: string | null
+    duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
     status?: string
@@ -18859,7 +18935,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    format?: string | null
     platform?: string | null
+    duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
     status?: string
@@ -18994,7 +19072,9 @@ export namespace Prisma {
     startDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     endDate?: DateTimeNullableFilter<"Product"> | Date | string | null
     link?: StringNullableFilter<"Product"> | string | null
+    format?: StringNullableFilter<"Product"> | string | null
     platform?: StringNullableFilter<"Product"> | string | null
+    duration?: StringNullableFilter<"Product"> | string | null
     dateDeadline?: DateTimeNullableFilter<"Product"> | Date | string | null
     quota?: IntNullableFilter<"Product"> | number | null
     status?: StringFilter<"Product"> | string
@@ -19296,7 +19376,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     endDate?: Date | string | null
     link?: string | null
+    format?: string | null
     platform?: string | null
+    duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
     status?: string
@@ -19365,7 +19447,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     platform?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
@@ -19388,7 +19472,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     platform?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
@@ -19411,7 +19497,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     platform?: NullableStringFieldUpdateOperationsInput | string | null
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string

@@ -1,6 +1,15 @@
 "use client";
 
-import { ArrowLeft, Clock, Calendar, MapPin, Share2, Loader2, CheckCircle2 } from "lucide-react";
+import {
+    ArrowLeftIcon,
+    ClockIcon,
+    CalendarIcon,
+    MapPinIcon,
+    ShareNetworkIcon,
+    SpinnerIcon,
+    CheckCircleIcon,
+    FileIcon
+} from "@phosphor-icons/react";
 import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
 import { api } from "~/trpc/react";
@@ -28,7 +37,7 @@ export default function ProductDetailPage() {
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                <SpinnerIcon className="w-8 h-8 animate-spin text-blue-500" />
             </div>
         );
     }
@@ -39,161 +48,264 @@ export default function ProductDetailPage() {
 
     const price = Number(product.price);
     const isGratis = price === 0;
-    const isWebinarOrClass = product.type === "WEBINAR" || product.type === "KELAS_ONLINE";
+    const isWebinarOrClass =
+        product.type === "WEBINAR" || product.type === "KELAS_ONLINE";
+
     const categoryLabel = TYPE_MAP[product.type] ?? product.type;
 
-    const handleShare = async () => {
-        try {
-            if (navigator.share) {
-                await navigator.share({
-                    title: product.name,
-                    text: `Lihat produk ${product.name} dari ${product.user.name} di CuanIN`,
-                    url: window.location.href,
-                });
-            } else {
-                await navigator.clipboard.writeText(window.location.href);
-                alert("Link berhasil disalin!");
-            }
-        } catch (error) {
-            console.error("Error sharing:", error);
-        }
+    const CATEGORY_STYLE: Record<string, string> = {
+        WEBINAR: "bg-cyan-100 text-cyan-700 border-cyan-200",
+        KELAS_ONLINE: "bg-amber-100 text-amber-700 border-amber-200",
+        DIGITAL_PRODUCT: "bg-emerald-100 text-emerald-700 border-emerald-200",
     };
 
-    return (
-        <div >
-            <div className="min-h-screen bg-white pb-24">
-                {/* Header Navigation */}
-                <div className="bg-white border-b border-slate-200 sticky top-0 z-10">
-                    <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-                        <Link
-                            href={`/${slug}`}
-                            className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-slate-100 transition-colors"
-                        >
-                            <ArrowLeft className="w-5 h-5 text-slate-600" />
-                        </Link>
-
-                        <button
-                            onClick={handleShare}
-                            className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-slate-100 text-slate-600 transition-colors"
-                        >
-                            <Share2 className="w-5 h-5" />
-                        </button>
+    const InfoItem = ({
+        icon,
+        label,
+        value,
+    }: {
+        icon: React.ReactNode;
+        label: string;
+        value: string;
+    }) => {
+        return (
+            <div className="flex items-center">
+                <div className="flex items-center gap-1 pr-2">
+                    <div className="w-10 h-10 rounded-full bg-cyan-50 flex items-center justify-center text-cyan-700">
+                        {icon}
                     </div>
-                </div>
 
-                <div className="max-w-4xl mx-auto px-4 py-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                        {/* Main Content Area */}
-                        <div className="lg:col-span-2 ">
-
-                            {/* Image Banner */}
-                            <div className="w-full aspect-video bg-[#1A1A1A] rounded-3xl overflow-hidden relative border border-slate-100 p-8 flex flex-col justify-between font-sans">
-                                <div className="flex flex-col gap-2">
-                                    <div className="self-start bg-white px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
-                                        <div className="w-6 h-6 rounded-full bg-slate-200 overflow-hidden shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-500">
-                                            {product.user.name?.charAt(0).toUpperCase()}
-                                        </div>
-                                        <p className="font-semibold text-slate-900 text-[12px]">{product.user.name}</p>
-                                    </div>
-                                    <h1 className="text-2xl md:text-4xl font-bold text-white leading-tight">
-                                        {product.name}
-                                    </h1>
-                                    <p className="text-sm text-slate-200">
-                                        {product.shortDescription}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Descripticatalogon */}
-                            {product.description && (
-                                <div className="rounded-2xl mt-3">
-                                    <MarkdownPreview content={product.description} />
-                                </div>
-                            )}
-
-                            {/* Event Details (If Webinar/Class) */}
-                            {isWebinarOrClass && product.startDate && (
-                                <div className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8">
-                                    <h3 className="font-semibold text-slate-800 mb-4">Tentang {categoryLabel}</h3>
-                                    <div className="space-y-4 divide-y divide-slate-100">
-                                        <div className="flex items-center justify-between py-3">
-                                            <div className="flex items-center gap-3 text-slate-600">
-                                                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                                                    <MapPin className="w-4 h-4" />
-                                                </div>
-                                                <span className="font-medium">Platform / Lokasi</span>
-                                            </div>
-                                            <span className="text-slate-800 font-medium">Online</span>
-                                        </div>
-                                        <div className="flex items-center justify-between py-3">
-                                            <div className="flex items-center gap-3 text-slate-600">
-                                                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                                                    <Calendar className="w-4 h-4" />
-                                                </div>
-                                                <span className="font-medium">Tanggal Pelaksanaan</span>
-                                            </div>
-                                            <span className="text-slate-800 font-medium">
-                                                {format(new Date(product.startDate), "dd MMMM yyyy", { locale: idLocale })}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center justify-between py-3">
-                                            <div className="flex items-center gap-3 text-slate-600">
-                                                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                                                    <Clock className="w-4 h-4" />
-                                                </div>
-                                                <span className="font-medium">Waktu</span>
-                                            </div>
-                                            <span className="text-slate-800 font-medium">
-                                                {format(new Date(product.startDate), "HH:mm")}
-                                                {product.endDate && ` - ${format(new Date(product.endDate), "HH:mm")} WIB`}
-                                                {!product.endDate && " WIB"}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Sidebar Pricing / CTA */}
-                        <div className="lg:col-span-1">
-                            <div className="bg-white rounded-2xl border border-slate-200 p-6 sticky top-24 shadow-sm">
-                                <div className="mb-6">
-                                    <h3 className="text-sm font-medium text-slate-500 mb-2"> {product.name}</h3>
-                                    <div className="space-y-3  mb-2">
-                                        {(product.benefit as string[])?.length > 0 ? (
-                                            (product.benefit as string[]).map((item, idx) => (
-                                                <div key={idx} className="flex items-start gap-3 text-slate-600 text-sm">
-                                                    <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                                                    <span>{item}</span>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <span className="text-slate-400">Belum ada benefit</span>
-                                        )}
-                                    </div>
-                                    {isGratis ? (
-                                        <div className="text-xl font-bold text-green-600">Gratis</div>
-                                    ) : (
-                                        <div className="text-xl font-bold text-slate-900">
-                                            Rp {price.toLocaleString("id-ID")}
-                                        </div>
-                                    )}
-                                </div>
-                                <Link href={`/${slug}/${productSlug}/checkout`} className="">
-                                    <button className="w-full py-3 px-4 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-xl transition-all active:scale-[0.98] shadow-sm hover:shadow text-center">
-                                        {isGratis ? "Daftar Sekarang" : "Beli Sekarang"}
-                                    </button>
-                                </Link>
-
-                                {/* <p className="text-xs text-center text-slate-400 mt-4 leading-relaxed">
-                                Dengan mendaftar, kamu menyetujui Syarat & Ketentuan yang berlaku.
-                            </p> */}
-                            </div>
-                        </div>
+                    <div className="flex flex-col">
+                        <span className="text-xs text-slate-500">{label}</span>
+                        <span className="text-sm font-medium text-slate-700">{value}</span>
                     </div>
                 </div>
             </div>
+        );
+    };
+
+    const start = product.startDate ? new Date(product.startDate) : null;
+    const end = product.endDate ? new Date(product.endDate) : null;
+
+    const isSameDay =
+        start &&
+        end &&
+        format(start, "yyyy-MM-dd") === format(end, "yyyy-MM-dd");
+
+    const metaLabel =
+        product.type === "DIGITAL_PRODUCT"
+            ? product.format
+            : product.type === "KELAS_ONLINE"
+                ? product.duration
+                : null;
+
+    return (
+        <div className="min-h-screen bg-slate-50">
+
+            {/* HEADER */}
+            <div className="bg-white border-b border-slate-200 sticky top-0 z-10">
+                <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+                    <Link
+                        href={`/${slug}`}
+                        className="w-10 h-10 flex items-center justify-center hover:bg-slate-100 rounded-full"
+                    >
+                        <ArrowLeftIcon className="w-5 h-5 text-slate-600" />
+                    </Link>
+
+                    <button className="w-10 h-10 flex items-center justify-center hover:bg-slate-100 rounded-full">
+                        <ShareNetworkIcon className="w-5 h-5 text-slate-600" />
+                    </button>
+                </div>
+            </div>
+
+            <div className="max-w-6xl mx-auto px-4 pt-10 pb-16">
+
+                {/* GRID */}
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+
+                    {/* ───── LEFT CONTENT ───── */}
+                    <div className="lg:col-span-3 flex flex-col gap-4">
+
+                        {/* ───── MAIN INFO CARD ───── */}
+
+                        <div className="border border-slate-300 bg-white rounded-xl p-6 md:p-8 flex flex-col gap-4 shadow-[0_-4px_0px_0px_rgba(0,146,184,100)]">
+
+                            <span className={`text-xs px-3 py-1 rounded-full border w-fit ${CATEGORY_STYLE[product.type] ?? "bg-slate-100 text-slate-700 border-slate-200"}`}>
+                                {categoryLabel}
+                            </span>
+
+                            <h1 className="text-2xl md:text-4xl font-bold text-slate-800">
+                                {product.name}
+                            </h1>
+
+                            <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 bg-yellow-200 rounded-full flex items-center justify-center text-xs font-bold">
+                                    {product.user.name?.charAt(0).toUpperCase()}
+                                </div>
+                                <p className="text-sm text-slate-700 font-medium">
+                                    {product.user.name}
+                                </p>
+                            </div>
+
+                            <p className="text-sm text-slate-600">
+                                {product.shortDescription}
+                            </p>
+
+                            {(metaLabel || isWebinarOrClass) && (
+                                <div className="flex flex-wrap gap-6 text-sm text-slate-700 py-2">
+
+                                    {/* FORMAT / DURASI */}
+                                    {metaLabel && (
+                                        <InfoItem
+                                            icon={
+                                                product.type === "KELAS_ONLINE" ? (
+                                                    <ClockIcon className="w-5 h-5" />
+                                                ) : (
+                                                    <FileIcon className="w-5 h-5" />
+                                                )
+                                            }
+                                            label={product.type === "KELAS_ONLINE" ? "Durasi" : "Format"}
+                                            value={metaLabel}
+                                        />
+                                    )}
+
+                                    {/* PLATFORM */}
+                                    {isWebinarOrClass && product.platform && (
+                                        <InfoItem
+                                            icon={<MapPinIcon className="w-5 h-5" />}
+                                            label="Platform"
+                                            value={product.platform}
+                                        />
+                                    )}
+
+                                    {/* TANGGAL */}
+                                    {start && (
+                                        <InfoItem
+                                            icon={<CalendarIcon className="w-5 h-5" />}
+                                            label="Tanggal"
+                                            value={
+                                                isSameDay
+                                                    ? format(start, "dd MMMM yyyy", { locale: idLocale })
+                                                    : `${format(start, "dd MMM yyyy", { locale: idLocale })} - ${end ? format(end, "dd MMM yyyy", { locale: idLocale }) : ""
+                                                    }`
+                                            }
+                                        />
+                                    )}
+
+                                    {/* JAM (WEBINAR ONLY) */}
+                                    {product.type === "WEBINAR" && start && end && (
+                                        <InfoItem
+                                            icon={<ClockIcon className="w-5 h-5" />}
+                                            label="Waktu"
+                                            value={`${format(start, "HH:mm")} - ${format(end, "HH:mm")} WIB`}
+                                        />
+                                    )}
+
+                                </div>
+                            )}
+
+                        </div>
+
+
+                        {/* ───── DESCRIPTION CARD (SEPARATE) ───── */}
+                        {product.description && (
+                            <div className="border border-slate-300 bg-white rounded-xl p-6">
+                                <h2 className="text-lg font-semibold text-slate-600 mb-2">
+                                    Deskripsi Produk
+                                </h2>
+                                <MarkdownPreview content={product.description} />
+                            </div>
+                        )}
+
+                    </div>
+
+
+                    {/* ───── RIGHT SIDEBAR ───── */}
+                    <div className="lg:col-span-2 flex flex-col gap-6">
+
+                        {/* IMAGE (TOP SIDEBAR) */}
+                        <div className="w-full aspect-square bg-slate-100 rounded-3xl overflow-hidden border border-slate-300">
+
+                            {product.image ? (
+                                <img
+                                    src={product.image}
+                                    alt={product.name}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-slate-400">
+                                    No Image
+                                </div>
+                            )}
+
+                        </div>
+
+                        {/* CTA (BOTTOM IMAGE) */}
+                        <div className="bg-white rounded-2xl border border-slate-300 p-6 shadow-sm">
+
+                            <h3 className="text-sm font-medium text-slate-600 mb-3">
+                                {product.name}
+                            </h3>
+
+                            <div className="space-y-3 mb-4">
+                                {(product.benefit as string[])?.length > 0 ? (
+                                    (product.benefit as string[]).map((item, idx) => (
+                                        <div key={idx} className="flex gap-3 text-sm text-slate-800">
+                                            <CheckCircleIcon className="w-5 h-5 text-green-600 shrink-0" weight="fill" />
+                                            <span>{item}</span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <span className="text-slate-400">Belum ada benefit</span>
+                                )}
+                            </div>
+
+                            {isWebinarOrClass && product.quota && (
+                                <div className="flex justify-between text-sm border-t pt-3">
+                                    <span className="text-slate-500">Kuota</span>
+                                    <span className="font-regular text-slate-800">
+                                        {product.quota} peserta
+                                    </span>
+                                </div>
+                            )}
+
+                            {isWebinarOrClass && product.dateDeadline && (
+                                <div className="flex justify-between text-sm mt-2">
+                                    <span className="text-slate-500">Batas Pendaftaran</span>
+                                    <span className="font-regular text-red-500">
+                                        {format(new Date(product.dateDeadline), "dd MMM yyyy", {
+                                            locale: idLocale,
+                                        })}
+                                    </span>
+                                </div>
+                            )}
+
+                            <div className="mt-4">
+                                {isGratis ? (
+                                    <div className="text-xl font-bold text-green-600">
+                                        Gratis
+                                    </div>
+                                ) : (
+                                    <div className="text-xl font-bold text-cyan-600">
+                                        Rp {price.toLocaleString("id-ID")}
+                                    </div>
+                                )}
+                            </div>
+
+                            <Link href={`/${slug}/${productSlug}/checkout`}>
+                                <button className="mt-5 w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white shadow-sm font-medium rounded-xl cursor-pointer">
+                                    {isGratis ? "Daftar Sekarang" : "Beli Sekarang"}
+                                </button>
+                            </Link>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
             <Footer />
         </div>
     );

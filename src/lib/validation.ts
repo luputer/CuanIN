@@ -98,6 +98,7 @@ export const productDigitalSchema = z
             .string()
             .min(1, "Link produk wajib diisi")
             .url("Link tidak valid, pastikan format URL benar (https://...)"),
+        format: z.string().optional(),
         notes: z.string().optional(),
         status: z.string().min(1, "Status wajib dipilih"),
         image: z.string().optional(),
@@ -128,6 +129,7 @@ export const productKelasOnlineSchema = z
             .string()
             .min(1, "Link produk wajib diisi")
             .url("Link tidak valid, pastikan format URL benar (https://...)"),
+        duration: z.string().optional(),
         notes: z.string().optional(),
         status: z.string().min(1, "Status wajib dipilih"),
         image: z.string().optional(),

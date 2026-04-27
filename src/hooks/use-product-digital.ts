@@ -57,6 +57,7 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
                 priceType: priceVal === 0 ? "free" : "paid",
                 price: priceVal,
                 link: product.link ?? "",
+                format: product.format ?? undefined,
                 status: product.status ?? "published",
                 notes: "",
                 image: product.image ?? undefined,
@@ -103,6 +104,7 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
                 description: data.description,
                 price: data.priceType === "free" ? 0 : (data.price ?? 0),
                 link: data.link,
+                format: data.format,
                 status: data.status,
                 image: data.image,
                 benefit: data.benefit?.filter((b) => b.trim() !== ""),
@@ -114,6 +116,7 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
                 price: data.priceType === "free" ? 0 : (data.price ?? 0),
                 type: "DIGITAL_PRODUCT",
                 link: data.link,
+                format: data.format,
                 image: data.image,
                 benefit: data.benefit?.filter((b) => b.trim() !== ""),
             });

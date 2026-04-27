@@ -211,7 +211,7 @@ export default function EditProductPage() {
                                         />
                                         <button
                                             type="button"
-                                            className="flex h-[52px] w-[52px] items-center justify-center rounded-lg bg-red-50 text-red-500 hover:text-red-700 hover:bg-red-100 transition-colors border border-transparent shrink-0 cursor-pointer"
+                                            className="flex h-[52px] w-[52px] items-center justify-center rounded-lg bg-white border border-slate-400 text-red-500 hover:text-red-600 hover:bg-red-100 transition-colors shrink-0 cursor-pointer"
                                             onClick={() => remove(index)}
                                         >
                                             <TrashIcon className="h-5 w-5 translate-y-[0.5px]" weight="bold" />
@@ -268,6 +268,11 @@ export default function EditProductPage() {
                                 />
                             </FormGroup>
                         )}
+
+                        {/* Format */}
+                        <FormGroup label="Format" error={(errors.format as unknown as { message?: string })?.message}>
+                            <FormInput {...register("format")} placeholder="Contoh: PDF, Video, Template" />
+                        </FormGroup>
 
                         {/* Link */}
                         <FormGroup label="Link" error={(errors.link as unknown as { message?: string })?.message}>

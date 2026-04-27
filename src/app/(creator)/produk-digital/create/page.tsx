@@ -109,6 +109,7 @@ export default function CreateDigitalProductPage() {
             price: data.priceType === "free" ? 0 : (data.price ?? 0),
             type: "DIGITAL_PRODUCT",
             link: data.link ?? undefined,
+            format: data.format ?? undefined,
             image: data.image,
             benefit: data.benefit?.filter(b => b.trim() !== ""),
         });
@@ -282,6 +283,11 @@ export default function CreateDigitalProductPage() {
                                 />
                             </FormGroup>
                         )}
+
+                        {/* Format */}
+                        <FormGroup label="Format" error={(errors.format as unknown as { message?: string })?.message}>
+                            <FormInput {...register("format")} placeholder="Contoh: PDF, Video, Template" />
+                        </FormGroup>
 
                         {/* Link */}
                         <FormGroup label="Link" error={(errors.link as unknown as { message?: string })?.message}>

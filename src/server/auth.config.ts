@@ -33,6 +33,8 @@ declare module "next-auth/jwt" {
     }
 }
 
+
+
 // Ini adalah konfigurasi yang aman untuk Edge Runtime (Middleware)
 export const authConfig = {
     session: {

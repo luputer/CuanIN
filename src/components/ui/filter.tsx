@@ -22,8 +22,8 @@ const FilterButton = React.forwardRef<HTMLButtonElement, FilterButtonProps>(
                 bg-white
                 shadow-[0px_1.5px_0px_rgba(29,41,61)]
                 transition-all duration-200 ease-out
-                hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none
-                focus:translate-x-[1px] focus:translate-y-[1px] focus:shadow-none
+                hover:translate-x-px hover:translate-y-px hover:shadow-none
+                focus:translate-x-px focus:translate-y-px focus:shadow-none
                 ${className ?? ""}
                 `}
                 {...props}

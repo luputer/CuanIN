@@ -183,6 +183,8 @@ exports.Prisma.PurchaseScalarFieldEnum = {
   status: 'status',
   xenditInvoiceId: 'xenditInvoiceId',
   xenditInvoiceUrl: 'xenditInvoiceUrl',
+  xenditPaymentMethod: 'xenditPaymentMethod',
+  paidAt: 'paidAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

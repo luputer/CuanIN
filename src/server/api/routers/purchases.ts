@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { sendProductEmail } from "../../nodemailer";
+import { sendProductEmail } from "../../../lib/nodemailer";
+import { env } from "~/env";
+import { createInvoice } from "~/lib/xendit";
 
 export const purchasesRouter = createTRPCRouter({
     // Create a purchase (public — called from checkout page)
@@ -23,11 +25,78 @@ export const purchasesRouter = createTRPCRouter({
             // Get the product to determine amount and link
             const product = await ctx.db.product.findUnique({
                 where: { id: input.productId, status: "published" },
-                select: { id: true, name: true, price: true, link: true },
+                select: { id: true, name: true, price: true, link: true, user: { select: { catalog: { select: { slug: true } } } } },
             });
             if (!product) throw new Error("Produk tidak ditemukan atau tidak tersedia");
 
-            // Create purchase with form answers in a transaction
+
+            const price = Number(product.price);
+
+            // Produk gratis → langsung completed
+            if (price === 0) {
+                const purchase = await ctx.db.$transaction(async (tx) => {
+                    const newPurchase = await tx.purchase.create({
+                        data: {
+                            productId: input.productId,
+                            buyerName: input.buyerName,
+                            buyerEmail: input.buyerEmail,
+                            buyerPhone: input.buyerPhone,
+                            amount: 0,
+                            status: "completed",
+                        },
+                    });
+
+                    if (input.answers?.length) {
+                        await tx.formAnswer.createMany({
+                            data: input.answers.map((a) => ({
+                                purchaseId: newPurchase.id,
+                                formFieldId: a.formFieldId,
+                                answer: a.answer,
+                            })),
+                        });
+                    }
+
+                    return newPurchase;
+                });
+
+                if (product.link) {
+                    void sendProductEmail({
+                        buyerEmail: input.buyerEmail,
+                        productName: product.name,
+                        productLink: product.link,
+                    });
+                }
+
+                return { status: "free", purchase };
+            }
+
+            // Create pending purchase
+            // const purchase = await ctx.db.$transaction(async (tx) => {
+            //     const newPurchase = await tx.purchase.create({
+            //         data: {
+            //             productId: input.productId,
+            //             buyerName: input.buyerName,
+            //             buyerEmail: input.buyerEmail,
+            //             buyerPhone: input.buyerPhone,
+            //             amount: price,
+            //             status: "pending",
+            //         },
+            //     });
+
+            //     // Create form answers if provided
+            //     if (input.answers?.length) {
+            //         await tx.formAnswer.createMany({
+            //             data: input.answers.map((a) => ({
+            //                 purchaseId: newPurchase.id,
+            //                 formFieldId: a.formFieldId,
+            //                 answer: a.answer,
+            //             })),
+            //         });
+            //     }
+
+            //     return newPurchase;
+            // });
+
             const purchase = await ctx.db.$transaction(async (tx) => {
                 const newPurchase = await tx.purchase.create({
                     data: {
@@ -35,13 +104,12 @@ export const purchasesRouter = createTRPCRouter({
                         buyerName: input.buyerName,
                         buyerEmail: input.buyerEmail,
                         buyerPhone: input.buyerPhone,
-                        amount: product.price,
-                        status: "completed",
+                        amount: price,
+                        status: "pending",
                     },
                 });
 
-                // Create form answers if provided
-                if (input.answers && input.answers.length > 0) {
+                if (input.answers?.length) {
                     await tx.formAnswer.createMany({
                         data: input.answers.map((a) => ({
                             purchaseId: newPurchase.id,
@@ -53,18 +121,30 @@ export const purchasesRouter = createTRPCRouter({
 
                 return newPurchase;
             });
-            // Send Email Notification if product link exists
-            if (product.link) {
-                // Execute sending email asynchronously without blocking the user response
-                void sendProductEmail({
-                    buyerEmail: input.buyerEmail,
-                    productName: product.name,
-                    productLink: product.link
-                });
 
-            }
+            const catalogSlug = product.user.catalog?.slug ?? "";
 
-            return purchase;
+
+            const invoice = await createInvoice({
+                externalId: purchase.id,
+                amount: price,
+                payerEmail: input.buyerEmail,
+                description: `Pembelian ${product.name}`,
+                successRedirectUrl: `${env.NEXT_PUBLIC_APP_URL}/payment/success?id=${purchase.id}`,
+                failureRedirectUrl: `${env.NEXT_PUBLIC_APP_URL}/${catalogSlug}`,
+            });
+
+
+            // Simpan invoice URL & ID ke purchase
+            await ctx.db.purchase.update({
+                where: { id: purchase.id },
+                data: {
+                    xenditInvoiceId: invoice.id,
+                    xenditInvoiceUrl: invoice.invoice_url,
+                },
+            });
+
+            return { status: "pending", invoiceUrl: invoice.invoice_url, purchase, xenditInvoiceId: invoice.id };
         }),
 
     // List all purchases for a product (creator dashboard, with pagination + search)

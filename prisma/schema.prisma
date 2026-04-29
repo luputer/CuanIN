@@ -71,22 +71,24 @@ model FormField {
 }
 
 model Purchase {
-    id                String       @id @default(uuid())
-    productId         String
-    buyerName         String
-    buyerEmail        String
-    buyerPhone        String
-    amount            Decimal      @default(0)
-    status            String       @default("completed")
-    xenditInvoiceId   String?
-    xenditInvoiceUrl  String?
-    createdAt         DateTime     @default(now())
-    updatedAt         DateTime     @updatedAt
-    answers           FormAnswer[]
-    product           Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+    id                  String       @id @default(uuid())
+    productId           String
+    buyerName           String
+    buyerEmail          String
+    buyerPhone          String
+    amount              Decimal      @default(0)
+    status              String       @default("pending") // ubah default ke pending
+    xenditInvoiceId     String? // tambah
+    xenditInvoiceUrl    String? // tambah
+    xenditPaymentMethod String? // tambah
+    paidAt              DateTime? // tambah
+    createdAt           DateTime     @default(now())
+    updatedAt           DateTime     @updatedAt
+    answers             FormAnswer[]
+    product             Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
 
     @@index([productId])
-    @@index([xenditInvoiceId])
+    @@index([xenditInvoiceId]) // tambah
 }
 
 model FormAnswer {

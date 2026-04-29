@@ -56,7 +56,7 @@ export default function HeaderKreator() {
                                     alt={user.name ?? "User"}
                                     width={32}
                                     height={32}
-                                    className="rounded-full object-cover"
+                                    className="rounded-full object-cover w-8 h-8 aspect-square shrink-0"
                                     unoptimized
                                 />
                             ) : (

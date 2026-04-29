@@ -185,7 +185,10 @@ export default function CatalogSlugPage() {
     const [activeTab, setActiveTab] = useState<TabFilter>("Semua");
     const [searchQuery, setSearchQuery] = useState(""); // State pencarian
 
-    const { data, isLoading } = api.catalog.getBySlug.useQuery({ slug });
+    const { data, isLoading } = api.catalog.getBySlug.useQuery(
+        { slug },
+        { enabled: !!slug }
+    );
 
     // ── Loading ──
     if (isLoading) {

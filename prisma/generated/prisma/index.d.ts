@@ -6587,6 +6587,8 @@ export namespace Prisma {
     status: string | null
     xenditInvoiceId: string | null
     xenditInvoiceUrl: string | null
+    xenditPaymentMethod: string | null
+    paidAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6601,6 +6603,8 @@ export namespace Prisma {
     status: string | null
     xenditInvoiceId: string | null
     xenditInvoiceUrl: string | null
+    xenditPaymentMethod: string | null
+    paidAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6615,6 +6619,8 @@ export namespace Prisma {
     status: number
     xenditInvoiceId: number
     xenditInvoiceUrl: number
+    xenditPaymentMethod: number
+    paidAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -6639,6 +6645,8 @@ export namespace Prisma {
     status?: true
     xenditInvoiceId?: true
     xenditInvoiceUrl?: true
+    xenditPaymentMethod?: true
+    paidAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6653,6 +6661,8 @@ export namespace Prisma {
     status?: true
     xenditInvoiceId?: true
     xenditInvoiceUrl?: true
+    xenditPaymentMethod?: true
+    paidAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6667,6 +6677,8 @@ export namespace Prisma {
     status?: true
     xenditInvoiceId?: true
     xenditInvoiceUrl?: true
+    xenditPaymentMethod?: true
+    paidAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -6768,6 +6780,8 @@ export namespace Prisma {
     status: string
     xenditInvoiceId: string | null
     xenditInvoiceUrl: string | null
+    xenditPaymentMethod: string | null
+    paidAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: PurchaseCountAggregateOutputType | null
@@ -6801,6 +6815,8 @@ export namespace Prisma {
     status?: boolean
     xenditInvoiceId?: boolean
     xenditInvoiceUrl?: boolean
+    xenditPaymentMethod?: boolean
+    paidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     answers?: boolean | Purchase$answersArgs<ExtArgs>
@@ -6818,6 +6834,8 @@ export namespace Prisma {
     status?: boolean
     xenditInvoiceId?: boolean
     xenditInvoiceUrl?: boolean
+    xenditPaymentMethod?: boolean
+    paidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -6833,6 +6851,8 @@ export namespace Prisma {
     status?: boolean
     xenditInvoiceId?: boolean
     xenditInvoiceUrl?: boolean
+    xenditPaymentMethod?: boolean
+    paidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -6848,11 +6868,13 @@ export namespace Prisma {
     status?: boolean
     xenditInvoiceId?: boolean
     xenditInvoiceUrl?: boolean
+    xenditPaymentMethod?: boolean
+    paidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type PurchaseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "buyerName" | "buyerEmail" | "buyerPhone" | "amount" | "status" | "xenditInvoiceId" | "xenditInvoiceUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["purchase"]>
+  export type PurchaseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "buyerName" | "buyerEmail" | "buyerPhone" | "amount" | "status" | "xenditInvoiceId" | "xenditInvoiceUrl" | "xenditPaymentMethod" | "paidAt" | "createdAt" | "updatedAt", ExtArgs["result"]["purchase"]>
   export type PurchaseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     answers?: boolean | Purchase$answersArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -6881,6 +6903,8 @@ export namespace Prisma {
       status: string
       xenditInvoiceId: string | null
       xenditInvoiceUrl: string | null
+      xenditPaymentMethod: string | null
+      paidAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["purchase"]>
@@ -7317,6 +7341,8 @@ export namespace Prisma {
     readonly status: FieldRef<"Purchase", 'String'>
     readonly xenditInvoiceId: FieldRef<"Purchase", 'String'>
     readonly xenditInvoiceUrl: FieldRef<"Purchase", 'String'>
+    readonly xenditPaymentMethod: FieldRef<"Purchase", 'String'>
+    readonly paidAt: FieldRef<"Purchase", 'DateTime'>
     readonly createdAt: FieldRef<"Purchase", 'DateTime'>
     readonly updatedAt: FieldRef<"Purchase", 'DateTime'>
   }
@@ -14432,6 +14458,8 @@ export namespace Prisma {
     status: 'status',
     xenditInvoiceId: 'xenditInvoiceId',
     xenditInvoiceUrl: 'xenditInvoiceUrl',
+    xenditPaymentMethod: 'xenditPaymentMethod',
+    paidAt: 'paidAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -15044,6 +15072,8 @@ export namespace Prisma {
     status?: StringFilter<"Purchase"> | string
     xenditInvoiceId?: StringNullableFilter<"Purchase"> | string | null
     xenditInvoiceUrl?: StringNullableFilter<"Purchase"> | string | null
+    xenditPaymentMethod?: StringNullableFilter<"Purchase"> | string | null
+    paidAt?: DateTimeNullableFilter<"Purchase"> | Date | string | null
     createdAt?: DateTimeFilter<"Purchase"> | Date | string
     updatedAt?: DateTimeFilter<"Purchase"> | Date | string
     answers?: FormAnswerListRelationFilter
@@ -15060,6 +15090,8 @@ export namespace Prisma {
     status?: SortOrder
     xenditInvoiceId?: SortOrderInput | SortOrder
     xenditInvoiceUrl?: SortOrderInput | SortOrder
+    xenditPaymentMethod?: SortOrderInput | SortOrder
+    paidAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     answers?: FormAnswerOrderByRelationAggregateInput
@@ -15079,6 +15111,8 @@ export namespace Prisma {
     status?: StringFilter<"Purchase"> | string
     xenditInvoiceId?: StringNullableFilter<"Purchase"> | string | null
     xenditInvoiceUrl?: StringNullableFilter<"Purchase"> | string | null
+    xenditPaymentMethod?: StringNullableFilter<"Purchase"> | string | null
+    paidAt?: DateTimeNullableFilter<"Purchase"> | Date | string | null
     createdAt?: DateTimeFilter<"Purchase"> | Date | string
     updatedAt?: DateTimeFilter<"Purchase"> | Date | string
     answers?: FormAnswerListRelationFilter
@@ -15095,6 +15129,8 @@ export namespace Prisma {
     status?: SortOrder
     xenditInvoiceId?: SortOrderInput | SortOrder
     xenditInvoiceUrl?: SortOrderInput | SortOrder
+    xenditPaymentMethod?: SortOrderInput | SortOrder
+    paidAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: PurchaseCountOrderByAggregateInput
@@ -15117,6 +15153,8 @@ export namespace Prisma {
     status?: StringWithAggregatesFilter<"Purchase"> | string
     xenditInvoiceId?: StringNullableWithAggregatesFilter<"Purchase"> | string | null
     xenditInvoiceUrl?: StringNullableWithAggregatesFilter<"Purchase"> | string | null
+    xenditPaymentMethod?: StringNullableWithAggregatesFilter<"Purchase"> | string | null
+    paidAt?: DateTimeNullableWithAggregatesFilter<"Purchase"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Purchase"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Purchase"> | Date | string
   }
@@ -15906,6 +15944,8 @@ export namespace Prisma {
     status?: string
     xenditInvoiceId?: string | null
     xenditInvoiceUrl?: string | null
+    xenditPaymentMethod?: string | null
+    paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     answers?: FormAnswerCreateNestedManyWithoutPurchaseInput
@@ -15922,6 +15962,8 @@ export namespace Prisma {
     status?: string
     xenditInvoiceId?: string | null
     xenditInvoiceUrl?: string | null
+    xenditPaymentMethod?: string | null
+    paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     answers?: FormAnswerUncheckedCreateNestedManyWithoutPurchaseInput
@@ -15936,6 +15978,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     answers?: FormAnswerUpdateManyWithoutPurchaseNestedInput
@@ -15952,6 +15996,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     answers?: FormAnswerUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -15967,6 +16013,8 @@ export namespace Prisma {
     status?: string
     xenditInvoiceId?: string | null
     xenditInvoiceUrl?: string | null
+    xenditPaymentMethod?: string | null
+    paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -15980,6 +16028,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15994,6 +16044,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -16972,6 +17024,8 @@ export namespace Prisma {
     status?: SortOrder
     xenditInvoiceId?: SortOrder
     xenditInvoiceUrl?: SortOrder
+    xenditPaymentMethod?: SortOrder
+    paidAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -16990,6 +17044,8 @@ export namespace Prisma {
     status?: SortOrder
     xenditInvoiceId?: SortOrder
     xenditInvoiceUrl?: SortOrder
+    xenditPaymentMethod?: SortOrder
+    paidAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -17004,6 +17060,8 @@ export namespace Prisma {
     status?: SortOrder
     xenditInvoiceId?: SortOrder
     xenditInvoiceUrl?: SortOrder
+    xenditPaymentMethod?: SortOrder
+    paidAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -18157,6 +18215,8 @@ export namespace Prisma {
     status?: string
     xenditInvoiceId?: string | null
     xenditInvoiceUrl?: string | null
+    xenditPaymentMethod?: string | null
+    paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     answers?: FormAnswerCreateNestedManyWithoutPurchaseInput
@@ -18171,6 +18231,8 @@ export namespace Prisma {
     status?: string
     xenditInvoiceId?: string | null
     xenditInvoiceUrl?: string | null
+    xenditPaymentMethod?: string | null
+    paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     answers?: FormAnswerUncheckedCreateNestedManyWithoutPurchaseInput
@@ -18295,6 +18357,8 @@ export namespace Prisma {
     status?: StringFilter<"Purchase"> | string
     xenditInvoiceId?: StringNullableFilter<"Purchase"> | string | null
     xenditInvoiceUrl?: StringNullableFilter<"Purchase"> | string | null
+    xenditPaymentMethod?: StringNullableFilter<"Purchase"> | string | null
+    paidAt?: DateTimeNullableFilter<"Purchase"> | Date | string | null
     createdAt?: DateTimeFilter<"Purchase"> | Date | string
     updatedAt?: DateTimeFilter<"Purchase"> | Date | string
   }
@@ -18668,6 +18732,8 @@ export namespace Prisma {
     status?: string
     xenditInvoiceId?: string | null
     xenditInvoiceUrl?: string | null
+    xenditPaymentMethod?: string | null
+    paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     product: ProductCreateNestedOneWithoutPurchasesInput
@@ -18683,6 +18749,8 @@ export namespace Prisma {
     status?: string
     xenditInvoiceId?: string | null
     xenditInvoiceUrl?: string | null
+    xenditPaymentMethod?: string | null
+    paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18747,6 +18815,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     product?: ProductUpdateOneRequiredWithoutPurchasesNestedInput
@@ -18762,6 +18832,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19336,6 +19408,8 @@ export namespace Prisma {
     status?: string
     xenditInvoiceId?: string | null
     xenditInvoiceUrl?: string | null
+    xenditPaymentMethod?: string | null
+    paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -19384,6 +19458,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     answers?: FormAnswerUpdateManyWithoutPurchaseNestedInput
@@ -19398,6 +19474,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     answers?: FormAnswerUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -19412,6 +19490,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

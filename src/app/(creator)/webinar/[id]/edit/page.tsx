@@ -288,11 +288,11 @@ export default function EditWebinarPage() {
                         )}
 
                         {/* Platform */}
-                        <FormGroup label="Platform" error={errors.platform?.message || errors.platformCustom?.message}>
+                        <FormGroup label="Platform" error={errors.platform?.message ?? errors.platformCustom?.message}>
                             <div className="space-y-3">
                                 <FormSelect
                                     {...register("platform", {
-                                        onChange: (e) => {
+                                        onChange: (e: React.ChangeEvent<HTMLSelectElement>) => {
                                             if (e.target.value !== "other") {
                                                 setValue("platformCustom", "");
                                             }

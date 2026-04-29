@@ -32,7 +32,10 @@ export default function KelasDetailPage() {
 
     const { data: catalog } = api.catalog.getMine.useQuery();
 
-    const { data: product, isLoading } = api.products.getById.useQuery({ id });
+    const { data: product, isLoading } = api.products.getById.useQuery(
+        { id },
+        { enabled: !!id }
+    );
     const { data: buyerCount } = api.purchases.countByProductId.useQuery(
         { productId: id },
         { enabled: !!id }

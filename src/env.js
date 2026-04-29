@@ -28,6 +28,8 @@ export const env = createEnv({
     SMTP_USER: z.string(),
     SMTP_PASS: z.string(),
     SMTP_FROM: z.string().email(),
+    XENDIT_SECRET_KEY: z.string(),
+    XENDIT_WEBHOOK_TOKEN: z.string(),
   },
 
   /**
@@ -36,7 +38,8 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_APP_URL: z.string().url(),
+    NEXT_PUBLIC_XENDIT_PUBLIC_KEY: z.string(),
   },
   /**
    * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
@@ -59,6 +62,10 @@ export const env = createEnv({
     SMTP_USER: process.env.SMTP_USER,
     SMTP_PASS: process.env.SMTP_PASS,
     SMTP_FROM: process.env.SMTP_FROM,
+    XENDIT_SECRET_KEY: process.env.XENDIT_SECRET_KEY,
+    XENDIT_WEBHOOK_TOKEN: process.env.XENDIT_WEBHOOK_TOKEN,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_XENDIT_PUBLIC_KEY: process.env.NEXT_PUBLIC_XENDIT_PUBLIC_KEY, // tambah
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

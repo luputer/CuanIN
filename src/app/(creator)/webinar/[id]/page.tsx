@@ -1,10 +1,9 @@
 "use client"
-import { ArrowLeftIcon, CopyIcon, ImageIcon, PencilIcon, TrashIcon, CalendarIcon, MapPinIcon, UsersIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, CopyIcon, ImageIcon, PencilIcon, TrashIcon } from "@phosphor-icons/react";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { ProductDetailTabs, ProductDetailTabContent } from "../../../../components/layout/product-detail-tabs";
-
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { Button } from "~/components/ui/button";
@@ -18,13 +17,13 @@ import { FormCustomizer } from "~/components/form-customizer";
 import Pembeli from "~/components/pembeli";
 import { Skeleton } from "~/components/ui/skeleton";
 import ConfirmDialog from "~/components/ui/confirm-dialog";
-import { useState, useRef, useEffect, use } from "react";
+import { useState, useRef, useEffect } from "react";
 import { SectionHeader } from "~/components/ui/form-layout";
 import { useRouter } from "next/navigation";
 
-export default function WebinarDetailPage(props: { params: Promise<{ id: string }> }) {
-    const params = use(props.params);
-    const id = params.id;
+export default function WebinarDetailPage() {
+    const params = useParams();
+    const id = params.id as string;
     const router = useRouter();
     const searchParams = useSearchParams();
     const utils = api.useUtils();
@@ -83,10 +82,12 @@ export default function WebinarDetailPage(props: { params: Promise<{ id: string 
         </div>
     );
 
+
     const getStatusColor = (status: string) => {
         switch (status?.toLowerCase()) {
             case "published": return "bg-green-100 rounded-full px-4 py-1 w-fit text-green-700";
             case "unpublished": return "bg-slate-200 rounded-full px-4 py-1 w-fit text-slate-500";
+            case "archived": return "bg-slate-200 rounded-full px-4 py-1 w-fit text-slate-500";
             default: return "bg-slate-200 rounded-full px-4 py-1 w-fit text-slate-500";
         }
     };
@@ -97,6 +98,7 @@ export default function WebinarDetailPage(props: { params: Promise<{ id: string 
 
     useEffect(() => {
         if (descriptionRef.current && product?.description) {
+            // Cek apakah konten melebihi batas (clamped) saat pertama kali render
             const isClamped = descriptionRef.current.scrollHeight > descriptionRef.current.clientHeight;
             if (isClamped) {
                 setIsOverflowing(true);
@@ -104,6 +106,7 @@ export default function WebinarDetailPage(props: { params: Promise<{ id: string 
         }
     }, [product?.description]);
 
+    // ✅ Skeleton loading
     if (isLoading) {
         return (
             <div className="w-full space-y-6">
@@ -112,6 +115,7 @@ export default function WebinarDetailPage(props: { params: Promise<{ id: string 
                     <Skeleton className="h-10 w-32" />
                 </div>
                 <Skeleton className="h-8 w-64" />
+
                 <div className="bg-white rounded-xl overflow-hidden border border-slate-200">
                     <div className="flex border-b border-slate-200">
                         <Skeleton className="h-14 flex-1" />
@@ -142,6 +146,7 @@ export default function WebinarDetailPage(props: { params: Promise<{ id: string 
 
     return (
         <div className="space-y-6">
+            {/* Header */}
             <div className="bg-slate-50">
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 pt-2">
                     <div className="flex-1 flex flex-col gap-1">
@@ -152,8 +157,10 @@ export default function WebinarDetailPage(props: { params: Promise<{ id: string 
                             <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
                             <span className="leading-none">Kembali ke Daftar</span>
                         </Link>
-                        <h1 className="text-xl font-semibold text-slate-800 break-words">{product.name}</h1>
+
+                        <h1 className="text-xl font-semibold text-slate-800 wrap-break-word">{product.name}</h1>
                     </div>
+
                     <div className="flex items-center gap-2 sm:gap-3">
                         <Button
                             variant="outline"
@@ -178,9 +185,11 @@ export default function WebinarDetailPage(props: { params: Promise<{ id: string 
                 </div>
             </div>
 
+            {/* Tabs */}
             <div className="rounded-xl border border-slate-800 overflow-hidden">
                 <ProductDetailTabs defaultTab={defaultTab} buyerCount={buyerCount ?? 0}>
                     <ProductDetailTabContent value="detail" className="bg-transparent overflow-visible">
+                        {/* Main Content Area */}
                         <div className="flex-1 min-w-0 bg-white rounded-xl px-4 py-2 sm:px-8 sm:py-8">
                             <SectionHeader title="Informasi Webinar">
                                 <Link
@@ -192,36 +201,18 @@ export default function WebinarDetailPage(props: { params: Promise<{ id: string 
                                 </Link>
                             </SectionHeader>
 
-                            <div className="flex flex-col lg:flex-row gap-10 items-start pt-4">
+                            <div className="flex flex-col lg:flex-row gap-10 items-start pt-6">
+                                {/* Kiri: Informasi Produk */}
                                 <div className="flex-1 min-w-0 space-y-0">
                                     <Row label="Nama">
                                         {product.name}
                                     </Row>
-                                    <Row label="Jadwal Webinar">
-                                        <div className="flex items-center gap-2">
-                                            <CalendarIcon className="w-4 h-4 text-slate-400" />
-                                            <span>
-                                                {product.startDate ? format(new Date(product.startDate), "d MMMM yyyy, HH:mm", { locale: idLocale }) : "-"}
-                                                {product.endDate && ` - ${format(new Date(product.endDate), "HH:mm")}`}
-                                            </span>
-                                        </div>
-                                    </Row>
-                                    <Row label="Platform">
-                                        <div className="flex items-center gap-2">
-                                            <MapPinIcon className="w-4 h-4 text-slate-400" />
-                                            <span>{product.platform ?? "-"}</span>
-                                        </div>
-                                    </Row>
-                                    <Row label="Kuota">
-                                        <div className="flex items-center gap-2">
-                                            <UsersIcon className="w-4 h-4 text-slate-400" />
-                                            <span>{product.quota ? `${product.quota} Peserta` : "Tidak terbatas"}</span>
-                                        </div>
-                                    </Row>
-                                    <Row label="Deskripsi Singkat">
+
+                                    <Row label="Ringkasan">
                                         {product.shortDescription ?? "-"}
                                     </Row>
-                                    <Row label="Deskripsi">
+
+                                    <Row label="Deskripsi Lengkap">
                                         <div className="">
                                             {product.description ? (
                                                 <>
@@ -237,6 +228,8 @@ export default function WebinarDetailPage(props: { params: Promise<{ id: string 
                                                             {product.description}
                                                         </ReactMarkdown>
                                                     </div>
+
+                                                    {/* Button */}
                                                     {(isOverflowing || expanded) && (
                                                         <button
                                                             onClick={() => setExpanded(!expanded)}
@@ -251,7 +244,8 @@ export default function WebinarDetailPage(props: { params: Promise<{ id: string 
                                             )}
                                         </div>
                                     </Row>
-                                    <Row label="Benefit">
+
+                                    <Row label="Manfaat">
                                         {Array.isArray(product.benefit) && product.benefit.length > 0 ? (
                                             <ul className="list-disc list-inside space-y-1">
                                                 {(product.benefit as string[]).map((item, index) => (
@@ -262,6 +256,23 @@ export default function WebinarDetailPage(props: { params: Promise<{ id: string 
                                             </ul>
                                         ) : "-"}
                                     </Row>
+
+                                    <Row label="Tipe">
+                                        {Number(product.price) === 0 ? "Gratis" : "Berbayar"}
+                                    </Row>
+
+                                    <Row label="Harga">
+                                        {Number(product.price) === 0
+                                            ? "Rp 0"
+                                            : `Rp ${Number(product.price).toLocaleString("id-ID")}`}
+                                    </Row>
+
+                                    <Row label="Platform">
+                                        {product.platform ? (
+                                            <span className="capitalize">{product.platform}</span>
+                                        ) : "-"}
+                                    </Row>
+
                                     <Row label="Link">
                                         {product.link ? (
                                             <a href={product.link} target="_blank" className="text-blue-500 hover:underline break-all">
@@ -269,24 +280,24 @@ export default function WebinarDetailPage(props: { params: Promise<{ id: string 
                                             </a>
                                         ) : "-"}
                                     </Row>
-                                    <Row label="Harga">
-                                        {Number(product.price) === 0
-                                            ? "Rp 0 (Gratis)"
-                                            : `Rp ${Number(product.price).toLocaleString("id-ID")}`}
+
+                                    <Row label="Catatan">
+                                        {product.notes ?? "-"}
                                     </Row>
+
                                     <Row label="Status">
                                         <p className={`w-fit font-medium ${getStatusColor(product.status ?? "draft")}`}>
-                                            {product.status
+                                            {product.status === "archived" ? "Selesai" : (product.status
                                                 ? product.status.charAt(0).toUpperCase() + product.status.slice(1)
-                                                : "Draft"}
+                                                : "Draft")}
                                         </p>
                                     </Row>
-                                    <p className="text-slate-500 text-sm">
-                                        Ditambahkan pada {format(new Date(product.createdAt), "d MMMM yyyy HH:mm", { locale: idLocale })}
-                                    </p>
+
                                 </div>
+
+                                {/* Kanan: Gambar */}
                                 <div className="shrink-0 w-full lg:w-90 bg-slate-100 p-4 rounded-xl border border-slate-100">
-                                    <p className="text-slate-700 text-sm font-medium mb-4">Gambar Webinar</p>
+                                    <p className="text-slate-700 text-sm font-medium mb-4">Thumbnail</p>
                                     <div className="w-full aspect-square bg-white rounded-xl overflow-hidden flex items-center justify-center border border-slate-200">
                                         {product.image ? (
                                             <Image
@@ -306,16 +317,54 @@ export default function WebinarDetailPage(props: { params: Promise<{ id: string 
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Jadwal Section */}
+                            <div className="mt-4">
+                                <SectionHeader title="Jadwal" />
+                                <div className="flex flex-col lg:flex-row gap-10 items-start pt-6">
+                                    <div className="flex-1 min-w-0 space-y-0">
+                                        <Row label="Waktu Mulai">
+                                            <span className="text-slate-700 text-sm font-medium">
+                                                {product.startDate ? format(new Date(product.startDate), "d MMMM yyyy, HH:mm", { locale: idLocale }) : "-"}
+                                            </span>
+                                        </Row>
+                                        <Row label="Waktu Selesai">
+                                            {product.endDate ? format(new Date(product.endDate), "d MMMM yyyy, HH:mm", { locale: idLocale }) : "-"}
+                                        </Row>
+                                    </div>
+                                    <div className="shrink-0 w-full lg:w-90 hidden lg:block" />
+                                </div>
+                            </div>
+
+                            <div className="mt-4">
+                                <SectionHeader title="Pendaftaran" />
+                                <div className="flex flex-col lg:flex-row gap-10 items-start pt-6">
+                                    <div className="flex-1 min-w-0 space-y-0">
+                                        <Row label="Batas Pendaftaran">
+                                            {product.dateDeadline ? format(new Date(product.dateDeadline), "d MMMM yyyy, HH:mm", { locale: idLocale }) : "-"}
+                                        </Row>
+                                        <Row label="Kuota">
+                                            {product.quota ? (Number(product.quota) === 0 ? "Tidak Terbatas" : product.quota) : "Tidak Terbatas"}
+                                        </Row>
+                                    </div>
+                                    <div className="shrink-0 w-full lg:w-90 hidden lg:block" />
+                                </div>
+                            </div>
+
                         </div>
+
                     </ProductDetailTabContent>
+
                     <ProductDetailTabContent value="user">
                         <Pembeli productId={id} />
                     </ProductDetailTabContent>
+
                     <ProductDetailTabContent value="form">
                         <FormCustomizer productId={id} />
                     </ProductDetailTabContent>
                 </ProductDetailTabs>
             </div>
+
             <ConfirmDialog
                 open={showDeleteConfirm}
                 onOpenChange={setShowDeleteConfirm}
@@ -336,6 +385,6 @@ export default function WebinarDetailPage(props: { params: Promise<{ id: string 
                     deleteProduct.mutate({ id });
                 }}
             />
-        </div>
+        </div >
     );
 }

@@ -151,6 +151,7 @@ exports.Prisma.ProductScalarFieldEnum = {
   duration: 'duration',
   dateDeadline: 'dateDeadline',
   quota: 'quota',
+  notes: 'notes',
   status: 'status',
   userId: 'userId',
   createdAt: 'createdAt',
@@ -180,6 +181,8 @@ exports.Prisma.PurchaseScalarFieldEnum = {
   buyerPhone: 'buyerPhone',
   amount: 'amount',
   status: 'status',
+  xenditInvoiceId: 'xenditInvoiceId',
+  xenditInvoiceUrl: 'xenditInvoiceUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

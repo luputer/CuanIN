@@ -96,7 +96,7 @@ function SortableFieldItem({
                                 <CaretDownIcon className="w-4 h-4" weight="bold" />
                             </div>
                         </div>
-                        <button onClick={() => removeField(field.id)} className="text-red-500 hover:text-red-700 p-1">
+                        <button onClick={() => removeField(field.id)} className="text-red-500 hover:text-red-700 p-1 cursor-pointer">
                             <TrashIcon className="w-[20px] h-[20px]" />
                         </button>
                     </div>

@@ -146,7 +146,7 @@ export default function WebinarPage() {
                 {/* Header */}
                 <div className="bg-slate-50">
                     <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
-                        <div className="text-2xl font-semibold mb-2 text-blue-600">Webinar</div>
+                        <div className="text-2xl font-semibold mb-2 text-cyan-600">Webinar</div>
                         <div className="text-sm font-regular text-slate-600">Pantau dan kelola semua webinar yang kamu buat.</div>
                     </div>
                 </div>
@@ -343,16 +343,17 @@ export default function WebinarPage() {
 
                                             <TableCell className="whitespace-nowrap">
                                                 <div className="flex flex-col justify-center min-h-[48px]">
-                                                    <div className="font-medium text-slate-700">
+                                                    <div className="font-medium text-slate-600">
                                                         {item.startDate ? format(new Date(item.startDate), "d MMM yyyy", { locale: idLocale }) : "-"}
                                                     </div>
-                                                    <div className="text-[11px] text-slate-400">
+                                                    <div className="mt-1 text-slate-500">
                                                         {item.startDate ? format(new Date(item.startDate), "HH:mm") : ""}
                                                         {item.startDate && item.endDate ? " - " : ""}
                                                         {item.endDate ? format(new Date(item.endDate), "HH:mm") : ""}
                                                     </div>
                                                 </div>
                                             </TableCell>
+
 
                                             <TableCell className="whitespace-nowrap">
                                                 <div className="flex items-center min-h-[48px]">

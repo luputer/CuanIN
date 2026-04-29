@@ -142,7 +142,7 @@ export default function KelasOnlinePage() {
 				{/* Header */}
 				<div className="bg-slate-50">
 					<div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
-						<div className="text-2xl font-semibold mb-2 text-blue-600">Kelas Online</div>
+						<div className="text-2xl font-semibold mb-2 text-cyan-600">Kelas Online</div>
 						<div className="text-sm font-regular text-slate-600">Pantau semua kelas online yang kamu kelola.</div>
 					</div>
 				</div>

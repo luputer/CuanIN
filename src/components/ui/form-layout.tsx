@@ -44,7 +44,7 @@ interface SectionHeaderProps {
 }
 
 export const SectionHeader = ({ title, children }: SectionHeaderProps) => (
-    <div className="flex items-center justify-between border-b border-cyan-600 pb-4 mb-4">
+    <div className="flex items-center justify-between border-b border-cyan-600 pt-2 pb-4">
         <h2 className="text-md font-semibold text-cyan-600">{title}</h2>
         {children}
     </div>

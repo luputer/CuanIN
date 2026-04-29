@@ -4053,6 +4053,7 @@ export namespace Prisma {
     duration: string | null
     dateDeadline: Date | null
     quota: number | null
+    notes: string | null
     status: string | null
     userId: string | null
     createdAt: Date | null
@@ -4076,6 +4077,7 @@ export namespace Prisma {
     duration: string | null
     dateDeadline: Date | null
     quota: number | null
+    notes: string | null
     status: string | null
     userId: string | null
     createdAt: Date | null
@@ -4099,6 +4101,7 @@ export namespace Prisma {
     duration: number
     dateDeadline: number
     quota: number
+    notes: number
     status: number
     userId: number
     createdAt: number
@@ -4135,6 +4138,7 @@ export namespace Prisma {
     duration?: true
     dateDeadline?: true
     quota?: true
+    notes?: true
     status?: true
     userId?: true
     createdAt?: true
@@ -4158,6 +4162,7 @@ export namespace Prisma {
     duration?: true
     dateDeadline?: true
     quota?: true
+    notes?: true
     status?: true
     userId?: true
     createdAt?: true
@@ -4181,6 +4186,7 @@ export namespace Prisma {
     duration?: true
     dateDeadline?: true
     quota?: true
+    notes?: true
     status?: true
     userId?: true
     createdAt?: true
@@ -4292,6 +4298,7 @@ export namespace Prisma {
     duration: string | null
     dateDeadline: Date | null
     quota: number | null
+    notes: string | null
     status: string
     userId: string
     createdAt: Date
@@ -4335,6 +4342,7 @@ export namespace Prisma {
     duration?: boolean
     dateDeadline?: boolean
     quota?: boolean
+    notes?: boolean
     status?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -4363,6 +4371,7 @@ export namespace Prisma {
     duration?: boolean
     dateDeadline?: boolean
     quota?: boolean
+    notes?: boolean
     status?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -4388,6 +4397,7 @@ export namespace Prisma {
     duration?: boolean
     dateDeadline?: boolean
     quota?: boolean
+    notes?: boolean
     status?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -4413,6 +4423,7 @@ export namespace Prisma {
     duration?: boolean
     dateDeadline?: boolean
     quota?: boolean
+    notes?: boolean
     status?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -4422,7 +4433,7 @@ export namespace Prisma {
     benefit?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "shortDescription" | "description" | "price" | "type" | "startDate" | "endDate" | "link" | "format" | "platform" | "duration" | "dateDeadline" | "quota" | "status" | "userId" | "createdAt" | "updatedAt" | "image" | "slug" | "benefit", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "shortDescription" | "description" | "price" | "type" | "startDate" | "endDate" | "link" | "format" | "platform" | "duration" | "dateDeadline" | "quota" | "notes" | "status" | "userId" | "createdAt" | "updatedAt" | "image" | "slug" | "benefit", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     formFields?: boolean | Product$formFieldsArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -4458,6 +4469,7 @@ export namespace Prisma {
       duration: string | null
       dateDeadline: Date | null
       quota: number | null
+      notes: string | null
       status: string
       userId: string
       createdAt: Date
@@ -4905,6 +4917,7 @@ export namespace Prisma {
     readonly duration: FieldRef<"Product", 'String'>
     readonly dateDeadline: FieldRef<"Product", 'DateTime'>
     readonly quota: FieldRef<"Product", 'Int'>
+    readonly notes: FieldRef<"Product", 'String'>
     readonly status: FieldRef<"Product", 'String'>
     readonly userId: FieldRef<"Product", 'String'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
@@ -6572,6 +6585,8 @@ export namespace Prisma {
     buyerPhone: string | null
     amount: Decimal | null
     status: string | null
+    xenditInvoiceId: string | null
+    xenditInvoiceUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6584,6 +6599,8 @@ export namespace Prisma {
     buyerPhone: string | null
     amount: Decimal | null
     status: string | null
+    xenditInvoiceId: string | null
+    xenditInvoiceUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6596,6 +6613,8 @@ export namespace Prisma {
     buyerPhone: number
     amount: number
     status: number
+    xenditInvoiceId: number
+    xenditInvoiceUrl: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -6618,6 +6637,8 @@ export namespace Prisma {
     buyerPhone?: true
     amount?: true
     status?: true
+    xenditInvoiceId?: true
+    xenditInvoiceUrl?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6630,6 +6651,8 @@ export namespace Prisma {
     buyerPhone?: true
     amount?: true
     status?: true
+    xenditInvoiceId?: true
+    xenditInvoiceUrl?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6642,6 +6665,8 @@ export namespace Prisma {
     buyerPhone?: true
     amount?: true
     status?: true
+    xenditInvoiceId?: true
+    xenditInvoiceUrl?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -6741,6 +6766,8 @@ export namespace Prisma {
     buyerPhone: string
     amount: Decimal
     status: string
+    xenditInvoiceId: string | null
+    xenditInvoiceUrl: string | null
     createdAt: Date
     updatedAt: Date
     _count: PurchaseCountAggregateOutputType | null
@@ -6772,6 +6799,8 @@ export namespace Prisma {
     buyerPhone?: boolean
     amount?: boolean
     status?: boolean
+    xenditInvoiceId?: boolean
+    xenditInvoiceUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     answers?: boolean | Purchase$answersArgs<ExtArgs>
@@ -6787,6 +6816,8 @@ export namespace Prisma {
     buyerPhone?: boolean
     amount?: boolean
     status?: boolean
+    xenditInvoiceId?: boolean
+    xenditInvoiceUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -6800,6 +6831,8 @@ export namespace Prisma {
     buyerPhone?: boolean
     amount?: boolean
     status?: boolean
+    xenditInvoiceId?: boolean
+    xenditInvoiceUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -6813,11 +6846,13 @@ export namespace Prisma {
     buyerPhone?: boolean
     amount?: boolean
     status?: boolean
+    xenditInvoiceId?: boolean
+    xenditInvoiceUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type PurchaseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "buyerName" | "buyerEmail" | "buyerPhone" | "amount" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["purchase"]>
+  export type PurchaseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "buyerName" | "buyerEmail" | "buyerPhone" | "amount" | "status" | "xenditInvoiceId" | "xenditInvoiceUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["purchase"]>
   export type PurchaseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     answers?: boolean | Purchase$answersArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -6844,6 +6879,8 @@ export namespace Prisma {
       buyerPhone: string
       amount: Prisma.Decimal
       status: string
+      xenditInvoiceId: string | null
+      xenditInvoiceUrl: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["purchase"]>
@@ -7278,6 +7315,8 @@ export namespace Prisma {
     readonly buyerPhone: FieldRef<"Purchase", 'String'>
     readonly amount: FieldRef<"Purchase", 'Decimal'>
     readonly status: FieldRef<"Purchase", 'String'>
+    readonly xenditInvoiceId: FieldRef<"Purchase", 'String'>
+    readonly xenditInvoiceUrl: FieldRef<"Purchase", 'String'>
     readonly createdAt: FieldRef<"Purchase", 'DateTime'>
     readonly updatedAt: FieldRef<"Purchase", 'DateTime'>
   }
@@ -14355,6 +14394,7 @@ export namespace Prisma {
     duration: 'duration',
     dateDeadline: 'dateDeadline',
     quota: 'quota',
+    notes: 'notes',
     status: 'status',
     userId: 'userId',
     createdAt: 'createdAt',
@@ -14390,6 +14430,8 @@ export namespace Prisma {
     buyerPhone: 'buyerPhone',
     amount: 'amount',
     status: 'status',
+    xenditInvoiceId: 'xenditInvoiceId',
+    xenditInvoiceUrl: 'xenditInvoiceUrl',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -14779,6 +14821,7 @@ export namespace Prisma {
     duration?: StringNullableFilter<"Product"> | string | null
     dateDeadline?: DateTimeNullableFilter<"Product"> | Date | string | null
     quota?: IntNullableFilter<"Product"> | number | null
+    notes?: StringNullableFilter<"Product"> | string | null
     status?: StringFilter<"Product"> | string
     userId?: StringFilter<"Product"> | string
     createdAt?: DateTimeFilter<"Product"> | Date | string
@@ -14806,6 +14849,7 @@ export namespace Prisma {
     duration?: SortOrderInput | SortOrder
     dateDeadline?: SortOrderInput | SortOrder
     quota?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
     status?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -14837,6 +14881,7 @@ export namespace Prisma {
     duration?: StringNullableFilter<"Product"> | string | null
     dateDeadline?: DateTimeNullableFilter<"Product"> | Date | string | null
     quota?: IntNullableFilter<"Product"> | number | null
+    notes?: StringNullableFilter<"Product"> | string | null
     status?: StringFilter<"Product"> | string
     userId?: StringFilter<"Product"> | string
     createdAt?: DateTimeFilter<"Product"> | Date | string
@@ -14863,6 +14908,7 @@ export namespace Prisma {
     duration?: SortOrderInput | SortOrder
     dateDeadline?: SortOrderInput | SortOrder
     quota?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
     status?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -14895,6 +14941,7 @@ export namespace Prisma {
     duration?: StringNullableWithAggregatesFilter<"Product"> | string | null
     dateDeadline?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
     quota?: IntNullableWithAggregatesFilter<"Product"> | number | null
+    notes?: StringNullableWithAggregatesFilter<"Product"> | string | null
     status?: StringWithAggregatesFilter<"Product"> | string
     userId?: StringWithAggregatesFilter<"Product"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
@@ -14995,6 +15042,8 @@ export namespace Prisma {
     buyerPhone?: StringFilter<"Purchase"> | string
     amount?: DecimalFilter<"Purchase"> | Decimal | DecimalJsLike | number | string
     status?: StringFilter<"Purchase"> | string
+    xenditInvoiceId?: StringNullableFilter<"Purchase"> | string | null
+    xenditInvoiceUrl?: StringNullableFilter<"Purchase"> | string | null
     createdAt?: DateTimeFilter<"Purchase"> | Date | string
     updatedAt?: DateTimeFilter<"Purchase"> | Date | string
     answers?: FormAnswerListRelationFilter
@@ -15009,6 +15058,8 @@ export namespace Prisma {
     buyerPhone?: SortOrder
     amount?: SortOrder
     status?: SortOrder
+    xenditInvoiceId?: SortOrderInput | SortOrder
+    xenditInvoiceUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     answers?: FormAnswerOrderByRelationAggregateInput
@@ -15026,6 +15077,8 @@ export namespace Prisma {
     buyerPhone?: StringFilter<"Purchase"> | string
     amount?: DecimalFilter<"Purchase"> | Decimal | DecimalJsLike | number | string
     status?: StringFilter<"Purchase"> | string
+    xenditInvoiceId?: StringNullableFilter<"Purchase"> | string | null
+    xenditInvoiceUrl?: StringNullableFilter<"Purchase"> | string | null
     createdAt?: DateTimeFilter<"Purchase"> | Date | string
     updatedAt?: DateTimeFilter<"Purchase"> | Date | string
     answers?: FormAnswerListRelationFilter
@@ -15040,6 +15093,8 @@ export namespace Prisma {
     buyerPhone?: SortOrder
     amount?: SortOrder
     status?: SortOrder
+    xenditInvoiceId?: SortOrderInput | SortOrder
+    xenditInvoiceUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: PurchaseCountOrderByAggregateInput
@@ -15060,6 +15115,8 @@ export namespace Prisma {
     buyerPhone?: StringWithAggregatesFilter<"Purchase"> | string
     amount?: DecimalWithAggregatesFilter<"Purchase"> | Decimal | DecimalJsLike | number | string
     status?: StringWithAggregatesFilter<"Purchase"> | string
+    xenditInvoiceId?: StringNullableWithAggregatesFilter<"Purchase"> | string | null
+    xenditInvoiceUrl?: StringNullableWithAggregatesFilter<"Purchase"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Purchase"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Purchase"> | Date | string
   }
@@ -15586,6 +15643,7 @@ export namespace Prisma {
     duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
+    notes?: string | null
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -15612,6 +15670,7 @@ export namespace Prisma {
     duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
+    notes?: string | null
     status?: string
     userId: string
     createdAt?: Date | string
@@ -15638,6 +15697,7 @@ export namespace Prisma {
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15664,6 +15724,7 @@ export namespace Prisma {
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15690,6 +15751,7 @@ export namespace Prisma {
     duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
+    notes?: string | null
     status?: string
     userId: string
     createdAt?: Date | string
@@ -15714,6 +15776,7 @@ export namespace Prisma {
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15737,6 +15800,7 @@ export namespace Prisma {
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15840,6 +15904,8 @@ export namespace Prisma {
     buyerPhone: string
     amount?: Decimal | DecimalJsLike | number | string
     status?: string
+    xenditInvoiceId?: string | null
+    xenditInvoiceUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     answers?: FormAnswerCreateNestedManyWithoutPurchaseInput
@@ -15854,6 +15920,8 @@ export namespace Prisma {
     buyerPhone: string
     amount?: Decimal | DecimalJsLike | number | string
     status?: string
+    xenditInvoiceId?: string | null
+    xenditInvoiceUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     answers?: FormAnswerUncheckedCreateNestedManyWithoutPurchaseInput
@@ -15866,6 +15934,8 @@ export namespace Prisma {
     buyerPhone?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: StringFieldUpdateOperationsInput | string
+    xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     answers?: FormAnswerUpdateManyWithoutPurchaseNestedInput
@@ -15880,6 +15950,8 @@ export namespace Prisma {
     buyerPhone?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: StringFieldUpdateOperationsInput | string
+    xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     answers?: FormAnswerUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -15893,6 +15965,8 @@ export namespace Prisma {
     buyerPhone: string
     amount?: Decimal | DecimalJsLike | number | string
     status?: string
+    xenditInvoiceId?: string | null
+    xenditInvoiceUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -15904,6 +15978,8 @@ export namespace Prisma {
     buyerPhone?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: StringFieldUpdateOperationsInput | string
+    xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15916,6 +15992,8 @@ export namespace Prisma {
     buyerPhone?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: StringFieldUpdateOperationsInput | string
+    xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -16647,6 +16725,7 @@ export namespace Prisma {
     duration?: SortOrder
     dateDeadline?: SortOrder
     quota?: SortOrder
+    notes?: SortOrder
     status?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -16676,6 +16755,7 @@ export namespace Prisma {
     duration?: SortOrder
     dateDeadline?: SortOrder
     quota?: SortOrder
+    notes?: SortOrder
     status?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -16699,6 +16779,7 @@ export namespace Prisma {
     duration?: SortOrder
     dateDeadline?: SortOrder
     quota?: SortOrder
+    notes?: SortOrder
     status?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -16889,6 +16970,8 @@ export namespace Prisma {
     buyerPhone?: SortOrder
     amount?: SortOrder
     status?: SortOrder
+    xenditInvoiceId?: SortOrder
+    xenditInvoiceUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -16905,6 +16988,8 @@ export namespace Prisma {
     buyerPhone?: SortOrder
     amount?: SortOrder
     status?: SortOrder
+    xenditInvoiceId?: SortOrder
+    xenditInvoiceUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -16917,6 +17002,8 @@ export namespace Prisma {
     buyerPhone?: SortOrder
     amount?: SortOrder
     status?: SortOrder
+    xenditInvoiceId?: SortOrder
+    xenditInvoiceUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -18068,6 +18155,8 @@ export namespace Prisma {
     buyerPhone: string
     amount?: Decimal | DecimalJsLike | number | string
     status?: string
+    xenditInvoiceId?: string | null
+    xenditInvoiceUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     answers?: FormAnswerCreateNestedManyWithoutPurchaseInput
@@ -18080,6 +18169,8 @@ export namespace Prisma {
     buyerPhone: string
     amount?: Decimal | DecimalJsLike | number | string
     status?: string
+    xenditInvoiceId?: string | null
+    xenditInvoiceUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     answers?: FormAnswerUncheckedCreateNestedManyWithoutPurchaseInput
@@ -18202,6 +18293,8 @@ export namespace Prisma {
     buyerPhone?: StringFilter<"Purchase"> | string
     amount?: DecimalFilter<"Purchase"> | Decimal | DecimalJsLike | number | string
     status?: StringFilter<"Purchase"> | string
+    xenditInvoiceId?: StringNullableFilter<"Purchase"> | string | null
+    xenditInvoiceUrl?: StringNullableFilter<"Purchase"> | string | null
     createdAt?: DateTimeFilter<"Purchase"> | Date | string
     updatedAt?: DateTimeFilter<"Purchase"> | Date | string
   }
@@ -18245,6 +18338,7 @@ export namespace Prisma {
     duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
+    notes?: string | null
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18270,6 +18364,7 @@ export namespace Prisma {
     duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
+    notes?: string | null
     status?: string
     userId: string
     createdAt?: Date | string
@@ -18338,6 +18433,7 @@ export namespace Prisma {
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18363,6 +18459,7 @@ export namespace Prisma {
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18412,6 +18509,7 @@ export namespace Prisma {
     duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
+    notes?: string | null
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18437,6 +18535,7 @@ export namespace Prisma {
     duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
+    notes?: string | null
     status?: string
     userId: string
     createdAt?: Date | string
@@ -18494,6 +18593,7 @@ export namespace Prisma {
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18519,6 +18619,7 @@ export namespace Prisma {
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18565,6 +18666,8 @@ export namespace Prisma {
     buyerPhone: string
     amount?: Decimal | DecimalJsLike | number | string
     status?: string
+    xenditInvoiceId?: string | null
+    xenditInvoiceUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     product: ProductCreateNestedOneWithoutPurchasesInput
@@ -18578,6 +18681,8 @@ export namespace Prisma {
     buyerPhone: string
     amount?: Decimal | DecimalJsLike | number | string
     status?: string
+    xenditInvoiceId?: string | null
+    xenditInvoiceUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18640,6 +18745,8 @@ export namespace Prisma {
     buyerPhone?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: StringFieldUpdateOperationsInput | string
+    xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     product?: ProductUpdateOneRequiredWithoutPurchasesNestedInput
@@ -18653,6 +18760,8 @@ export namespace Prisma {
     buyerPhone?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: StringFieldUpdateOperationsInput | string
+    xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18915,6 +19024,7 @@ export namespace Prisma {
     duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
+    notes?: string | null
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18940,6 +19050,7 @@ export namespace Prisma {
     duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
+    notes?: string | null
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -19077,6 +19188,7 @@ export namespace Prisma {
     duration?: StringNullableFilter<"Product"> | string | null
     dateDeadline?: DateTimeNullableFilter<"Product"> | Date | string | null
     quota?: IntNullableFilter<"Product"> | number | null
+    notes?: StringNullableFilter<"Product"> | string | null
     status?: StringFilter<"Product"> | string
     userId?: StringFilter<"Product"> | string
     createdAt?: DateTimeFilter<"Product"> | Date | string
@@ -19222,6 +19334,8 @@ export namespace Prisma {
     buyerPhone: string
     amount?: Decimal | DecimalJsLike | number | string
     status?: string
+    xenditInvoiceId?: string | null
+    xenditInvoiceUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -19268,6 +19382,8 @@ export namespace Prisma {
     buyerPhone?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: StringFieldUpdateOperationsInput | string
+    xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     answers?: FormAnswerUpdateManyWithoutPurchaseNestedInput
@@ -19280,6 +19396,8 @@ export namespace Prisma {
     buyerPhone?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: StringFieldUpdateOperationsInput | string
+    xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     answers?: FormAnswerUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -19292,6 +19410,8 @@ export namespace Prisma {
     buyerPhone?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: StringFieldUpdateOperationsInput | string
+    xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19381,6 +19501,7 @@ export namespace Prisma {
     duration?: string | null
     dateDeadline?: Date | string | null
     quota?: number | null
+    notes?: string | null
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -19452,6 +19573,7 @@ export namespace Prisma {
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19477,6 +19599,7 @@ export namespace Prisma {
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19502,6 +19625,7 @@ export namespace Prisma {
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     quota?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

@@ -44,7 +44,7 @@ export function DateTimePicker({ date, setDate, placeholder = "Pilih Tanggal & W
                 <Button
                     variant={"outline"}
                     className={cn(
-                        "w-full justify-between text-left bg-white border-slate-400 hover:bg-slate-50 h-[52px] px-4 rounded-lg focus:ring-2 focus:ring-cyan-600/50 transition-all shadow-none",
+                        "w-full justify-between text-left bg-white border-slate-400 hover:bg-slate-50 h-[52px] hover:text-slate-600 px-4 rounded-lg focus:ring-2 focus:ring-cyan-600/50 transition-all shadow-none",
                         !date ? "text-slate-400 font-regular" : "text-slate-800 font-regular",
                         className
                     )}

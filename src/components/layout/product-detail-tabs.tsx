@@ -28,7 +28,7 @@ export function ProductDetailTabs({ defaultTab, buyerCount, children, className 
             <button
                 onClick={() => setActiveTab(value)}
                 className={cn(
-                    "relative pt-6 pb-4 px-4 transition-all cursor-pointer text-center text-md border-b-3 -mb-[1px]",
+                    "relative pt-6 pb-4 px-4 transition-all cursor-pointer text-center text-md border-b-4 -mb-[1px]",
                     isActive
                         ? cn("z-20 font-semibold", ACTIVE_TAB_CLASSES)
                         : "font-normal text-slate-500 hover:text-slate-800 border-transparent"

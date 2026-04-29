@@ -49,6 +49,7 @@ export const webinarSchema = z
         dateDeadline: z.date({ required_error: "Batas pendaftaran wajib diisi" }),
         quota: z.number({ required_error: "Kuota wajib diisi" }).min(0, "Kuota tidak boleh negatif"),
         benefit: z.array(z.string()).optional(),
+        image: z.string().optional(),
     })
     .refine(
         (data) => {
@@ -84,6 +85,18 @@ export const webinarSchema = z
         {
             message: "Batas pendaftaran tidak boleh setelah waktu mulai",
             path: ["dateDeadline"],
+        }
+    )
+    .refine(
+        (data) => {
+            if (data.platform === "other") {
+                return !!data.platformCustom && data.platformCustom.trim().length > 0;
+            }
+            return true;
+        },
+        {
+            message: "Nama platform wajib diisi jika memilih 'Lainnya'",
+            path: ["platformCustom"],
         }
     );
 

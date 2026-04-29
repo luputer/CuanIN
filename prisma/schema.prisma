@@ -41,6 +41,7 @@ model Product {
     duration         String?
     dateDeadline     DateTime?
     quota            Int?
+    notes            String?     @db.Text
     status           String      @default("published")
     userId           String
     createdAt        DateTime    @default(now())
@@ -70,19 +71,22 @@ model FormField {
 }
 
 model Purchase {
-    id         String       @id @default(uuid())
-    productId  String
-    buyerName  String
-    buyerEmail String
-    buyerPhone String
-    amount     Decimal      @default(0)
-    status     String       @default("completed")
-    createdAt  DateTime     @default(now())
-    updatedAt  DateTime     @updatedAt
-    answers    FormAnswer[]
-    product    Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+    id                String       @id @default(uuid())
+    productId         String
+    buyerName         String
+    buyerEmail        String
+    buyerPhone        String
+    amount            Decimal      @default(0)
+    status            String       @default("completed")
+    xenditInvoiceId   String?
+    xenditInvoiceUrl  String?
+    createdAt         DateTime     @default(now())
+    updatedAt         DateTime     @updatedAt
+    answers           FormAnswer[]
+    product           Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
 
     @@index([productId])
+    @@index([xenditInvoiceId])
 }
 
 model FormAnswer {

@@ -46,7 +46,7 @@ const credentialsSchema = z.object({
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
-    adapter: PrismaAdapter(db) as Adapter,
+    adapter: PrismaAdapter(db),
     providers: [
         GoogleProvider({
             clientId: env.GOOGLE_CLIENT_ID,

@@ -1,7 +1,7 @@
 "use client";
 
 import { DotsSixVerticalIcon, CircleNotchIcon, PlusIcon, TrashIcon, XIcon, CheckCircleIcon, CaretDownIcon } from "@phosphor-icons/react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, type CSSProperties } from "react";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
 import ButtonSave from "~/components/ui/button-save";
@@ -52,11 +52,11 @@ function SortableFieldItem({
 }) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: field.id });
 
-    const style = {
+    const style: CSSProperties = {
         transform: CSS.Transform.toString(transform),
         transition,
         zIndex: isDragging ? 10 : 0,
-        position: 'relative' as const,
+        position: 'relative',
     };
 
     return (

@@ -85,7 +85,12 @@ function SortableFieldItem({
                         <div className="relative group">
                             <select
                                 value={field.type}
-                                onChange={(e) => handleTypeChange(field.id, e.target.value as FieldType)}
+                                // onChange={(e) => handleTypeChange(field.id, e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value
+                                    handleTypeChange(field.id, value as FieldType)
+                                }}
+
                                 className="border border-slate-300 rounded-md pl-3 pr-9 py-1.5 text-[15px] font-medium text-slate-600 focus:outline-none bg-white appearance-none cursor-pointer hover:border-slate-400 transition-colors"
                             >
                                 {Object.entries(FIELD_TYPE_LABELS).map(([value, label]) => (

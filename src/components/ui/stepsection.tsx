@@ -28,7 +28,7 @@ export default function StepsSection() {
                                 className="w-full flex justify-between items-center py-2 text-left"
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 flex items-center justify-center rounded-full bg-cyan-600 text-3xl text-white font-semibold border-2 border-slate-800 shadow-[2px_3px_0px_rgba(30,27,75)]">
+                                    <div className="w-16 h-16 flex items-center justify-center rounded-full bg-cyan-600 text-3xl text-white font-semibold border-2 border-slate-800 shadow-[2px_2px_0px_rgba(29,41,61)]">
                                         {index + 1}
                                     </div>
                                     <span className="px-2 text-2xl font-medium text-slate-800">{step.title}</span>

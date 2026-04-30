@@ -29,7 +29,7 @@ export default function Button({ text, onClick, href }: ButtonProps) {
         text-white 
         bg-cyan-600
         
-        shadow-[2px_2px_0px_rgba(30,27,75)]
+        shadow-[2px_2px_0px_rgba(29,41,61)]
         
         hover:translate-x-[2px] 
         hover:translate-y-[2px] 

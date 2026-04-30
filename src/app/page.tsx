@@ -8,6 +8,12 @@ import { UsersThreeIcon, CreditCardIcon, GridFourIcon, ChartBarIcon } from "@pho
 import Figure6 from "public/assets/Figure6.png";
 import Figure10 from "public/assets/Figure10.png";
 import Figure11 from "public/assets/Figure11.png";
+import WebinarDashboardPreview from "~/components/ui/webinardashboard";
+import manajemen from "public/assets/manajemen.png"
+import payment from "public/assets/payment.png"
+import form from "public/assets/form.png"
+import dashboard from "public/assets/dashboard.png"
+
 
 export default function FormateLanding() {
   return (
@@ -40,12 +46,12 @@ export default function FormateLanding() {
 
         {/* Dashboard Preview Section */}
         <section className="relative mt-12 md:mt-16 w-full max-w-6xl mx-auto px-4 sm:px-6 mb-20 md:mb-10">
-          <div className="w-full h-[300px] sm:h-[450px] lg:h-[640px] border-2 border-slate-800 rounded-xl flex items-center justify-center bg-cyan-50 shadow-[0px_3px_0px_rgba(30,27,75)] relative z-10">
-            <p className="text-slate-400">Image Preview</p>
+          <div className="w-full h-[300px] sm:h-[450px] lg:h-[640px] border-2 border-slate-800 rounded-xl flex items-center justify-center bg-cyan-50 shadow-[0px_2px_0px_rgba(29,41,61)] relative z-10">
+            <WebinarDashboardPreview />
           </div>
 
           {/* Kotak kecil (overlap) */}
-          <div className="w-[90%] lg:w-full max-w-4xl absolute -bottom-16 md:-bottom-10 left-1/2 flex -translate-x-1/2 items-center justify-center rounded-xl border-2 border-slate-800 bg-yellow-200 py-6 md:py-10 px-4 text-center shadow-[0px_5px_0px_rgba(30,27,75)] z-20">
+          <div className="w-[90%] lg:w-full max-w-4xl absolute -bottom-16 md:-bottom-10 left-1/2 flex -translate-x-1/2 items-center justify-center rounded-xl border-2 border-slate-800 bg-yellow-200 py-6 md:py-10 px-4 text-center shadow-[0px_4px_0px_rgba(29,41,61)] z-20">
             {/* Dekorasi atas kiri */}
             <div className="hidden sm:block absolute top-[-15px] left-[-15px] md:left-[-20px] w-12 h-12 md:w-16 md:h-16">
               <Image src={Figure10} alt="Decor Top Left" className="w-full h-full object-contain" />
@@ -93,7 +99,7 @@ export default function FormateLanding() {
                   key={i}
                   className="flex flex-col items-center w-full max-w-[240px] text-center transition-all duration-300 hover:-translate-y-2"
                 >
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center rounded-full bg-cyan-600 border-2 border-slate-800 shadow-[2px_3px_0px_rgba(30,27,75)]">
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center rounded-full bg-cyan-600 border-2 border-slate-800 shadow-[2px_3px_0px_rgba(29,41,61)]">
                     <div className="text-white text-3xl">
                       {item.icon}
                     </div>
@@ -118,7 +124,7 @@ export default function FormateLanding() {
               {/* Card 1 (lebar besar) */}
               <div className="lg:col-span-6 p-6 rounded-xl border-2 border-slate-800 bg-white transition-all duration-300 hover:-translate-y-2">
                 <div className="w-full h-64 md:h-80 bg-cyan-50 rounded-xl flex items-center justify-center border-2 border-transparent">
-                  <span className="text-gray-400">Image</span>
+                  <Image src={manajemen} alt="Manajemen" className="w-full h-full object-cover" />
                 </div>
                 <h3 className="mt-6 text-2xl font-medium text-slate-800">
                   All-in-One Platform
@@ -131,7 +137,7 @@ export default function FormateLanding() {
               {/* Card 2 (kecil) */}
               <div className="lg:col-span-5 p-6 rounded-xl border-2 border-slate-800 bg-white transition-all duration-300 hover:-translate-y-2">
                 <div className="w-full h-64 md:h-80 bg-cyan-50 rounded-xl flex items-center justify-center border-2 border-transparent">
-                  <span className="text-gray-400">Image</span>
+                  <Image src={payment} alt="Form" className="w-full h-full object-contain" />
                 </div>
                 <h3 className="mt-6 text-2xl font-medium text-slate-800">
                   Payment Gateway
@@ -144,7 +150,7 @@ export default function FormateLanding() {
               {/* Card 3 (kecil) */}
               <div className="lg:col-span-5 p-6 rounded-xl border-2 border-slate-800 bg-white transition-all duration-300 hover:-translate-y-2">
                 <div className="w-full h-64 md:h-80 bg-cyan-50 rounded-xl flex items-center justify-center border-2 border-transparent">
-                  <span className="text-gray-400">Image</span>
+                  <Image src={form} alt="Form" className="w-full h-full object-contain" />
                 </div>
                 <h3 className="mt-6 text-2xl font-medium text-slate-800">
                   Kustomisasi Form
@@ -157,7 +163,7 @@ export default function FormateLanding() {
               {/* Card 4 (lebar besar) */}
               <div className="lg:col-span-6 p-6 rounded-xl border-2 border-slate-800 bg-white transition-all duration-300 hover:-translate-y-2">
                 <div className="w-full h-64 md:h-80 bg-cyan-50 rounded-xl flex items-center justify-center border-2 border-transparent">
-                  <span className="text-gray-400">Image</span>
+                  <Image src={dashboard} alt="Dashboard" className="w-full h-full object-cover" />
                 </div>
                 <h3 className="mt-6 text-2xl font-medium text-slate-800">
                   Dashboard Analitik
@@ -174,8 +180,33 @@ export default function FormateLanding() {
         <section id="cara-kerja" className="py-20 md:py-30 bg-white w-full">
           <div className="max-w-6xl mx-auto px-4 md:px-6 flex flex-col lg:flex-row items-center gap-12 lg:gap-10">
             {/* KIRI - IMAGE */}
-            <div className="w-full lg:w-1/2 h-80 sm:h-[400px] lg:h-[600px] bg-cyan-50 flex items-center justify-center rounded-xl border-2 border-slate-800 shadow-[2px_3px_0px_rgba(30,27,75)]">
-              <span className="text-gray-400">Image</span>
+            <div className="w-full lg:w-1/2 h-full sm:h-[400px] lg:h-[600px] bg-cyan-50 flex items-center justify-center rounded-xl border-2 border-slate-800 shadow-[2px_2px_0px_rgba(29,41,61)]">
+
+              {/* MOCKUP CONTENT */}
+              <div className="w-[90%] h-[90%] rounded-2xl border-2 border-slate-800 bg-white p-4 sm:p-6 shadow-[0px_4px_0px_rgba(29,41,61)]">
+
+                {/* Header */}
+                <div className="justify-center text-center mb-4">
+                  <h1 className="text-xl font-semibold text-cyan-600">Daftar</h1>
+                  <p className="text-xs text-slate-700 mt-1">
+                    Buat akun baru
+                  </p>
+                </div>
+
+                {/* Fake input fields (mock only) */}
+                <div className="flex flex-col justify-center items-center space-y-2">
+
+                  <div className="h-8 w-full rounded bg-slate-100 border border-slate-200" />
+                  <div className="h-8 w-full rounded bg-slate-100 border border-slate-200" />
+                  <div className="h-8 w-full rounded bg-slate-100 border border-slate-200" />
+                  <div className="h-8 w-full rounded bg-slate-100 border border-slate-200" />
+
+                  {/* Button */}
+                  <div className="h-9 w-full rounded bg-yellow-200 border-2 border-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] mt-3" />
+                </div>
+
+              </div>
+
             </div>
 
             {/* KANAN - STEPS SECTION */}
@@ -187,7 +218,7 @@ export default function FormateLanding() {
 
         {/* CTA Section */}
         <section className="relative max-w-6xl w-full py-16 md:py-30 px-4 md:px-6 mx-auto">
-          <div className="relative bg-yellow-200 py-12 md:py-16 rounded-xl border-2 border-slate-800 shadow-[2px_3px_0px_rgba(30,27,75)] px-6 md:px-12 text-center">
+          <div className="relative bg-yellow-200 py-12 md:py-16 rounded-xl border-2 border-slate-800 shadow-[2px_3px_0px_rgba(29,41,61)] px-6 md:px-12 text-center">
             {/* Dekorasi atas kiri */}
             <div className="hidden sm:block absolute top-[-20px] left-[-10px] md:left-[-30px] w-16 h-16 md:w-20 md:h-20">
               <Image src={Figure11} alt="Decor Top Left" className="w-full h-full object-contain" />

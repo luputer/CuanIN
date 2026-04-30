@@ -53,7 +53,7 @@ export default function LoginPage() {
 
             {/* Main Content */}
             <main className="flex flex-1 items-center justify-center px-4 py-12 sm:py-20">
-                <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-6 sm:p-10 shadow-[0px_5px_0px_rgba(30,27,75)]">
+                <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-6 sm:p-10 shadow-[0px_4px_0px_rgba(29,41,61)]">
 
                     {/* Title */}
                     <div className="pb-8 pt-2 text-center">
@@ -143,7 +143,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="mt-4 w-full cursor-pointer rounded-lg border-2 border-slate-800 bg-yellow-200 py-2.5 text-lg font-semibold text-slate-800 shadow-[0px_3px_0px_rgba(30,27,75)] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
+                            className="mt-4 w-full cursor-pointer rounded-lg border-2 border-slate-800 bg-yellow-200 py-2.5 text-lg font-semibold text-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
                         >
                             {isSubmitting ? "Memproses..." : "Login"}
                         </button>

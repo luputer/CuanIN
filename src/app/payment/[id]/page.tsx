@@ -221,11 +221,14 @@ export default function PaymentPage() {
 
                         <span className="flex h-12 w-full items-center justify-center gap-2 rounded-md bg-white px-3 ring-1 ring-slate-200 transition group-hover:ring-cyan-100">
                           {method.icons.map((icon) => (
-                            <img
+                            <Image
                               key={icon}
                               src={icon}
-                              alt=""
-                              className={`max-h-8 max-w-24 object-contain ${method.logoClassName ?? ""}`}
+                              alt={`${method.label} logo`}
+                              width={96}
+                              height={32}
+                              unoptimized
+                              className={`h-auto max-h-8 w-auto max-w-24 object-contain ${method.logoClassName ?? ""}`}
                             />
                           ))}
                         </span>

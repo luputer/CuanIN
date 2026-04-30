@@ -146,7 +146,7 @@ model User {
   accounts      Account[]
   catalog       Catalog?
   products      Product[]
-  role          RoleType  @default(CREATOR)
+  role          RoleType  @default(USER)
   sessions      Session[]
 }
 

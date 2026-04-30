@@ -64,7 +64,7 @@ export default function HeaderKreator() {
                                     {user?.name?.[0] ?? "U"}
                                 </div>
                             )}
-                            <span className="text-sm font-regular text-slate-800 truncate max-w-[120px]">
+                            <span className="text-sm font-regular text-slate-800 truncate max-w-30">
                                 {user?.name ?? "User"}
                             </span>
                         </div>

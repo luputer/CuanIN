@@ -45,7 +45,7 @@ function SidebarItem({
         <div
             className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-all duration-300 ease-out
         ${active
-                    ? "bg-yellow-200 text-slate-800 font-semibold text-base border-1 border-slate-800 shadow-[1px_2px_0px_rgba(30,27,75)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition duration-200 ease-out"
+                    ? "bg-yellow-200 text-slate-800 font-semibold text-base border border-slate-800 shadow-[1px_2px_0px_rgba(30,27,75)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition duration-200 ease-out"
                     : "font-semibold text-base text-slate-800 hover:bg-slate-200"
                 }`}
         >
@@ -62,7 +62,7 @@ export default function DashboardPreview() {
     const pathname = usePathname();
 
     return (
-        <div className="w-full pb-4 pl-2 lg:h-[640px] border-2 border-slate-800 rounded-xl bg-white shadow-[0px_3px_0px_rgba(30,27,75)] overflow-hidden flex">
+        <div className="w-full pb-4 pl-2 lg:h-160 border-2 border-slate-800 rounded-xl bg-white shadow-[0px_3px_0px_rgba(30,27,75)] overflow-hidden flex">
 
             {/* ───────── SIDEBAR (FIXED 1:1) ───────── */}
             <div className="w-52 bg-white border-r border-slate-800 p-4 flex flex-col">

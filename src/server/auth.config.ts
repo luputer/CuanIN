@@ -33,6 +33,8 @@ declare module "next-auth/jwt" {
     }
 }
 
+
+
 // Ini adalah konfigurasi yang aman untuk Edge Runtime (Middleware)
 export const authConfig = {
     session: {
@@ -104,7 +106,7 @@ export const authConfig = {
                 token.isProfileComplete = user.isProfileComplete;
             }
             if (trigger === "update" && session) {
-                return { ...token, ...(session as Partial<JWT>) } as JWT;
+                return { ...token, ...(session as Partial<JWT>) };
             }
             return token;
         },

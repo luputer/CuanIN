@@ -17,6 +17,7 @@ const poppins = Poppins({
   variable: "--font-poppins",
 });
 
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {

@@ -2,7 +2,6 @@ import NextAuth, { type DefaultSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { type Adapter } from "next-auth/adapters";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
@@ -46,7 +45,7 @@ const credentialsSchema = z.object({
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
-    adapter: PrismaAdapter(db) as Adapter,
+    adapter: PrismaAdapter(db),
     providers: [
         GoogleProvider({
             clientId: env.GOOGLE_CLIENT_ID,

@@ -1,7 +1,7 @@
 "use client";
 
 // React
-import { useState, useRef } from "react";
+import React, { useRef } from "react";
 
 // Next.js
 import dynamic from "next/dynamic";
@@ -101,7 +101,7 @@ export default function CreateWebinarPage() {
     };
 
     const handleQuotaAdjust = (amount: number) => {
-        const currentQuota = Number(getValues("quota") || 0);
+        const currentQuota = Number(getValues("quota") ?? 0);
         const newQuota = Math.max(0, currentQuota + amount);
         setValue("quota", newQuota, { shouldValidate: true });
     };
@@ -330,11 +330,11 @@ export default function CreateWebinarPage() {
                         )}
 
                         {/* Platform */}
-                        <FormGroup label="Platform" error={errors.platform?.message || errors.platformCustom?.message}>
+                        <FormGroup label="Platform" error={errors.platform?.message ?? errors.platformCustom?.message}>
                             <div className="space-y-3">
                                 <FormSelect
                                     {...register("platform", {
-                                        onChange: (e) => {
+                                        onChange: (e: React.ChangeEvent<HTMLSelectElement>) => {
                                             if (e.target.value !== "other") {
                                                 setValue("platformCustom", "");
                                             }

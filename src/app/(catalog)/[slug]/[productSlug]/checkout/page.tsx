@@ -114,32 +114,7 @@ export default function CheckoutPage() {
                 return;
             }
 
-            if (!data.invoiceUrl) {
-                toast.error("Gagal mendapatkan link pembayaran");
-                return;
-            }
-
-            // Buka invoice Xendit di popup window
-            const popup = window.open(
-                data.invoiceUrl,
-                "xendit-payment",
-                "width=480,height=700,scrollbars=yes,resizable=yes"
-            );
-
-            if (!popup) {
-                // Kalau popup diblock browser, fallback redirect biasa
-                window.location.href = data.invoiceUrl;
-                return;
-            }
-
-            // Polling cek apakah popup sudah ditutup
-            const timer = setInterval(() => {
-                if (popup.closed) {
-                    clearInterval(timer);
-                    // Cek status pembayaran setelah popup tutup
-                    router.push(`/payment/success?id=${data.purchase.id}`);
-                }
-            }, 1000);
+            router.push(`/payment/${data.purchase.id}`);
         },
         onError: (e) => toast.error(e.message),
     });

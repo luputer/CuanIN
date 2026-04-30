@@ -97,6 +97,7 @@ export const purchasesRouter = createTRPCRouter({
             //     return newPurchase;
             // });
 
+
             const purchase = await ctx.db.$transaction(async (tx) => {
                 const newPurchase = await tx.purchase.create({
                     data: {
@@ -200,6 +201,31 @@ export const purchasesRouter = createTRPCRouter({
                 limit,
                 totalPages: Math.ceil(total / limit),
             };
+        }),
+
+
+    // get Purcase by id
+
+    getById: publicProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const purchase = await ctx.db.purchase.findUnique({
+                where: { id: input.id },
+                include: {
+                    product: {
+                        select: {
+                            name: true,
+                            image: true,
+                            type: true,
+                            price: true,
+                        },
+                    },
+                },
+            });
+
+            if (!purchase) throw new Error("Transaksi tidak ditemukan");
+
+            return purchase;
         }),
 
     // Get single purchase detail with form answers (creator dashboard)

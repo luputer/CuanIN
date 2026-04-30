@@ -359,6 +359,95 @@ export const purchasesRouter = createTRPCRouter({
             };
         }),
 
+    // List all purchases for all products owned by the creator (creator dashboard)
+    getAllForCreator: protectedProcedure
+        .input(
+            z.object({
+                page: z.number().min(1).default(1),
+                limit: z.number().min(1).max(100).default(7),
+                search: z.string().optional(),
+                status: z.string().optional().default("ALL"),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const page = input.page;
+            const limit = input.limit;
+            const skip = (page - 1) * limit;
+
+            // Get all product IDs owned by this creator
+            const products = await ctx.db.product.findMany({
+                where: { userId: ctx.session.user.id },
+                select: { id: true },
+            });
+            const productIds = products.map((p) => p.id);
+
+            if (productIds.length === 0) {
+                return {
+                    items: [],
+                    total: 0,
+                    page,
+                    limit,
+                    totalPages: 0,
+                    stats: {
+                        totalIncome: 0,
+                        totalTransactions: 0,
+                        balance: 0,
+                    },
+                };
+            }
+
+            const where = {
+                productId: { in: productIds },
+                ...(input.search
+                    ? {
+                        OR: [
+                            { buyerName: { contains: input.search, mode: "insensitive" as const } },
+                            { product: { name: { contains: input.search, mode: "insensitive" as const } } },
+                            { id: { contains: input.search, mode: "insensitive" as const } },
+                        ],
+                    }
+                    : {}),
+                ...(input.status && input.status !== "ALL" ? { status: input.status } : {}),
+            };
+
+            const [items, total, allCompletedPurchases] = await Promise.all([
+                ctx.db.purchase.findMany({
+                    where,
+                    include: {
+                        product: {
+                            select: { name: true },
+                        },
+                    },
+                    orderBy: { createdAt: "desc" },
+                    skip,
+                    take: limit,
+                }),
+                ctx.db.purchase.count({ where }),
+                ctx.db.purchase.findMany({
+                    where: {
+                        productId: { in: productIds },
+                        status: "completed",
+                    },
+                    select: { amount: true },
+                }),
+            ]);
+
+            const totalIncome = allCompletedPurchases.reduce((acc, p) => acc + Number(p.amount), 0);
+
+            return {
+                items,
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+                stats: {
+                    totalIncome,
+                    totalTransactions: allCompletedPurchases.length,
+                    balance: totalIncome, // Simplified for now
+                },
+            };
+        }),
+
     // Delete single purchase (creator dashboard)
     delete: protectedProcedure
         .input(z.object({ id: z.string() }))

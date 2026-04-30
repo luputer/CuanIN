@@ -58,7 +58,7 @@ export default function UserPage() {
 				{/* Header */}
 				<div className="bg-slate-50">
 					<div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
-						<div className="text-2xl font-semibold mb-2 text-blue-600">Daftar User</div>
+						<div className="text-2xl font-semibold mb-2 text-cyan-600">Daftar User</div>
 						<div className="text-sm font-regular text-slate-600">Pantau semua user yang membeli produkmu.</div>
 					</div>
 				</div>

@@ -131,23 +131,24 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String       @id @default(cuid())
   name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified_at")
+  email         String?      @unique
+  emailVerified DateTime?    @map("email_verified_at")
   image         String?
   password      String?
-  status        String    @default("active")
-  statusPayment String    @default("free")
-  googleId      String?   @map("google_id")
-  phoneNumber   String?   @map("phone_number")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  status        String       @default("active")
+  statusPayment String       @default("free")
+  googleId      String?      @map("google_id")
+  phoneNumber   String?      @map("phone_number")
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
   accounts      Account[]
   catalog       Catalog?
   products      Product[]
-  role          RoleType  @default(USER)
+  role          RoleType     @default(USER)
   sessions      Session[]
+  withdrawals   Withdrawal[]
 }
 
 model VerificationToken {
@@ -168,6 +169,29 @@ model Catalog {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Withdrawal {
+  id                String           @id @default(uuid())
+  userId            String
+  amount            Decimal
+  bankCode          String
+  bankName          String
+  accountNumber     String
+  accountHolderName String
+  email             String
+  status            WithdrawalStatus @default(PENDING)
+  referenceId       String           @unique
+  xenditPayoutId    String?
+  failureCode       String?
+  failureMessage    String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([xenditPayoutId])
+}
+
 enum ProductType {
   WEBINAR
   DIGITAL_PRODUCT
@@ -186,4 +210,14 @@ enum FieldType {
   MULTIPLE_CHOICE
   CHECKBOX
   DROPDOWN
+}
+
+enum WithdrawalStatus {
+  PENDING
+  ACCEPTED
+  REQUESTED
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  REVERSED
 }

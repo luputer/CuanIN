@@ -250,6 +250,24 @@ exports.Prisma.CatalogScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.WithdrawalScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  amount: 'amount',
+  bankCode: 'bankCode',
+  bankName: 'bankName',
+  accountNumber: 'accountNumber',
+  accountHolderName: 'accountHolderName',
+  email: 'email',
+  status: 'status',
+  referenceId: 'referenceId',
+  xenditPayoutId: 'xenditPayoutId',
+  failureCode: 'failureCode',
+  failureMessage: 'failureMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -295,6 +313,16 @@ exports.RoleType = exports.$Enums.RoleType = {
   USER: 'USER'
 };
 
+exports.WithdrawalStatus = exports.$Enums.WithdrawalStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REQUESTED: 'REQUESTED',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED',
+  REVERSED: 'REVERSED'
+};
+
 exports.Prisma.ModelName = {
   Post: 'Post',
   Profile: 'Profile',
@@ -306,7 +334,8 @@ exports.Prisma.ModelName = {
   Session: 'Session',
   User: 'User',
   VerificationToken: 'VerificationToken',
-  Catalog: 'Catalog'
+  Catalog: 'Catalog',
+  Withdrawal: 'Withdrawal'
 };
 
 /**

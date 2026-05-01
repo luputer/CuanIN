@@ -523,30 +523,42 @@ export const purchasesRouter = createTRPCRouter({
           : {}),
       };
 
-      const [items, total, allCompletedPurchases] = await Promise.all([
-        ctx.db.purchase.findMany({
-          where,
-          include: {
-            product: {
-              select: { name: true },
+      const [items, total, allCompletedPurchases, activeWithdrawals] =
+        await Promise.all([
+          ctx.db.purchase.findMany({
+            where,
+            include: {
+              product: {
+                select: { name: true },
+              },
             },
-          },
-          orderBy: { createdAt: "desc" },
-          skip,
-          take: limit,
-        }),
-        ctx.db.purchase.count({ where }),
-        ctx.db.purchase.findMany({
-          where: {
-            productId: { in: productIds },
-            status: "completed",
-          },
-          select: { amount: true },
-        }),
-      ]);
+            orderBy: { createdAt: "desc" },
+            skip,
+            take: limit,
+          }),
+          ctx.db.purchase.count({ where }),
+          ctx.db.purchase.findMany({
+            where: {
+              productId: { in: productIds },
+              status: "completed",
+            },
+            select: { amount: true },
+          }),
+          ctx.db.withdrawal.findMany({
+            where: {
+              userId: ctx.session.user.id,
+              status: { in: ["PENDING", "ACCEPTED", "REQUESTED", "SUCCEEDED"] },
+            },
+            select: { amount: true },
+          }),
+        ]);
 
       const totalIncome = allCompletedPurchases.reduce(
         (acc, p) => acc + Number(p.amount),
+        0,
+      );
+      const totalWithdrawn = activeWithdrawals.reduce(
+        (acc, withdrawal) => acc + Number(withdrawal.amount),
         0,
       );
 
@@ -559,7 +571,7 @@ export const purchasesRouter = createTRPCRouter({
         stats: {
           totalIncome,
           totalTransactions: allCompletedPurchases.length,
-          balance: totalIncome, // Simplified for now
+          balance: Math.max(totalIncome - totalWithdrawn, 0),
         },
       };
     }),

@@ -4,21 +4,82 @@ import { sendProductEmail } from "~/lib/nodemailer";
 import { env } from "~/env";
 
 export async function POST(req: NextRequest) {
-  // Verifikasi token dari Xendit
   const token = req.headers.get("x-callback-token");
   if (token !== env.XENDIT_WEBHOOK_TOKEN) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   const body = (await req.json()) as {
-    external_id: string;
-    status: string;
+    event?: string;
+    data?: {
+      id: string;
+      reference_id: string;
+      status: string;
+      failure_code?: string;
+    };
+    external_id?: string;
+    status?: string;
     payment_method?: string;
     id: string;
   };
 
+  // ───────────────────────────────────────────
+  // Payouts v2 webhook
+  // ───────────────────────────────────────────
+  if (body.event?.startsWith("payout.") && body.data) {
+    const payout = body.data;
+
+    const status =
+      payout.status === "SUCCEEDED"
+        ? "SUCCEEDED"
+        : payout.status === "FAILED"
+          ? "FAILED"
+          : payout.status === "REVERSED"
+            ? "REVERSED"
+            : payout.status === "REQUESTED"
+              ? "REQUESTED"
+              : "ACCEPTED";
+
+    const withdrawal = await db.withdrawal.findFirst({
+      where: {
+        OR: [
+          { referenceId: payout.reference_id },
+          { xenditPayoutId: payout.id },
+        ],
+      },
+    });
+
+    if (!withdrawal) {
+      return NextResponse.json(
+        { message: "Withdrawal not found" },
+        { status: 404 },
+      );
+    }
+
+    await db.withdrawal.update({
+      where: { id: withdrawal.id },
+      data: {
+        status,
+        xenditPayoutId: payout.id,
+        failureCode: payout.failure_code ?? null,
+      },
+    });
+
+    return NextResponse.json({ message: "OK" });
+  }
+
+  // ───────────────────────────────────────────
+  // Payment / Invoice webhook
+  // ───────────────────────────────────────────
   if (body.status !== "PAID") {
     return NextResponse.json({ message: "Ignored" });
+  }
+
+  if (!body.external_id) {
+    return NextResponse.json(
+      { message: "Missing external_id" },
+      { status: 400 },
+    );
   }
 
   const purchaseId = body.external_id.split("__")[0] ?? body.external_id;
@@ -37,7 +98,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Update status purchase
   await db.purchase.update({
     where: { id: purchase.id },
     data: {
@@ -50,7 +110,6 @@ export async function POST(req: NextRequest) {
   let emailSent = false;
   let emailError: unknown = null;
 
-  // Kirim email produk ke buyer
   if (purchase.product.link) {
     const emailResult = await sendProductEmail({
       buyerEmail: purchase.buyerEmail,

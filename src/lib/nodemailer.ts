@@ -52,3 +52,69 @@ export const sendProductEmail = async ({
         return { success: false, error };
     }
 };
+
+type SendWithdrawalEmailParams = {
+  email: string;
+  amount: number;
+  bankName: string;
+  accountNumber: string;
+  accountHolderName: string;
+};
+
+export const sendWithdrawalEmail = async ({
+  email,
+  amount,
+  bankName,
+  accountNumber,
+  accountHolderName,
+}: SendWithdrawalEmailParams) => {
+  const formattedAmount = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(amount);
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
+      to: email,
+      subject: `Penarikan Saldo Berhasil – ${formattedAmount}`,
+      text: `Penarikan saldo sebesar ${formattedAmount} ke rekening ${bankName} ${accountNumber} atas nama ${accountHolderName} telah berhasil diproses.`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; color: #333; line-height: 1.6;">
+          <h2 style="color: #0f172a;">Penarikan Saldo Berhasil ✅</h2>
+          <p>Halo <strong>${accountHolderName}</strong>,</p>
+          <p>Penarikan saldo kamu telah berhasil diproses. Berikut detailnya:</p>
+          <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 8px 0; color: #64748b; width: 140px;">Jumlah</td>
+                <td style="padding: 8px 0; font-weight: bold; color: #16a34a;">${formattedAmount}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #64748b;">Bank</td>
+                <td style="padding: 8px 0;">${bankName}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #64748b;">No. Rekening</td>
+                <td style="padding: 8px 0;">${accountNumber}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #64748b;">Atas Nama</td>
+                <td style="padding: 8px 0;">${accountHolderName}</td>
+              </tr>
+            </table>
+          </div>
+          <p>Dana akan masuk ke rekening kamu sesuai jam operasional bank.</p>
+          <p>Jika ada pertanyaan, balas email ini ya.</p>
+          <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
+          <p style="font-size: 12px; color: #64748b; text-align: center;">© ${new Date().getFullYear()} CuanIN. All rights reserved.</p>
+        </div>
+      `,
+    });
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("Error sending withdrawal email:", error);
+    return { success: false, error };
+  }
+};

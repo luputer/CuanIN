@@ -141,7 +141,7 @@ export default function KelasOnlinePage() {
 			<div className="space-y-6">
 				{/* Header */}
 				<div className="bg-slate-50">
-					<div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
+					<div className="sticky top-18.5 bg-slate-50 z-40 -mx-4 px-4 mb-2">
 						<div className="text-2xl font-semibold mb-2 text-cyan-600">Kelas Online</div>
 						<div className="text-sm font-regular text-slate-600">Pantau semua kelas online yang kamu kelola.</div>
 					</div>
@@ -162,7 +162,7 @@ export default function KelasOnlinePage() {
 							<DropdownMenuTrigger asChild>
 								<ButtonFilter label={`Tipe: ${priceTypeFilter === "ALL" ? "Semua" : priceTypeFilter === "FREE" ? "Gratis" : "Berbayar"}`} />
 							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end" className="w-[160px]">
+							<DropdownMenuContent align="end" className="w-40">
 								<DropdownMenuRadioGroup value={priceTypeFilter} onValueChange={(v) => setPriceTypeFilter(v as "ALL" | "FREE" | "PAID")}>
 									<DropdownMenuRadioItem value="ALL">Semua Tipe</DropdownMenuRadioItem>
 									<DropdownMenuRadioItem value="FREE">Gratis</DropdownMenuRadioItem>
@@ -175,7 +175,7 @@ export default function KelasOnlinePage() {
 							<DropdownMenuTrigger asChild>
 								<ButtonFilter label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "published" ? "Published" : statusFilter === "unpublished" ? "Unpublished" : "Selesai"}`} />
 							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end" className="w-[160px]">
+							<DropdownMenuContent align="end" className="w-40">
 								<DropdownMenuRadioGroup value={statusFilter} onValueChange={setStatusFilter}>
 									<DropdownMenuRadioItem value="ALL">Semua Status</DropdownMenuRadioItem>
 									<DropdownMenuRadioItem value="published">Published</DropdownMenuRadioItem>
@@ -285,7 +285,7 @@ export default function KelasOnlinePage() {
 											</TableCell>
 
 											<TableCell className="whitespace-nowrap">
-												<div className="flex items-center min-h-[48px]">
+												<div className="flex items-center min-h-12">
 													<Link href={`/kelas/${item.id}`} className="hover:text-cyan-600 transition-colors">
 														{item.name}
 													</Link>
@@ -312,19 +312,19 @@ export default function KelasOnlinePage() {
 											</TableCell>
 
 											<TableCell className="whitespace-nowrap">
-												<div className="flex items-center min-h-[48px]">
+												<div className="flex items-center min-h-12">
 													{priceNum > 0 ? "Berbayar" : "Gratis"}
 												</div>
 											</TableCell>
 
 											<TableCell className="whitespace-nowrap">
-												<div className="flex items-center min-h-[48px]">
+												<div className="flex items-center min-h-12">
 													{priceNum === 0 ? "Rp 0" : `Rp ${priceNum.toLocaleString("id-ID")}`}
 												</div>
 											</TableCell>
 
 											<TableCell className="whitespace-nowrap">
-												<div className="flex items-center gap-3 min-h-[48px]">
+												<div className="flex items-center gap-3 min-h-12">
 													<span>{buyerCounts?.[item.id] ?? 0}</span>
 													<button
 														onClick={() => router.push(`/kelas/${item.id}?tab=user`)}
@@ -336,7 +336,7 @@ export default function KelasOnlinePage() {
 											</TableCell>
 
 											<TableCell className="whitespace-nowrap">
-												<div className="flex items-center min-h-[48px]">
+												<div className="flex items-center min-h-12">
 													<span className={`px-4 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.status)}`}>
 														{getStatusLabel(item.status)}
 													</span>
@@ -348,7 +348,7 @@ export default function KelasOnlinePage() {
 													<Tooltip>
 														<TooltipTrigger asChild>
 															<button onClick={() => router.push(`/kelas/${item.id}`)}>
-																<EyeIcon className="w-[24px] h-[24px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
+																<EyeIcon className="w-6 h-6 text-cyan-600 cursor-pointer hover:text-cyan-700" />
 															</button>
 														</TooltipTrigger>
 														<TooltipContent>Lihat Detail</TooltipContent>
@@ -357,7 +357,7 @@ export default function KelasOnlinePage() {
 													<Tooltip>
 														<TooltipTrigger asChild>
 															<button onClick={() => setDeleteId(item.id)}>
-																<TrashIcon className="w-[24px] h-[24px] text-red-600 cursor-pointer hover:text-red-700" />
+																<TrashIcon className="w-6 h-6 text-red-600 cursor-pointer hover:text-red-700" />
 															</button>
 														</TooltipTrigger>
 														<TooltipContent>Hapus Kelas</TooltipContent>
@@ -366,7 +366,7 @@ export default function KelasOnlinePage() {
 													<Tooltip>
 														<TooltipTrigger asChild>
 															<button onClick={() => handleCopyLink(item.id, item.slug ?? null)}>
-																<CopyIcon className="w-[24px] h-[24px] text-yellow-500 cursor-pointer hover:text-yellow-600" />
+																<CopyIcon className="w-6 h-6 text-yellow-500 cursor-pointer hover:text-yellow-600" />
 															</button>
 														</TooltipTrigger>
 														<TooltipContent>Salin Link Kelas</TooltipContent>

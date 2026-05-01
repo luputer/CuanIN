@@ -105,7 +105,7 @@ function SortableFieldItem({
         {...listeners}
         className="cursor-grab rounded p-1 text-blue-300 hover:bg-slate-100 active:cursor-grabbing"
       >
-        <DotsSixVerticalIcon className="h-[24px] w-[24px] text-slate-400" />
+        <DotsSixVerticalIcon className="h-6 w-6 text-slate-400" />
       </div>
 
       <div className="flex-1 space-y-4">
@@ -144,7 +144,7 @@ function SortableFieldItem({
               onClick={() => removeField(field.id)}
               className="cursor-pointer p-1 text-red-500 hover:text-red-700"
             >
-              <TrashIcon className="h-[20px] w-[20px]" />
+              <TrashIcon className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -203,7 +203,7 @@ function SortableFieldItem({
                 updateField(field.id, { required: e.target.checked })
               }
             />
-            <div className="peer h-6 w-11 rounded-full bg-slate-200 peer-checked:bg-[#00B4D8] after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
+            <div className="peer h-6 w-11 rounded-full bg-slate-200 peer-checked:bg-[#00B4D8] after:absolute after:top-0.5 after:left-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
             <span className="ml-2 text-[15px] font-medium text-slate-600">
               Wajib diisi
             </span>
@@ -408,7 +408,7 @@ export function FormCustomizer({ productId }: { productId: string }) {
     return (
       <div className="animate-pulse rounded-b-xl border border-slate-200 bg-[#f0f9fa] p-4 md:p-6">
         <Skeleton className="mb-2 h-6 w-48" />
-        <div className="mb-6 h-[2px] w-full bg-[#00B4D8] opacity-20"></div>
+        <div className="mb-6 h-0.5 w-full bg-[#00B4D8] opacity-20"></div>
 
         <div className="mb-6 space-y-4">
           {[1, 2].map((i) => (
@@ -416,7 +416,7 @@ export function FormCustomizer({ productId }: { productId: string }) {
               key={i}
               className="flex gap-4 rounded-lg border border-slate-200 bg-white p-5"
             >
-              <Skeleton className="mt-6 h-[18px] w-[18px]" />
+              <Skeleton className="mt-6 h-4.5 w-4.5" />
 
               <div className="flex-1 space-y-4">
                 <div className="flex flex-col justify-between gap-4 border-b border-slate-100 pb-4 md:flex-row md:items-center">

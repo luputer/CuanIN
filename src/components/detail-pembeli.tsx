@@ -32,8 +32,8 @@ export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBa
                         <div className="space-y-4">
                             {[1, 2, 3].map((i) => (
                                 <div key={i} className="flex flex-col md:flex-row gap-10">
-                                    <Skeleton className="h-5 w-[200px]" />
-                                    <Skeleton className="flex-1 h-[52px] rounded-lg" />
+                                    <Skeleton className="h-5 w-50" />
+                                    <Skeleton className="flex-1 h-13 rounded-lg" />
                                 </div>
                             ))}
                         </div>
@@ -104,7 +104,7 @@ export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBa
                                 {purchase.answers.map((answer) => (
                                     <FormGroup key={answer.id} label={answer.formField.label} align={answer.answer.length > 50 ? "start" : "center"}>
                                         {answer.answer.length > 50 ? (
-                                            <FormTextarea value={answer.answer} readOnly className="bg-slate-50 cursor-default min-h-[100px]" />
+                                            <FormTextarea value={answer.answer} readOnly className="bg-slate-50 cursor-default min-h-25" />
                                         ) : (
                                             <FormInput value={answer.answer} readOnly className="bg-slate-50 cursor-default" />
                                         )}

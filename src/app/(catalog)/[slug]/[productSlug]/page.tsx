@@ -104,6 +104,7 @@ export default function ProductDetailPage() {
       <div className="sticky top-0 z-10 border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
           <Link
+          
             href={`/${slug}`}
             className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-slate-100"
           >
@@ -220,7 +221,7 @@ export default function ProductDetailPage() {
           {/* ───── RIGHT SIDEBAR ───── */}
           <div className="flex flex-col gap-6 lg:col-span-2">
             {/* IMAGE (TOP SIDEBAR) */}
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-slate-300 bg-slate-100 shadow-sm lg:aspect-square lg:max-h-[380px]">
+            <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-slate-300 bg-slate-100 shadow-sm lg:aspect-square lg:max-h-95">
               {product.image ? (
                 <Image
                   src={product.image}
@@ -230,7 +231,7 @@ export default function ProductDetailPage() {
                   className="object-cover"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-slate-400">
+                <div className="flex h-full w-full items-center justify-Wcenter text-slate-400">
                   No Image
                 </div>
               )}
@@ -238,7 +239,7 @@ export default function ProductDetailPage() {
 
             {/* CTA (BOTTOM IMAGE) */}
             <div className="rounded-2xl border border-slate-300 bg-white p-6 shadow-sm">
-              <h3 className="mb-3 text-sm font-medium break-words text-slate-600">
+              <h3 className="mb-3 text-sm font-medium wrap-break-word text-slate-600">
                 {product.name}
               </h3>
 
@@ -253,7 +254,7 @@ export default function ProductDetailPage() {
                         className="h-5 w-5 shrink-0 text-green-600"
                         weight="fill"
                       />
-                      <span className="min-w-0 break-words">{item}</span>
+                      <span className="min-w-0 wrap-break-word">{item}</span>
                     </div>
                   ))
                 ) : (

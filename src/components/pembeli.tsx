@@ -105,7 +105,7 @@ export default function Pembeli({ productId }: { productId: string }) {
                         <DropdownMenuTrigger asChild>
                             <ButtonFilter label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "completed" ? "Sudah Bayar" : statusFilter === "pending" ? "Pending" : statusFilter}`} />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-[160px]">
+                        <DropdownMenuContent align="end" className="w-40">
                             <DropdownMenuRadioGroup value={statusFilter} onValueChange={setStatusFilter}>
                                 <DropdownMenuRadioItem value="ALL">Semua Status</DropdownMenuRadioItem>
                                 <DropdownMenuRadioItem value="completed">Sudah Bayar</DropdownMenuRadioItem>
@@ -144,7 +144,7 @@ export default function Pembeli({ productId }: { productId: string }) {
                         {isLoading ? (
                             Array.from({ length: 5 }).map((_, i) => (
                                 <TableRow data-type="body" key={i}>
-                                    <TableCell className="text-center h-[80px]">
+                                    <TableCell className="text-center h-20">
                                         <Skeleton className="h-4 w-4 mx-auto" />
                                     </TableCell>
                                     <TableCell>
@@ -160,11 +160,11 @@ export default function Pembeli({ productId }: { productId: string }) {
                                         <Skeleton className="h-4 w-28" />
                                     </TableCell>
                                     <TableCell>
-                                        <Skeleton className="h-[26px] w-[90px] rounded-full" />
+                                        <Skeleton className="h-6.5 w-22.5 rounded-full" />
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex items-center gap-3">
-                                            <Skeleton className="h-[24px] w-[24px] rounded-md" />
+                                            <Skeleton className="h-6 w-6 rounded-md" />
                                         </div>
                                     </TableCell>
                                 </TableRow>
@@ -192,32 +192,32 @@ export default function Pembeli({ productId }: { productId: string }) {
                                                 }}
                                                 className="hover:text-cyan-600 transition-colors"
                                             >
-                                                <div className="flex items-center min-h-[48px]">
+                                                <div className="flex items-center min-h-12">
                                                     {item.buyerName}
                                                 </div>
                                             </button>
                                         </TableCell>
 
                                         <TableCell className="whitespace-nowrap">
-                                            <div className="flex items-center min-h-[48px]">
+                                            <div className="flex items-center min-h-12">
                                                 {item.buyerEmail}
                                             </div>
                                         </TableCell>
 
                                         <TableCell className="whitespace-nowrap">
-                                            <div className="flex items-center min-h-[48px]">
+                                            <div className="flex items-center min-h-12">
                                                 {item.buyerPhone}
                                             </div>
                                         </TableCell>
 
                                         <TableCell className="whitespace-nowrap">
-                                            <div className="flex items-center min-h-[48px]">
+                                            <div className="flex items-center min-h-12">
                                                 {format(new Date(item.createdAt), "d MMM yyyy", { locale: idLocale })}
                                             </div>
                                         </TableCell>
 
                                         <TableCell className="whitespace-nowrap">
-                                            <div className="flex items-center min-h-[48px]">
+                                            <div className="flex items-center min-h-12">
                                                 <span className={`px-4 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.status)}`}>
                                                     {getStatusLabel(item.status)}
                                                 </span>
@@ -233,7 +233,7 @@ export default function Pembeli({ productId }: { productId: string }) {
                                                             setSelectedPurchaseId(item.id);
                                                             setView("detail");
                                                         }}>
-                                                            <EyeIcon className="w-[24px] h-[24px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
+                                                            <EyeIcon className="w-6 h-6 text-cyan-600 cursor-pointer hover:text-cyan-700" />
                                                         </button>
                                                     </TooltipTrigger>
                                                     <TooltipContent>Detail</TooltipContent>

@@ -47,14 +47,29 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  let emailSent = false;
+  let emailError: unknown = null;
+
   // Kirim email produk ke buyer
   if (purchase.product.link) {
-    void sendProductEmail({
+    const emailResult = await sendProductEmail({
       buyerEmail: purchase.buyerEmail,
       productName: purchase.product.name,
       productLink: purchase.product.link,
     });
+
+    emailSent = emailResult.success;
+    emailError = emailResult.success ? null : emailResult.error;
+  } else {
+    console.warn("Product access email skipped: product link is empty", {
+      purchaseId: purchase.id,
+      productName: purchase.product.name,
+    });
   }
 
-  return NextResponse.json({ message: "OK" });
+  return NextResponse.json({
+    message: "OK",
+    emailSent,
+    emailError: emailError ? "Failed to send email" : null,
+  });
 }

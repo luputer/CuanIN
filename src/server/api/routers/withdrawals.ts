@@ -23,7 +23,10 @@ const WITHDRAWAL_DEDUCTING_STATUSES = [
   WithdrawalStatus.SUCCEEDED,
 ];
 
-async function getCreatorBalance(db: PrismaClient, userId: string) {
+async function getCreatorBalance(
+  db: PrismaClient | Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, 
+  userId: string
+) {
   const products = await db.product.findMany({
     where: { userId },
     select: { id: true },
@@ -78,43 +81,48 @@ export const withdrawalsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const balance = await getCreatorBalance(ctx.db, ctx.session.user.id);
+      const withdrawal = await ctx.db.$transaction(async (tx) => {
+        const balance = await getCreatorBalance(tx, ctx.session.user.id);
 
-      if (input.amount > balance.balance) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Jumlah penarikan melebihi saldo tersedia.",
+        if (input.amount > balance.balance) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Jumlah penarikan melebihi saldo tersedia.",
+          });
+        }
+
+        const bank = BANK_OPTIONS[input.bank];
+        
+        return await tx.withdrawal.create({
+          data: {
+            userId: ctx.session.user.id,
+            amount: input.amount,
+            bankCode: bank.channelCode,
+            bankName: bank.name,
+            accountNumber: input.accountNumber,
+            accountHolderName: input.accountHolderName,
+            email: input.email,
+            referenceId: "TEMP-" + ctx.session.user.id.slice(0, 5) + "-" + Date.now().toString(),
+          },
         });
-      }
-
-      const bank = BANK_OPTIONS[input.bank];
-      const withdrawal = await ctx.db.withdrawal.create({
-        data: {
-          userId: ctx.session.user.id,
-          amount: input.amount,
-          bankCode: bank.channelCode,
-          bankName: bank.name,
-          accountNumber: input.accountNumber,
-          accountHolderName: input.accountHolderName,
-          email: input.email,
-          referenceId: `withdraw_${ctx.session.user.id}_${Date.now()}`,
-        },
       });
 
       try {
+        const bank = BANK_OPTIONS[input.bank];
         const payout = await createXenditPayout({
-          referenceId: withdrawal.referenceId,
+          referenceId: withdrawal.id, 
           amount: input.amount,
           channelCode: bank.channelCode,
           accountNumber: input.accountNumber,
           accountHolderName: input.accountHolderName,
-          description: `Penarikan saldo CuanIN ${bank.name}`,
+          description: "Penarikan saldo CuanIN " + bank.name + " - " + withdrawal.id,
         });
 
         return await ctx.db.withdrawal.update({
           where: { id: withdrawal.id },
           data: {
             xenditPayoutId: payout.id,
+            referenceId: withdrawal.id,
             status: payout.status === "REQUESTED" ? "REQUESTED" : "ACCEPTED",
             failureCode: payout.failure_code,
           },

@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { db } from "~/server/db";
-import { sendProductEmail } from "~/lib/nodemailer";
+import { sendProductEmail, sendWithdrawalEmail } from "~/lib/nodemailer";
 import { env } from "~/env";
 
 export async function POST(req: NextRequest) {
@@ -23,9 +23,7 @@ export async function POST(req: NextRequest) {
     id: string;
   };
 
-  // ───────────────────────────────────────────
   // Payouts v2 webhook
-  // ───────────────────────────────────────────
   if (body.event?.startsWith("payout.") && body.data) {
     const payout = body.data;
 
@@ -50,11 +48,14 @@ export async function POST(req: NextRequest) {
     });
 
     if (!withdrawal) {
+      console.error("Withdrawal not found");
       return NextResponse.json(
         { message: "Withdrawal not found" },
         { status: 404 },
       );
     }
+
+    const previousStatus = withdrawal.status;
 
     await db.withdrawal.update({
       where: { id: withdrawal.id },
@@ -65,12 +66,27 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // Kirim email jika status baru SUCCEEDED dan sebelumnya belum SUCCEEDED
+    if (status === "SUCCEEDED" && previousStatus !== "SUCCEEDED") {
+      console.log("Sending withdrawal email to", withdrawal.email);
+      try {
+        const emailResult = await sendWithdrawalEmail({
+          email: withdrawal.email,
+          amount: Number(withdrawal.amount),
+          bankName: withdrawal.bankName,
+          accountNumber: withdrawal.accountNumber,
+          accountHolderName: withdrawal.accountHolderName,
+        });
+        console.log("Email result:", emailResult);
+      } catch (err) {
+        console.error("Failed to send email inside webhook:", err);
+      }
+    }
+
     return NextResponse.json({ message: "OK" });
   }
 
-  // ───────────────────────────────────────────
   // Payment / Invoice webhook
-  // ───────────────────────────────────────────
   if (body.status !== "PAID") {
     return NextResponse.json({ message: "Ignored" });
   }
@@ -119,11 +135,6 @@ export async function POST(req: NextRequest) {
 
     emailSent = emailResult.success;
     emailError = emailResult.success ? null : emailResult.error;
-  } else {
-    console.warn("Product access email skipped: product link is empty", {
-      purchaseId: purchase.id,
-      productName: purchase.product.name,
-    });
   }
 
   return NextResponse.json({

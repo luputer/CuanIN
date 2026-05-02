@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createPayout as createXenditPayout } from "~/lib/xendit";
+import { createPayout as createXenditPayout, simulatePayoutSuccess } from "~/lib/xendit";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import {
   WithdrawalStatus,
@@ -24,8 +24,8 @@ const WITHDRAWAL_DEDUCTING_STATUSES = [
 ];
 
 async function getCreatorBalance(
-  db: PrismaClient | Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, 
-  userId: string
+  db: PrismaClient | Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">,
+  userId: string,
 ) {
   const products = await db.product.findMany({
     where: { userId },
@@ -92,7 +92,7 @@ export const withdrawalsRouter = createTRPCRouter({
         }
 
         const bank = BANK_OPTIONS[input.bank];
-        
+
         return await tx.withdrawal.create({
           data: {
             userId: ctx.session.user.id,
@@ -110,7 +110,7 @@ export const withdrawalsRouter = createTRPCRouter({
       try {
         const bank = BANK_OPTIONS[input.bank];
         const payout = await createXenditPayout({
-          referenceId: withdrawal.id, 
+          referenceId: withdrawal.id,
           amount: input.amount,
           channelCode: bank.channelCode,
           accountNumber: input.accountNumber,
@@ -118,7 +118,7 @@ export const withdrawalsRouter = createTRPCRouter({
           description: "Penarikan saldo CuanIN " + bank.name + " - " + withdrawal.id,
         });
 
-        return await ctx.db.withdrawal.update({
+        const updated = await ctx.db.withdrawal.update({
           where: { id: withdrawal.id },
           data: {
             xenditPayoutId: payout.id,
@@ -127,6 +127,17 @@ export const withdrawalsRouter = createTRPCRouter({
             failureCode: payout.failure_code,
           },
         });
+
+        // Auto-simulate di sandbox — matikan saat production
+        if (process.env.ENABLE_PAYOUT_SIMULATE === "true") {
+          setTimeout(() => {
+            void simulatePayoutSuccess(payout.id).catch((err) =>
+              console.error("❌ Simulate payout error:", err),
+            );
+          }, 3000);
+        }
+
+        return updated;
       } catch (error) {
         await ctx.db.withdrawal.update({
           where: { id: withdrawal.id },

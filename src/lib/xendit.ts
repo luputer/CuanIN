@@ -1,7 +1,6 @@
 import { env } from "~/env";
 
 const XENDIT_BASE_URL = "https://api.xendit.co";
-
 const headers = {
   "Content-Type": "application/json",
   Authorization: `Basic ${Buffer.from(env.XENDIT_SECRET_KEY + ":").toString("base64")}`,
@@ -99,4 +98,21 @@ export async function createPayout(
   }
 
   return res.json() as Promise<XenditPayout>;
+}
+
+export async function simulatePayoutSuccess(payoutId: string): Promise<void> {
+  const res = await fetch(
+    `${XENDIT_BASE_URL}/payouts/${payoutId}/simulate_payment`,
+    {
+      method: "POST",
+      headers,
+    },
+  );
+
+  if (!res.ok) {
+    const err = (await res.json()) as { message?: string };
+    throw new Error(err.message ?? "Gagal simulate payout");
+  }
+
+  console.log("✅ Simulate payout success:", payoutId);
 }

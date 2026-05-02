@@ -38,17 +38,20 @@ export async function POST(req: NextRequest) {
               ? "REQUESTED"
               : "ACCEPTED";
 
+    // CARI DATA DENGAN LEBIH TELITI:
+    // Kita cek ke id (PK), referenceId, atau xenditPayoutId
     const withdrawal = await db.withdrawal.findFirst({
       where: {
         OR: [
-          { referenceId: payout.reference_id },
-          { xenditPayoutId: payout.id },
+          { id: payout.reference_id }, // Cek jika reference_id adalah Primary Key (UUID)
+          { referenceId: payout.reference_id }, // Cek jika reference_id adalah string custom
+          { xenditPayoutId: payout.id }, // Cek berdasarkan ID dari Xendit
         ],
       },
     });
 
     if (!withdrawal) {
-      console.error("Withdrawal not found");
+      console.error("[Webhook Xendit] Withdrawal not found for reference_id:", payout.reference_id);
       return NextResponse.json(
         { message: "Withdrawal not found" },
         { status: 404 },
@@ -62,24 +65,24 @@ export async function POST(req: NextRequest) {
       data: {
         status,
         xenditPayoutId: payout.id,
+        // Jika kita berhasil menemukan berdasarkan ID, sinkronkan referenceId-nya juga
+        referenceId: withdrawal.id === payout.reference_id ? withdrawal.id : withdrawal.referenceId,
         failureCode: payout.failure_code ?? null,
       },
     });
 
     // Kirim email jika status baru SUCCEEDED dan sebelumnya belum SUCCEEDED
     if (status === "SUCCEEDED" && previousStatus !== "SUCCEEDED") {
-      console.log("Sending withdrawal email to", withdrawal.email);
       try {
-        const emailResult = await sendWithdrawalEmail({
+        await sendWithdrawalEmail({
           email: withdrawal.email,
           amount: Number(withdrawal.amount),
           bankName: withdrawal.bankName,
           accountNumber: withdrawal.accountNumber,
           accountHolderName: withdrawal.accountHolderName,
         });
-        console.log("Email result:", emailResult);
       } catch (err) {
-        console.error("Failed to send email inside webhook:", err);
+        console.error("Failed to send withdrawal email:", err);
       }
     }
 
@@ -123,23 +126,13 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  let emailSent = false;
-  let emailError: unknown = null;
-
   if (purchase.product.link) {
-    const emailResult = await sendProductEmail({
+    await sendProductEmail({
       buyerEmail: purchase.buyerEmail,
       productName: purchase.product.name,
       productLink: purchase.product.link,
     });
-
-    emailSent = emailResult.success;
-    emailError = emailResult.success ? null : emailResult.error;
   }
 
-  return NextResponse.json({
-    message: "OK",
-    emailSent,
-    emailError: emailError ? "Failed to send email" : null,
-  });
+  return NextResponse.json({ message: "OK" });
 }

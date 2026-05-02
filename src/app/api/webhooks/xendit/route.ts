@@ -73,18 +73,20 @@ export async function POST(req: NextRequest) {
 
     // Kirim email jika status baru SUCCEEDED dan sebelumnya belum SUCCEEDED
     if (status === "SUCCEEDED" && previousStatus !== "SUCCEEDED") {
-      try {
-        await sendWithdrawalEmail({
-          email: withdrawal.email,
-          amount: Number(withdrawal.amount),
-          bankName: withdrawal.bankName,
-          accountNumber: withdrawal.accountNumber,
-          accountHolderName: withdrawal.accountHolderName,
-        });
-      } catch (err) {
-        console.error("Failed to send withdrawal email:", err);
-      }
-    }
+  console.log("📧 Attempting to send email to:", withdrawal.email);
+  try {
+    const result = await sendWithdrawalEmail({
+      email: withdrawal.email,
+      amount: Number(withdrawal.amount),
+      bankName: withdrawal.bankName,
+      accountNumber: withdrawal.accountNumber,
+      accountHolderName: withdrawal.accountHolderName,
+    });
+    console.log("📧 Email result:", result);
+  } catch (err) {
+    console.error("📧 Failed to send withdrawal email:", err);
+  }
+}
 
     return NextResponse.json({ message: "OK" });
   }

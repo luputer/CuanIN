@@ -57,7 +57,7 @@ export async function createInvoice(
       description: params.description,
       payment_methods: params.paymentMethods,
       success_redirect_url: params.successRedirectUrl,
-      failure_redirect_url: pparams.failureRedirectUrl,
+      failure_redirect_url: params.failureRedirectUrl,
       currency: "IDR",
     }),
   });
@@ -70,9 +70,12 @@ export async function createInvoice(
   return res.json() as Promise<XenditInvoice>;
 }
 
-export async fu¹Ñ¥½¸É•…Ñ•A…å½ÕĞ (€Á…É…µÌèÉ•…Ñ•A…å½ÕÑA…É…µÌ°(¤èAÉ½µ¥Í”ña•¹‘¥ÑA…å½ÕĞøì(€½¹ÍĞÉ•Ì€ô…İ…¥Ğ™•Ñ ¡€‘ía9%Q}	M}UI1ô½ØÈ½Á…å½ÕÑÍ€° {
+export async function createPayout(
+  params: CreatePayoutParams,
+): Promise<XenditPayout> {
+  const res = await fetch(`${XENDIT_BASE_URL}/v2/payouts`, {
     method: "POST",
-    headers* {
+    headers: {
       ...headers,
       "Idempotency-key": params.referenceId,
     },
@@ -95,4 +98,21 @@ export async fu¹Ñ¥½¸É•…Ñ•A…å½ÕĞ (€Á…É…µÌèÉ•…Ñ•A…å½ÕÑA…É…µÌ°(¤èAÉ½µ¥Í”ña•¹
   }
 
   return res.json() as Promise<XenditPayout>;
+}
+
+export async function simulatePayoutSuccess(payoutId: string): Promise<void> {
+  const res = await fetch(
+    `${XENDIT_BASE_URL}/payouts/${payoutId}/simulate_payment`,
+    {
+      method: "POST",
+      headers,
+    },
+  );
+
+  if (!res.ok) {
+    const err = (await res.json()) as { message?: string };
+    throw new Error(err.message ?? "Gagal simulate payout");
+  }
+
+  console.log("âœ… Simulate payout success:", payoutId);
 }

@@ -100,14 +100,30 @@ export async function createPayout(
   return res.json() as Promise<XenditPayout>;
 }
 
-export async function simulatePayoutSuccess(payoutId: string): Promise<void> {
-  const res = await fetch(
-    `${XENDIT_BASE_URL}/payouts/${payoutId}/simulate_payment`,
-    {
-      method: "POST",
-      headers,
+export async function simulatePayoutSuccess(
+  payoutId: string,
+  referenceId: string,
+): Promise<void> {
+  const webhookUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://cuanin-dev.vercel.app"}/api/webhooks/xendit`;
+
+  const payload = {
+    event: "payout.succeeded",
+    data: {
+      id: payoutId,
+      reference_id: referenceId,
+      status: "SUCCEEDED",
+      failure_code: null,
     },
-  );
+  };
+
+  const res = await fetch(webhookUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-callback-token": env.XENDIT_WEBHOOK_TOKEN,
+    },
+    body: JSON.stringify(payload),
+  });
 
   if (!res.ok) {
     const err = (await res.json()) as { message?: string };

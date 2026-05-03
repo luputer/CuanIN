@@ -128,15 +128,14 @@ export const withdrawalsRouter = createTRPCRouter({
           },
         });
 
-        // Auto-simulate di sandbox — matikan saat production
+        // withdrawalsRouter.ts — hapus bagian ini
         if (process.env.ENABLE_PAYOUT_SIMULATE === "true") {
           setTimeout(() => {
-            void simulatePayoutSuccess(payout.id).catch((err) =>
+            void simulatePayoutSuccess(payout.id, withdrawal.id).catch((err) =>
               console.error("❌ Simulate payout error:", err),
             );
           }, 3000);
         }
-
         return updated;
       } catch (error) {
         await ctx.db.withdrawal.update({
@@ -155,4 +154,4 @@ export const withdrawalsRouter = createTRPCRouter({
         });
       }
     }),
-});
+}); 

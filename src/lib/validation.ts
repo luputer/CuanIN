@@ -163,3 +163,26 @@ export const productKelasOnlineSchema = z
             path: ["price"],
         }
     );
+
+
+// schema withdrawlScema
+export const withdrawalSchema = z.object({
+    amount: z.coerce
+        .number({ invalid_type_error: "Jumlah harus berupa angka" })
+        .int("Jumlah harus bilangan bulat")
+        .positive("Jumlah harus lebih dari 0"),
+    bank: z.enum(["bca", "bni", "bri", "mandiri", "cimb", "bsi"], {
+        required_error: "Pilih bank tujuan",
+    }),
+    accountNumber: z
+        .string()
+        .min(5, "Nomor rekening minimal 5 digit")
+        .regex(/^\d+$/, "Nomor rekening hanya boleh berisi angka"),
+    accountHolderName: z
+        .string()
+        .min(2, "Nama pemilik rekening wajib diisi")
+        .max(100, "Nama terlalu panjang"),
+    email: z.string().email("Format email tidak valid"),
+});
+
+export type WithdrawalFormData = z.infer<typeof withdrawalSchema>;

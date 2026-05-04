@@ -2,6 +2,7 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { sendWelcomeEmail } from "~/lib/nodemailer";
 
 export const authRouter = createTRPCRouter({
   register: publicProcedure
@@ -37,6 +38,9 @@ export const authRouter = createTRPCRouter({
               role: "CREATOR",
             },
           });
+
+          void sendWelcomeEmail({ email, name })
+
           return { success: true };
         }
 
@@ -56,6 +60,9 @@ export const authRouter = createTRPCRouter({
           role: "CREATOR",
         },
       });
+
+      void sendWelcomeEmail({ email, name })
+
 
       return { success: true };
     }),

@@ -2,33 +2,39 @@ import { env } from "~/env";
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-    host: env.SMTP_HOST,
-    port: env.SMTP_PORT,
-    secure: env.SMTP_PORT === 465, // true for 465, false for other ports
-    auth: {
-        user: env.SMTP_USER,
-        pass: env.SMTP_PASS,
-    },
+  host: env.SMTP_HOST,
+  port: env.SMTP_PORT,
+  secure: env.SMTP_PORT === 465, // true for 465, false for other ports
+  auth: {
+    user: env.SMTP_USER,
+    pass: env.SMTP_PASS,
+  },
 });
 
 type SendProductEmailParams = {
-    buyerEmail: string;
-    productName: string;
-    productLink: string;
+  buyerEmail: string;
+  productName: string;
+  productLink: string;
 };
 
+type SendWelcomeEmailParams = {
+  email: string;
+  name: string;
+};
+
+
 export const sendProductEmail = async ({
-    buyerEmail,
-    productName,
-    productLink,
+  buyerEmail,
+  productName,
+  productLink,
 }: SendProductEmailParams) => {
-    try {
-        const info = await transporter.sendMail({
-            from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
-            to: buyerEmail,
-            subject: `Akses Produk Digital Anda: ${productName}`,
-            text: `Terima kasih atas pembelian Anda!\n\nBerikut adalah link untuk mengakses produk digital Anda:\n${productLink}\n\nSalam,\nTim CuanIN`,
-            html: `
+  try {
+    const info = await transporter.sendMail({
+      from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
+      to: buyerEmail,
+      subject: `Akses Produk Digital Anda: ${productName}`,
+      text: `Terima kasih atas pembelian Anda!\n\nBerikut adalah link untuk mengakses produk digital Anda:\n${productLink}\n\nSalam,\nTim CuanIN`,
+      html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; color: #333; line-height: 1.6;">
                     <h2 style="color: #0f172a;">Terima Kasih Atas Pembelian Anda!</h2>
                     <p>Halo,</p>
@@ -44,13 +50,13 @@ export const sendProductEmail = async ({
                     <p style="font-size: 12px; color: #64748b; text-align: center;">© ${new Date().getFullYear()} CuanIN. All rights reserved.</p>
                 </div>
             `,
-        });
-        console.log("Email sent: %s", info.messageId);
-        return { success: true, messageId: info.messageId };
-    } catch (error) {
-        console.error("Error sending email:", error);
-        return { success: false, error };
-    }
+    });
+    console.log("Email sent: %s", info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("Error sending email:", error);
+    return { success: false, error };
+  }
 };
 
 type SendWithdrawalEmailParams = {
@@ -115,6 +121,39 @@ export const sendWithdrawalEmail = async ({
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error("Error sending withdrawal email:", error);
+    return { success: false, error };
+  }
+};
+
+
+// saat register email
+export const sendWelcomeEmail = async ({
+  email,
+  name,
+}: SendWelcomeEmailParams) => {
+  try {
+    const info = await transporter.sendMail({
+      from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
+      to: email,
+      subject: `Selamat Datang di CuanIN, ${name}! 🎉`,
+      text: `Halo ${name}, selamat datang di CuanIN! Akun kamu telah berhasil dibuat.`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; color: #333; line-height: 1.6;">
+          <h2 style="color: #0891b2;">Selamat Datang di CuanIN! 🎉</h2>
+          <p>Halo <strong>${name}</strong>,</p>
+          <p>Akun kamu telah berhasil dibuat. Sekarang kamu bisa mulai menjual produk digital dan menerima pembayaran dengan mudah.</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${env.NEXT_PUBLIC_APP_URL}/dashboard" style="background-color: #0891b2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Masuk ke Dashboard</a>
+          </div>
+          <p>Jika ada pertanyaan, jangan ragu untuk membalas email ini.</p>
+          <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
+          <p style="font-size: 12px; color: #64748b; text-align: center;">© ${new Date().getFullYear()} CuanIN. All rights reserved.</p>
+        </div>
+      `,
+    });
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("Error sending welcome email:", error);
     return { success: false, error };
   }
 };

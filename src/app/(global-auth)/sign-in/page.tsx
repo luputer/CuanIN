@@ -108,11 +108,10 @@ export default function LoginPage() {
                   type="email"
                   required
                   placeholder="Masukkan Email Anda"
-                  className={`w-full rounded-lg border py-2.5 pr-6 pl-12 text-sm transition-all outline-none placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${
-                    errors.email
-                      ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                      : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
-                  }`}
+                  className={`w-full rounded-lg border py-2.5 pr-6 pl-12 text-sm transition-all outline-none placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${errors.email
+                    ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                    : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
+                    }`}
                   {...register("email")}
                 />
               </div>
@@ -136,11 +135,10 @@ export default function LoginPage() {
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Masukkan Password Anda"
-                  className={`w-full rounded-lg border py-2.5 pr-10 pl-12 text-sm text-slate-500 transition-all outline-none placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${
-                    errors.password
-                      ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                      : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
-                  }`}
+                  className={`w-full rounded-lg border py-2.5 pr-10 pl-12 text-sm text-slate-500 transition-all outline-none placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${errors.password
+                    ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                    : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
+                    }`}
                   {...register("password")}
                 />
 

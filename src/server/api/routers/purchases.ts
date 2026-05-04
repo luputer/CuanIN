@@ -43,10 +43,37 @@ export const purchasesRouter = createTRPCRouter({
       // Get the product to determine amount and link
       const product = await ctx.db.product.findUnique({
         where: { id: input.productId, status: "published" },
-        select: { id: true, name: true, price: true, link: true, userId: true },
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          link: true,
+          userId: true,
+          quota: true,
+          _count: {
+            select: {
+              purchases: {
+                where: { status: "completed" },
+              },
+            },
+          },
+        },
       });
+
       if (!product)
         throw new Error("Produk tidak ditemukan atau tidak tersedia");
+
+      // Cek Kuota
+      if (
+        product.quota &&
+        product.quota > 0 &&
+        product._count.purchases >= product.quota
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Maaf, kuota sudah penuh.",
+        });
+      }
 
       if (ctx.session?.user.id === product.userId) {
         throw new TRPCError({
@@ -78,6 +105,13 @@ export const purchasesRouter = createTRPCRouter({
                 formFieldId: a.formFieldId,
                 answer: a.answer,
               })),
+            });
+          }
+
+          if (ctx.session?.user.id) {
+            await tx.user.update({
+              where: { id: ctx.session.user.id },
+              data: { phoneNumber: input.buyerPhone },
             });
           }
 
@@ -144,6 +178,13 @@ export const purchasesRouter = createTRPCRouter({
           });
         }
 
+        if (ctx.session?.user.id) {
+          await tx.user.update({
+            where: { id: ctx.session.user.id },
+            data: { phoneNumber: input.buyerPhone },
+          });
+        }
+
         return newPurchase;
       });
 
@@ -191,7 +232,7 @@ export const purchasesRouter = createTRPCRouter({
       if (
         purchase.xenditInvoiceUrl &&
         purchase.xenditPaymentMethod ===
-          XENDIT_PAYMENT_METHODS[input.paymentMethod]
+        XENDIT_PAYMENT_METHODS[input.paymentMethod]
       ) {
         return {
           invoiceUrl: purchase.xenditInvoiceUrl,
@@ -258,11 +299,11 @@ export const purchasesRouter = createTRPCRouter({
         productId: input.productId,
         ...(input.search
           ? {
-              buyerName: {
-                contains: input.search,
-                mode: "insensitive" as const,
-              },
-            }
+            buyerName: {
+              contains: input.search,
+              mode: "insensitive" as const,
+            },
+          }
           : {}),
         ...(input.status && input.status !== "ALL"
           ? { status: input.status }
@@ -400,21 +441,21 @@ export const purchasesRouter = createTRPCRouter({
         productId: { in: productIds },
         ...(input.search
           ? {
-              OR: [
-                {
-                  buyerName: {
-                    contains: input.search,
-                    mode: "insensitive" as const,
-                  },
+            OR: [
+              {
+                buyerName: {
+                  contains: input.search,
+                  mode: "insensitive" as const,
                 },
-                {
-                  buyerEmail: {
-                    contains: input.search,
-                    mode: "insensitive" as const,
-                  },
+              },
+              {
+                buyerEmail: {
+                  contains: input.search,
+                  mode: "insensitive" as const,
                 },
-              ],
-            }
+              },
+            ],
+          }
           : {}),
       };
 
@@ -497,70 +538,101 @@ export const purchasesRouter = createTRPCRouter({
         productId: { in: productIds },
         ...(input.search
           ? {
-              OR: [
-                {
-                  buyerName: {
+            OR: [
+              {
+                buyerName: {
+                  contains: input.search,
+                  mode: "insensitive" as const,
+                },
+              },
+              {
+                product: {
+                  name: {
                     contains: input.search,
                     mode: "insensitive" as const,
                   },
                 },
-                {
-                  product: {
-                    name: {
-                      contains: input.search,
-                      mode: "insensitive" as const,
-                    },
-                  },
-                },
-                {
-                  id: { contains: input.search, mode: "insensitive" as const },
-                },
-              ],
-            }
+              },
+              {
+                id: { contains: input.search, mode: "insensitive" as const },
+              },
+            ],
+          }
           : {}),
         ...(input.status && input.status !== "ALL"
           ? { status: input.status }
           : {}),
       };
 
-      const [items, total, allCompletedPurchases, activeWithdrawals] =
-        await Promise.all([
-          ctx.db.purchase.findMany({
-            where,
-            include: {
-              product: {
-                select: { name: true },
-              },
-            },
-            orderBy: { createdAt: "desc" },
-            skip,
-            take: limit,
-          }),
-          ctx.db.purchase.count({ where }),
-          ctx.db.purchase.findMany({
-            where: {
-              productId: { in: productIds },
-              status: "completed",
-            },
-            select: { amount: true },
-          }),
-          ctx.db.withdrawal.findMany({
-            where: {
-              userId: ctx.session.user.id,
-              status: { in: ["PENDING", "ACCEPTED", "REQUESTED", "SUCCEEDED"] },
-            },
-            select: { amount: true },
-          }),
-        ]);
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
 
-      const totalIncome = allCompletedPurchases.reduce(
-        (acc, p) => acc + Number(p.amount),
-        0,
-      );
+      const [
+        items,
+        total,
+        allTimeStats,
+        currentStats,
+        previousStats,
+        activeWithdrawals,
+      ] = await Promise.all([
+        ctx.db.purchase.findMany({
+          where,
+          include: {
+            product: {
+              select: { name: true },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+          skip,
+          take: limit,
+        }),
+        ctx.db.purchase.count({ where }),
+        ctx.db.purchase.aggregate({
+          where: {
+            productId: { in: productIds },
+            status: "completed",
+          },
+          _sum: { amount: true },
+          _count: { id: true },
+        }),
+        ctx.db.purchase.aggregate({
+          where: {
+            productId: { in: productIds },
+            status: "completed",
+            createdAt: { gte: thirtyDaysAgo },
+          },
+          _sum: { amount: true },
+          _count: { id: true },
+        }),
+        ctx.db.purchase.aggregate({
+          where: {
+            productId: { in: productIds },
+            status: "completed",
+            createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo },
+          },
+          _sum: { amount: true },
+          _count: { id: true },
+        }),
+        ctx.db.withdrawal.findMany({
+          where: {
+            userId: ctx.session.user.id,
+            status: { in: ["PENDING", "ACCEPTED", "REQUESTED", "SUCCEEDED"] },
+          },
+          select: { amount: true },
+        }),
+      ]);
+
+      const totalIncome = Number(allTimeStats._sum.amount ?? 0);
       const totalWithdrawn = activeWithdrawals.reduce(
         (acc, withdrawal) => acc + Number(withdrawal.amount),
         0,
       );
+
+      const calculateChange = (current: number, previous: number) => {
+        if (previous === 0) return current > 0 ? 100 : 0;
+        return ((current - previous) / previous) * 100;
+      };
 
       return {
         items,
@@ -570,8 +642,16 @@ export const purchasesRouter = createTRPCRouter({
         totalPages: Math.ceil(total / limit),
         stats: {
           totalIncome,
-          totalTransactions: allCompletedPurchases.length,
+          totalTransactions: allTimeStats._count.id,
           balance: Math.max(totalIncome - totalWithdrawn, 0),
+          incomeChange: calculateChange(
+            Number(currentStats._sum.amount ?? 0),
+            Number(previousStats._sum.amount ?? 0),
+          ),
+          transactionsChange: calculateChange(
+            currentStats._count.id,
+            previousStats._count.id,
+          ),
         },
       };
     }),
@@ -595,5 +675,61 @@ export const purchasesRouter = createTRPCRouter({
       });
 
       return { success: true };
+    }),
+
+  // Get participant detail by email
+  getParticipantDetail: protectedProcedure
+    .input(z.object({ email: z.string().email() }))
+    .query(async ({ ctx, input }) => {
+      // Get all product IDs owned by this creator
+      const products = await ctx.db.product.findMany({
+        where: { userId: ctx.session.user.id },
+        select: { id: true },
+      });
+      const productIds = products.map((p) => p.id);
+
+      if (productIds.length === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Kamu belum memiliki produk",
+        });
+      }
+
+      // Get all purchases by this email for this creator's products
+      const purchases = await ctx.db.purchase.findMany({
+        where: {
+          buyerEmail: input.email,
+          productId: { in: productIds },
+        },
+        include: {
+          product: {
+            select: {
+              name: true,
+              type: true,
+              format: true,
+},
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      if (purchases.length === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Peserta tidak ditemukan",
+        });
+      }
+
+      // Latest purchase info for basic details
+      const latest = purchases[0]!;
+
+      return {
+        participant: {
+          name: latest.buyerName,
+          email: latest.buyerEmail,
+          phone: latest.buyerPhone,
+        },
+        purchases,
+      };
     }),
 });

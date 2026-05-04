@@ -18,6 +18,7 @@ declare module "next-auth" {
       status: string;
       statusPayment: string;
       isProfileComplete: boolean;
+      phone: string | null;
     } & DefaultSession["user"];
   }
 
@@ -26,6 +27,7 @@ declare module "next-auth" {
     status: string;
     statusPayment: string;
     isProfileComplete: boolean;
+    phone: string | null;
   }
 }
 
@@ -36,6 +38,7 @@ declare module "next-auth/jwt" {
     status: string;
     statusPayment: string;
     isProfileComplete: boolean;
+    phone: string | null;
   }
 }
 
@@ -95,6 +98,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           status: user.status,
           statusPayment: user.statusPayment,
           isProfileComplete: !!user.phoneNumber,
+          phone: user.phoneNumber,
         };
       },
     }),
@@ -140,6 +144,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.status = user.status;
         token.statusPayment = user.statusPayment;
         token.isProfileComplete = user.isProfileComplete;
+
+        // Ensure phone is loaded from DB (Google doesn't provide it)
+        if (user.phone) {
+          token.phone = user.phone;
+        } else {
+          const dbUser = await db.user.findUnique({
+            where: { id: user.id },
+            select: { phoneNumber: true },
+          });
+          token.phone = dbUser?.phoneNumber ?? null;
+        }
       }
 
       if (trigger === "update" && token.sub) {
@@ -158,6 +173,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           token.status = dbUser.status;
           token.statusPayment = dbUser.statusPayment;
           token.isProfileComplete = !!dbUser.phoneNumber;
+          token.phone = dbUser.phoneNumber;
         }
       }
 

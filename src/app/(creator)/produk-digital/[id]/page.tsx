@@ -256,14 +256,6 @@ export default function ProductDetailPage() {
                                         ) : "-"}
                                     </Row>
 
-                                    <Row label="Link">
-                                        {product.link ? (
-                                            <a href={product.link} target="_blank" className="text-blue-500 hover:underline break-all">
-                                                {product.link}
-                                            </a>
-                                        ) : "-"}
-                                    </Row>
-
                                     <Row label="Tipe">
                                         {Number(product.price) === 0 ? "Gratis" : "Berbayar"}
                                     </Row>
@@ -272,6 +264,22 @@ export default function ProductDetailPage() {
                                         {Number(product.price) === 0
                                             ? "Rp 0"
                                             : `Rp ${Number(product.price).toLocaleString("id-ID")}`}
+                                    </Row>
+
+                                    <Row label="Format">
+                                        <p className="w-fit font-medium bg-slate-100 text-slate-700 px-4 py-1 rounded-full">
+                                            {product.format
+                                                ? product.format.charAt(0).toUpperCase() + product.format.slice(1)
+                                                : "-"}
+                                        </p>
+                                    </Row>
+
+                                    <Row label="Link">
+                                        {product.link ? (
+                                            <a href={product.link} target="_blank" className="text-blue-500 hover:underline break-all">
+                                                {product.link}
+                                            </a>
+                                        ) : "-"}
                                     </Row>
 
                                     <Row label="Status">

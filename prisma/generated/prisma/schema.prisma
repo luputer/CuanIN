@@ -136,6 +136,7 @@ model User {
   email         String?      @unique
   emailVerified DateTime?    @map("email_verified_at")
   image         String?
+  banner        String?
   password      String?
   status        String       @default("active")
   statusPayment String       @default("free")

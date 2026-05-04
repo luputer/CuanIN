@@ -11210,6 +11210,7 @@ export namespace Prisma {
     email: string | null
     emailVerified: Date | null
     image: string | null
+    banner: string | null
     password: string | null
     status: string | null
     statusPayment: string | null
@@ -11226,6 +11227,7 @@ export namespace Prisma {
     email: string | null
     emailVerified: Date | null
     image: string | null
+    banner: string | null
     password: string | null
     status: string | null
     statusPayment: string | null
@@ -11242,6 +11244,7 @@ export namespace Prisma {
     email: number
     emailVerified: number
     image: number
+    banner: number
     password: number
     status: number
     statusPayment: number
@@ -11260,6 +11263,7 @@ export namespace Prisma {
     email?: true
     emailVerified?: true
     image?: true
+    banner?: true
     password?: true
     status?: true
     statusPayment?: true
@@ -11276,6 +11280,7 @@ export namespace Prisma {
     email?: true
     emailVerified?: true
     image?: true
+    banner?: true
     password?: true
     status?: true
     statusPayment?: true
@@ -11292,6 +11297,7 @@ export namespace Prisma {
     email?: true
     emailVerified?: true
     image?: true
+    banner?: true
     password?: true
     status?: true
     statusPayment?: true
@@ -11381,6 +11387,7 @@ export namespace Prisma {
     email: string | null
     emailVerified: Date | null
     image: string | null
+    banner: string | null
     password: string | null
     status: string
     statusPayment: string
@@ -11414,6 +11421,7 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     image?: boolean
+    banner?: boolean
     password?: boolean
     status?: boolean
     statusPayment?: boolean
@@ -11436,6 +11444,7 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     image?: boolean
+    banner?: boolean
     password?: boolean
     status?: boolean
     statusPayment?: boolean
@@ -11452,6 +11461,7 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     image?: boolean
+    banner?: boolean
     password?: boolean
     status?: boolean
     statusPayment?: boolean
@@ -11468,6 +11478,7 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     image?: boolean
+    banner?: boolean
     password?: boolean
     status?: boolean
     statusPayment?: boolean
@@ -11478,7 +11489,7 @@ export namespace Prisma {
     role?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "password" | "status" | "statusPayment" | "googleId" | "phoneNumber" | "createdAt" | "updatedAt" | "role", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "banner" | "password" | "status" | "statusPayment" | "googleId" | "phoneNumber" | "createdAt" | "updatedAt" | "role", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     catalog?: boolean | User$catalogArgs<ExtArgs>
@@ -11505,6 +11516,7 @@ export namespace Prisma {
       email: string | null
       emailVerified: Date | null
       image: string | null
+      banner: string | null
       password: string | null
       status: string
       statusPayment: string
@@ -11946,6 +11958,7 @@ export namespace Prisma {
     readonly email: FieldRef<"User", 'String'>
     readonly emailVerified: FieldRef<"User", 'DateTime'>
     readonly image: FieldRef<"User", 'String'>
+    readonly banner: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
     readonly status: FieldRef<"User", 'String'>
     readonly statusPayment: FieldRef<"User", 'String'>
@@ -15879,6 +15892,7 @@ export namespace Prisma {
     email: 'email',
     emailVerified: 'emailVerified',
     image: 'image',
+    banner: 'banner',
     password: 'password',
     status: 'status',
     statusPayment: 'statusPayment',
@@ -16771,6 +16785,7 @@ export namespace Prisma {
     email?: StringNullableFilter<"User"> | string | null
     emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
     image?: StringNullableFilter<"User"> | string | null
+    banner?: StringNullableFilter<"User"> | string | null
     password?: StringNullableFilter<"User"> | string | null
     status?: StringFilter<"User"> | string
     statusPayment?: StringFilter<"User"> | string
@@ -16792,6 +16807,7 @@ export namespace Prisma {
     email?: SortOrderInput | SortOrder
     emailVerified?: SortOrderInput | SortOrder
     image?: SortOrderInput | SortOrder
+    banner?: SortOrderInput | SortOrder
     password?: SortOrderInput | SortOrder
     status?: SortOrder
     statusPayment?: SortOrder
@@ -16816,6 +16832,7 @@ export namespace Prisma {
     name?: StringNullableFilter<"User"> | string | null
     emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
     image?: StringNullableFilter<"User"> | string | null
+    banner?: StringNullableFilter<"User"> | string | null
     password?: StringNullableFilter<"User"> | string | null
     status?: StringFilter<"User"> | string
     statusPayment?: StringFilter<"User"> | string
@@ -16837,6 +16854,7 @@ export namespace Prisma {
     email?: SortOrderInput | SortOrder
     emailVerified?: SortOrderInput | SortOrder
     image?: SortOrderInput | SortOrder
+    banner?: SortOrderInput | SortOrder
     password?: SortOrderInput | SortOrder
     status?: SortOrder
     statusPayment?: SortOrder
@@ -16859,6 +16877,7 @@ export namespace Prisma {
     email?: StringNullableWithAggregatesFilter<"User"> | string | null
     emailVerified?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
+    banner?: StringNullableWithAggregatesFilter<"User"> | string | null
     password?: StringNullableWithAggregatesFilter<"User"> | string | null
     status?: StringWithAggregatesFilter<"User"> | string
     statusPayment?: StringWithAggregatesFilter<"User"> | string
@@ -17774,6 +17793,7 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
+    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -17795,6 +17815,7 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
+    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -17816,6 +17837,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -17837,6 +17859,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -17858,6 +17881,7 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
+    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -17874,6 +17898,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -17890,6 +17915,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -18882,6 +18908,7 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
+    banner?: SortOrder
     password?: SortOrder
     status?: SortOrder
     statusPayment?: SortOrder
@@ -18898,6 +18925,7 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
+    banner?: SortOrder
     password?: SortOrder
     status?: SortOrder
     statusPayment?: SortOrder
@@ -18914,6 +18942,7 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
+    banner?: SortOrder
     password?: SortOrder
     status?: SortOrder
     statusPayment?: SortOrder
@@ -19976,6 +20005,7 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
+    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -19996,6 +20026,7 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
+    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -20105,6 +20136,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -20125,6 +20157,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -20655,6 +20688,7 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
+    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -20675,6 +20709,7 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
+    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -20711,6 +20746,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -20731,6 +20767,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -20751,6 +20788,7 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
+    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -20771,6 +20809,7 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
+    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -20807,6 +20846,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -20827,6 +20867,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -21202,6 +21243,7 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
+    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -21222,6 +21264,7 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
+    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -21258,6 +21301,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -21278,6 +21322,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -21298,6 +21343,7 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
+    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -21318,6 +21364,7 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
+    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -21354,6 +21401,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -21374,6 +21422,7 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string

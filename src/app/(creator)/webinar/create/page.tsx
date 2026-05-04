@@ -1,7 +1,7 @@
 "use client";
 
 // React
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 
 // Next.js
 import dynamic from "next/dynamic";
@@ -23,16 +23,19 @@ import {
     ArrowLeftIcon,
     CaretDownIcon,
     CaretUpIcon,
-    ImageIcon,
+    CircleNotchIcon,
     PencilSimpleIcon,
     PlusIcon,
     TrashIcon,
 } from "@phosphor-icons/react";
 
-// Internal
+// Internal & Utils
 import { api } from "~/trpc/react";
 import { webinarSchema } from "~/lib/validation";
 import { formatNumberWithDots, parseDotsToNumber } from "~/lib/utils";
+import { useImageUpload } from "~/hooks/use-upload";
+
+// Components
 import { DateTimePicker } from "~/components/ui/date-time-picker";
 import {
     FormGroup,
@@ -43,7 +46,6 @@ import {
 } from "~/components/ui/form-layout";
 import ButtonAdd from "~/components/ui/button-add";
 import ButtonCancel from "~/components/ui/button-cancel";
-import { useImageUpload } from "~/hooks/use-upload";
 
 // Dynamic import — MDEditor tidak support SSR
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
@@ -53,6 +55,8 @@ type WebinarFormValues = z.infer<typeof webinarSchema>;
 export default function CreateWebinarPage() {
     const router = useRouter();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const utils = api.useUtils();
+
     const {
         previewUrl,
         uploading,
@@ -72,12 +76,17 @@ export default function CreateWebinarPage() {
         defaultValues: {
             priceType: "free",
             platform: "zoom",
-            status: "unpublished",
+            status: "published",
             price: 0,
             quota: 0,
             notes: "",
             benefit: ["", "", ""],
         },
+    });
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "benefit" as never,
     });
 
     // Watched values
@@ -86,11 +95,18 @@ export default function CreateWebinarPage() {
     const dateEnd = watch("dateEnd");
     const dateDeadline = watch("dateDeadline");
 
-    // Field array untuk manfaat/benefit
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "benefit" as never,
-    });
+    // ─── Effects ─────────────────────────────────────────────────────────────
+
+    // Format initial price value or when priceType changes to paid
+    useEffect(() => {
+        if (priceType === "paid") {
+            const input = document.getElementById("price-input-create") as HTMLInputElement;
+            if (input) {
+                const currentVal = getValues("price")?.toString() ?? "0";
+                input.value = formatNumberWithDots(currentVal);
+            }
+        }
+    }, [priceType, getValues]);
 
     // ─── Handlers ────────────────────────────────────────────────────────────
 
@@ -98,25 +114,32 @@ export default function CreateWebinarPage() {
         const currentPrice = parseDotsToNumber(getValues("price")?.toString() ?? "0");
         const newPrice = Math.max(0, currentPrice + amount);
         setValue("price", newPrice, { shouldValidate: true });
+
+        const input = document.getElementById("price-input-create") as HTMLInputElement;
+        if (input) {
+            input.value = formatNumberWithDots(newPrice.toString());
+        }
     };
 
     const handleQuotaAdjust = (amount: number) => {
         const currentQuota = Number(getValues("quota") ?? 0);
         const newQuota = Math.max(0, currentQuota + amount);
         setValue("quota", newQuota, { shouldValidate: true });
+
+        const input = document.getElementById("quota-input-create") as HTMLInputElement;
+        if (input) {
+            input.value = newQuota.toString();
+        }
     };
 
     const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const url = await handleFileUpload(e);
-
         if (url) {
             setValue("image", url, { shouldValidate: true });
         }
     };
 
     // ─── API ─────────────────────────────────────────────────────────────────
-
-    const utils = api.useUtils();
 
     const createWebinar = api.products.create.useMutation({
         onSuccess: () => {
@@ -157,25 +180,26 @@ export default function CreateWebinarPage() {
         <div className="space-y-6">
             {/* Header */}
             <div className="bg-slate-50">
-                <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
-                    <Link
-                        href="/webinar"
-                        className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
-                    >
-                        <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-                        <span className="leading-none">Kembali ke Daftar</span>
-                    </Link>
-                    <h1 className="text-2xl font-semibold text-slate-800">Tambah Webinar Baru</h1>
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 pt-2">
+                    <div className="flex-1 flex flex-col gap-1">
+                        <Link
+                            href="/webinar"
+                            className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
+                        >
+                            <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                            <span className="leading-none">Kembali ke Daftar Webinar</span>
+                        </Link>
+                        <h1 className="text-xl font-semibold text-slate-800">Tambah Webinar Baru</h1>
+                    </div>
                 </div>
             </div>
 
-            <div className="bg-cyan-50 rounded-xl border border-slate-800 overflow-hidden">
+            <div className="bg-cyan-50 rounded-xl border border-slate-800 overflow-hidden shadow-[0px_2px_0px_rgba(29,41,61)]">
                 <div className="px-4 sm:px-10 py-6 sm:py-8">
-
                     {/* ─── Informasi Webinar ─── */}
                     <SectionHeader title="Informasi Webinar" />
 
-                    <div>
+                    <div className="mt-4">
                         {/* Nama */}
                         <FormGroup label="Nama" error={errors.name?.message}>
                             <FormInput
@@ -191,14 +215,15 @@ export default function CreateWebinarPage() {
                                     className="relative group shrink-0 w-48 h-48 cursor-pointer"
                                     onClick={() => fileInputRef.current?.click()}
                                 >
-                                    <div className="w-full h-full bg-slate-50 border-2 border-dashed border-slate-400 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-slate-400 group-hover:bg-slate-100">
+                                    <div className="w-full h-full bg-white border-2 border-dashed border-slate-400 hover:bg-slate-100 rounded-xl flex flex-col items-center justify-center overflow-hidden relative">
                                         {previewUrl ? (
                                             <>
                                                 <Image
                                                     src={previewUrl}
                                                     alt="Preview"
                                                     fill
-                                                    className="object-cover rounded-xl group-hover:opacity-80 transition-opacity"
+                                                    className="object-cover group-hover:opacity-80 transition-opacity"
+                                                    unoptimized
                                                 />
                                                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10">
                                                     <div className="bg-white/90 p-2 rounded-full shadow-md text-slate-800">
@@ -207,14 +232,14 @@ export default function CreateWebinarPage() {
                                                 </div>
                                                 {uploading && (
                                                     <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                                                        <span className="text-white text-sm">Uploading...</span>
+                                                        <CircleNotchIcon className="animate-spin text-white" size={32} />
                                                     </div>
                                                 )}
                                             </>
                                         ) : (
-                                            <div className="flex flex-col items-center gap-2 text-slate-400">
-                                                <ImageIcon size={32} weight="light" />
-                                                <span className="text-xs font-medium">Upload Gambar</span>
+                                            <div className="flex flex-col items-center gap-2 text-slate-400 group-hover:text-cyan-600 transition-colors">
+                                                <PlusIcon size={32} weight="bold" />
+                                                <span className="text-xs font-medium">Unggah Gambar</span>
                                             </div>
                                         )}
                                     </div>
@@ -226,20 +251,25 @@ export default function CreateWebinarPage() {
                                         onChange={handleImageChange}
                                     />
                                 </div>
-                                <p className="text-xs text-slate-500">JPG/PNG, 1:1 (square) direkomendasikan</p>
+                                <p className="text-xs text-slate-500 italic">Disarankan rasio 1:1 (square)</p>
                             </div>
                         </FormGroup>
 
                         {/* Ringkasan */}
-                        <FormGroup label="Ringkasan" align="start" error={errors.shortDescription?.message}>
+                        <FormGroup
+                            label="Ringkasan"
+                            align="start"
+                            error={errors.shortDescription?.message}
+                            description={`${watch("shortDescription")?.length ?? 0}/200 karakter`}
+                        >
                             <FormTextarea
-                                placeholder="Masukkan ringkasan tentang webinar"
+                                placeholder="Masukkan ringkasan tentang webinar ini"
                                 {...register("shortDescription")}
                             />
                         </FormGroup>
 
                         {/* Deskripsi Lengkap */}
-                        <FormGroup label="Deskripsi Lengkap" align="start" error={errors.description?.message}>
+                        <FormGroup label="Deskripsi" align="start" error={errors.description?.message}>
                             <div data-color-mode="light" className="border border-slate-400 rounded-lg overflow-hidden">
                                 <MDEditor
                                     textareaProps={{ placeholder: "Masukkan deskripsi lengkap tentang webinar" }}
@@ -254,20 +284,20 @@ export default function CreateWebinarPage() {
                             </div>
                         </FormGroup>
 
-                        {/* Manfaat */}
-                        <FormGroup label="Manfaat" align="start" error={errors.benefit?.message}>
+                        {/* Benefit */}
+                        <FormGroup label="Benefit" align="start" error={errors.benefit?.message}>
                             <div className="flex flex-col space-y-3">
                                 {fields.map((field, index) => (
                                     <div key={field.id} className="flex gap-2">
                                         <FormInput
-                                            placeholder={`Manfaat ${index + 1}`}
+                                            placeholder={`Benefit ${index + 1}`}
                                             className="flex-1"
                                             {...register(`benefit.${index}` as const)}
                                         />
                                         <button
                                             type="button"
                                             onClick={() => remove(index)}
-                                            className="flex h-[52px] w-[52px] items-center justify-center rounded-lg bg-white border border-slate-300 text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors shrink-0 cursor-pointer"
+                                            className="flex h-[52px] w-[52px] items-center justify-center rounded-lg bg-white border border-slate-400 text-red-500 hover:text-red-700 hover:bg-red-100 transition-colors shrink-0 cursor-pointer"
                                         >
                                             <TrashIcon className="h-5 w-5 translate-y-[0.5px]" weight="bold" />
                                         </button>
@@ -279,13 +309,13 @@ export default function CreateWebinarPage() {
                                     className="flex justify-center items-center gap-2 bg-white border border-slate-400 rounded-lg py-2 px-4 text-sm font-regular text-slate-800 hover:bg-slate-100 w-fit cursor-pointer"
                                 >
                                     <PlusIcon className="h-4 w-4" weight="regular" />
-                                    <span>Tambah Manfaat</span>
+                                    <span>Tambah Benefit</span>
                                 </button>
                             </div>
                         </FormGroup>
 
                         {/* Tipe Harga */}
-                        <FormGroup label="Tipe" error={errors.priceType?.message}>
+                        <FormGroup label="Tipe">
                             <FormSelect
                                 value={priceType}
                                 onChange={(e) => {
@@ -310,6 +340,7 @@ export default function CreateWebinarPage() {
                                     render={({ field: { onChange, value, ref } }) => (
                                         <FormInput
                                             ref={ref}
+                                            id="price-input-create"
                                             prefix="Rp"
                                             value={formatNumberWithDots(value)}
                                             onChange={(e) => onChange(parseDotsToNumber(e.target.value))}
@@ -356,7 +387,7 @@ export default function CreateWebinarPage() {
                         </FormGroup>
 
                         {/* Link */}
-                        <FormGroup label="Link" error={errors.link?.message}>
+                        <FormGroup label="Link Akses" error={errors.link?.message}>
                             <FormInput
                                 placeholder="https://zoom.us/j/..."
                                 {...register("link")}
@@ -384,7 +415,7 @@ export default function CreateWebinarPage() {
                     {/* ─── Jadwal ─── */}
                     <section className="mt-6">
                         <SectionHeader title="Jadwal" />
-                        <div>
+                        <div className="mt-4">
                             {/* Waktu Mulai */}
                             <FormGroup label="Waktu Mulai" error={errors.dateStart?.message}>
                                 <DateTimePicker
@@ -424,16 +455,21 @@ export default function CreateWebinarPage() {
                     {/* ─── Pendaftaran ─── */}
                     <section className="mt-6">
                         <SectionHeader title="Pendaftaran" />
-                        <div>
+                        <div className="mt-4">
                             {/* Kuota */}
-                            <FormGroup label="Kuota" error={errors.quota?.message}>
+                            <FormGroup
+                                label="Kuota"
+                                error={errors.quota?.message}
+                                description="Isi 0 jika tidak ada batas kuota"
+                            >
                                 <Controller
                                     control={control}
                                     name="quota"
                                     render={({ field: { onChange, value, ref } }) => (
                                         <FormInput
                                             ref={ref}
-                                            placeholder="0 (Isi 0 jika tidak terbatas)"
+                                            id="quota-input-create"
+                                            placeholder="Masukkan jumlah kuota"
                                             value={value ?? ""}
                                             onChange={(e) => {
                                                 const val = e.target.value.replace(/[^0-9]/g, "");
@@ -481,7 +517,6 @@ export default function CreateWebinarPage() {
                             </FormGroup>
                         </div>
                     </section>
-
                 </div>
 
                 {/* Footer Actions */}
@@ -491,7 +526,7 @@ export default function CreateWebinarPage() {
                         onClick={() => router.push("/webinar")}
                     />
                     <ButtonAdd
-                        label="Buat Webinar"
+                        label="Tambah Webinar"
                         weight="bold"
                         onClick={handleSubmit(onSubmit)}
                         isLoading={createWebinar.isPending}

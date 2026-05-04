@@ -6,7 +6,7 @@ interface ButtonSaveProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
     isLoading?: boolean;
     label?: string;
     loadingLabel?: string;
-    icon?: React.ElementType;
+    icon?: React.ElementType | null;
     weight?: "regular" | "bold" | "fill" | "light" | "thin";
     className?: string;
     align?: "left" | "center";
@@ -43,7 +43,7 @@ export default function ButtonSave({
                 </>
             ) : (
                 <>
-                    <Icon className="h-4 w-4" weight={weight} />
+                    {Icon && <Icon className="h-4 w-4" weight={weight} />}
                     <span>{label}</span>
                 </>
             )}

@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight, CreditCard, Wallet } from "lucide-react";
+import {
+  ArrowUpRightIcon,
+  CreditCardIcon,
+  WalletIcon
+} from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
 import { useDebounce } from "~/hooks/use-debounce";
 import { format } from "date-fns";
@@ -20,6 +24,8 @@ import {
   DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
+  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
@@ -32,6 +38,9 @@ import {
 } from "~/components/ui/select";
 import ButtonFilter from "~/components/ui/filter";
 import SearchInput from "~/components/ui/search";
+import ActionButton from "~/components/ui/button-add";
+import ButtonSave from "~/components/ui/button-save";
+import ButtonCancel from "~/components/ui/button-cancel";
 import {
   Table,
   TableHead,
@@ -41,6 +50,17 @@ import {
   TableCell,
   TablePagination,
 } from "~/components/ui/table";
+import {
+  FormGroup,
+  FormInput,
+  FormSelect,
+} from "~/components/ui/form-layout";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 
 export default function TransactionPage() {
   const [page, setPage] = useState(1);
@@ -79,10 +99,13 @@ export default function TransactionPage() {
   };
 
   const transactions = data?.items ?? [];
-  const stats = data?.stats ?? {
+  const stats = {
     totalIncome: 0,
     totalTransactions: 0,
     balance: 0,
+    incomeChange: 0,
+    transactionsChange: 0,
+    ...data?.stats,
   };
   const totalPages = data?.totalPages ?? 0;
   const totalItems = data?.total ?? 0;
@@ -130,7 +153,7 @@ export default function TransactionPage() {
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "ALL":
-        return "Semua";
+        return "Semua Status";
       case "completed":
         return "Sudah Bayar";
       case "pending":
@@ -145,8 +168,8 @@ export default function TransactionPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <Dialog open={isWithdrawOpen} onOpenChange={setIsWithdrawOpen}>
+    <TooltipProvider>
+      <div className="space-y-8">
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold text-cyan-600">Daftar Transaksi</h1>
@@ -156,27 +179,148 @@ export default function TransactionPage() {
         </div>
 
         {/* Stats Card */}
-        <div className="flex flex-col overflow-hidden rounded-xl border border-slate-800 bg-white p-0 shadow-[0px_1px_0px_rgba(30,27,75)] md:flex-row">
+        <div className="flex flex-col overflow-hidden rounded-xl border border-slate-800 bg-cyan-50 p-0 shadow-[0px_1px_0px_rgba(41,61,94)] md:flex-row">
           {/* Balance Section */}
           <div className="flex flex-1 flex-col justify-between border-b border-slate-200 p-6 md:border-r md:border-b-0">
-            <div className="mb-4 flex items-center gap-2 text-slate-500">
-              <Wallet className="h-5 w-5 text-blue-500" />
+            <div className="mb-4 flex items-center gap-2 text-slate-800">
+              <WalletIcon className="h-5 w-5 text-cyan-600" weight="fill" />
               <span className="text-sm font-medium">Saldo saat ini</span>
             </div>
             <div className="flex items-end justify-between">
-              <h2 className="text-2xl font-bold text-blue-600">
+              <h2 className="text-2xl font-semibold text-cyan-600">
                 {isLoading && !data ? (
                   <Skeleton className="h-8 w-40" />
                 ) : (
                   formatCurrency(stats.balance)
                 )}
               </h2>
-              <DialogTrigger asChild>
-                <button className="flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-blue-600 shadow-sm transition-colors hover:bg-blue-50">
-                  Tarik Saldo
-                  <ArrowUpRight className="h-4 w-4" />
-                </button>
-              </DialogTrigger>
+              <Dialog open={isWithdrawOpen} onOpenChange={setIsWithdrawOpen}>
+                <DialogTrigger asChild>
+                  <ActionButton
+                    label="Tarik Saldo"
+                    icon={ArrowUpRightIcon}
+                    variant="secondary"
+                  />
+                </DialogTrigger>
+                <DialogContent size="2xl" showCloseButton={false}>
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center justify-center gap-4">
+                      <CreditCardIcon className="h-6 w-6" weight="fill" />
+                      Penarikan Saldo
+                    </DialogTitle>
+                  </DialogHeader>
+
+                  <form
+                    className="space-y-0 px-10 py-8"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      createWithdrawal.mutate({
+                        amount: Number(withdrawForm.amount),
+                        bank: withdrawForm.bank as
+                          | "bca"
+                          | "bni"
+                          | "bri"
+                          | "mandiri"
+                          | "cimb"
+                          | "bsi",
+                        accountNumber: withdrawForm.accountNumber,
+                        accountHolderName: withdrawForm.accountHolderName,
+                        email: withdrawForm.email,
+                      });
+                    }}
+                  >
+                    <div className="space-y-0">
+                      <FormGroup label="Jumlah" labelWidth="md:w-[100px]">
+                        <FormInput
+                          type="number"
+                          min="0"
+                          value={withdrawForm.amount}
+                          onChange={(event) =>
+                            setWithdrawForm((current) => ({
+                              ...current,
+                              amount: event.target.value,
+                            }))
+                          }
+                          placeholder="Masukkan jumlah saldo yang ingin ditarik"
+                        />
+                      </FormGroup>
+
+                      <FormGroup label="Pilih Bank" labelWidth="md:w-[100px]">
+                        <FormSelect
+                          value={withdrawForm.bank}
+                          onChange={(e) =>
+                            setWithdrawForm((current) => ({
+                              ...current,
+                              bank: e.target.value,
+                            }))
+                          }
+                        >
+                          <option value="" disabled>Pilih salah satu</option>
+                          {bankOptions.map((bank) => (
+                            <option key={bank.value} value={bank.value}>
+                              {bank.label}
+                            </option>
+                          ))}
+                        </FormSelect>
+                      </FormGroup>
+
+                      <FormGroup label="Nama Pemilik" labelWidth="md:w-[100px]">
+                        <FormInput
+                          value={withdrawForm.accountHolderName}
+                          onChange={(event) =>
+                            setWithdrawForm((current) => ({
+                              ...current,
+                              accountHolderName: event.target.value,
+                            }))
+                          }
+                          placeholder="Masukkan nama pemilik rekening"
+                        />
+                      </FormGroup>
+
+                      <FormGroup label="No Rekening" labelWidth="md:w-[100px]">
+                        <FormInput
+                          inputMode="numeric"
+                          value={withdrawForm.accountNumber}
+                          onChange={(event) =>
+                            setWithdrawForm((current) => ({
+                              ...current,
+                              accountNumber: event.target.value,
+                            }))
+                          }
+                          placeholder="Masukkan nomor rekening anda"
+                        />
+                      </FormGroup>
+
+                      <FormGroup label="Email" labelWidth="md:w-[100px]">
+                        <FormInput
+                          type="email"
+                          value={withdrawForm.email}
+                          onChange={(event) =>
+                            setWithdrawForm((current) => ({
+                              ...current,
+                              email: event.target.value,
+                            }))
+                          }
+                          placeholder="Masukkan email anda"
+                        />
+                      </FormGroup>
+                    </div>
+
+                    <DialogFooter className="grid grid-cols-2 gap-4">
+                      <DialogClose asChild>
+                        <ButtonCancel label="Batal" className="w-full sm:w-auto text-md" />
+                      </DialogClose>
+                      <ButtonSave
+                        type="submit"
+                        isLoading={createWithdrawal.isPending}
+                        label="Konfirmasi"
+                        icon={null}
+                        className="w-full sm:w-auto text-md"
+                      />
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
 
@@ -185,7 +329,7 @@ export default function TransactionPage() {
             <p className="mb-2 text-xs font-bold text-slate-700">
               Total Penghasilan
             </p>
-            <h3 className="mb-2 text-xl font-bold text-blue-600">
+            <h3 className="mb-2 text-xl font-semibold text-cyan-600">
               {isLoading && !data ? (
                 <Skeleton className="h-7 w-32" />
               ) : (
@@ -193,7 +337,16 @@ export default function TransactionPage() {
               )}
             </h3>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-400">Total akumulasi</span>
+              <span className="text-slate-400">30 hari terakhir</span>
+              <span
+                className={`rounded-full px-2 py-1 font-medium ${stats.incomeChange >= 0
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+                  }`}
+              >
+                {stats.incomeChange >= 0 ? "+" : ""}
+                {stats.incomeChange.toFixed(0)}%
+              </span>
             </div>
           </div>
 
@@ -202,7 +355,7 @@ export default function TransactionPage() {
             <p className="mb-2 text-xs font-bold text-slate-700">
               Total Transaksi
             </p>
-            <h3 className="mb-2 text-xl font-bold text-blue-600">
+            <h3 className="mb-2 text-xl font-semibold text-cyan-600">
               {isLoading && !data ? (
                 <Skeleton className="h-7 w-12" />
               ) : (
@@ -210,13 +363,22 @@ export default function TransactionPage() {
               )}
             </h3>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-400">Transaksi berhasil</span>
+              <span className="text-slate-400">30 hari terakhir</span>
+              <span
+                className={`rounded-full px-2 py-1 font-medium ${stats.transactionsChange >= 0
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+                  }`}
+              >
+                {stats.transactionsChange >= 0 ? "+" : ""}
+                {stats.transactionsChange.toFixed(0)}%
+              </span>
             </div>
           </div>
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-col justify-between gap-4 md:flex-row">
+        <div className="flex flex-col md:flex-row justify-between gap-4">
           {/* Search */}
           <SearchInput
             value={search}
@@ -272,19 +434,19 @@ export default function TransactionPage() {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[5%] text-center">No</TableHead>
-              <TableHead>ID Transaksi</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Metode</TableHead>
-              <TableHead>Nama Pembeli</TableHead>
-              <TableHead>Produk</TableHead>
-              <TableHead>Tanggal</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead className="w-[10%] whitespace-nowrap">ID</TableHead>
+              <TableHead className="w-[12%] whitespace-nowrap">Total</TableHead>
+              <TableHead className="w-[10%] whitespace-nowrap">Metode</TableHead>
+              <TableHead className="w-[18%] whitespace-nowrap">Pembeli</TableHead>
+              <TableHead className="w-[20%] whitespace-nowrap">Produk</TableHead>
+              <TableHead className="w-[15%] whitespace-nowrap">Tanggal</TableHead>
+              <TableHead className="w-[10%] whitespace-nowrap text-center">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading && !data ? (
               Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
+                <TableRow key={i} data-type="body">
                   <TableCell>
                     <Skeleton className="mx-auto h-4 w-4" />
                   </TableCell>
@@ -306,7 +468,7 @@ export default function TransactionPage() {
                   <TableCell>
                     <Skeleton className="h-4 w-32" />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <Skeleton className="h-6 w-20 rounded-full" />
                   </TableCell>
                 </TableRow>
@@ -322,214 +484,79 @@ export default function TransactionPage() {
               </TableRow>
             ) : (
               transactions.map((item, index) => (
-                <TableRow key={item.id}>
+                <TableRow key={item.id} data-type="body">
                   <TableCell className="text-center font-medium">
-                    {(page - 1) * limit + index + 1}
-                  </TableCell>
-                  <TableCell className="max-w-[100px] truncate text-xs font-medium text-slate-400">
-                    {item.id}
-                  </TableCell>
-                  <TableCell className="font-medium whitespace-nowrap text-slate-800">
-                    {formatCurrency(Number(item.amount))}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-slate-600">
-                    {item.xenditPaymentMethod ?? "-"}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-slate-600">
-                    {item.buyerName}
-                  </TableCell>
-                  <TableCell className="max-w-[200px] truncate text-slate-600">
-                    {item.product.name}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-slate-600">
-                    {format(new Date(item.createdAt), "dd MMM yyyy HH:mm", {
-                      locale: id,
-                    })}
+                    <div className="flex items-center justify-center min-h-[48px]">
+                      {(page - 1) * limit + index + 1}
+                    </div>
                   </TableCell>
                   <TableCell>
-                    <span
-                      className={`rounded-full px-4 py-1 text-[13px] leading-tight font-medium ${getStatusColor(item.status)}`}
-                    >
-                      {item.status === "completed"
-                        ? "Sudah Bayar"
-                        : item.status === "pending"
-                          ? "Menunggu"
-                          : item.status === "failed"
-                            ? "Gagal"
-                            : item.status === "expired"
-                              ? "Kedaluwarsa"
-                              : item.status}
-                    </span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center min-h-[48px] max-w-[80px] truncate text-xs font-medium text-slate-400">
+                          {item.id}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>ID: {item.id}</TooltipContent>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    <div className="flex items-center min-h-[48px] font-medium text-slate-800">
+                      {formatCurrency(Number(item.amount))}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center min-h-[48px] text-slate-600 max-w-[80px] truncate">
+                          {item.xenditPaymentMethod ?? "-"}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>{item.xenditPaymentMethod ?? "-"}</TooltipContent>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center min-h-[48px] text-slate-600 max-w-[140px] truncate">
+                          {item.buyerName}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>{item.buyerName}</TooltipContent>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center min-h-[48px] max-w-[180px] truncate text-slate-600">
+                          {item.product.name}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>{item.product.name}</TooltipContent>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    <div className="flex items-center min-h-[48px] text-slate-600">
+                      {format(new Date(item.createdAt), "dd MMM yyyy HH:mm", {
+                        locale: id,
+                      })}
+                    </div>
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    <div className="flex items-center justify-center min-h-[48px]">
+                      <span
+                        className={`rounded-full px-4 py-1 text-[13px] leading-tight font-medium ${getStatusColor(item.status)}`}
+                      >
+                        {getStatusLabel(item.status)}
+                      </span>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
-        <DialogContent
-          showCloseButton={false}
-          className="max-w-[554px] gap-0 overflow-hidden rounded-lg border-0 bg-white p-0 text-slate-800 shadow-2xl ring-0 sm:max-w-[554px]"
-        >
-          <div className="bg-blue-50 px-8 py-6">
-            <DialogTitle className="flex items-center justify-center gap-4 text-2xl font-bold text-blue-500">
-              <CreditCard className="h-6 w-6" />
-              Penarikan Saldo
-            </DialogTitle>
-            <DialogDescription className="sr-only">
-              Form penarikan saldo ke rekening bank.
-            </DialogDescription>
-          </div>
-
-          <form
-            className="space-y-4 px-10 py-8"
-            onSubmit={(event) => {
-              event.preventDefault();
-              createWithdrawal.mutate({
-                amount: Number(withdrawForm.amount),
-                bank: withdrawForm.bank as
-                  | "bca"
-                  | "bni"
-                  | "bri"
-                  | "mandiri"
-                  | "cimb"
-                  | "bsi",
-                accountNumber: withdrawForm.accountNumber,
-                accountHolderName: withdrawForm.accountHolderName,
-                email: withdrawForm.email,
-              });
-            }}
-          >
-            <div className="grid gap-3 md:grid-cols-[86px_1fr] md:items-center">
-              <label
-                htmlFor="withdraw-amount"
-                className="text-sm font-medium text-slate-700"
-              >
-                Jumlah
-              </label>
-              <input
-                id="withdraw-amount"
-                type="number"
-                min="0"
-                value={withdrawForm.amount}
-                onChange={(event) =>
-                  setWithdrawForm((current) => ({
-                    ...current,
-                    amount: event.target.value,
-                  }))
-                }
-                placeholder="Masukkan jumlah saldo yang ingin ditarik"
-                className="h-12 w-full rounded-xl border border-blue-300 bg-white px-5 text-sm text-slate-700 transition outline-none placeholder:text-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              />
-            </div>
-
-            <div className="grid gap-3 md:grid-cols-[86px_1fr] md:items-center">
-              <label className="text-sm font-medium text-slate-700">
-                Pilih Bank
-              </label>
-              <Select
-                value={withdrawForm.bank}
-                onValueChange={(value) =>
-                  setWithdrawForm((current) => ({ ...current, bank: value }))
-                }
-              >
-                <SelectTrigger className="h-12 w-full rounded-xl border-blue-300 bg-white px-5 text-sm text-slate-700 focus-visible:border-blue-500 focus-visible:ring-blue-200 data-[size=default]:h-12">
-                  <SelectValue placeholder="Pilih salah satu" />
-                </SelectTrigger>
-                <SelectContent className="rounded-lg border-blue-100">
-                  {bankOptions.map((bank) => (
-                    <SelectItem key={bank.value} value={bank.value}>
-                      {bank.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid gap-3 md:grid-cols-[86px_1fr] md:items-center">
-              <label
-                htmlFor="withdraw-account-holder"
-                className="text-sm font-medium text-slate-700"
-              >
-                Nama Pemilik
-              </label>
-              <input
-                id="withdraw-account-holder"
-                value={withdrawForm.accountHolderName}
-                onChange={(event) =>
-                  setWithdrawForm((current) => ({
-                    ...current,
-                    accountHolderName: event.target.value,
-                  }))
-                }
-                placeholder="Masukkan nama pemilik rekening"
-                className="h-12 w-full rounded-xl border border-blue-300 bg-white px-5 text-sm text-slate-700 transition outline-none placeholder:text-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              />
-            </div>
-
-            <div className="grid gap-3 md:grid-cols-[86px_1fr] md:items-center">
-              <label
-                htmlFor="withdraw-account"
-                className="text-sm font-medium text-slate-700"
-              >
-                No Rekening
-              </label>
-              <input
-                id="withdraw-account"
-                inputMode="numeric"
-                value={withdrawForm.accountNumber}
-                onChange={(event) =>
-                  setWithdrawForm((current) => ({
-                    ...current,
-                    accountNumber: event.target.value,
-                  }))
-                }
-                placeholder="Masukkan nomor rekening anda"
-                className="h-12 w-full rounded-xl border border-blue-300 bg-white px-5 text-sm text-slate-700 transition outline-none placeholder:text-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              />
-            </div>
-
-            <div className="grid gap-3 md:grid-cols-[86px_1fr] md:items-center">
-              <label
-                htmlFor="withdraw-email"
-                className="text-sm font-medium text-slate-700"
-              >
-                Email
-              </label>
-              <input
-                id="withdraw-email"
-                type="email"
-                value={withdrawForm.email}
-                onChange={(event) =>
-                  setWithdrawForm((current) => ({
-                    ...current,
-                    email: event.target.value,
-                  }))
-                }
-                placeholder="Masukkan email anda"
-                className="h-12 w-full rounded-xl border border-blue-300 bg-white px-5 text-sm text-slate-700 transition outline-none placeholder:text-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              />
-            </div>
-
-            <div className="grid gap-2 pt-2 sm:grid-cols-2">
-              <DialogClose asChild>
-                <button
-                  type="button"
-                  className="h-9 rounded-lg bg-slate-200 px-5 text-sm font-semibold text-slate-600 transition hover:bg-slate-300"
-                >
-                  Batal
-                </button>
-              </DialogClose>
-              <button
-                type="submit"
-                disabled={createWithdrawal.isPending}
-                className="h-9 rounded-lg bg-blue-500 px-5 text-sm font-semibold text-white transition hover:bg-blue-600"
-              >
-                {createWithdrawal.isPending ? "Memproses..." : "Konfirmasi"}
-              </button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 }

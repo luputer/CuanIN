@@ -260,14 +260,6 @@ export default function KelasDetailPage() {
                                         ) : "-"}
                                     </Row>
 
-                                    <Row label="Link">
-                                        {product.link ? (
-                                            <a href={product.link} target="_blank" className="text-blue-500 hover:underline break-all">
-                                                {product.link}
-                                            </a>
-                                        ) : "-"}
-                                    </Row>
-
                                     <Row label="Tipe">
                                         {Number(product.price) === 0 ? "Gratis" : "Berbayar"}
                                     </Row>
@@ -276,6 +268,18 @@ export default function KelasDetailPage() {
                                         {Number(product.price) === 0
                                             ? "Rp 0"
                                             : `Rp ${Number(product.price).toLocaleString("id-ID")}`}
+                                    </Row>
+
+                                    <Row label="Durasi">
+                                        {product.duration}
+                                    </Row>
+
+                                    <Row label="Link">
+                                        {product.link ? (
+                                            <a href={product.link} target="_blank" className="text-blue-500 hover:underline break-all">
+                                                {product.link}
+                                            </a>
+                                        ) : "-"}
                                     </Row>
 
                                     <Row label="Status">

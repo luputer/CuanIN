@@ -1,5 +1,19 @@
 "use client";
 
+// React
+import { useState, useEffect } from "react";
+
+// Next.js
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+// Third-party
+import { format } from "date-fns";
+import { id as idLocale } from "date-fns/locale";
+import { toast } from "sonner";
+
+// Icons
 import {
     CaretUpIcon,
     CaretDownIcon,
@@ -7,10 +21,12 @@ import {
     TrashIcon,
     CopyIcon,
 } from "@phosphor-icons/react";
+
+// Internal & Utils
+import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
-import { useState, useEffect } from "react";
-import { toast } from "sonner";
-import ConfirmDialog from "~/components/ui/confirm-dialog";
+
+// Components
 import {
     Table,
     TableHead,
@@ -21,13 +37,10 @@ import {
     TablePagination,
 } from "~/components/ui/table";
 import { Skeleton } from "~/components/ui/skeleton";
-import Link from "next/link";
-import { api } from "~/trpc/react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import SearchInput from "~/components/ui/search";
 import ButtonFilter from "~/components/ui/filter";
 import ActionButton from "~/components/ui/button-add";
+import ConfirmDialog from "~/components/ui/confirm-dialog";
 import {
     Tooltip,
     TooltipContent,
@@ -41,10 +54,10 @@ import {
     DropdownMenuRadioGroup,
     DropdownMenuRadioItem,
 } from "~/components/ui/dropdown-menu";
-import { format } from "date-fns";
-import { id as idLocale } from "date-fns/locale";
 
 export default function WebinarPage() {
+    // ─── States & Hooks ──────────────────────────────────────────────────────
+
     const utils = api.useUtils();
     const router = useRouter();
 
@@ -58,6 +71,8 @@ export default function WebinarPage() {
     const [priceTypeFilter, setPriceTypeFilter] = useState<"ALL" | "FREE" | "PAID">("ALL");
     const [statusFilter, setStatusFilter] = useState<string>("ALL");
 
+    // ─── Effects ─────────────────────────────────────────────────────────────
+
     // Debounce search
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -66,6 +81,8 @@ export default function WebinarPage() {
         }, 500);
         return () => clearTimeout(timer);
     }, [search]);
+
+    // ─── API ─────────────────────────────────────────────────────────────────
 
     const { data, isLoading } = api.products.getAll.useQuery({
         type: "WEBINAR",
@@ -84,6 +101,8 @@ export default function WebinarPage() {
     const total = data?.total ?? 0;
     const totalPages = data?.totalPages ?? 1;
 
+    const isFiltered = debouncedSearch !== "" || priceTypeFilter !== "ALL" || statusFilter !== "ALL";
+
     // Fetch buyer counts for all webinars
     const productIds = webinars?.map(p => p.id) ?? [];
     const { data: buyerCounts } = api.purchases.countByProductIds.useQuery(
@@ -93,7 +112,7 @@ export default function WebinarPage() {
 
     const [deleteId, setDeleteId] = useState<string | null>(null);
 
-    const deleteWebinar = api.products.delete.useMutation({
+    const deleteProduct = api.products.delete.useMutation({
         onSuccess: () => {
             void utils.products.getAll.invalidate();
             toast.success("Webinar berhasil dihapus");
@@ -105,13 +124,15 @@ export default function WebinarPage() {
         },
     });
 
-    const webinarToDelete = webinars?.find((p) => p.id === deleteId);
+    const productToDelete = webinars?.find((p) => p.id === deleteId);
+
+    // ─── Helpers ─────────────────────────────────────────────────────────────
 
     const getStatusColor = (status: string) => {
         const s = status.toLowerCase();
         switch (s) {
             case "selesai": return "bg-green-100 text-green-700";
-            case "published": return "bg-amber-100 text-amber-700";
+            case "published": return "bg-green-100 text-green-700";
             case "unpublished": return "bg-slate-200 text-slate-500";
             default: return "bg-slate-100 text-slate-600";
         }
@@ -140,13 +161,15 @@ export default function WebinarPage() {
         toast.success("Link webinar disalin!");
     };
 
+    // ─── Render ──────────────────────────────────────────────────────────────
+
     return (
         <TooltipProvider>
             <div className="space-y-6">
                 {/* Header */}
                 <div className="bg-slate-50">
                     <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
-                        <div className="text-2xl font-semibold mb-2 text-cyan-600">Webinar</div>
+                        <div className="text-2xl font-bold mb-2 text-cyan-600">Webinar</div>
                         <div className="text-sm font-regular text-slate-600">Pantau dan kelola semua webinar yang kamu buat.</div>
                     </div>
                 </div>
@@ -238,9 +261,9 @@ export default function WebinarPage() {
                                         </div>
                                     </div>
                                 </TableHead>
-                                <TableHead className="w-[14%]">Thumbnail</TableHead>
+                                <TableHead className="w-[12%]">Thumbnail</TableHead>
                                 <TableHead
-                                    className="w-[14%] cursor-pointer select-none hover:text-slate-900 transition-colors group"
+                                    className="w-[12%] cursor-pointer select-none hover:text-slate-900 transition-colors group"
                                     onClick={() => {
                                         if (sortBy === "startDate") {
                                             setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -265,10 +288,10 @@ export default function WebinarPage() {
                                     </div>
                                 </TableHead>
                                 <TableHead className="w-[10%]">Tipe</TableHead>
-                                <TableHead className="w-[13%]">Harga</TableHead>
+                                <TableHead className="w-[12%]">Harga</TableHead>
                                 <TableHead className="w-[12%]">Pembeli</TableHead>
                                 <TableHead className="w-[14%]">Status</TableHead>
-                                <TableHead className="text-left w-[10%]">Aksi</TableHead>
+                                <TableHead className="text-left w-[5%]">Aksi</TableHead>
                             </TableRow>
                         </TableHeader>
 
@@ -297,10 +320,16 @@ export default function WebinarPage() {
                                 <TableRow className="text-center">
                                     <TableCell colSpan={9} className="py-20">
                                         <div className="flex flex-col items-center gap-1">
-                                            <span className="text-slate-500">Belum ada webinar.</span>
-                                            <Link href="/webinar/create" className="text-cyan-600 font-medium hover:underline">
-                                                Buat webinar pertamamu
-                                            </Link>
+                                            {isFiltered ? (
+                                                <span className="text-slate-500">Hasil pencarian atau filter tidak ditemukan.</span>
+                                            ) : (
+                                                <>
+                                                    <span className="text-slate-500">Belum ada webinar.</span>
+                                                    <Link href="/webinar/create" className="text-cyan-600 font-medium hover:underline">
+                                                        Yuk, buat webinar pertamamu!
+                                                    </Link>
+                                                </>
+                                            )}
                                         </div>
                                     </TableCell>
                                 </TableRow>
@@ -346,7 +375,7 @@ export default function WebinarPage() {
                                                     <div className="font-medium text-slate-600">
                                                         {item.startDate ? format(new Date(item.startDate), "d MMM yyyy", { locale: idLocale }) : "-"}
                                                     </div>
-                                                    <div className="mt-1 text-slate-500">
+                                                    <div className="mt-1 text-slate-500 text-xs">
                                                         {item.startDate ? format(new Date(item.startDate), "HH:mm") : ""}
                                                         {item.startDate && item.endDate ? " - " : ""}
                                                         {item.endDate ? format(new Date(item.endDate), "HH:mm") : ""}
@@ -388,7 +417,7 @@ export default function WebinarPage() {
                                             </TableCell>
 
                                             <TableCell className="px-6 py-4 text-right">
-                                                <div className="flex justify-end items-center gap-3">
+                                                <div className="flex justify-start items-center gap-3">
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <button onClick={() => router.push(`/webinar/${item.id}`)}>
@@ -432,17 +461,17 @@ export default function WebinarPage() {
                     title="Hapus Webinar?"
                     description={
                         <>
-                            Kamu yakin ingin menghapus webinar {" "}
-                            <span className="font-semibold text-slate-800">&quot;{webinarToDelete?.name}&quot;</span>?
+                            Kamu yakin ingin menghapus {" "}
+                            <span className="font-semibold text-slate-800">&quot;{productToDelete?.name}&quot;</span>?
                             <br />
                             Tindakan ini tidak bisa dibatalkan.
                         </>
                     }
                     confirmText="Ya, Hapus"
                     confirmClassName="bg-red-500 hover:bg-red-600 text-white"
-                    loading={deleteWebinar.isPending}
+                    loading={deleteProduct.isPending}
                     onConfirm={() => {
-                        if (deleteId) deleteWebinar.mutate({ id: deleteId });
+                        if (deleteId) deleteProduct.mutate({ id: deleteId });
                     }}
                 />
             </div>

@@ -14,6 +14,7 @@ export const catalogRouter = createTRPCRouter({
                             id: true,
                             name: true,
                             image: true,
+                            banner: true,
                             products: {
                                 where: { status: "published" },
                                 orderBy: { createdAt: "desc" },
@@ -33,6 +34,7 @@ export const catalogRouter = createTRPCRouter({
                     id: catalog.user.id,
                     name: catalog.user.name,
                     image: catalog.user.image,
+                    banner: catalog.user.banner,
                 },
                 products: catalog.user.products,
             };
@@ -72,6 +74,13 @@ export const catalogRouter = createTRPCRouter({
                     },
                     formFields: {
                         orderBy: { order: "asc" },
+                    },
+                    _count: {
+                        select: {
+                            purchases: {
+                                where: { status: "completed" },
+                            },
+                        },
                     },
                 },
             });

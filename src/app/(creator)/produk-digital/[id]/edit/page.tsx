@@ -177,9 +177,14 @@ export default function EditProductPage() {
                             </div>
                         </FormGroup>
 
-                        <FormGroup label="Deskripsi Singkat" align="start" error={errors.shortDescription?.message}>
+                        <FormGroup
+                            label="Ringkasan"
+                            align="start"
+                            error={errors.shortDescription?.message}
+                            description={`${watch("shortDescription")?.length ?? 0}/200 karakter`}
+                        >
                             <FormTextarea
-                                placeholder="Masukkan deskripsi singkat"
+                                placeholder="Masukkan ringkasan tentang produk digital ini"
                                 {...register("shortDescription")}
                             />
                         </FormGroup>

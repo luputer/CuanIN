@@ -12,6 +12,7 @@ declare module "next-auth" {
             status: string;
             statusPayment: string;
             isProfileComplete: boolean;
+            phone: string | null;
         } & DefaultSession["user"];
     }
 
@@ -20,6 +21,7 @@ declare module "next-auth" {
         status: string;
         statusPayment: string;
         isProfileComplete: boolean;
+        phone: string | null;
     }
 }
 
@@ -30,6 +32,7 @@ declare module "next-auth/jwt" {
         status: string;
         statusPayment: string;
         isProfileComplete: boolean;
+        phone: string | null;
     }
 }
 
@@ -104,6 +107,7 @@ export const authConfig = {
                 token.status = user.status;
                 token.statusPayment = user.statusPayment;
                 token.isProfileComplete = user.isProfileComplete;
+                token.phone = user.phone;
             }
             if (trigger === "update" && session) {
                 return { ...token, ...(session as Partial<JWT>) };
@@ -117,6 +121,7 @@ export const authConfig = {
                 session.user.status = token.status;
                 session.user.statusPayment = token.statusPayment;
                 session.user.isProfileComplete = token.isProfileComplete;
+                session.user.phone = token.phone;
             }
             return session;
         },

@@ -9,30 +9,36 @@ interface FormGroupProps {
     label: string;
     children: React.ReactNode;
     error?: string;
+    description?: string;
     className?: string;
     align?: "start" | "center";
+    labelWidth?: string;
 }
 
 export const FormGroup = ({
     label,
     children,
     error,
+    description,
     className,
     align = "center",
+    labelWidth = "md:w-[200px]",
 }: FormGroupProps) => (
     <div className={cn(
-        "flex flex-col md:flex-row gap-10 py-4 last:border-0",
+        "flex flex-col md:flex-row gap-4 md:gap-10 py-4 last:border-0",
         align === "center" ? "md:items-center" : "md:items-start",
         className
     )}>
         <Label className={cn(
-            "text-sm text-slate-600 font-medium w-[200px]",
+            "text-sm text-slate-600 font-medium shrink-0",
+            labelWidth,
             align === "start" && "md:pt-1"
         )}>
             {label}
         </Label>
         <div className="flex-1">
             {children}
+            {description && <p className="text-slate-500 text-xs mt-2 italic">{description}</p>}
             {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
         </div>
     </div>

@@ -1,13 +1,23 @@
 "use client";
 
+// React
+import { useState, useEffect } from "react";
+
+// Next.js
+import Link from "next/link";
+
+// Icons
 import {
 	CaretUpIcon,
 	CaretDownIcon,
 	EyeIcon,
 	UserMinusIcon,
 } from "@phosphor-icons/react";
-import { useState, useEffect } from "react";
+
+// Internal & Utils
 import { api } from "~/trpc/react";
+
+// Components
 import {
 	Table,
 	TableHead,
@@ -25,11 +35,16 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "~/components/ui/tooltip";
+
 export default function UserPage() {
+	// ─── States & Hooks ──────────────────────────────────────────────────────
+
 	const [search, setSearch] = useState("");
 	const [debouncedSearch, setDebouncedSearch] = useState("");
 	const [page, setPage] = useState(1);
 	const [limit, setLimit] = useState(10);
+
+	// ─── Effects ─────────────────────────────────────────────────────────────
 
 	// Debounce search
 	useEffect(() => {
@@ -39,6 +54,8 @@ export default function UserPage() {
 		}, 500);
 		return () => clearTimeout(timer);
 	}, [search]);
+
+	// ─── API ─────────────────────────────────────────────────────────────────
 
 	const { data, isLoading } = api.purchases.getAllParticipants.useQuery({
 		page,
@@ -52,19 +69,22 @@ export default function UserPage() {
 	const total = data?.total ?? 0;
 	const totalPages = data?.totalPages ?? 1;
 
+	// ─── Render ──────────────────────────────────────────────────────────────
+
 	return (
 		<TooltipProvider>
 			<div className="space-y-6">
 				{/* Header */}
 				<div className="bg-slate-50">
 					<div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
-						<div className="text-2xl font-semibold mb-2 text-cyan-600">Daftar User</div>
+						<div className="text-2xl font-bold mb-2 text-cyan-600">Daftar User</div>
 						<div className="text-sm font-regular text-slate-600">Pantau semua user yang membeli produkmu.</div>
 					</div>
 				</div>
 
 				{/* Toolbar */}
 				<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+					{/* Search */}
 					<SearchInput
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
@@ -175,9 +195,12 @@ export default function UserPage() {
 												<div className="flex justify-start items-center gap-3">
 													<Tooltip>
 														<TooltipTrigger asChild>
-															<button className="text-cyan-600 cursor-pointer hover:text-cyan-700 transition-colors">
+															<Link
+																href={`/peserta/${encodeURIComponent(item.email)}`}
+																className="text-cyan-600 cursor-pointer hover:text-cyan-700 transition-colors"
+															>
 																<EyeIcon size={24} weight="regular" />
-															</button>
+															</Link>
 														</TooltipTrigger>
 														<TooltipContent>Lihat Detail</TooltipContent>
 													</Tooltip>

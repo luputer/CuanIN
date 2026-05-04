@@ -1,5 +1,17 @@
 "use client";
 
+// React
+import { useState, useEffect } from "react";
+
+// Next.js
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+// Third-party
+import { toast } from "sonner";
+
+// Icons
 import {
 	CaretUpIcon,
 	CaretDownIcon,
@@ -7,10 +19,12 @@ import {
 	TrashIcon,
 	CopyIcon,
 } from "@phosphor-icons/react";
+
+// Internal & Utils
+import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
-import { useState, useEffect } from "react";
-import { toast } from "sonner";
-import ConfirmDialog from "~/components/ui/confirm-dialog";
+
+// Components
 import {
 	Table,
 	TableHead,
@@ -21,13 +35,10 @@ import {
 	TablePagination,
 } from "~/components/ui/table";
 import { Skeleton } from "~/components/ui/skeleton";
-import Link from "next/link";
-import { api } from "~/trpc/react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import SearchInput from "~/components/ui/search";
 import ButtonFilter from "~/components/ui/filter";
 import ActionButton from "~/components/ui/button-add";
+import ConfirmDialog from "~/components/ui/confirm-dialog";
 import {
 	Tooltip,
 	TooltipContent,
@@ -43,6 +54,8 @@ import {
 } from "~/components/ui/dropdown-menu";
 
 export default function DigitalProductPage() {
+	// ─── States & Hooks ──────────────────────────────────────────────────────
+
 	const utils = api.useUtils();
 	const router = useRouter();
 
@@ -56,6 +69,8 @@ export default function DigitalProductPage() {
 	const [priceTypeFilter, setPriceTypeFilter] = useState<"ALL" | "FREE" | "PAID">("ALL");
 	const [statusFilter, setStatusFilter] = useState<string>("ALL");
 
+	// ─── Effects ─────────────────────────────────────────────────────────────
+
 	// Debounce search
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -64,6 +79,8 @@ export default function DigitalProductPage() {
 		}, 500);
 		return () => clearTimeout(timer);
 	}, [search]);
+
+	// ─── API ─────────────────────────────────────────────────────────────────
 
 	const { data, isLoading } = api.products.getAll.useQuery({
 		type: "DIGITAL_PRODUCT",
@@ -81,6 +98,8 @@ export default function DigitalProductPage() {
 	const products = data?.items;
 	const total = data?.total ?? 0;
 	const totalPages = data?.totalPages ?? 1;
+
+	const isFiltered = debouncedSearch !== "" || priceTypeFilter !== "ALL" || statusFilter !== "ALL";
 
 	// Fetch buyer counts for all products
 	const productIds = products?.map(p => p.id) ?? [];
@@ -104,6 +123,8 @@ export default function DigitalProductPage() {
 	});
 
 	const productToDelete = products?.find((p) => p.id === deleteId);
+
+	// ─── Helpers ─────────────────────────────────────────────────────────────
 
 	const getStatusColor = (status: string) => {
 		const s = status.toLowerCase();
@@ -136,13 +157,15 @@ export default function DigitalProductPage() {
 		toast.success("Link produk disalin!");
 	};
 
+	// ─── Render ──────────────────────────────────────────────────────────────
+
 	return (
 		<TooltipProvider>
 			<div className="space-y-6">
 				{/* Header */}
 				<div className="bg-slate-50">
 					<div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
-						<div className="text-2xl font-semibold mb-2 text-cyan-600">Produk Digital</div>
+						<div className="text-2xl font-bold mb-2 text-cyan-600">Produk Digital</div>
 						<div className="text-sm font-regular text-slate-600">Pantau dan kelola semua produk digital yang kamu buat.</div>
 					</div>
 				</div>
@@ -180,7 +203,6 @@ export default function DigitalProductPage() {
 									<DropdownMenuRadioItem value="ALL">Semua Status</DropdownMenuRadioItem>
 									<DropdownMenuRadioItem value="published">Published</DropdownMenuRadioItem>
 									<DropdownMenuRadioItem value="unpublished">Unpublished</DropdownMenuRadioItem>
-									<DropdownMenuRadioItem value="selesai">Selesai</DropdownMenuRadioItem>
 								</DropdownMenuRadioGroup>
 							</DropdownMenuContent>
 						</DropdownMenu>
@@ -234,12 +256,13 @@ export default function DigitalProductPage() {
 										</div>
 									</div>
 								</TableHead>
-								<TableHead className="w-[14%]">Thumbnail</TableHead>
+								<TableHead className="w-[12%]">Thumbnail</TableHead>
+								<TableHead className="w-[12%]">Format</TableHead>
 								<TableHead className="w-[10%]">Tipe</TableHead>
-								<TableHead className="w-[13%]">Harga</TableHead>
-								<TableHead className="w-[14%]">Pembeli</TableHead>
-								<TableHead className="w-[16%]">Status</TableHead>
-								<TableHead className="text-left w-[10%]">Aksi</TableHead>
+								<TableHead className="w-[12%]">Harga</TableHead>
+								<TableHead className="w-[12%]">Pembeli</TableHead>
+								<TableHead className="w-[14%]">Status</TableHead>
+								<TableHead className="text-left w-[5%]">Aksi</TableHead>
 							</TableRow>
 						</TableHeader>
 
@@ -251,6 +274,7 @@ export default function DigitalProductPage() {
 										<TableCell><Skeleton className="h-4 w-32" /></TableCell>
 										<TableCell><Skeleton className="h-12 w-12 rounded-md" /></TableCell>
 										<TableCell><Skeleton className="h-4 w-16" /></TableCell>
+										<TableCell><Skeleton className="h-4 w-12" /></TableCell>
 										<TableCell><Skeleton className="h-4 w-20" /></TableCell>
 										<TableCell><Skeleton className="h-4 w-12" /></TableCell>
 										<TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
@@ -265,12 +289,18 @@ export default function DigitalProductPage() {
 								))
 							) : products?.length === 0 ? (
 								<TableRow className="text-center">
-									<TableCell colSpan={8} className="py-20">
+									<TableCell colSpan={9} className="py-20">
 										<div className="flex flex-col items-center gap-1">
-											<span className="text-slate-500">Belum ada produk digital.</span>
-											<Link href="/produk-digital/create" className="text-cyan-600 font-medium hover:underline">
-												Buat produk digital pertamamu
-											</Link>
+											{isFiltered ? (
+												<span className="text-slate-500">Hasil pencarian atau filter tidak ditemukan.</span>
+											) : (
+												<>
+													<span className="text-slate-500">Belum ada produk digital.</span>
+													<Link href="/produk-digital/create" className="text-cyan-600 font-medium hover:underline">
+														Yuk, buat produk digital pertamamu!
+													</Link>
+												</>
+											)}
 										</div>
 									</TableCell>
 								</TableRow>
@@ -308,6 +338,12 @@ export default function DigitalProductPage() {
 															No image
 														</div>
 													)}
+												</div>
+											</TableCell>
+
+											<TableCell className="whitespace-nowrap text-slate-600 font-medium">
+												<div className="flex items-center min-h-[48px]">
+													{item.format || "-"}
 												</div>
 											</TableCell>
 

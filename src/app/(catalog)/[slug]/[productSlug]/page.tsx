@@ -21,7 +21,7 @@ import Footer from "~/components/layout/footer";
 
 const TYPE_MAP: Record<string, string> = {
   WEBINAR: "Webinar",
-  KELAS_ONLINE: "Kelas Online",
+  KELAS_ONLINE: "Kelas",
   DIGITAL_PRODUCT: "Produk Digital",
 };
 
@@ -262,12 +262,17 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
-              {isWebinarOrClass && product.quota && (
+              {isWebinarOrClass && product.quota && product.quota > 0 && (
                 <div className="flex justify-between border-t pt-3 text-sm">
                   <span className="text-slate-500">Kuota</span>
-                  <span className="font-regular text-slate-800">
-                    {product.quota} peserta
-                  </span>
+                  <div className="flex flex-col items-end">
+                    <span className="font-regular text-slate-800">
+                      {product.quota} peserta
+                    </span>
+                    {(product._count?.purchases ?? 0) >= product.quota && (
+                      <span className="text-[10px] font-bold text-red-500 uppercase">Sudah Full</span>
+                    )}
+                  </div>
                 </div>
               )}
 
@@ -292,11 +297,20 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
-              <Link href={`/${slug}/${productSlug}/checkout`}>
-                <button className="mt-5 w-full cursor-pointer rounded-xl bg-cyan-600 py-3 font-medium text-white shadow-sm hover:bg-cyan-700">
-                  {isGratis ? "Daftar Sekarang" : "Beli Sekarang"}
+              {product.quota && product.quota > 0 && (product._count?.purchases ?? 0) >= product.quota ? (
+                <button
+                  disabled
+                  className="mt-5 w-full rounded-xl bg-slate-300 py-3 font-medium text-slate-500 shadow-sm cursor-not-allowed"
+                >
+                  Kuota sudah full
                 </button>
-              </Link>
+              ) : (
+                <Link href={`/${slug}/${productSlug}/checkout`}>
+                  <button className="mt-5 w-full cursor-pointer rounded-xl bg-cyan-600 py-3 font-medium text-white shadow-sm hover:bg-cyan-700">
+                    {isGratis ? "Daftar Sekarang" : "Beli Sekarang"}
+                  </button>
+                </Link>
+              )}
             </div>
           </div>
         </div>

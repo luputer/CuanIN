@@ -189,9 +189,14 @@ export default function EditWebinarPage() {
                         </FormGroup>
 
                         {/* Ringkasan */}
-                        <FormGroup label="Ringkasan" align="start" error={errors.shortDescription?.message}>
+                        <FormGroup
+                            label="Ringkasan"
+                            align="start"
+                            error={errors.shortDescription?.message}
+                            description={`${watch("shortDescription")?.length ?? 0}/200 karakter`}
+                        >
                             <FormTextarea
-                                placeholder="Masukkan ringkasan tentang webinar"
+                                placeholder="Masukkan ringkasan tentang webinar ini"
                                 {...register("shortDescription")}
                             />
                         </FormGroup>

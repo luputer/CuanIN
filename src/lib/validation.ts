@@ -32,7 +32,7 @@ export type LoginFormData = z.infer<typeof loginSchema>;
 export const webinarSchema = z
     .object({
         name: z.string().min(1, "Nama webinar wajib diisi"),
-        shortDescription: z.string().optional(),
+        shortDescription: z.string().max(200, "Ringkasan maksimal 200 karakter").optional(),
         description: z.string().min(1, "Deskripsi wajib diisi"),
         priceType: z.enum(["free", "paid"]),
         price: z.number().min(0, "Harga tidak boleh negatif").optional(),
@@ -102,7 +102,7 @@ export const webinarSchema = z
 
 export const baseProductDigitalSchema = z.object({
     name: z.string().min(1, "Nama produk wajib diisi"),
-    shortDescription: z.string().optional(),
+    shortDescription: z.string().max(200, "Ringkasan maksimal 200 karakter").optional(),
     description: z.string().min(1, "Deskripsi wajib diisi"),
     priceType: z.enum(["free", "paid"]),
     price: z.number().min(0, "Harga tidak boleh negatif").optional(),
@@ -111,6 +111,7 @@ export const baseProductDigitalSchema = z.object({
         .min(1, "Link produk wajib diisi")
         .url("Link tidak valid, pastikan format URL benar (https://...)"),
     format: z.string().optional(),
+    duration: z.string().optional(),
     notes: z.string().optional(),
     status: z.string().min(1, "Status wajib dipilih"),
     image: z.string().optional(),
@@ -136,7 +137,7 @@ export type DigitalProductFormValues = z.infer<typeof baseProductDigitalSchema>;
 export const productKelasOnlineSchema = z
     .object({
         name: z.string().min(1, "Nama produk wajib diisi"),
-        shortDescription: z.string().optional(),
+        shortDescription: z.string().max(200, "Ringkasan maksimal 200 karakter").optional(),
         description: z.string().min(1, "Deskripsi wajib diisi"),
         priceType: z.enum(["free", "paid"]),
         price: z.number().min(0, "Harga tidak boleh negatif").optional(),

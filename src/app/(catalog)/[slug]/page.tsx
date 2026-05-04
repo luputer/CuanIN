@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { useParams, notFound } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { api } from "~/trpc/react";
 import Link from "next/link";
 import SearchInput from "~/components/ui/search";
-import { ImagesIcon, SpinnerIcon, CalendarDotsIcon, ArrowRightIcon, FileIcon, ClockIcon } from "@phosphor-icons/react";
-
+import { ImagesIcon, SpinnerIcon, CalendarDotsIcon, ArrowRightIcon, FileIcon, ClockIcon, ArrowLeftIcon } from "@phosphor-icons/react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -185,6 +185,8 @@ export default function CatalogSlugPage() {
     const [activeTab, setActiveTab] = useState<TabFilter>("Semua");
     const [searchQuery, setSearchQuery] = useState(""); // State pencarian
 
+    const { data: session } = useSession();
+
     const { data, isLoading } = api.catalog.getBySlug.useQuery(
         { slug },
         { enabled: !!slug }
@@ -218,12 +220,25 @@ export default function CatalogSlugPage() {
         : "??";
 
     return (
-        <div className="min-h-screen bg-slate-50 px-4 py-16">
-            <div className="max-w-6xl mx-auto pb-6">
+        <div className="min-h-screen bg-slate-50 pb-16">
+            {/* ── Banner Section ── */}
+            <div className="relative w-full h-32 md:h-48 bg-slate-200 overflow-hidden">
+                {(creator as any).banner ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                        src={(creator as any).banner}
+                        alt="Banner"
+                        className="w-full h-full object-cover"
+                    />
+                ) : (
+                    <div className="w-full h-full bg-gradient-to-r from-cyan-500 to-blue-600 opacity-20" />
+                )}
+            </div>
 
+            <div className="max-w-6xl mx-auto px-4">
                 {/* ── Profile Section ── */}
-                <div className="flex flex-col items-center gap-2 text-center pb-6">
-                    <Avatar className="bg-white px-1 py-1 w-24 h-24 border border-slate-300">
+                <div className="flex flex-col items-center -mt-12 md:-mt-16 relative z-10 text-center pb-6">
+                    <Avatar className="bg-white p-1 w-24 h-24 md:w-32 md:h-32 border-4 border-white shadow-md rounded-full overflow-hidden">
                         <AvatarImage src={creator.image ?? ""} alt={creator.name ?? ""} />
                         <AvatarFallback className="text-2xl font-bold bg-yellow-200 text-slate-800">
                             {initials}
@@ -336,6 +351,19 @@ export default function CatalogSlugPage() {
                         </div>
                     )}
                 </div>
+
+                {/* ── Back to Account for Creator ── */}
+                {session?.user?.role === "CREATOR" && (
+                    <div className="mt-12 flex justify-center border-t border-slate-200 pt-10">
+                        <Link
+                            href="/dashboard"
+                            className="flex items-center gap-2 px-8 py-3 bg-slate-800 text-white rounded-full font-semibold hover:bg-slate-700 transition-all shadow-md hover:shadow-lg active:scale-95"
+                        >
+                            <ArrowLeftIcon className="w-5 h-5" />
+                            <span>Kembali ke Dashboard</span>
+                        </Link>
+                    </div>
+                )}
             </div>
         </div>
     );

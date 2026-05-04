@@ -176,9 +176,14 @@ export default function EditKelasPage() {
                             </div>
                         </FormGroup>
 
-                        <FormGroup label="Deskripsi Singkat" align="start" error={errors.shortDescription?.message}>
+                        <FormGroup
+                            label="Ringkasan"
+                            align="start"
+                            error={errors.shortDescription?.message}
+                            description={`${watch("shortDescription")?.length ?? 0}/200 karakter`}
+                        >
                             <FormTextarea
-                                placeholder="Masukkan deskripsi singkat"
+                                placeholder="Masukkan ringkasan tentang kelas ini"
                                 {...register("shortDescription")}
                             />
                         </FormGroup>
@@ -267,6 +272,14 @@ export default function EditKelasPage() {
                                 />
                             </FormGroup>
                         )}
+
+                        {/* Durasi */}
+                        <FormGroup label="Durasi" error={errors.duration?.message}>
+                            <FormInput
+                                placeholder="Contoh: 12 Jam Materi, 30 Hari Akses, dsb"
+                                {...register("duration")}
+                            />
+                        </FormGroup>
 
                         {/* Link */}
                         <FormGroup label="Link Akses" error={errors.link?.message}>

@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import {
   ArrowUpRightIcon,
   CreditCardIcon,
-  WalletIcon
+  WalletIcon,
 } from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
 import { useDebounce } from "~/hooks/use-debounce";
+import { withdrawalSchema, type WithdrawalFormData } from "~/lib/validation";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { toast } from "sonner";
@@ -23,19 +24,11 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import ButtonFilter from "~/components/ui/filter";
 import SearchInput from "~/components/ui/search";
 import ActionButton from "~/components/ui/button-add";
@@ -50,11 +43,7 @@ import {
   TableCell,
   TablePagination,
 } from "~/components/ui/table";
-import {
-  FormGroup,
-  FormInput,
-  FormSelect,
-} from "~/components/ui/form-layout";
+import { FormGroup, FormInput, FormSelect } from "~/components/ui/form-layout";
 import {
   Tooltip,
   TooltipContent,
@@ -75,6 +64,9 @@ export default function TransactionPage() {
     accountHolderName: "",
     email: "",
   });
+  const [withdrawErrors, setWithdrawErrors] = useState<
+    Partial<Record<keyof WithdrawalFormData, string>>
+  >({});
   const debouncedSearch = useDebounce(search, 500);
   const utils = api.useUtils();
 
@@ -98,6 +90,14 @@ export default function TransactionPage() {
     }).format(amount);
   };
 
+  const formatNumberInput = (value: string) => {
+    if (!value) {
+      return "";
+    }
+
+    return new Intl.NumberFormat("id-ID").format(Number(value));
+  };
+
   const transactions = data?.items ?? [];
   const stats = {
     totalIncome: 0,
@@ -117,6 +117,8 @@ export default function TransactionPage() {
     { value: "cimb", label: "CIMB Niaga" },
     { value: "bsi", label: "BSI" },
   ];
+  const errorFieldClassName =
+    "border-red-500 focus:ring-red-500/30 focus:border-red-500";
   const createWithdrawal = api.withdrawals.create.useMutation({
     onSuccess: async () => {
       toast.success("Permintaan penarikan saldo berhasil dibuat");
@@ -128,12 +130,67 @@ export default function TransactionPage() {
         accountHolderName: "",
         email: "",
       });
+      setWithdrawErrors({});
       await utils.purchases.getAllForCreator.invalidate();
     },
     onError: (error) => {
       toast.error(error.message);
     },
   });
+
+  const updateWithdrawField = (
+    field: keyof typeof withdrawForm,
+    value: string,
+  ) => {
+    const nextValue =
+      field === "amount" || field === "accountNumber"
+        ? value.replace(/\D/g, "")
+        : value;
+
+    setWithdrawForm((current) => ({
+      ...current,
+      [field]: nextValue,
+    }));
+    setWithdrawErrors((current) => {
+      if (!current[field]) {
+        return current;
+      }
+
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+  };
+
+  const handleWithdrawalSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const result = withdrawalSchema.safeParse(withdrawForm);
+
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
+
+      setWithdrawErrors({
+        amount: fieldErrors.amount?.[0],
+        bank: fieldErrors.bank?.[0],
+        accountNumber: fieldErrors.accountNumber?.[0],
+        accountHolderName: fieldErrors.accountHolderName?.[0],
+        email: fieldErrors.email?.[0],
+      });
+      return;
+    }
+
+    setWithdrawErrors({});
+    createWithdrawal.mutate(result.data);
+  };
+
+  const handleWithdrawDialogOpenChange = (open: boolean) => {
+    setIsWithdrawOpen(open);
+
+    if (!open) {
+      setWithdrawErrors({});
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -194,7 +251,10 @@ export default function TransactionPage() {
                   formatCurrency(stats.balance)
                 )}
               </h2>
-              <Dialog open={isWithdrawOpen} onOpenChange={setIsWithdrawOpen}>
+              <Dialog
+                open={isWithdrawOpen}
+                onOpenChange={handleWithdrawDialogOpenChange}
+              >
                 <DialogTrigger asChild>
                   <ActionButton
                     label="Tarik Saldo"
@@ -212,50 +272,46 @@ export default function TransactionPage() {
 
                   <form
                     className="space-y-0 px-10 py-8"
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      createWithdrawal.mutate({
-                        amount: Number(withdrawForm.amount),
-                        bank: withdrawForm.bank as
-                          | "bca"
-                          | "bni"
-                          | "bri"
-                          | "mandiri"
-                          | "cimb"
-                          | "bsi",
-                        accountNumber: withdrawForm.accountNumber,
-                        accountHolderName: withdrawForm.accountHolderName,
-                        email: withdrawForm.email,
-                      });
-                    }}
+                    onSubmit={handleWithdrawalSubmit}
                   >
                     <div className="space-y-0">
-                      <FormGroup label="Jumlah" labelWidth="md:w-[100px]">
+                      <FormGroup
+                        label="Jumlah"
+                        labelWidth="md:w-[100px]"
+                        error={withdrawErrors.amount}
+                      >
                         <FormInput
-                          type="number"
-                          min="0"
-                          value={withdrawForm.amount}
-                          onChange={(event) =>
-                            setWithdrawForm((current) => ({
-                              ...current,
-                              amount: event.target.value,
-                            }))
+                          type="text"
+                          inputMode="numeric"
+                          prefix="Rp"
+                          value={formatNumberInput(withdrawForm.amount)}
+                          className={
+                            withdrawErrors.amount ? errorFieldClassName : ""
                           }
-                          placeholder="Masukkan jumlah saldo yang ingin ditarik"
+                          onChange={(event) =>
+                            updateWithdrawField("amount", event.target.value)
+                          }
+                          placeholder="Contoh: 500000"
                         />
                       </FormGroup>
 
-                      <FormGroup label="Pilih Bank" labelWidth="md:w-[100px]">
+                      <FormGroup
+                        label="Pilih Bank"
+                        labelWidth="md:w-[100px]"
+                        error={withdrawErrors.bank}
+                      >
                         <FormSelect
                           value={withdrawForm.bank}
+                          className={
+                            withdrawErrors.bank ? errorFieldClassName : ""
+                          }
                           onChange={(e) =>
-                            setWithdrawForm((current) => ({
-                              ...current,
-                              bank: e.target.value,
-                            }))
+                            updateWithdrawField("bank", e.target.value)
                           }
                         >
-                          <option value="" disabled>Pilih salah satu</option>
+                          <option value="" disabled>
+                            Pilih salah satu
+                          </option>
                           {bankOptions.map((bank) => (
                             <option key={bank.value} value={bank.value}>
                               {bank.label}
@@ -264,42 +320,64 @@ export default function TransactionPage() {
                         </FormSelect>
                       </FormGroup>
 
-                      <FormGroup label="Nama Pemilik" labelWidth="md:w-[100px]">
+                      <FormGroup
+                        label="Nama Pemilik"
+                        labelWidth="md:w-[100px]"
+                        error={withdrawErrors.accountHolderName}
+                      >
                         <FormInput
                           value={withdrawForm.accountHolderName}
+                          className={
+                            withdrawErrors.accountHolderName
+                              ? errorFieldClassName
+                              : ""
+                          }
                           onChange={(event) =>
-                            setWithdrawForm((current) => ({
-                              ...current,
-                              accountHolderName: event.target.value,
-                            }))
+                            updateWithdrawField(
+                              "accountHolderName",
+                              event.target.value,
+                            )
                           }
                           placeholder="Masukkan nama pemilik rekening"
                         />
                       </FormGroup>
 
-                      <FormGroup label="No Rekening" labelWidth="md:w-[100px]">
+                      <FormGroup
+                        label="No Rekening"
+                        labelWidth="md:w-[100px]"
+                        error={withdrawErrors.accountNumber}
+                      >
                         <FormInput
                           inputMode="numeric"
                           value={withdrawForm.accountNumber}
+                          className={
+                            withdrawErrors.accountNumber
+                              ? errorFieldClassName
+                              : ""
+                          }
                           onChange={(event) =>
-                            setWithdrawForm((current) => ({
-                              ...current,
-                              accountNumber: event.target.value,
-                            }))
+                            updateWithdrawField(
+                              "accountNumber",
+                              event.target.value,
+                            )
                           }
                           placeholder="Masukkan nomor rekening anda"
                         />
                       </FormGroup>
 
-                      <FormGroup label="Email" labelWidth="md:w-[100px]">
+                      <FormGroup
+                        label="Email"
+                        labelWidth="md:w-[100px]"
+                        error={withdrawErrors.email}
+                      >
                         <FormInput
                           type="email"
                           value={withdrawForm.email}
+                          className={
+                            withdrawErrors.email ? errorFieldClassName : ""
+                          }
                           onChange={(event) =>
-                            setWithdrawForm((current) => ({
-                              ...current,
-                              email: event.target.value,
-                            }))
+                            updateWithdrawField("email", event.target.value)
                           }
                           placeholder="Masukkan email anda"
                         />
@@ -308,14 +386,17 @@ export default function TransactionPage() {
 
                     <DialogFooter className="grid grid-cols-2 gap-4">
                       <DialogClose asChild>
-                        <ButtonCancel label="Batal" className="w-full sm:w-auto text-md" />
+                        <ButtonCancel
+                          label="Batal"
+                          className="text-md w-full sm:w-auto"
+                        />
                       </DialogClose>
                       <ButtonSave
                         type="submit"
                         isLoading={createWithdrawal.isPending}
                         label="Konfirmasi"
                         icon={null}
-                        className="w-full sm:w-auto text-md"
+                        className="text-md w-full sm:w-auto"
                       />
                     </DialogFooter>
                   </form>
@@ -339,10 +420,11 @@ export default function TransactionPage() {
             <div className="flex items-center justify-between text-xs">
               <span className="text-slate-400">30 hari terakhir</span>
               <span
-                className={`rounded-full px-2 py-1 font-medium ${stats.incomeChange >= 0
-                  ? "bg-green-100 text-green-800"
-                  : "bg-red-100 text-red-800"
-                  }`}
+                className={`rounded-full px-2 py-1 font-medium ${
+                  stats.incomeChange >= 0
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
               >
                 {stats.incomeChange >= 0 ? "+" : ""}
                 {stats.incomeChange.toFixed(0)}%
@@ -365,10 +447,11 @@ export default function TransactionPage() {
             <div className="flex items-center justify-between text-xs">
               <span className="text-slate-400">30 hari terakhir</span>
               <span
-                className={`rounded-full px-2 py-1 font-medium ${stats.transactionsChange >= 0
-                  ? "bg-green-100 text-green-800"
-                  : "bg-red-100 text-red-800"
-                  }`}
+                className={`rounded-full px-2 py-1 font-medium ${
+                  stats.transactionsChange >= 0
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
               >
                 {stats.transactionsChange >= 0 ? "+" : ""}
                 {stats.transactionsChange.toFixed(0)}%
@@ -378,7 +461,7 @@ export default function TransactionPage() {
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-col md:flex-row justify-between gap-4">
+        <div className="flex flex-col justify-between gap-4 md:flex-row">
           {/* Search */}
           <SearchInput
             value={search}
@@ -436,11 +519,21 @@ export default function TransactionPage() {
               <TableHead className="w-[5%] text-center">No</TableHead>
               <TableHead className="w-[10%] whitespace-nowrap">ID</TableHead>
               <TableHead className="w-[12%] whitespace-nowrap">Total</TableHead>
-              <TableHead className="w-[10%] whitespace-nowrap">Metode</TableHead>
-              <TableHead className="w-[18%] whitespace-nowrap">Pembeli</TableHead>
-              <TableHead className="w-[20%] whitespace-nowrap">Produk</TableHead>
-              <TableHead className="w-[15%] whitespace-nowrap">Tanggal</TableHead>
-              <TableHead className="w-[10%] whitespace-nowrap text-center">Status</TableHead>
+              <TableHead className="w-[10%] whitespace-nowrap">
+                Metode
+              </TableHead>
+              <TableHead className="w-[18%] whitespace-nowrap">
+                Pembeli
+              </TableHead>
+              <TableHead className="w-[20%] whitespace-nowrap">
+                Produk
+              </TableHead>
+              <TableHead className="w-[15%] whitespace-nowrap">
+                Tanggal
+              </TableHead>
+              <TableHead className="w-[10%] text-center whitespace-nowrap">
+                Status
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -486,14 +579,14 @@ export default function TransactionPage() {
               transactions.map((item, index) => (
                 <TableRow key={item.id} data-type="body">
                   <TableCell className="text-center font-medium">
-                    <div className="flex items-center justify-center min-h-[48px]">
+                    <div className="flex min-h-[48px] items-center justify-center">
                       {(page - 1) * limit + index + 1}
                     </div>
                   </TableCell>
                   <TableCell>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="flex items-center min-h-[48px] max-w-[80px] truncate text-xs font-medium text-slate-400">
+                        <div className="flex min-h-[48px] max-w-[80px] items-center truncate text-xs font-medium text-slate-400">
                           {item.id}
                         </div>
                       </TooltipTrigger>
@@ -501,24 +594,26 @@ export default function TransactionPage() {
                     </Tooltip>
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    <div className="flex items-center min-h-[48px] font-medium text-slate-800">
+                    <div className="flex min-h-[48px] items-center font-medium text-slate-800">
                       {formatCurrency(Number(item.amount))}
                     </div>
                   </TableCell>
                   <TableCell>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="flex items-center min-h-[48px] text-slate-600 max-w-[80px] truncate">
+                        <div className="flex min-h-[48px] max-w-[80px] items-center truncate text-slate-600">
                           {item.xenditPaymentMethod ?? "-"}
                         </div>
                       </TooltipTrigger>
-                      <TooltipContent>{item.xenditPaymentMethod ?? "-"}</TooltipContent>
+                      <TooltipContent>
+                        {item.xenditPaymentMethod ?? "-"}
+                      </TooltipContent>
                     </Tooltip>
                   </TableCell>
                   <TableCell>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="flex items-center min-h-[48px] text-slate-600 max-w-[140px] truncate">
+                        <div className="flex min-h-[48px] max-w-[140px] items-center truncate text-slate-600">
                           {item.buyerName}
                         </div>
                       </TooltipTrigger>
@@ -528,7 +623,7 @@ export default function TransactionPage() {
                   <TableCell>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="flex items-center min-h-[48px] max-w-[180px] truncate text-slate-600">
+                        <div className="flex min-h-[48px] max-w-[180px] items-center truncate text-slate-600">
                           {item.product.name}
                         </div>
                       </TooltipTrigger>
@@ -536,14 +631,14 @@ export default function TransactionPage() {
                     </Tooltip>
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    <div className="flex items-center min-h-[48px] text-slate-600">
+                    <div className="flex min-h-[48px] items-center text-slate-600">
                       {format(new Date(item.createdAt), "dd MMM yyyy HH:mm", {
                         locale: id,
                       })}
                     </div>
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    <div className="flex items-center justify-center min-h-[48px]">
+                    <div className="flex min-h-[48px] items-center justify-center">
                       <span
                         className={`rounded-full px-4 py-1 text-[13px] leading-tight font-medium ${getStatusColor(item.status)}`}
                       >

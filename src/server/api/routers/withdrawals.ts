@@ -1,6 +1,9 @@
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { createPayout as createXenditPayout, simulatePayoutSuccess } from "~/lib/xendit";
+import { withdrawalSchema } from "~/lib/validation";
+import {
+  createPayout as createXenditPayout,
+  simulatePayoutSuccess,
+} from "~/lib/xendit";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import {
   WithdrawalStatus,
@@ -24,7 +27,17 @@ const WITHDRAWAL_DEDUCTING_STATUSES = [
 ];
 
 async function getCreatorBalance(
-  db: PrismaClient | Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">,
+  db:
+    | PrismaClient
+    | Omit<
+        PrismaClient,
+        | "$connect"
+        | "$disconnect"
+        | "$on"
+        | "$transaction"
+        | "$use"
+        | "$extends"
+      >,
   userId: string,
 ) {
   const products = await db.product.findMany({
@@ -69,17 +82,7 @@ async function getCreatorBalance(
 
 export const withdrawalsRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(
-      z.object({
-        amount: z.coerce.number().int().positive(),
-        bank: z.enum(["bca", "bni", "bri", "mandiri", "cimb", "bsi"]),
-        accountNumber: z.string().min(5, "Nomor rekening wajib diisi"),
-        accountHolderName: z
-          .string()
-          .min(2, "Nama pemilik rekening wajib diisi"),
-        email: z.string().email("Email tidak valid"),
-      }),
-    )
+    .input(withdrawalSchema)
     .mutation(async ({ ctx, input }) => {
       const withdrawal = await ctx.db.$transaction(async (tx) => {
         const balance = await getCreatorBalance(tx, ctx.session.user.id);
@@ -102,7 +105,11 @@ export const withdrawalsRouter = createTRPCRouter({
             accountNumber: input.accountNumber,
             accountHolderName: input.accountHolderName,
             email: input.email,
-            referenceId: "TEMP-" + ctx.session.user.id.slice(0, 5) + "-" + Date.now().toString(),
+            referenceId:
+              "TEMP-" +
+              ctx.session.user.id.slice(0, 5) +
+              "-" +
+              Date.now().toString(),
           },
         });
       });
@@ -115,7 +122,8 @@ export const withdrawalsRouter = createTRPCRouter({
           channelCode: bank.channelCode,
           accountNumber: input.accountNumber,
           accountHolderName: input.accountHolderName,
-          description: "Penarikan saldo CuanIN " + bank.name + " - " + withdrawal.id,
+          description:
+            "Penarikan saldo CuanIN " + bank.name + " - " + withdrawal.id,
         });
 
         const updated = await ctx.db.withdrawal.update({
@@ -154,4 +162,4 @@ export const withdrawalsRouter = createTRPCRouter({
         });
       }
     }),
-}); 
+});

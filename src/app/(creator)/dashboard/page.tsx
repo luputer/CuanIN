@@ -19,14 +19,17 @@ import {
     Area,
     Cell,
 } from "recharts";
+import { api } from "~/trpc/react";
+import { formatPrice } from "~/lib/utils";
 
 type CardProps = {
     title: string;
-    value: string;
+    value: string | number;
     icon: React.ReactNode;
     iconColor?: string;
     bgColor?: string;
     showArrow?: boolean;
+    change?: number;
 };
 
 function Card({
@@ -36,6 +39,7 @@ function Card({
     iconColor,
     bgColor,
     showArrow,
+    change = 0,
 }: CardProps) {
 
     return (
@@ -69,47 +73,28 @@ function Card({
             {/* INFO */}
             <div className="mt-1 flex items-center justify-between font-regular text-xs text-slate-600">
                 <span>30 hari terakhir</span>
-                <span className="bg-green-100 px-2 py-1 rounded-full text-xs font-regular text-green-800">30%</span>
+                <span className={`${change >= 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"} px-2 py-1 rounded-full text-xs font-regular`}>
+                    {change >= 0 ? "+" : ""}{change.toFixed(1)}%
+                </span>
             </div>
 
         </div>
     );
 }
 
-const weeklyRevenue = [
-    { day: "Senin", value: 400 },
-    { day: "Selasa", value: 700 },
-    { day: "Rabu", value: 500 },
-    { day: "Kamis", value: 900 },
-    { day: "Jumat", value: 1200 },
-    { day: "Sabtu", value: 800 },
-    { day: "Minggu", value: 1000 },
-];
-
-const categoryData = [
-    { name: "Webinar", total: 40 },
-    { name: "Kelas", total: 65 },
-    { name: "Produk Digital", total: 30 },
-];
-
-const trafficData = [
-    { day: "Senin", value: 200 },
-    { day: "Selasa", value: 400 },
-    { day: "Rabu", value: 350 },
-    { day: "Kamis", value: 600 },
-    { day: "Jumat", value: 750 },
-    { day: "Sabtu", value: 500 },
-    { day: "Minggu", value: 650 },
-];
-
-const buyerData = [
-    { week: "Minggu 1", total: 50 },
-    { week: "Minggu 2", total: 80 },
-    { week: "Minggu 3", total: 65 },
-    { week: "Minggu 4", total: 100 },
-];
-
 export default function DashboardPage() {
+    const { data: stats, isLoading } = api.analytics.getDashboardStats.useQuery();
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-600"></div>
+            </div>
+        );
+    }
+
+    if (!stats) return null;
+
     return (
 
         <div className="space-y-6">
@@ -117,7 +102,7 @@ export default function DashboardPage() {
             <div className="bg-slate-50">
                 <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
                     <div className="text-2xl font-bold mb-2 text-cyan-600">Dashboard</div>
-                    <div className="text-sm font-regular text-slate-600">Selamat datang, Mason Brooks. Kelola produk dan pantau penjualan Anda di sini.</div>
+                    <div className="text-sm font-regular text-slate-600">Selamat datang, {stats.userName ?? "Kreator"}. Kelola produk dan pantau penjualan Anda di sini.</div>
                 </div>
             </div>
 
@@ -125,32 +110,36 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                 <Card
                     title="Total Penghasilan"
-                    value="Rp 12.500.000"
+                    value={formatPrice(stats.totalIncome)}
                     icon={<WalletIcon weight="fill" className="w-8 h-8" />}
                     iconColor="text-cyan-600"
                     bgColor="bg-cyan-50"
                     showArrow={true}
+                    change={stats.incomeChange}
                 />
 
                 <Card
                     title="Total Produk"
-                    value="120"
+                    value={stats.totalProducts}
                     icon={<ShoppingBagIcon weight="fill" className="w-8 h-8" />}
                     iconColor="text-yellow-500"
+                    change={stats.productsChange}
                 />
 
                 <Card
                     title="Total User"
-                    value="850"
+                    value={stats.totalUsers}
                     icon={<UsersIcon weight="fill" className="w-8 h-8" />}
                     iconColor="text-orange-500"
+                    change={stats.usersChange}
                 />
 
                 <Card
                     title="Total Pengunjung"
-                    value="5.430"
+                    value={stats.totalVisitors}
                     icon={<ChartLineUpIcon weight="fill" className="w-8 h-8" color="currentColor" />}
                     iconColor="text-green-500"
+                    change={stats.visitorsChange}
                 />
             </div>
 
@@ -159,7 +148,7 @@ export default function DashboardPage() {
                 <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
                     <h2 className="pl-2 font-semibold text-lg mb-6 text-slate-800">Pendapatan Mingguan</h2>
                     <ResponsiveContainer width="100%" height={300}>
-                        <AreaChart data={weeklyRevenue}>
+                        <AreaChart data={stats.weeklyRevenue}>
                             <defs>
                                 <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="0%" stopColor="#FDC700" stopOpacity={0.4} />
@@ -181,8 +170,7 @@ export default function DashboardPage() {
                                 width={55}
                                 stroke="#A2F4FD"
                             />
-                            <Tooltip />
-
+                            <Tooltip formatter={(value: unknown) => formatPrice(Number(value))} />
                             <Area
                                 type="monotone"
                                 dataKey="value"
@@ -199,7 +187,7 @@ export default function DashboardPage() {
                 <div className="lg:col-span-1 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
                     <h2 className="pl-2 font-semibold text-lg mb-6 text-slate-800">Total per Kategori</h2>
                     <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={categoryData} barCategoryGap="20%">
+                        <BarChart data={stats.categoryData} barCategoryGap="20%">
                             <CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
                             <XAxis
                                 dataKey="name"
@@ -216,7 +204,7 @@ export default function DashboardPage() {
                             <Tooltip />
 
                             <Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
-                                {categoryData.map((entry, index) => {
+                                {stats.categoryData.map((entry, index) => {
                                     const colors = ["#FFF085", "#FFB86A"];
                                     return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
                                 })}
@@ -231,7 +219,7 @@ export default function DashboardPage() {
                 <div className="lg:col-span-1 xl:col-span-3 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
                     <h2 className="pl-2 font-semibold text-lg mb-6 text-slate-800">Traffic Website</h2>
                     <ResponsiveContainer width="100%" height={300}>
-                        <AreaChart data={trafficData}>
+                        <AreaChart data={stats.trafficData}>
                             <defs>
                                 <linearGradient id="trafficGradient" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="0%" stopColor="#FDC700" stopOpacity={0.4} />
@@ -271,7 +259,7 @@ export default function DashboardPage() {
                 <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
                     <h2 className="pl-2 font-semibold text-lg mb-6 text-slate-800">Jumlah Pembeli</h2>
                     <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={buyerData} barCategoryGap="20%">
+                        <BarChart data={stats.buyerData} barCategoryGap="20%">
                             <CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
                             <XAxis
                                 dataKey="week"
@@ -288,7 +276,7 @@ export default function DashboardPage() {
                             <Tooltip />
 
                             <Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
-                                {buyerData.map((entry, index) => {
+                                {stats.buyerData.map((entry, index) => {
                                     const colors = ["#FFF085", "#FFB86A"];
                                     return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
                                 })}

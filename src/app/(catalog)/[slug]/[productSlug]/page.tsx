@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import {
   ArrowLeftIcon,
   ClockIcon,
@@ -25,6 +26,23 @@ const TYPE_MAP: Record<string, string> = {
   DIGITAL_PRODUCT: "Produk Digital",
 };
 
+const VISITOR_ID_KEY = "cuanin_visitor_id";
+
+const getVisitorId = () => {
+  const existingVisitorId = window.localStorage.getItem(VISITOR_ID_KEY);
+  if (existingVisitorId) return existingVisitorId;
+
+  const visitorId =
+    typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : Array.from(crypto.getRandomValues(new Uint32Array(4)))
+          .map((value) => value.toString(36))
+          .join("-");
+
+  window.localStorage.setItem(VISITOR_ID_KEY, visitorId);
+  return visitorId;
+};
+
 export default function ProductDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
@@ -34,6 +52,17 @@ export default function ProductDetailPage() {
     slug,
     productSlug,
   });
+
+  const { mutate: recordView } = api.analytics.recordView.useMutation();
+
+  useEffect(() => {
+    if (product?.id) {
+      recordView({
+        productId: product.id,
+        visitorId: getVisitorId(),
+      });
+    }
+  }, [product?.id, recordView]);
 
   if (isLoading) {
     return (

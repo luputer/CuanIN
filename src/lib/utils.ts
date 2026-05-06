@@ -9,18 +9,35 @@ export function cn(...inputs: ClassValue[]) {
  * Formats a number or string into Indonesian currency style with dot separators
  * Example: 10000 -> 10.000
  */
-export function formatNumberWithDots(value: number | string | undefined | null): string {
-  if (value === undefined || value === null || value === "") return "";
-  const numberValue = typeof value === "string" ? value.replace(/\D/g, "") : value.toString();
-  return numberValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-}
+// export function formatNumberWithDots(value: number | string | undefined | null): string {
+//   if (value === undefined || value === null || value === "") return "";
+//   const numberValue = typeof value === "string" ? value.replace(/\D/g, "") : value.toString();
+//   return numberValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+// }
 
 /**
  * Strips all non-digit characters to get an integer value
  * Example: "10.000" -> 10000
  */
-export function parseDotsToNumber(value: string | undefined | null): number {
-  if (!value) return 0;
-  const stripped = value.toString().replace(/\D/g, "");
-  return stripped ? parseInt(stripped, 10) : 0;
-}
+// export function parseDotsToNumber(value: string | undefined | null): number {
+//   if (!value) return 0;
+//   const stripped = value.toString().replace(/\D/g, "");
+//   return stripped ? parseInt(stripped, 10) : 0;
+// }
+
+
+export const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(amount);
+};
+
+export const formatNumberInput = (value: string) => {
+  if (!value) {
+    return "";
+  }
+
+  return new Intl.NumberFormat("id-ID").format(Number(value));
+};

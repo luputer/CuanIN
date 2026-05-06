@@ -29,7 +29,7 @@ import {
 
 // Internal
 import { useWebinar } from "~/hooks/use-webinar";
-import { formatNumberWithDots, parseDotsToNumber } from "~/lib/utils";
+import { formatNumberInput } from "~/lib/utils";
 import { DateTimePicker } from "~/components/ui/date-time-picker";
 import {
     FormGroup,
@@ -75,7 +75,7 @@ export default function EditWebinarPage() {
     // ─── Handlers ────────────────────────────────────────────────────────────
 
     const handlePriceAdjust = (amount: number) => {
-        const current = parseDotsToNumber(getValues("price")?.toString() ?? "0");
+        const current = Number(getValues("price")?.toString() ?? "0");
         const newPrice = Math.max(0, current + amount);
         setValue("price", newPrice, { shouldValidate: true });
     };
@@ -274,8 +274,11 @@ export default function EditWebinarPage() {
                                         <FormInput
                                             ref={ref}
                                             prefix="Rp"
-                                            value={formatNumberWithDots(value)}
-                                            onChange={(e) => onChange(parseDotsToNumber(e.target.value))}
+                                            value={formatNumberInput((value ?? 0).toString())}
+                                            onChange={(e) => {
+                                                const rawValue = e.target.value.replace(/\D/g, "");
+                                                onChange(rawValue ? Number(rawValue) : 0);
+                                            }}
                                             suffix={
                                                 <div className="flex flex-col">
                                                     <button type="button" onClick={() => handlePriceAdjust(1000)} className="cursor-pointer">

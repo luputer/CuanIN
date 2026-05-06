@@ -18,7 +18,7 @@ import {
 
 import dynamic from "next/dynamic";
 
-import { formatNumberWithDots, parseDotsToNumber } from "~/lib/utils";
+import { formatNumberInput } from "~/lib/utils";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import {
@@ -67,20 +67,20 @@ export default function EditProductPage() {
             const input = document.getElementById("price-input-edit") as HTMLInputElement;
             if (input) {
                 const currentVal = getValues("price")?.toString() ?? "0";
-                input.value = formatNumberWithDots(currentVal);
+                input.value = formatNumberInput(currentVal);
             }
         }
     }, [priceType, getValues]);
 
     const handlePriceAdjust = (amount: number) => {
-        const current = parseDotsToNumber(getValues("price")?.toString() ?? "0");
+        const current = Number(getValues("price")?.toString() ?? "0");
         const newPrice = Math.max(0, current + amount);
 
         setValue("price", newPrice, { shouldValidate: true });
 
         const input = document.getElementById("price-input-edit") as HTMLInputElement;
         if (input) {
-            input.value = formatNumberWithDots(newPrice.toString());
+            input.value = formatNumberInput(newPrice.toString());
         }
     };
 
@@ -253,10 +253,10 @@ export default function EditProductPage() {
                                             ref={ref}
                                             id="price-input-edit"
                                             prefix="Rp"
-                                            value={formatNumberWithDots(value)}
+                                            value={formatNumberInput((value ?? 0).toString())}
                                             onChange={(e) => {
-                                                const val = parseDotsToNumber(e.target.value);
-                                                onChange(val);
+                                                const rawValue = e.target.value.replace(/\D/g, "");
+                                                onChange(rawValue ? Number(rawValue) : 0);
                                             }}
                                             suffix={
                                                 <div className="flex flex-col">

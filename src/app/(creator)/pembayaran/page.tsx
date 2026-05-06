@@ -50,6 +50,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { formatCurrency, formatNumberInput } from "~/lib/utils";
 
 export default function TransactionPage() {
   const [page, setPage] = useState(1);
@@ -82,21 +83,7 @@ export default function TransactionPage() {
     },
   );
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
 
-  const formatNumberInput = (value: string) => {
-    if (!value) {
-      return "";
-    }
-
-    return new Intl.NumberFormat("id-ID").format(Number(value));
-  };
 
   const transactions = data?.items ?? [];
   const stats = {
@@ -420,11 +407,10 @@ export default function TransactionPage() {
             <div className="flex items-center justify-between text-xs">
               <span className="text-slate-400">30 hari terakhir</span>
               <span
-                className={`rounded-full px-2 py-1 font-medium ${
-                  stats.incomeChange >= 0
+                className={`rounded-full px-2 py-1 font-medium ${stats.incomeChange >= 0
                     ? "bg-green-100 text-green-800"
                     : "bg-red-100 text-red-800"
-                }`}
+                  }`}
               >
                 {stats.incomeChange >= 0 ? "+" : ""}
                 {stats.incomeChange.toFixed(0)}%
@@ -447,11 +433,10 @@ export default function TransactionPage() {
             <div className="flex items-center justify-between text-xs">
               <span className="text-slate-400">30 hari terakhir</span>
               <span
-                className={`rounded-full px-2 py-1 font-medium ${
-                  stats.transactionsChange >= 0
+                className={`rounded-full px-2 py-1 font-medium ${stats.transactionsChange >= 0
                     ? "bg-green-100 text-green-800"
                     : "bg-red-100 text-red-800"
-                }`}
+                  }`}
               >
                 {stats.transactionsChange >= 0 ? "+" : ""}
                 {stats.transactionsChange.toFixed(0)}%

@@ -31,7 +31,7 @@ import {
 // Internal & Utils
 import { api } from "~/trpc/react";
 import { productDigitalSchema } from "~/lib/validation";
-import { formatNumberWithDots, parseDotsToNumber } from "~/lib/utils";
+import { formatNumberInput } from "~/lib/utils";
 import { useImageUpload } from "~/hooks/use-upload";
 
 // Components
@@ -106,7 +106,7 @@ export default function CreateDigitalProductPage() {
             const input = document.getElementById("price-input-create") as HTMLInputElement;
             if (input) {
                 const currentVal = getValues("price")?.toString() ?? "0";
-                input.value = formatNumberWithDots(currentVal);
+                input.value = formatNumberInput(currentVal);
             }
         }
     }, [priceType, getValues]);
@@ -114,13 +114,13 @@ export default function CreateDigitalProductPage() {
     // ─── Handlers ────────────────────────────────────────────────────────────
 
     const handlePriceAdjust = (amount: number) => {
-        const currentPrice = parseDotsToNumber(getValues("price")?.toString() ?? "0");
+        const currentPrice = Number(getValues("price")?.toString() ?? "0");
         const newPrice = Math.max(0, currentPrice + amount);
         setValue("price", newPrice, { shouldValidate: true });
 
         const input = document.getElementById("price-input-create") as HTMLInputElement;
         if (input) {
-            input.value = formatNumberWithDots(newPrice.toString());
+            input.value = formatNumberInput(newPrice.toString());
         }
     };
 
@@ -327,8 +327,11 @@ export default function CreateDigitalProductPage() {
                                             ref={ref}
                                             id="price-input-create"
                                             prefix="Rp"
-                                            value={formatNumberWithDots(value)}
-                                            onChange={(e) => onChange(parseDotsToNumber(e.target.value))}
+                                            value={formatNumberInput((value ?? 0).toString())}
+                                            onChange={(e) => {
+                                                const rawValue = e.target.value.replace(/\D/g, "");
+                                                onChange(rawValue ? Number(rawValue) : 0);
+                                            }}
                                             suffix={
                                                 <div className="flex flex-col">
                                                     <button type="button" onClick={() => handlePriceAdjust(1000)} className="cursor-pointer">

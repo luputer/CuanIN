@@ -50,3 +50,32 @@ export const formatNumberInput = (value: string) => {
 
   return new Intl.NumberFormat("id-ID").format(Number(value));
 };
+
+/**
+ * Menghitung estimasi biaya layanan berdasarkan metode pembayaran (Xendit)
+ */
+export function calculatePaymentFee(methodId: string | null, baseAmount: number): number {
+  if (!methodId) return 0;
+
+  switch (methodId) {
+    case "qris":
+      return Math.round(baseAmount * 0.007); // QRIS 0.7%
+    case "shopeepay":
+    case "dana":
+    case "ovo":
+      return Math.round(baseAmount * 0.015); // E-Wallet 1.5%
+    case "bca":
+    case "bni":
+    case "bri":
+    case "mandiri":
+    case "bsi":
+    case "permata":
+      return 4000; // Virtual Account flat 4000
+    case "alfamart":
+      return 5000; // Retail flat 5000
+    case "cc":
+      return Math.round(baseAmount * 0.029) + 2000; // Credit Card 2.9% + 2000
+    default:
+      return 0;
+  }
+}

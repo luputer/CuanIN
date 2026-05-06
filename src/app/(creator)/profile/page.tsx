@@ -61,7 +61,7 @@ export default function ProfilePage() {
                 bannerUpload.setPreviewUrl(user.banner);
             }
         }
-    }, [user, avatarUpload.setPreviewUrl, bannerUpload.setPreviewUrl]);
+    }, [user, avatarUpload, bannerUpload]);
 
     const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         await avatarUpload.handleFileUpload(e);

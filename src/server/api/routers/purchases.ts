@@ -4,6 +4,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { sendProductEmail } from "../../../lib/nodemailer";
 import { env } from "~/env";
 import { createInvoice as createXenditInvoice } from "~/lib/xendit";
+import { calculatePaymentFee } from "~/lib/utils";
 
 const XENDIT_PAYMENT_METHODS = {
   qris: "QRIS",
@@ -248,15 +249,19 @@ export const purchasesRouter = createTRPCRouter({
       }
 
       const xenditPaymentMethod = XENDIT_PAYMENT_METHODS[input.paymentMethod];
+      const baseAmount = Number(purchase.amount);
+      const fee = calculatePaymentFee(input.paymentMethod, baseAmount);
+      const totalAmount = baseAmount + fee;
 
       const invoice = await createXenditInvoice({
         externalId: `${purchase.id}__${input.paymentMethod}__${Date.now()}`,
-        amount: Number(purchase.amount),
+        amount: totalAmount,
         payerEmail: purchase.buyerEmail,
         description: `Pembelian ${purchase.product.name}`,
         paymentMethods: [xenditPaymentMethod],
         successRedirectUrl: `${env.NEXT_PUBLIC_APP_URL}/payment/success?id=${purchase.id}`,
         failureRedirectUrl: `${env.NEXT_PUBLIC_APP_URL}/payment/failed?id=${purchase.id}`,
+        fees: fee > 0 ? [{ type: "Biaya Layanan", value: fee }] : undefined,
       });
 
       await ctx.db.purchase.update({

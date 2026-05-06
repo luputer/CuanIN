@@ -14,6 +14,7 @@ type CreateInvoiceParams = {
   paymentMethods?: string[];
   successRedirectUrl?: string;
   failureRedirectUrl?: string;
+  fees?: Array<{ type: string; value: number }>;
 };
 
 type XenditInvoice = {
@@ -58,6 +59,7 @@ export async function createInvoice(
       payment_methods: params.paymentMethods,
       success_redirect_url: params.successRedirectUrl,
       failure_redirect_url: params.failureRedirectUrl,
+      fees: params.fees,
       currency: "IDR",
     }),
   });

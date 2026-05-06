@@ -2,11 +2,14 @@
 
 import { useParams } from "next/navigation";
 import { api } from "~/trpc/react";
+import { calculatePaymentFee } from "~/lib/utils";
 import Image from "next/image";
 import {
   SpinnerIcon,
   ShieldCheckIcon,
-  ArrowRightIcon,
+  EnvelopeSimpleIcon,
+  PhoneIcon,
+  CaretDownIcon,
 } from "@phosphor-icons/react";
 import React from "react";
 import { toast } from "sonner";
@@ -154,6 +157,7 @@ export default function PaymentPage() {
   }
 
   const price = Number(purchase.amount);
+  const fee = calculatePaymentFee(selected, price);
 
   const handlePay = () => {
     if (!selected) return;
@@ -247,64 +251,62 @@ export default function PaymentPage() {
           <div className="space-y-4 lg:sticky lg:top-24">
             {/* Tagihan */}
             <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-              <div className="border-t-4 border-slate-900 px-5 pt-5 pb-4">
-                <h3 className="text-center font-semibold text-slate-900">
+              <div className="border-t-[5px] border-slate-900 px-5 pt-6 pb-5">
+                <h3 className="text-center font-bold text-slate-900 text-lg">
                   Tagihan
                 </h3>
 
                 {/* Buyer info */}
-                <div className="mt-4 space-y-1.5">
-                  <p className="font-semibold text-slate-900">
+                <div className="mt-6 space-y-2.5">
+                  <p className="font-bold text-slate-800 text-[15px]">
                     {purchase.buyerName}
                   </p>
-                  <p className="text-xs break-all text-slate-500">
-                    {purchase.buyerEmail}
-                  </p>
-                  <p className="text-xs text-slate-500">
-                    {purchase.buyerPhone}
-                  </p>
-                </div>
-
-                {/* Product */}
-                <div className="mt-4 flex gap-3 border-t border-slate-100 pt-4">
-                  <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-slate-100">
-                    {purchase.product.image ? (
-                      <Image
-                        src={purchase.product.image}
-                        alt={purchase.product.name}
-                        fill
-                        unoptimized
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-xs text-slate-300">
-                        No Image
-                      </div>
-                    )}
+                  <div className="flex items-center gap-2.5 text-sm text-slate-600">
+                    <EnvelopeSimpleIcon className="w-4 h-4 text-slate-400" />
+                    <p className="break-all font-medium text-[13px]">{purchase.buyerEmail}</p>
                   </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-slate-800">
-                      {purchase.product.name}
-                    </p>
-                    <p className="text-xs text-slate-400">
-                      {purchase.product.type}
-                    </p>
+                  <div className="flex items-center gap-2.5 text-sm text-slate-600">
+                    <PhoneIcon className="w-4 h-4 text-slate-400" />
+                    <p className="font-medium text-[13px]">{purchase.buyerPhone}</p>
                   </div>
                 </div>
 
                 {/* Note */}
-                <p className="mt-4 text-xs leading-relaxed text-slate-400 italic">
-                  *Informasi lebih lanjut terkait layanan yang telah dibayarkan
-                  akan dikirimkan melalui email.
+                <p className="mt-6 text-[11px] leading-relaxed text-slate-400 italic">
+                  *Informasi lebih lanjut terkait layanan yang telah dibayarkan akan dikirimkan melalui email.
                 </p>
               </div>
 
-              <div className="border-t border-slate-200 p-5">
-                {/* Total */}
+              {/* Item Awal */}
+              <div className="border-t border-slate-200 px-5 py-4">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-800">Total</span>
-                  <span className="text-lg font-bold text-slate-900">
+                  <div className="flex items-center gap-2 cursor-pointer">
+                    <span className="text-[15px] text-slate-800">Item Awal</span>
+                    <CaretDownIcon className="w-3.5 h-3.5 text-slate-500" />
+                  </div>
+                  <span className="text-[15px] font-semibold text-slate-800">
                     Rp{price.toLocaleString("id-ID")}
+                  </span>
+                </div>
+              </div>
+
+              {/* Biaya Layanan */}
+              <div className="border-t border-slate-200 px-5 py-4">
+                <p className="text-[15px] text-slate-800 mb-2">Biaya Layanan</p>
+                <div className="flex items-center justify-between text-[13px] text-slate-600">
+                  <span className="flex items-center gap-1">
+                    {selected ? `1x ${PAYMENT_METHODS.flatMap(g => g.methods).find(m => m.id === selected)?.label ?? ""}` : "-"}
+                  </span>
+                  <span>{selected ? `Rp${fee.toLocaleString("id-ID")}` : "Rp0"}</span>
+                </div>
+              </div>
+
+              {/* Total & Button */}
+              <div className="border-t border-slate-200 px-5 py-5">
+                <div className="flex items-center justify-between mb-5">
+                  <span className="font-bold text-slate-900 text-[15px]">Total</span>
+                  <span className="text-base font-bold text-slate-900">
+                    Rp{(price + fee).toLocaleString("id-ID")}
                   </span>
                 </div>
 
@@ -312,16 +314,11 @@ export default function PaymentPage() {
                 <button
                   onClick={handlePay}
                   disabled={!selected || createPaymentInvoice.isPending}
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-600 py-3 font-semibold text-white shadow-sm transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600"
+                  className="flex w-full items-center justify-center gap-2 rounded-md bg-[#FFDF20] py-3 text-[15px] font-semibold text-slate-900 transition hover:bg-[#F2D219] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
                 >
                   {createPaymentInvoice.isPending
-                    ? "Menghubungkan ke Xendit..."
-                    : selected
-                      ? "Bayar Sekarang"
-                      : "Pilih Metode Pembayaran"}
-                  {selected && !createPaymentInvoice.isPending && (
-                    <ArrowRightIcon className="h-4 w-4" />
-                  )}
+                    ? "Memproses..."
+                    : "Bayar"}
                 </button>
               </div>
             </div>

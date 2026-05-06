@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   ArrowLeftIcon,
   ClockIcon,
@@ -47,6 +47,7 @@ export default function ProductDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
   const productSlug = params.productSlug as string;
+  const recordedProductIdRef = useRef<string | null>(null);
 
   const { data: product, isLoading } = api.catalog.getProductById.useQuery({
     slug,
@@ -56,12 +57,15 @@ export default function ProductDetailPage() {
   const { mutate: recordView } = api.analytics.recordView.useMutation();
 
   useEffect(() => {
-    if (product?.id) {
-      recordView({
-        productId: product.id,
-        visitorId: getVisitorId(),
-      });
-    }
+    if (!product?.id) return;
+    if (recordedProductIdRef.current === product.id) return;
+
+    recordedProductIdRef.current = product.id;
+
+    recordView({
+      productId: product.id,
+      visitorId: getVisitorId(),
+    });
   }, [product?.id, recordView]);
 
   if (isLoading) {

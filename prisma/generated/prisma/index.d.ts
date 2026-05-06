@@ -74,6 +74,11 @@ export type VerificationToken = $Result.DefaultSelection<Prisma.$VerificationTok
  */
 export type Catalog = $Result.DefaultSelection<Prisma.$CatalogPayload>
 /**
+ * Model CatalogView
+ * 
+ */
+export type CatalogView = $Result.DefaultSelection<Prisma.$CatalogViewPayload>
+/**
  * Model Withdrawal
  * 
  */
@@ -379,6 +384,16 @@ export class PrismaClient<
     * ```
     */
   get catalog(): Prisma.CatalogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.catalogView`: Exposes CRUD operations for the **CatalogView** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CatalogViews
+    * const catalogViews = await prisma.catalogView.findMany()
+    * ```
+    */
+  get catalogView(): Prisma.CatalogViewDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.withdrawal`: Exposes CRUD operations for the **Withdrawal** model.
@@ -842,6 +857,7 @@ export namespace Prisma {
     User: 'User',
     VerificationToken: 'VerificationToken',
     Catalog: 'Catalog',
+    CatalogView: 'CatalogView',
     Withdrawal: 'Withdrawal'
   };
 
@@ -861,7 +877,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "post" | "profile" | "product" | "productView" | "formField" | "purchase" | "formAnswer" | "account" | "session" | "user" | "verificationToken" | "catalog" | "withdrawal"
+      modelProps: "post" | "profile" | "product" | "productView" | "formField" | "purchase" | "formAnswer" | "account" | "session" | "user" | "verificationToken" | "catalog" | "catalogView" | "withdrawal"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1753,6 +1769,80 @@ export namespace Prisma {
           }
         }
       }
+      CatalogView: {
+        payload: Prisma.$CatalogViewPayload<ExtArgs>
+        fields: Prisma.CatalogViewFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CatalogViewFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CatalogViewPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CatalogViewFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CatalogViewPayload>
+          }
+          findFirst: {
+            args: Prisma.CatalogViewFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CatalogViewPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CatalogViewFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CatalogViewPayload>
+          }
+          findMany: {
+            args: Prisma.CatalogViewFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CatalogViewPayload>[]
+          }
+          create: {
+            args: Prisma.CatalogViewCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CatalogViewPayload>
+          }
+          createMany: {
+            args: Prisma.CatalogViewCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CatalogViewCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CatalogViewPayload>[]
+          }
+          delete: {
+            args: Prisma.CatalogViewDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CatalogViewPayload>
+          }
+          update: {
+            args: Prisma.CatalogViewUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CatalogViewPayload>
+          }
+          deleteMany: {
+            args: Prisma.CatalogViewDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CatalogViewUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CatalogViewUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CatalogViewPayload>[]
+          }
+          upsert: {
+            args: Prisma.CatalogViewUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CatalogViewPayload>
+          }
+          aggregate: {
+            args: Prisma.CatalogViewAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCatalogView>
+          }
+          groupBy: {
+            args: Prisma.CatalogViewGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CatalogViewGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CatalogViewCountArgs<ExtArgs>
+            result: $Utils.Optional<CatalogViewCountAggregateOutputType> | number
+          }
+        }
+      }
       Withdrawal: {
         payload: Prisma.$WithdrawalPayload<ExtArgs>
         fields: Prisma.WithdrawalFieldRefs
@@ -1935,6 +2025,7 @@ export namespace Prisma {
     user?: UserOmit
     verificationToken?: VerificationTokenOmit
     catalog?: CatalogOmit
+    catalogView?: CatalogViewOmit
     withdrawal?: WithdrawalOmit
   }
 
@@ -2128,6 +2219,7 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     accounts: number
+    catalogViews: number
     products: number
     sessions: number
     withdrawals: number
@@ -2135,6 +2227,7 @@ export namespace Prisma {
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
+    catalogViews?: boolean | UserCountOutputTypeCountCatalogViewsArgs
     products?: boolean | UserCountOutputTypeCountProductsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     withdrawals?: boolean | UserCountOutputTypeCountWithdrawalsArgs
@@ -2161,6 +2254,13 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
+  export type UserCountOutputTypeCountCatalogViewsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CatalogViewWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
   export type UserCountOutputTypeCountProductsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProductWhereInput
   }
@@ -2177,6 +2277,37 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountWithdrawalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: WithdrawalWhereInput
+  }
+
+
+  /**
+   * Count Type CatalogCountOutputType
+   */
+
+  export type CatalogCountOutputType = {
+    views: number
+  }
+
+  export type CatalogCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    views?: boolean | CatalogCountOutputTypeCountViewsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CatalogCountOutputType without action
+   */
+  export type CatalogCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogCountOutputType
+     */
+    select?: CatalogCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CatalogCountOutputType without action
+   */
+  export type CatalogCountOutputTypeCountViewsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CatalogViewWhereInput
   }
 
 
@@ -5646,6 +5777,11 @@ export namespace Prisma {
     id: string | null
     productId: string | null
     visitorId: string | null
+    ipHash: string | null
+    userAgent: string | null
+    browser: string | null
+    os: string | null
+    device: string | null
     createdAt: Date | null
   }
 
@@ -5653,6 +5789,11 @@ export namespace Prisma {
     id: string | null
     productId: string | null
     visitorId: string | null
+    ipHash: string | null
+    userAgent: string | null
+    browser: string | null
+    os: string | null
+    device: string | null
     createdAt: Date | null
   }
 
@@ -5660,6 +5801,11 @@ export namespace Prisma {
     id: number
     productId: number
     visitorId: number
+    ipHash: number
+    userAgent: number
+    browser: number
+    os: number
+    device: number
     createdAt: number
     _all: number
   }
@@ -5669,6 +5815,11 @@ export namespace Prisma {
     id?: true
     productId?: true
     visitorId?: true
+    ipHash?: true
+    userAgent?: true
+    browser?: true
+    os?: true
+    device?: true
     createdAt?: true
   }
 
@@ -5676,6 +5827,11 @@ export namespace Prisma {
     id?: true
     productId?: true
     visitorId?: true
+    ipHash?: true
+    userAgent?: true
+    browser?: true
+    os?: true
+    device?: true
     createdAt?: true
   }
 
@@ -5683,6 +5839,11 @@ export namespace Prisma {
     id?: true
     productId?: true
     visitorId?: true
+    ipHash?: true
+    userAgent?: true
+    browser?: true
+    os?: true
+    device?: true
     createdAt?: true
     _all?: true
   }
@@ -5763,6 +5924,11 @@ export namespace Prisma {
     id: string
     productId: string
     visitorId: string | null
+    ipHash: string | null
+    userAgent: string | null
+    browser: string | null
+    os: string | null
+    device: string | null
     createdAt: Date
     _count: ProductViewCountAggregateOutputType | null
     _min: ProductViewMinAggregateOutputType | null
@@ -5787,6 +5953,11 @@ export namespace Prisma {
     id?: boolean
     productId?: boolean
     visitorId?: boolean
+    ipHash?: boolean
+    userAgent?: boolean
+    browser?: boolean
+    os?: boolean
+    device?: boolean
     createdAt?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["productView"]>
@@ -5795,6 +5966,11 @@ export namespace Prisma {
     id?: boolean
     productId?: boolean
     visitorId?: boolean
+    ipHash?: boolean
+    userAgent?: boolean
+    browser?: boolean
+    os?: boolean
+    device?: boolean
     createdAt?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["productView"]>
@@ -5803,6 +5979,11 @@ export namespace Prisma {
     id?: boolean
     productId?: boolean
     visitorId?: boolean
+    ipHash?: boolean
+    userAgent?: boolean
+    browser?: boolean
+    os?: boolean
+    device?: boolean
     createdAt?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["productView"]>
@@ -5811,10 +5992,15 @@ export namespace Prisma {
     id?: boolean
     productId?: boolean
     visitorId?: boolean
+    ipHash?: boolean
+    userAgent?: boolean
+    browser?: boolean
+    os?: boolean
+    device?: boolean
     createdAt?: boolean
   }
 
-  export type ProductViewOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "visitorId" | "createdAt", ExtArgs["result"]["productView"]>
+  export type ProductViewOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "visitorId" | "ipHash" | "userAgent" | "browser" | "os" | "device" | "createdAt", ExtArgs["result"]["productView"]>
   export type ProductViewInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }
@@ -5834,6 +6020,11 @@ export namespace Prisma {
       id: string
       productId: string
       visitorId: string | null
+      ipHash: string | null
+      userAgent: string | null
+      browser: string | null
+      os: string | null
+      device: string | null
       createdAt: Date
     }, ExtArgs["result"]["productView"]>
     composites: {}
@@ -6262,6 +6453,11 @@ export namespace Prisma {
     readonly id: FieldRef<"ProductView", 'String'>
     readonly productId: FieldRef<"ProductView", 'String'>
     readonly visitorId: FieldRef<"ProductView", 'String'>
+    readonly ipHash: FieldRef<"ProductView", 'String'>
+    readonly userAgent: FieldRef<"ProductView", 'String'>
+    readonly browser: FieldRef<"ProductView", 'String'>
+    readonly os: FieldRef<"ProductView", 'String'>
+    readonly device: FieldRef<"ProductView", 'String'>
     readonly createdAt: FieldRef<"ProductView", 'DateTime'>
   }
     
@@ -12605,6 +12801,7 @@ export namespace Prisma {
     role?: boolean
     accounts?: boolean | User$accountsArgs<ExtArgs>
     catalog?: boolean | User$catalogArgs<ExtArgs>
+    catalogViews?: boolean | User$catalogViewsArgs<ExtArgs>
     products?: boolean | User$productsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     withdrawals?: boolean | User$withdrawalsArgs<ExtArgs>
@@ -12666,6 +12863,7 @@ export namespace Prisma {
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     catalog?: boolean | User$catalogArgs<ExtArgs>
+    catalogViews?: boolean | User$catalogViewsArgs<ExtArgs>
     products?: boolean | User$productsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     withdrawals?: boolean | User$withdrawalsArgs<ExtArgs>
@@ -12679,6 +12877,7 @@ export namespace Prisma {
     objects: {
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       catalog: Prisma.$CatalogPayload<ExtArgs> | null
+      catalogViews: Prisma.$CatalogViewPayload<ExtArgs>[]
       products: Prisma.$ProductPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       withdrawals: Prisma.$WithdrawalPayload<ExtArgs>[]
@@ -13094,6 +13293,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     catalog<T extends User$catalogArgs<ExtArgs> = {}>(args?: Subset<T, User$catalogArgs<ExtArgs>>): Prisma__CatalogClient<$Result.GetResult<Prisma.$CatalogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    catalogViews<T extends User$catalogViewsArgs<ExtArgs> = {}>(args?: Subset<T, User$catalogViewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CatalogViewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     products<T extends User$productsArgs<ExtArgs> = {}>(args?: Subset<T, User$productsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     withdrawals<T extends User$withdrawalsArgs<ExtArgs> = {}>(args?: Subset<T, User$withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WithdrawalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -13568,6 +13768,30 @@ export namespace Prisma {
      */
     include?: CatalogInclude<ExtArgs> | null
     where?: CatalogWhereInput
+  }
+
+  /**
+   * User.catalogViews
+   */
+  export type User$catalogViewsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogView
+     */
+    select?: CatalogViewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CatalogView
+     */
+    omit?: CatalogViewOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CatalogViewInclude<ExtArgs> | null
+    where?: CatalogViewWhereInput
+    orderBy?: CatalogViewOrderByWithRelationInput | CatalogViewOrderByWithRelationInput[]
+    cursor?: CatalogViewWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CatalogViewScalarFieldEnum | CatalogViewScalarFieldEnum[]
   }
 
   /**
@@ -14802,7 +15026,9 @@ export namespace Prisma {
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    views?: boolean | Catalog$viewsArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
+    _count?: boolean | CatalogCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["catalog"]>
 
   export type CatalogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14836,7 +15062,9 @@ export namespace Prisma {
 
   export type CatalogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "slug" | "bio" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["catalog"]>
   export type CatalogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    views?: boolean | Catalog$viewsArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
+    _count?: boolean | CatalogCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CatalogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -14848,6 +15076,7 @@ export namespace Prisma {
   export type $CatalogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Catalog"
     objects: {
+      views: Prisma.$CatalogViewPayload<ExtArgs>[]
       user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -15251,6 +15480,7 @@ export namespace Prisma {
    */
   export interface Prisma__CatalogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    views<T extends Catalog$viewsArgs<ExtArgs> = {}>(args?: Subset<T, Catalog$viewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CatalogViewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -15683,6 +15913,30 @@ export namespace Prisma {
   }
 
   /**
+   * Catalog.views
+   */
+  export type Catalog$viewsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogView
+     */
+    select?: CatalogViewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CatalogView
+     */
+    omit?: CatalogViewOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CatalogViewInclude<ExtArgs> | null
+    where?: CatalogViewWhereInput
+    orderBy?: CatalogViewOrderByWithRelationInput | CatalogViewOrderByWithRelationInput[]
+    cursor?: CatalogViewWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CatalogViewScalarFieldEnum | CatalogViewScalarFieldEnum[]
+  }
+
+  /**
    * Catalog without action
    */
   export type CatalogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15698,6 +15952,1137 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: CatalogInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CatalogView
+   */
+
+  export type AggregateCatalogView = {
+    _count: CatalogViewCountAggregateOutputType | null
+    _min: CatalogViewMinAggregateOutputType | null
+    _max: CatalogViewMaxAggregateOutputType | null
+  }
+
+  export type CatalogViewMinAggregateOutputType = {
+    id: string | null
+    catalogId: string | null
+    userId: string | null
+    visitorId: string | null
+    ipHash: string | null
+    userAgent: string | null
+    browser: string | null
+    os: string | null
+    device: string | null
+    createdAt: Date | null
+  }
+
+  export type CatalogViewMaxAggregateOutputType = {
+    id: string | null
+    catalogId: string | null
+    userId: string | null
+    visitorId: string | null
+    ipHash: string | null
+    userAgent: string | null
+    browser: string | null
+    os: string | null
+    device: string | null
+    createdAt: Date | null
+  }
+
+  export type CatalogViewCountAggregateOutputType = {
+    id: number
+    catalogId: number
+    userId: number
+    visitorId: number
+    ipHash: number
+    userAgent: number
+    browser: number
+    os: number
+    device: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type CatalogViewMinAggregateInputType = {
+    id?: true
+    catalogId?: true
+    userId?: true
+    visitorId?: true
+    ipHash?: true
+    userAgent?: true
+    browser?: true
+    os?: true
+    device?: true
+    createdAt?: true
+  }
+
+  export type CatalogViewMaxAggregateInputType = {
+    id?: true
+    catalogId?: true
+    userId?: true
+    visitorId?: true
+    ipHash?: true
+    userAgent?: true
+    browser?: true
+    os?: true
+    device?: true
+    createdAt?: true
+  }
+
+  export type CatalogViewCountAggregateInputType = {
+    id?: true
+    catalogId?: true
+    userId?: true
+    visitorId?: true
+    ipHash?: true
+    userAgent?: true
+    browser?: true
+    os?: true
+    device?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type CatalogViewAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CatalogView to aggregate.
+     */
+    where?: CatalogViewWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CatalogViews to fetch.
+     */
+    orderBy?: CatalogViewOrderByWithRelationInput | CatalogViewOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CatalogViewWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CatalogViews from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CatalogViews.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CatalogViews
+    **/
+    _count?: true | CatalogViewCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CatalogViewMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CatalogViewMaxAggregateInputType
+  }
+
+  export type GetCatalogViewAggregateType<T extends CatalogViewAggregateArgs> = {
+        [P in keyof T & keyof AggregateCatalogView]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCatalogView[P]>
+      : GetScalarType<T[P], AggregateCatalogView[P]>
+  }
+
+
+
+
+  export type CatalogViewGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CatalogViewWhereInput
+    orderBy?: CatalogViewOrderByWithAggregationInput | CatalogViewOrderByWithAggregationInput[]
+    by: CatalogViewScalarFieldEnum[] | CatalogViewScalarFieldEnum
+    having?: CatalogViewScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CatalogViewCountAggregateInputType | true
+    _min?: CatalogViewMinAggregateInputType
+    _max?: CatalogViewMaxAggregateInputType
+  }
+
+  export type CatalogViewGroupByOutputType = {
+    id: string
+    catalogId: string
+    userId: string
+    visitorId: string | null
+    ipHash: string | null
+    userAgent: string | null
+    browser: string | null
+    os: string | null
+    device: string | null
+    createdAt: Date
+    _count: CatalogViewCountAggregateOutputType | null
+    _min: CatalogViewMinAggregateOutputType | null
+    _max: CatalogViewMaxAggregateOutputType | null
+  }
+
+  type GetCatalogViewGroupByPayload<T extends CatalogViewGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CatalogViewGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CatalogViewGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CatalogViewGroupByOutputType[P]>
+            : GetScalarType<T[P], CatalogViewGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CatalogViewSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    catalogId?: boolean
+    userId?: boolean
+    visitorId?: boolean
+    ipHash?: boolean
+    userAgent?: boolean
+    browser?: boolean
+    os?: boolean
+    device?: boolean
+    createdAt?: boolean
+    catalog?: boolean | CatalogDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["catalogView"]>
+
+  export type CatalogViewSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    catalogId?: boolean
+    userId?: boolean
+    visitorId?: boolean
+    ipHash?: boolean
+    userAgent?: boolean
+    browser?: boolean
+    os?: boolean
+    device?: boolean
+    createdAt?: boolean
+    catalog?: boolean | CatalogDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["catalogView"]>
+
+  export type CatalogViewSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    catalogId?: boolean
+    userId?: boolean
+    visitorId?: boolean
+    ipHash?: boolean
+    userAgent?: boolean
+    browser?: boolean
+    os?: boolean
+    device?: boolean
+    createdAt?: boolean
+    catalog?: boolean | CatalogDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["catalogView"]>
+
+  export type CatalogViewSelectScalar = {
+    id?: boolean
+    catalogId?: boolean
+    userId?: boolean
+    visitorId?: boolean
+    ipHash?: boolean
+    userAgent?: boolean
+    browser?: boolean
+    os?: boolean
+    device?: boolean
+    createdAt?: boolean
+  }
+
+  export type CatalogViewOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "catalogId" | "userId" | "visitorId" | "ipHash" | "userAgent" | "browser" | "os" | "device" | "createdAt", ExtArgs["result"]["catalogView"]>
+  export type CatalogViewInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    catalog?: boolean | CatalogDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CatalogViewIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    catalog?: boolean | CatalogDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CatalogViewIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    catalog?: boolean | CatalogDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $CatalogViewPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CatalogView"
+    objects: {
+      catalog: Prisma.$CatalogPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      catalogId: string
+      userId: string
+      visitorId: string | null
+      ipHash: string | null
+      userAgent: string | null
+      browser: string | null
+      os: string | null
+      device: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["catalogView"]>
+    composites: {}
+  }
+
+  type CatalogViewGetPayload<S extends boolean | null | undefined | CatalogViewDefaultArgs> = $Result.GetResult<Prisma.$CatalogViewPayload, S>
+
+  type CatalogViewCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CatalogViewFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CatalogViewCountAggregateInputType | true
+    }
+
+  export interface CatalogViewDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CatalogView'], meta: { name: 'CatalogView' } }
+    /**
+     * Find zero or one CatalogView that matches the filter.
+     * @param {CatalogViewFindUniqueArgs} args - Arguments to find a CatalogView
+     * @example
+     * // Get one CatalogView
+     * const catalogView = await prisma.catalogView.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CatalogViewFindUniqueArgs>(args: SelectSubset<T, CatalogViewFindUniqueArgs<ExtArgs>>): Prisma__CatalogViewClient<$Result.GetResult<Prisma.$CatalogViewPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CatalogView that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CatalogViewFindUniqueOrThrowArgs} args - Arguments to find a CatalogView
+     * @example
+     * // Get one CatalogView
+     * const catalogView = await prisma.catalogView.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CatalogViewFindUniqueOrThrowArgs>(args: SelectSubset<T, CatalogViewFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CatalogViewClient<$Result.GetResult<Prisma.$CatalogViewPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CatalogView that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CatalogViewFindFirstArgs} args - Arguments to find a CatalogView
+     * @example
+     * // Get one CatalogView
+     * const catalogView = await prisma.catalogView.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CatalogViewFindFirstArgs>(args?: SelectSubset<T, CatalogViewFindFirstArgs<ExtArgs>>): Prisma__CatalogViewClient<$Result.GetResult<Prisma.$CatalogViewPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CatalogView that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CatalogViewFindFirstOrThrowArgs} args - Arguments to find a CatalogView
+     * @example
+     * // Get one CatalogView
+     * const catalogView = await prisma.catalogView.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CatalogViewFindFirstOrThrowArgs>(args?: SelectSubset<T, CatalogViewFindFirstOrThrowArgs<ExtArgs>>): Prisma__CatalogViewClient<$Result.GetResult<Prisma.$CatalogViewPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CatalogViews that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CatalogViewFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CatalogViews
+     * const catalogViews = await prisma.catalogView.findMany()
+     * 
+     * // Get first 10 CatalogViews
+     * const catalogViews = await prisma.catalogView.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const catalogViewWithIdOnly = await prisma.catalogView.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CatalogViewFindManyArgs>(args?: SelectSubset<T, CatalogViewFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CatalogViewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CatalogView.
+     * @param {CatalogViewCreateArgs} args - Arguments to create a CatalogView.
+     * @example
+     * // Create one CatalogView
+     * const CatalogView = await prisma.catalogView.create({
+     *   data: {
+     *     // ... data to create a CatalogView
+     *   }
+     * })
+     * 
+     */
+    create<T extends CatalogViewCreateArgs>(args: SelectSubset<T, CatalogViewCreateArgs<ExtArgs>>): Prisma__CatalogViewClient<$Result.GetResult<Prisma.$CatalogViewPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CatalogViews.
+     * @param {CatalogViewCreateManyArgs} args - Arguments to create many CatalogViews.
+     * @example
+     * // Create many CatalogViews
+     * const catalogView = await prisma.catalogView.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CatalogViewCreateManyArgs>(args?: SelectSubset<T, CatalogViewCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CatalogViews and returns the data saved in the database.
+     * @param {CatalogViewCreateManyAndReturnArgs} args - Arguments to create many CatalogViews.
+     * @example
+     * // Create many CatalogViews
+     * const catalogView = await prisma.catalogView.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CatalogViews and only return the `id`
+     * const catalogViewWithIdOnly = await prisma.catalogView.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CatalogViewCreateManyAndReturnArgs>(args?: SelectSubset<T, CatalogViewCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CatalogViewPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CatalogView.
+     * @param {CatalogViewDeleteArgs} args - Arguments to delete one CatalogView.
+     * @example
+     * // Delete one CatalogView
+     * const CatalogView = await prisma.catalogView.delete({
+     *   where: {
+     *     // ... filter to delete one CatalogView
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CatalogViewDeleteArgs>(args: SelectSubset<T, CatalogViewDeleteArgs<ExtArgs>>): Prisma__CatalogViewClient<$Result.GetResult<Prisma.$CatalogViewPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CatalogView.
+     * @param {CatalogViewUpdateArgs} args - Arguments to update one CatalogView.
+     * @example
+     * // Update one CatalogView
+     * const catalogView = await prisma.catalogView.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CatalogViewUpdateArgs>(args: SelectSubset<T, CatalogViewUpdateArgs<ExtArgs>>): Prisma__CatalogViewClient<$Result.GetResult<Prisma.$CatalogViewPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CatalogViews.
+     * @param {CatalogViewDeleteManyArgs} args - Arguments to filter CatalogViews to delete.
+     * @example
+     * // Delete a few CatalogViews
+     * const { count } = await prisma.catalogView.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CatalogViewDeleteManyArgs>(args?: SelectSubset<T, CatalogViewDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CatalogViews.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CatalogViewUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CatalogViews
+     * const catalogView = await prisma.catalogView.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CatalogViewUpdateManyArgs>(args: SelectSubset<T, CatalogViewUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CatalogViews and returns the data updated in the database.
+     * @param {CatalogViewUpdateManyAndReturnArgs} args - Arguments to update many CatalogViews.
+     * @example
+     * // Update many CatalogViews
+     * const catalogView = await prisma.catalogView.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CatalogViews and only return the `id`
+     * const catalogViewWithIdOnly = await prisma.catalogView.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CatalogViewUpdateManyAndReturnArgs>(args: SelectSubset<T, CatalogViewUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CatalogViewPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CatalogView.
+     * @param {CatalogViewUpsertArgs} args - Arguments to update or create a CatalogView.
+     * @example
+     * // Update or create a CatalogView
+     * const catalogView = await prisma.catalogView.upsert({
+     *   create: {
+     *     // ... data to create a CatalogView
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CatalogView we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CatalogViewUpsertArgs>(args: SelectSubset<T, CatalogViewUpsertArgs<ExtArgs>>): Prisma__CatalogViewClient<$Result.GetResult<Prisma.$CatalogViewPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CatalogViews.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CatalogViewCountArgs} args - Arguments to filter CatalogViews to count.
+     * @example
+     * // Count the number of CatalogViews
+     * const count = await prisma.catalogView.count({
+     *   where: {
+     *     // ... the filter for the CatalogViews we want to count
+     *   }
+     * })
+    **/
+    count<T extends CatalogViewCountArgs>(
+      args?: Subset<T, CatalogViewCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CatalogViewCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CatalogView.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CatalogViewAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CatalogViewAggregateArgs>(args: Subset<T, CatalogViewAggregateArgs>): Prisma.PrismaPromise<GetCatalogViewAggregateType<T>>
+
+    /**
+     * Group by CatalogView.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CatalogViewGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CatalogViewGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CatalogViewGroupByArgs['orderBy'] }
+        : { orderBy?: CatalogViewGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CatalogViewGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCatalogViewGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CatalogView model
+   */
+  readonly fields: CatalogViewFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CatalogView.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CatalogViewClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    catalog<T extends CatalogDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CatalogDefaultArgs<ExtArgs>>): Prisma__CatalogClient<$Result.GetResult<Prisma.$CatalogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CatalogView model
+   */
+  interface CatalogViewFieldRefs {
+    readonly id: FieldRef<"CatalogView", 'String'>
+    readonly catalogId: FieldRef<"CatalogView", 'String'>
+    readonly userId: FieldRef<"CatalogView", 'String'>
+    readonly visitorId: FieldRef<"CatalogView", 'String'>
+    readonly ipHash: FieldRef<"CatalogView", 'String'>
+    readonly userAgent: FieldRef<"CatalogView", 'String'>
+    readonly browser: FieldRef<"CatalogView", 'String'>
+    readonly os: FieldRef<"CatalogView", 'String'>
+    readonly device: FieldRef<"CatalogView", 'String'>
+    readonly createdAt: FieldRef<"CatalogView", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CatalogView findUnique
+   */
+  export type CatalogViewFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogView
+     */
+    select?: CatalogViewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CatalogView
+     */
+    omit?: CatalogViewOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CatalogViewInclude<ExtArgs> | null
+    /**
+     * Filter, which CatalogView to fetch.
+     */
+    where: CatalogViewWhereUniqueInput
+  }
+
+  /**
+   * CatalogView findUniqueOrThrow
+   */
+  export type CatalogViewFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogView
+     */
+    select?: CatalogViewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CatalogView
+     */
+    omit?: CatalogViewOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CatalogViewInclude<ExtArgs> | null
+    /**
+     * Filter, which CatalogView to fetch.
+     */
+    where: CatalogViewWhereUniqueInput
+  }
+
+  /**
+   * CatalogView findFirst
+   */
+  export type CatalogViewFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogView
+     */
+    select?: CatalogViewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CatalogView
+     */
+    omit?: CatalogViewOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CatalogViewInclude<ExtArgs> | null
+    /**
+     * Filter, which CatalogView to fetch.
+     */
+    where?: CatalogViewWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CatalogViews to fetch.
+     */
+    orderBy?: CatalogViewOrderByWithRelationInput | CatalogViewOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CatalogViews.
+     */
+    cursor?: CatalogViewWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CatalogViews from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CatalogViews.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CatalogViews.
+     */
+    distinct?: CatalogViewScalarFieldEnum | CatalogViewScalarFieldEnum[]
+  }
+
+  /**
+   * CatalogView findFirstOrThrow
+   */
+  export type CatalogViewFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogView
+     */
+    select?: CatalogViewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CatalogView
+     */
+    omit?: CatalogViewOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CatalogViewInclude<ExtArgs> | null
+    /**
+     * Filter, which CatalogView to fetch.
+     */
+    where?: CatalogViewWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CatalogViews to fetch.
+     */
+    orderBy?: CatalogViewOrderByWithRelationInput | CatalogViewOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CatalogViews.
+     */
+    cursor?: CatalogViewWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CatalogViews from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CatalogViews.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CatalogViews.
+     */
+    distinct?: CatalogViewScalarFieldEnum | CatalogViewScalarFieldEnum[]
+  }
+
+  /**
+   * CatalogView findMany
+   */
+  export type CatalogViewFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogView
+     */
+    select?: CatalogViewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CatalogView
+     */
+    omit?: CatalogViewOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CatalogViewInclude<ExtArgs> | null
+    /**
+     * Filter, which CatalogViews to fetch.
+     */
+    where?: CatalogViewWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CatalogViews to fetch.
+     */
+    orderBy?: CatalogViewOrderByWithRelationInput | CatalogViewOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CatalogViews.
+     */
+    cursor?: CatalogViewWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CatalogViews from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CatalogViews.
+     */
+    skip?: number
+    distinct?: CatalogViewScalarFieldEnum | CatalogViewScalarFieldEnum[]
+  }
+
+  /**
+   * CatalogView create
+   */
+  export type CatalogViewCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogView
+     */
+    select?: CatalogViewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CatalogView
+     */
+    omit?: CatalogViewOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CatalogViewInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CatalogView.
+     */
+    data: XOR<CatalogViewCreateInput, CatalogViewUncheckedCreateInput>
+  }
+
+  /**
+   * CatalogView createMany
+   */
+  export type CatalogViewCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CatalogViews.
+     */
+    data: CatalogViewCreateManyInput | CatalogViewCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CatalogView createManyAndReturn
+   */
+  export type CatalogViewCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogView
+     */
+    select?: CatalogViewSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CatalogView
+     */
+    omit?: CatalogViewOmit<ExtArgs> | null
+    /**
+     * The data used to create many CatalogViews.
+     */
+    data: CatalogViewCreateManyInput | CatalogViewCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CatalogViewIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CatalogView update
+   */
+  export type CatalogViewUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogView
+     */
+    select?: CatalogViewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CatalogView
+     */
+    omit?: CatalogViewOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CatalogViewInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CatalogView.
+     */
+    data: XOR<CatalogViewUpdateInput, CatalogViewUncheckedUpdateInput>
+    /**
+     * Choose, which CatalogView to update.
+     */
+    where: CatalogViewWhereUniqueInput
+  }
+
+  /**
+   * CatalogView updateMany
+   */
+  export type CatalogViewUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CatalogViews.
+     */
+    data: XOR<CatalogViewUpdateManyMutationInput, CatalogViewUncheckedUpdateManyInput>
+    /**
+     * Filter which CatalogViews to update
+     */
+    where?: CatalogViewWhereInput
+    /**
+     * Limit how many CatalogViews to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CatalogView updateManyAndReturn
+   */
+  export type CatalogViewUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogView
+     */
+    select?: CatalogViewSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CatalogView
+     */
+    omit?: CatalogViewOmit<ExtArgs> | null
+    /**
+     * The data used to update CatalogViews.
+     */
+    data: XOR<CatalogViewUpdateManyMutationInput, CatalogViewUncheckedUpdateManyInput>
+    /**
+     * Filter which CatalogViews to update
+     */
+    where?: CatalogViewWhereInput
+    /**
+     * Limit how many CatalogViews to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CatalogViewIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CatalogView upsert
+   */
+  export type CatalogViewUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogView
+     */
+    select?: CatalogViewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CatalogView
+     */
+    omit?: CatalogViewOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CatalogViewInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CatalogView to update in case it exists.
+     */
+    where: CatalogViewWhereUniqueInput
+    /**
+     * In case the CatalogView found by the `where` argument doesn't exist, create a new CatalogView with this data.
+     */
+    create: XOR<CatalogViewCreateInput, CatalogViewUncheckedCreateInput>
+    /**
+     * In case the CatalogView was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CatalogViewUpdateInput, CatalogViewUncheckedUpdateInput>
+  }
+
+  /**
+   * CatalogView delete
+   */
+  export type CatalogViewDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogView
+     */
+    select?: CatalogViewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CatalogView
+     */
+    omit?: CatalogViewOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CatalogViewInclude<ExtArgs> | null
+    /**
+     * Filter which CatalogView to delete.
+     */
+    where: CatalogViewWhereUniqueInput
+  }
+
+  /**
+   * CatalogView deleteMany
+   */
+  export type CatalogViewDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CatalogViews to delete
+     */
+    where?: CatalogViewWhereInput
+    /**
+     * Limit how many CatalogViews to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CatalogView without action
+   */
+  export type CatalogViewDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogView
+     */
+    select?: CatalogViewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CatalogView
+     */
+    omit?: CatalogViewOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CatalogViewInclude<ExtArgs> | null
   }
 
 
@@ -16990,6 +18375,11 @@ export namespace Prisma {
     id: 'id',
     productId: 'productId',
     visitorId: 'visitorId',
+    ipHash: 'ipHash',
+    userAgent: 'userAgent',
+    browser: 'browser',
+    os: 'os',
+    device: 'device',
     createdAt: 'createdAt'
   };
 
@@ -17108,6 +18498,22 @@ export namespace Prisma {
   };
 
   export type CatalogScalarFieldEnum = (typeof CatalogScalarFieldEnum)[keyof typeof CatalogScalarFieldEnum]
+
+
+  export const CatalogViewScalarFieldEnum: {
+    id: 'id',
+    catalogId: 'catalogId',
+    userId: 'userId',
+    visitorId: 'visitorId',
+    ipHash: 'ipHash',
+    userAgent: 'userAgent',
+    browser: 'browser',
+    os: 'os',
+    device: 'device',
+    createdAt: 'createdAt'
+  };
+
+  export type CatalogViewScalarFieldEnum = (typeof CatalogViewScalarFieldEnum)[keyof typeof CatalogViewScalarFieldEnum]
 
 
   export const WithdrawalScalarFieldEnum: {
@@ -17588,6 +18994,11 @@ export namespace Prisma {
     id?: StringFilter<"ProductView"> | string
     productId?: StringFilter<"ProductView"> | string
     visitorId?: StringNullableFilter<"ProductView"> | string | null
+    ipHash?: StringNullableFilter<"ProductView"> | string | null
+    userAgent?: StringNullableFilter<"ProductView"> | string | null
+    browser?: StringNullableFilter<"ProductView"> | string | null
+    os?: StringNullableFilter<"ProductView"> | string | null
+    device?: StringNullableFilter<"ProductView"> | string | null
     createdAt?: DateTimeFilter<"ProductView"> | Date | string
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
   }
@@ -17596,6 +19007,11 @@ export namespace Prisma {
     id?: SortOrder
     productId?: SortOrder
     visitorId?: SortOrderInput | SortOrder
+    ipHash?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    browser?: SortOrderInput | SortOrder
+    os?: SortOrderInput | SortOrder
+    device?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     product?: ProductOrderByWithRelationInput
   }
@@ -17607,6 +19023,11 @@ export namespace Prisma {
     NOT?: ProductViewWhereInput | ProductViewWhereInput[]
     productId?: StringFilter<"ProductView"> | string
     visitorId?: StringNullableFilter<"ProductView"> | string | null
+    ipHash?: StringNullableFilter<"ProductView"> | string | null
+    userAgent?: StringNullableFilter<"ProductView"> | string | null
+    browser?: StringNullableFilter<"ProductView"> | string | null
+    os?: StringNullableFilter<"ProductView"> | string | null
+    device?: StringNullableFilter<"ProductView"> | string | null
     createdAt?: DateTimeFilter<"ProductView"> | Date | string
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
   }, "id">
@@ -17615,6 +19036,11 @@ export namespace Prisma {
     id?: SortOrder
     productId?: SortOrder
     visitorId?: SortOrderInput | SortOrder
+    ipHash?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    browser?: SortOrderInput | SortOrder
+    os?: SortOrderInput | SortOrder
+    device?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: ProductViewCountOrderByAggregateInput
     _max?: ProductViewMaxOrderByAggregateInput
@@ -17628,6 +19054,11 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"ProductView"> | string
     productId?: StringWithAggregatesFilter<"ProductView"> | string
     visitorId?: StringNullableWithAggregatesFilter<"ProductView"> | string | null
+    ipHash?: StringNullableWithAggregatesFilter<"ProductView"> | string | null
+    userAgent?: StringNullableWithAggregatesFilter<"ProductView"> | string | null
+    browser?: StringNullableWithAggregatesFilter<"ProductView"> | string | null
+    os?: StringNullableWithAggregatesFilter<"ProductView"> | string | null
+    device?: StringNullableWithAggregatesFilter<"ProductView"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"ProductView"> | Date | string
   }
 
@@ -18032,6 +19463,7 @@ export namespace Prisma {
     role?: EnumRoleTypeFilter<"User"> | $Enums.RoleType
     accounts?: AccountListRelationFilter
     catalog?: XOR<CatalogNullableScalarRelationFilter, CatalogWhereInput> | null
+    catalogViews?: CatalogViewListRelationFilter
     products?: ProductListRelationFilter
     sessions?: SessionListRelationFilter
     withdrawals?: WithdrawalListRelationFilter
@@ -18054,6 +19486,7 @@ export namespace Prisma {
     role?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
     catalog?: CatalogOrderByWithRelationInput
+    catalogViews?: CatalogViewOrderByRelationAggregateInput
     products?: ProductOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     withdrawals?: WithdrawalOrderByRelationAggregateInput
@@ -18079,6 +19512,7 @@ export namespace Prisma {
     role?: EnumRoleTypeFilter<"User"> | $Enums.RoleType
     accounts?: AccountListRelationFilter
     catalog?: XOR<CatalogNullableScalarRelationFilter, CatalogWhereInput> | null
+    catalogViews?: CatalogViewListRelationFilter
     products?: ProductListRelationFilter
     sessions?: SessionListRelationFilter
     withdrawals?: WithdrawalListRelationFilter
@@ -18177,6 +19611,7 @@ export namespace Prisma {
     userId?: StringFilter<"Catalog"> | string
     createdAt?: DateTimeFilter<"Catalog"> | Date | string
     updatedAt?: DateTimeFilter<"Catalog"> | Date | string
+    views?: CatalogViewListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -18187,6 +19622,7 @@ export namespace Prisma {
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    views?: CatalogViewOrderByRelationAggregateInput
     user?: UserOrderByWithRelationInput
   }
 
@@ -18200,6 +19636,7 @@ export namespace Prisma {
     bio?: StringNullableFilter<"Catalog"> | string | null
     createdAt?: DateTimeFilter<"Catalog"> | Date | string
     updatedAt?: DateTimeFilter<"Catalog"> | Date | string
+    views?: CatalogViewListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "slug" | "userId">
 
@@ -18225,6 +19662,89 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"Catalog"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Catalog"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Catalog"> | Date | string
+  }
+
+  export type CatalogViewWhereInput = {
+    AND?: CatalogViewWhereInput | CatalogViewWhereInput[]
+    OR?: CatalogViewWhereInput[]
+    NOT?: CatalogViewWhereInput | CatalogViewWhereInput[]
+    id?: StringFilter<"CatalogView"> | string
+    catalogId?: StringFilter<"CatalogView"> | string
+    userId?: StringFilter<"CatalogView"> | string
+    visitorId?: StringNullableFilter<"CatalogView"> | string | null
+    ipHash?: StringNullableFilter<"CatalogView"> | string | null
+    userAgent?: StringNullableFilter<"CatalogView"> | string | null
+    browser?: StringNullableFilter<"CatalogView"> | string | null
+    os?: StringNullableFilter<"CatalogView"> | string | null
+    device?: StringNullableFilter<"CatalogView"> | string | null
+    createdAt?: DateTimeFilter<"CatalogView"> | Date | string
+    catalog?: XOR<CatalogScalarRelationFilter, CatalogWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type CatalogViewOrderByWithRelationInput = {
+    id?: SortOrder
+    catalogId?: SortOrder
+    userId?: SortOrder
+    visitorId?: SortOrderInput | SortOrder
+    ipHash?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    browser?: SortOrderInput | SortOrder
+    os?: SortOrderInput | SortOrder
+    device?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    catalog?: CatalogOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type CatalogViewWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CatalogViewWhereInput | CatalogViewWhereInput[]
+    OR?: CatalogViewWhereInput[]
+    NOT?: CatalogViewWhereInput | CatalogViewWhereInput[]
+    catalogId?: StringFilter<"CatalogView"> | string
+    userId?: StringFilter<"CatalogView"> | string
+    visitorId?: StringNullableFilter<"CatalogView"> | string | null
+    ipHash?: StringNullableFilter<"CatalogView"> | string | null
+    userAgent?: StringNullableFilter<"CatalogView"> | string | null
+    browser?: StringNullableFilter<"CatalogView"> | string | null
+    os?: StringNullableFilter<"CatalogView"> | string | null
+    device?: StringNullableFilter<"CatalogView"> | string | null
+    createdAt?: DateTimeFilter<"CatalogView"> | Date | string
+    catalog?: XOR<CatalogScalarRelationFilter, CatalogWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type CatalogViewOrderByWithAggregationInput = {
+    id?: SortOrder
+    catalogId?: SortOrder
+    userId?: SortOrder
+    visitorId?: SortOrderInput | SortOrder
+    ipHash?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    browser?: SortOrderInput | SortOrder
+    os?: SortOrderInput | SortOrder
+    device?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: CatalogViewCountOrderByAggregateInput
+    _max?: CatalogViewMaxOrderByAggregateInput
+    _min?: CatalogViewMinOrderByAggregateInput
+  }
+
+  export type CatalogViewScalarWhereWithAggregatesInput = {
+    AND?: CatalogViewScalarWhereWithAggregatesInput | CatalogViewScalarWhereWithAggregatesInput[]
+    OR?: CatalogViewScalarWhereWithAggregatesInput[]
+    NOT?: CatalogViewScalarWhereWithAggregatesInput | CatalogViewScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CatalogView"> | string
+    catalogId?: StringWithAggregatesFilter<"CatalogView"> | string
+    userId?: StringWithAggregatesFilter<"CatalogView"> | string
+    visitorId?: StringNullableWithAggregatesFilter<"CatalogView"> | string | null
+    ipHash?: StringNullableWithAggregatesFilter<"CatalogView"> | string | null
+    userAgent?: StringNullableWithAggregatesFilter<"CatalogView"> | string | null
+    browser?: StringNullableWithAggregatesFilter<"CatalogView"> | string | null
+    os?: StringNullableWithAggregatesFilter<"CatalogView"> | string | null
+    device?: StringNullableWithAggregatesFilter<"CatalogView"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"CatalogView"> | Date | string
   }
 
   export type WithdrawalWhereInput = {
@@ -18622,6 +20142,11 @@ export namespace Prisma {
   export type ProductViewCreateInput = {
     id?: string
     visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
     createdAt?: Date | string
     product: ProductCreateNestedOneWithoutViewsInput
   }
@@ -18630,12 +20155,22 @@ export namespace Prisma {
     id?: string
     productId: string
     visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
     createdAt?: Date | string
   }
 
   export type ProductViewUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     product?: ProductUpdateOneRequiredWithoutViewsNestedInput
   }
@@ -18644,6 +20179,11 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
     visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -18651,12 +20191,22 @@ export namespace Prisma {
     id?: string
     productId: string
     visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
     createdAt?: Date | string
   }
 
   export type ProductViewUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -18664,6 +20214,11 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
     visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -19092,6 +20647,7 @@ export namespace Prisma {
     role?: $Enums.RoleType
     accounts?: AccountCreateNestedManyWithoutUserInput
     catalog?: CatalogCreateNestedOneWithoutUserInput
+    catalogViews?: CatalogViewCreateNestedManyWithoutUserInput
     products?: ProductCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
@@ -19114,6 +20670,7 @@ export namespace Prisma {
     role?: $Enums.RoleType
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     catalog?: CatalogUncheckedCreateNestedOneWithoutUserInput
+    catalogViews?: CatalogViewUncheckedCreateNestedManyWithoutUserInput
     products?: ProductUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
@@ -19136,6 +20693,7 @@ export namespace Prisma {
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     accounts?: AccountUpdateManyWithoutUserNestedInput
     catalog?: CatalogUpdateOneWithoutUserNestedInput
+    catalogViews?: CatalogViewUpdateManyWithoutUserNestedInput
     products?: ProductUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
@@ -19158,6 +20716,7 @@ export namespace Prisma {
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
+    catalogViews?: CatalogViewUncheckedUpdateManyWithoutUserNestedInput
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
@@ -19262,6 +20821,7 @@ export namespace Prisma {
     bio?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    views?: CatalogViewCreateNestedManyWithoutCatalogInput
     user: UserCreateNestedOneWithoutCatalogInput
   }
 
@@ -19272,6 +20832,7 @@ export namespace Prisma {
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    views?: CatalogViewUncheckedCreateNestedManyWithoutCatalogInput
   }
 
   export type CatalogUpdateInput = {
@@ -19280,6 +20841,7 @@ export namespace Prisma {
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    views?: CatalogViewUpdateManyWithoutCatalogNestedInput
     user?: UserUpdateOneRequiredWithoutCatalogNestedInput
   }
 
@@ -19290,6 +20852,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    views?: CatalogViewUncheckedUpdateManyWithoutCatalogNestedInput
   }
 
   export type CatalogCreateManyInput = {
@@ -19316,6 +20879,95 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CatalogViewCreateInput = {
+    id?: string
+    visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
+    createdAt?: Date | string
+    catalog: CatalogCreateNestedOneWithoutViewsInput
+    user: UserCreateNestedOneWithoutCatalogViewsInput
+  }
+
+  export type CatalogViewUncheckedCreateInput = {
+    id?: string
+    catalogId: string
+    userId: string
+    visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
+    createdAt?: Date | string
+  }
+
+  export type CatalogViewUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    catalog?: CatalogUpdateOneRequiredWithoutViewsNestedInput
+    user?: UserUpdateOneRequiredWithoutCatalogViewsNestedInput
+  }
+
+  export type CatalogViewUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    catalogId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CatalogViewCreateManyInput = {
+    id?: string
+    catalogId: string
+    userId: string
+    visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
+    createdAt?: Date | string
+  }
+
+  export type CatalogViewUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CatalogViewUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    catalogId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type WithdrawalCreateInput = {
@@ -19901,6 +21553,11 @@ export namespace Prisma {
     id?: SortOrder
     productId?: SortOrder
     visitorId?: SortOrder
+    ipHash?: SortOrder
+    userAgent?: SortOrder
+    browser?: SortOrder
+    os?: SortOrder
+    device?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -19908,6 +21565,11 @@ export namespace Prisma {
     id?: SortOrder
     productId?: SortOrder
     visitorId?: SortOrder
+    ipHash?: SortOrder
+    userAgent?: SortOrder
+    browser?: SortOrder
+    os?: SortOrder
+    device?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -19915,6 +21577,11 @@ export namespace Prisma {
     id?: SortOrder
     productId?: SortOrder
     visitorId?: SortOrder
+    ipHash?: SortOrder
+    userAgent?: SortOrder
+    browser?: SortOrder
+    os?: SortOrder
+    device?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -20187,6 +21854,12 @@ export namespace Prisma {
     isNot?: CatalogWhereInput | null
   }
 
+  export type CatalogViewListRelationFilter = {
+    every?: CatalogViewWhereInput
+    some?: CatalogViewWhereInput
+    none?: CatalogViewWhereInput
+  }
+
   export type ProductListRelationFilter = {
     every?: ProductWhereInput
     some?: ProductWhereInput
@@ -20206,6 +21879,10 @@ export namespace Prisma {
   }
 
   export type AccountOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CatalogViewOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -20330,6 +22007,50 @@ export namespace Prisma {
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type CatalogScalarRelationFilter = {
+    is?: CatalogWhereInput
+    isNot?: CatalogWhereInput
+  }
+
+  export type CatalogViewCountOrderByAggregateInput = {
+    id?: SortOrder
+    catalogId?: SortOrder
+    userId?: SortOrder
+    visitorId?: SortOrder
+    ipHash?: SortOrder
+    userAgent?: SortOrder
+    browser?: SortOrder
+    os?: SortOrder
+    device?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CatalogViewMaxOrderByAggregateInput = {
+    id?: SortOrder
+    catalogId?: SortOrder
+    userId?: SortOrder
+    visitorId?: SortOrder
+    ipHash?: SortOrder
+    userAgent?: SortOrder
+    browser?: SortOrder
+    os?: SortOrder
+    device?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CatalogViewMinOrderByAggregateInput = {
+    id?: SortOrder
+    catalogId?: SortOrder
+    userId?: SortOrder
+    visitorId?: SortOrder
+    ipHash?: SortOrder
+    userAgent?: SortOrder
+    browser?: SortOrder
+    os?: SortOrder
+    device?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type EnumWithdrawalStatusFilter<$PrismaModel = never> = {
@@ -20798,6 +22519,13 @@ export namespace Prisma {
     connect?: CatalogWhereUniqueInput
   }
 
+  export type CatalogViewCreateNestedManyWithoutUserInput = {
+    create?: XOR<CatalogViewCreateWithoutUserInput, CatalogViewUncheckedCreateWithoutUserInput> | CatalogViewCreateWithoutUserInput[] | CatalogViewUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CatalogViewCreateOrConnectWithoutUserInput | CatalogViewCreateOrConnectWithoutUserInput[]
+    createMany?: CatalogViewCreateManyUserInputEnvelope
+    connect?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+  }
+
   export type ProductCreateNestedManyWithoutUserInput = {
     create?: XOR<ProductCreateWithoutUserInput, ProductUncheckedCreateWithoutUserInput> | ProductCreateWithoutUserInput[] | ProductUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ProductCreateOrConnectWithoutUserInput | ProductCreateOrConnectWithoutUserInput[]
@@ -20830,6 +22558,13 @@ export namespace Prisma {
     create?: XOR<CatalogCreateWithoutUserInput, CatalogUncheckedCreateWithoutUserInput>
     connectOrCreate?: CatalogCreateOrConnectWithoutUserInput
     connect?: CatalogWhereUniqueInput
+  }
+
+  export type CatalogViewUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<CatalogViewCreateWithoutUserInput, CatalogViewUncheckedCreateWithoutUserInput> | CatalogViewCreateWithoutUserInput[] | CatalogViewUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CatalogViewCreateOrConnectWithoutUserInput | CatalogViewCreateOrConnectWithoutUserInput[]
+    createMany?: CatalogViewCreateManyUserInputEnvelope
+    connect?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
   }
 
   export type ProductUncheckedCreateNestedManyWithoutUserInput = {
@@ -20879,6 +22614,20 @@ export namespace Prisma {
     delete?: CatalogWhereInput | boolean
     connect?: CatalogWhereUniqueInput
     update?: XOR<XOR<CatalogUpdateToOneWithWhereWithoutUserInput, CatalogUpdateWithoutUserInput>, CatalogUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CatalogViewUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CatalogViewCreateWithoutUserInput, CatalogViewUncheckedCreateWithoutUserInput> | CatalogViewCreateWithoutUserInput[] | CatalogViewUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CatalogViewCreateOrConnectWithoutUserInput | CatalogViewCreateOrConnectWithoutUserInput[]
+    upsert?: CatalogViewUpsertWithWhereUniqueWithoutUserInput | CatalogViewUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CatalogViewCreateManyUserInputEnvelope
+    set?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    disconnect?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    delete?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    connect?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    update?: CatalogViewUpdateWithWhereUniqueWithoutUserInput | CatalogViewUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CatalogViewUpdateManyWithWhereWithoutUserInput | CatalogViewUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CatalogViewScalarWhereInput | CatalogViewScalarWhereInput[]
   }
 
   export type ProductUpdateManyWithoutUserNestedInput = {
@@ -20947,6 +22696,20 @@ export namespace Prisma {
     update?: XOR<XOR<CatalogUpdateToOneWithWhereWithoutUserInput, CatalogUpdateWithoutUserInput>, CatalogUncheckedUpdateWithoutUserInput>
   }
 
+  export type CatalogViewUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CatalogViewCreateWithoutUserInput, CatalogViewUncheckedCreateWithoutUserInput> | CatalogViewCreateWithoutUserInput[] | CatalogViewUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CatalogViewCreateOrConnectWithoutUserInput | CatalogViewCreateOrConnectWithoutUserInput[]
+    upsert?: CatalogViewUpsertWithWhereUniqueWithoutUserInput | CatalogViewUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CatalogViewCreateManyUserInputEnvelope
+    set?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    disconnect?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    delete?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    connect?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    update?: CatalogViewUpdateWithWhereUniqueWithoutUserInput | CatalogViewUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CatalogViewUpdateManyWithWhereWithoutUserInput | CatalogViewUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CatalogViewScalarWhereInput | CatalogViewScalarWhereInput[]
+  }
+
   export type ProductUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<ProductCreateWithoutUserInput, ProductUncheckedCreateWithoutUserInput> | ProductCreateWithoutUserInput[] | ProductUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ProductCreateOrConnectWithoutUserInput | ProductCreateOrConnectWithoutUserInput[]
@@ -20989,10 +22752,38 @@ export namespace Prisma {
     deleteMany?: WithdrawalScalarWhereInput | WithdrawalScalarWhereInput[]
   }
 
+  export type CatalogViewCreateNestedManyWithoutCatalogInput = {
+    create?: XOR<CatalogViewCreateWithoutCatalogInput, CatalogViewUncheckedCreateWithoutCatalogInput> | CatalogViewCreateWithoutCatalogInput[] | CatalogViewUncheckedCreateWithoutCatalogInput[]
+    connectOrCreate?: CatalogViewCreateOrConnectWithoutCatalogInput | CatalogViewCreateOrConnectWithoutCatalogInput[]
+    createMany?: CatalogViewCreateManyCatalogInputEnvelope
+    connect?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+  }
+
   export type UserCreateNestedOneWithoutCatalogInput = {
     create?: XOR<UserCreateWithoutCatalogInput, UserUncheckedCreateWithoutCatalogInput>
     connectOrCreate?: UserCreateOrConnectWithoutCatalogInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type CatalogViewUncheckedCreateNestedManyWithoutCatalogInput = {
+    create?: XOR<CatalogViewCreateWithoutCatalogInput, CatalogViewUncheckedCreateWithoutCatalogInput> | CatalogViewCreateWithoutCatalogInput[] | CatalogViewUncheckedCreateWithoutCatalogInput[]
+    connectOrCreate?: CatalogViewCreateOrConnectWithoutCatalogInput | CatalogViewCreateOrConnectWithoutCatalogInput[]
+    createMany?: CatalogViewCreateManyCatalogInputEnvelope
+    connect?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+  }
+
+  export type CatalogViewUpdateManyWithoutCatalogNestedInput = {
+    create?: XOR<CatalogViewCreateWithoutCatalogInput, CatalogViewUncheckedCreateWithoutCatalogInput> | CatalogViewCreateWithoutCatalogInput[] | CatalogViewUncheckedCreateWithoutCatalogInput[]
+    connectOrCreate?: CatalogViewCreateOrConnectWithoutCatalogInput | CatalogViewCreateOrConnectWithoutCatalogInput[]
+    upsert?: CatalogViewUpsertWithWhereUniqueWithoutCatalogInput | CatalogViewUpsertWithWhereUniqueWithoutCatalogInput[]
+    createMany?: CatalogViewCreateManyCatalogInputEnvelope
+    set?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    disconnect?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    delete?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    connect?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    update?: CatalogViewUpdateWithWhereUniqueWithoutCatalogInput | CatalogViewUpdateWithWhereUniqueWithoutCatalogInput[]
+    updateMany?: CatalogViewUpdateManyWithWhereWithoutCatalogInput | CatalogViewUpdateManyWithWhereWithoutCatalogInput[]
+    deleteMany?: CatalogViewScalarWhereInput | CatalogViewScalarWhereInput[]
   }
 
   export type UserUpdateOneRequiredWithoutCatalogNestedInput = {
@@ -21001,6 +22792,48 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutCatalogInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCatalogInput, UserUpdateWithoutCatalogInput>, UserUncheckedUpdateWithoutCatalogInput>
+  }
+
+  export type CatalogViewUncheckedUpdateManyWithoutCatalogNestedInput = {
+    create?: XOR<CatalogViewCreateWithoutCatalogInput, CatalogViewUncheckedCreateWithoutCatalogInput> | CatalogViewCreateWithoutCatalogInput[] | CatalogViewUncheckedCreateWithoutCatalogInput[]
+    connectOrCreate?: CatalogViewCreateOrConnectWithoutCatalogInput | CatalogViewCreateOrConnectWithoutCatalogInput[]
+    upsert?: CatalogViewUpsertWithWhereUniqueWithoutCatalogInput | CatalogViewUpsertWithWhereUniqueWithoutCatalogInput[]
+    createMany?: CatalogViewCreateManyCatalogInputEnvelope
+    set?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    disconnect?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    delete?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    connect?: CatalogViewWhereUniqueInput | CatalogViewWhereUniqueInput[]
+    update?: CatalogViewUpdateWithWhereUniqueWithoutCatalogInput | CatalogViewUpdateWithWhereUniqueWithoutCatalogInput[]
+    updateMany?: CatalogViewUpdateManyWithWhereWithoutCatalogInput | CatalogViewUpdateManyWithWhereWithoutCatalogInput[]
+    deleteMany?: CatalogViewScalarWhereInput | CatalogViewScalarWhereInput[]
+  }
+
+  export type CatalogCreateNestedOneWithoutViewsInput = {
+    create?: XOR<CatalogCreateWithoutViewsInput, CatalogUncheckedCreateWithoutViewsInput>
+    connectOrCreate?: CatalogCreateOrConnectWithoutViewsInput
+    connect?: CatalogWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutCatalogViewsInput = {
+    create?: XOR<UserCreateWithoutCatalogViewsInput, UserUncheckedCreateWithoutCatalogViewsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCatalogViewsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type CatalogUpdateOneRequiredWithoutViewsNestedInput = {
+    create?: XOR<CatalogCreateWithoutViewsInput, CatalogUncheckedCreateWithoutViewsInput>
+    connectOrCreate?: CatalogCreateOrConnectWithoutViewsInput
+    upsert?: CatalogUpsertWithoutViewsInput
+    connect?: CatalogWhereUniqueInput
+    update?: XOR<XOR<CatalogUpdateToOneWithWhereWithoutViewsInput, CatalogUpdateWithoutViewsInput>, CatalogUncheckedUpdateWithoutViewsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutCatalogViewsNestedInput = {
+    create?: XOR<UserCreateWithoutCatalogViewsInput, UserUncheckedCreateWithoutCatalogViewsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCatalogViewsInput
+    upsert?: UserUpsertWithoutCatalogViewsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCatalogViewsInput, UserUpdateWithoutCatalogViewsInput>, UserUncheckedUpdateWithoutCatalogViewsInput>
   }
 
   export type UserCreateNestedOneWithoutWithdrawalsInput = {
@@ -21391,6 +23224,7 @@ export namespace Prisma {
     role?: $Enums.RoleType
     accounts?: AccountCreateNestedManyWithoutUserInput
     catalog?: CatalogCreateNestedOneWithoutUserInput
+    catalogViews?: CatalogViewCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
   }
@@ -21412,6 +23246,7 @@ export namespace Prisma {
     role?: $Enums.RoleType
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     catalog?: CatalogUncheckedCreateNestedOneWithoutUserInput
+    catalogViews?: CatalogViewUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
   }
@@ -21466,12 +23301,22 @@ export namespace Prisma {
   export type ProductViewCreateWithoutProductInput = {
     id?: string
     visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
     createdAt?: Date | string
   }
 
   export type ProductViewUncheckedCreateWithoutProductInput = {
     id?: string
     visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
     createdAt?: Date | string
   }
 
@@ -21544,6 +23389,7 @@ export namespace Prisma {
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     accounts?: AccountUpdateManyWithoutUserNestedInput
     catalog?: CatalogUpdateOneWithoutUserNestedInput
+    catalogViews?: CatalogViewUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
@@ -21565,6 +23411,7 @@ export namespace Prisma {
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
+    catalogViews?: CatalogViewUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -21627,6 +23474,11 @@ export namespace Prisma {
     id?: StringFilter<"ProductView"> | string
     productId?: StringFilter<"ProductView"> | string
     visitorId?: StringNullableFilter<"ProductView"> | string | null
+    ipHash?: StringNullableFilter<"ProductView"> | string | null
+    userAgent?: StringNullableFilter<"ProductView"> | string | null
+    browser?: StringNullableFilter<"ProductView"> | string | null
+    os?: StringNullableFilter<"ProductView"> | string | null
+    device?: StringNullableFilter<"ProductView"> | string | null
     createdAt?: DateTimeFilter<"ProductView"> | Date | string
   }
 
@@ -22253,6 +24105,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     role?: $Enums.RoleType
     catalog?: CatalogCreateNestedOneWithoutUserInput
+    catalogViews?: CatalogViewCreateNestedManyWithoutUserInput
     products?: ProductCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
@@ -22274,6 +24127,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     role?: $Enums.RoleType
     catalog?: CatalogUncheckedCreateNestedOneWithoutUserInput
+    catalogViews?: CatalogViewUncheckedCreateNestedManyWithoutUserInput
     products?: ProductUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
@@ -22311,6 +24165,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     catalog?: CatalogUpdateOneWithoutUserNestedInput
+    catalogViews?: CatalogViewUpdateManyWithoutUserNestedInput
     products?: ProductUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
@@ -22332,6 +24187,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
+    catalogViews?: CatalogViewUncheckedUpdateManyWithoutUserNestedInput
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
@@ -22354,6 +24210,7 @@ export namespace Prisma {
     role?: $Enums.RoleType
     accounts?: AccountCreateNestedManyWithoutUserInput
     catalog?: CatalogCreateNestedOneWithoutUserInput
+    catalogViews?: CatalogViewCreateNestedManyWithoutUserInput
     products?: ProductCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
   }
@@ -22375,6 +24232,7 @@ export namespace Prisma {
     role?: $Enums.RoleType
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     catalog?: CatalogUncheckedCreateNestedOneWithoutUserInput
+    catalogViews?: CatalogViewUncheckedCreateNestedManyWithoutUserInput
     products?: ProductUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
   }
@@ -22412,6 +24270,7 @@ export namespace Prisma {
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     accounts?: AccountUpdateManyWithoutUserNestedInput
     catalog?: CatalogUpdateOneWithoutUserNestedInput
+    catalogViews?: CatalogViewUpdateManyWithoutUserNestedInput
     products?: ProductUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
@@ -22433,6 +24292,7 @@ export namespace Prisma {
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
+    catalogViews?: CatalogViewUncheckedUpdateManyWithoutUserNestedInput
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -22481,6 +24341,7 @@ export namespace Prisma {
     bio?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    views?: CatalogViewCreateNestedManyWithoutCatalogInput
   }
 
   export type CatalogUncheckedCreateWithoutUserInput = {
@@ -22489,11 +24350,46 @@ export namespace Prisma {
     bio?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    views?: CatalogViewUncheckedCreateNestedManyWithoutCatalogInput
   }
 
   export type CatalogCreateOrConnectWithoutUserInput = {
     where: CatalogWhereUniqueInput
     create: XOR<CatalogCreateWithoutUserInput, CatalogUncheckedCreateWithoutUserInput>
+  }
+
+  export type CatalogViewCreateWithoutUserInput = {
+    id?: string
+    visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
+    createdAt?: Date | string
+    catalog: CatalogCreateNestedOneWithoutViewsInput
+  }
+
+  export type CatalogViewUncheckedCreateWithoutUserInput = {
+    id?: string
+    catalogId: string
+    visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
+    createdAt?: Date | string
+  }
+
+  export type CatalogViewCreateOrConnectWithoutUserInput = {
+    where: CatalogViewWhereUniqueInput
+    create: XOR<CatalogViewCreateWithoutUserInput, CatalogViewUncheckedCreateWithoutUserInput>
+  }
+
+  export type CatalogViewCreateManyUserInputEnvelope = {
+    data: CatalogViewCreateManyUserInput | CatalogViewCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
   export type ProductCreateWithoutUserInput = {
@@ -22677,6 +24573,7 @@ export namespace Prisma {
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    views?: CatalogViewUpdateManyWithoutCatalogNestedInput
   }
 
   export type CatalogUncheckedUpdateWithoutUserInput = {
@@ -22685,6 +24582,39 @@ export namespace Prisma {
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    views?: CatalogViewUncheckedUpdateManyWithoutCatalogNestedInput
+  }
+
+  export type CatalogViewUpsertWithWhereUniqueWithoutUserInput = {
+    where: CatalogViewWhereUniqueInput
+    update: XOR<CatalogViewUpdateWithoutUserInput, CatalogViewUncheckedUpdateWithoutUserInput>
+    create: XOR<CatalogViewCreateWithoutUserInput, CatalogViewUncheckedCreateWithoutUserInput>
+  }
+
+  export type CatalogViewUpdateWithWhereUniqueWithoutUserInput = {
+    where: CatalogViewWhereUniqueInput
+    data: XOR<CatalogViewUpdateWithoutUserInput, CatalogViewUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CatalogViewUpdateManyWithWhereWithoutUserInput = {
+    where: CatalogViewScalarWhereInput
+    data: XOR<CatalogViewUpdateManyMutationInput, CatalogViewUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type CatalogViewScalarWhereInput = {
+    AND?: CatalogViewScalarWhereInput | CatalogViewScalarWhereInput[]
+    OR?: CatalogViewScalarWhereInput[]
+    NOT?: CatalogViewScalarWhereInput | CatalogViewScalarWhereInput[]
+    id?: StringFilter<"CatalogView"> | string
+    catalogId?: StringFilter<"CatalogView"> | string
+    userId?: StringFilter<"CatalogView"> | string
+    visitorId?: StringNullableFilter<"CatalogView"> | string | null
+    ipHash?: StringNullableFilter<"CatalogView"> | string | null
+    userAgent?: StringNullableFilter<"CatalogView"> | string | null
+    browser?: StringNullableFilter<"CatalogView"> | string | null
+    os?: StringNullableFilter<"CatalogView"> | string | null
+    device?: StringNullableFilter<"CatalogView"> | string | null
+    createdAt?: DateTimeFilter<"CatalogView"> | Date | string
   }
 
   export type ProductUpsertWithWhereUniqueWithoutUserInput = {
@@ -22794,6 +24724,40 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Withdrawal"> | Date | string
   }
 
+  export type CatalogViewCreateWithoutCatalogInput = {
+    id?: string
+    visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutCatalogViewsInput
+  }
+
+  export type CatalogViewUncheckedCreateWithoutCatalogInput = {
+    id?: string
+    userId: string
+    visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
+    createdAt?: Date | string
+  }
+
+  export type CatalogViewCreateOrConnectWithoutCatalogInput = {
+    where: CatalogViewWhereUniqueInput
+    create: XOR<CatalogViewCreateWithoutCatalogInput, CatalogViewUncheckedCreateWithoutCatalogInput>
+  }
+
+  export type CatalogViewCreateManyCatalogInputEnvelope = {
+    data: CatalogViewCreateManyCatalogInput | CatalogViewCreateManyCatalogInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserCreateWithoutCatalogInput = {
     id?: string
     name?: string | null
@@ -22810,6 +24774,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     role?: $Enums.RoleType
     accounts?: AccountCreateNestedManyWithoutUserInput
+    catalogViews?: CatalogViewCreateNestedManyWithoutUserInput
     products?: ProductCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
@@ -22831,6 +24796,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     role?: $Enums.RoleType
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    catalogViews?: CatalogViewUncheckedCreateNestedManyWithoutUserInput
     products?: ProductUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
@@ -22839,6 +24805,22 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutCatalogInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutCatalogInput, UserUncheckedCreateWithoutCatalogInput>
+  }
+
+  export type CatalogViewUpsertWithWhereUniqueWithoutCatalogInput = {
+    where: CatalogViewWhereUniqueInput
+    update: XOR<CatalogViewUpdateWithoutCatalogInput, CatalogViewUncheckedUpdateWithoutCatalogInput>
+    create: XOR<CatalogViewCreateWithoutCatalogInput, CatalogViewUncheckedCreateWithoutCatalogInput>
+  }
+
+  export type CatalogViewUpdateWithWhereUniqueWithoutCatalogInput = {
+    where: CatalogViewWhereUniqueInput
+    data: XOR<CatalogViewUpdateWithoutCatalogInput, CatalogViewUncheckedUpdateWithoutCatalogInput>
+  }
+
+  export type CatalogViewUpdateManyWithWhereWithoutCatalogInput = {
+    where: CatalogViewScalarWhereInput
+    data: XOR<CatalogViewUpdateManyMutationInput, CatalogViewUncheckedUpdateManyWithoutCatalogInput>
   }
 
   export type UserUpsertWithoutCatalogInput = {
@@ -22868,6 +24850,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    catalogViews?: CatalogViewUpdateManyWithoutUserNestedInput
     products?: ProductUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
@@ -22889,6 +24872,163 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    catalogViews?: CatalogViewUncheckedUpdateManyWithoutUserNestedInput
+    products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type CatalogCreateWithoutViewsInput = {
+    id?: string
+    slug: string
+    bio?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutCatalogInput
+  }
+
+  export type CatalogUncheckedCreateWithoutViewsInput = {
+    id?: string
+    slug: string
+    bio?: string | null
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CatalogCreateOrConnectWithoutViewsInput = {
+    where: CatalogWhereUniqueInput
+    create: XOR<CatalogCreateWithoutViewsInput, CatalogUncheckedCreateWithoutViewsInput>
+  }
+
+  export type UserCreateWithoutCatalogViewsInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    banner?: string | null
+    password?: string | null
+    status?: string
+    statusPayment?: string
+    googleId?: string | null
+    phoneNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    role?: $Enums.RoleType
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    catalog?: CatalogCreateNestedOneWithoutUserInput
+    products?: ProductCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCatalogViewsInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    banner?: string | null
+    password?: string | null
+    status?: string
+    statusPayment?: string
+    googleId?: string | null
+    phoneNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    role?: $Enums.RoleType
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    catalog?: CatalogUncheckedCreateNestedOneWithoutUserInput
+    products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCatalogViewsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCatalogViewsInput, UserUncheckedCreateWithoutCatalogViewsInput>
+  }
+
+  export type CatalogUpsertWithoutViewsInput = {
+    update: XOR<CatalogUpdateWithoutViewsInput, CatalogUncheckedUpdateWithoutViewsInput>
+    create: XOR<CatalogCreateWithoutViewsInput, CatalogUncheckedCreateWithoutViewsInput>
+    where?: CatalogWhereInput
+  }
+
+  export type CatalogUpdateToOneWithWhereWithoutViewsInput = {
+    where?: CatalogWhereInput
+    data: XOR<CatalogUpdateWithoutViewsInput, CatalogUncheckedUpdateWithoutViewsInput>
+  }
+
+  export type CatalogUpdateWithoutViewsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutCatalogNestedInput
+  }
+
+  export type CatalogUncheckedUpdateWithoutViewsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUpsertWithoutCatalogViewsInput = {
+    update: XOR<UserUpdateWithoutCatalogViewsInput, UserUncheckedUpdateWithoutCatalogViewsInput>
+    create: XOR<UserCreateWithoutCatalogViewsInput, UserUncheckedCreateWithoutCatalogViewsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCatalogViewsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCatalogViewsInput, UserUncheckedUpdateWithoutCatalogViewsInput>
+  }
+
+  export type UserUpdateWithoutCatalogViewsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    statusPayment?: StringFieldUpdateOperationsInput | string
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    catalog?: CatalogUpdateOneWithoutUserNestedInput
+    products?: ProductUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCatalogViewsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    statusPayment?: StringFieldUpdateOperationsInput | string
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
@@ -22911,6 +25051,7 @@ export namespace Prisma {
     role?: $Enums.RoleType
     accounts?: AccountCreateNestedManyWithoutUserInput
     catalog?: CatalogCreateNestedOneWithoutUserInput
+    catalogViews?: CatalogViewCreateNestedManyWithoutUserInput
     products?: ProductCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
@@ -22932,6 +25073,7 @@ export namespace Prisma {
     role?: $Enums.RoleType
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     catalog?: CatalogUncheckedCreateNestedOneWithoutUserInput
+    catalogViews?: CatalogViewUncheckedCreateNestedManyWithoutUserInput
     products?: ProductUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -22969,6 +25111,7 @@ export namespace Prisma {
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     accounts?: AccountUpdateManyWithoutUserNestedInput
     catalog?: CatalogUpdateOneWithoutUserNestedInput
+    catalogViews?: CatalogViewUpdateManyWithoutUserNestedInput
     products?: ProductUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
@@ -22990,6 +25133,7 @@ export namespace Prisma {
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
+    catalogViews?: CatalogViewUncheckedUpdateManyWithoutUserNestedInput
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -23023,6 +25167,11 @@ export namespace Prisma {
   export type ProductViewCreateManyProductInput = {
     id?: string
     visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
     createdAt?: Date | string
   }
 
@@ -23111,18 +25260,33 @@ export namespace Prisma {
   export type ProductViewUpdateWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
     visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ProductViewUncheckedUpdateWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
     visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ProductViewUncheckedUpdateManyWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
     visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23194,6 +25358,18 @@ export namespace Prisma {
     scope?: string | null
     id_token?: string | null
     session_state?: string | null
+  }
+
+  export type CatalogViewCreateManyUserInput = {
+    id?: string
+    catalogId: string
+    visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
+    createdAt?: Date | string
   }
 
   export type ProductCreateManyUserInput = {
@@ -23283,6 +25459,42 @@ export namespace Prisma {
     scope?: NullableStringFieldUpdateOperationsInput | string | null
     id_token?: NullableStringFieldUpdateOperationsInput | string | null
     session_state?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CatalogViewUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    catalog?: CatalogUpdateOneRequiredWithoutViewsNestedInput
+  }
+
+  export type CatalogViewUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    catalogId?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CatalogViewUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    catalogId?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ProductUpdateWithoutUserInput = {
@@ -23430,6 +25642,54 @@ export namespace Prisma {
     failureMessage?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CatalogViewCreateManyCatalogInput = {
+    id?: string
+    userId: string
+    visitorId?: string | null
+    ipHash?: string | null
+    userAgent?: string | null
+    browser?: string | null
+    os?: string | null
+    device?: string | null
+    createdAt?: Date | string
+  }
+
+  export type CatalogViewUpdateWithoutCatalogInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutCatalogViewsNestedInput
+  }
+
+  export type CatalogViewUncheckedUpdateWithoutCatalogInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CatalogViewUncheckedUpdateManyWithoutCatalogInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    ipHash?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    device?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

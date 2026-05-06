@@ -59,11 +59,19 @@ model ProductView {
   id        String   @id @default(uuid())
   productId String
   visitorId String?
+  ipHash    String?
+  userAgent String?  @db.Text
+  browser   String?
+  os        String?
+  device    String?
   createdAt DateTime @default(now())
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
   @@index([visitorId])
+  @@index([ipHash])
+  @@index([browser])
+  @@index([device])
   @@index([productId, visitorId])
   @@index([createdAt])
 }
@@ -160,6 +168,7 @@ model User {
   updatedAt     DateTime     @updatedAt
   accounts      Account[]
   catalog       Catalog?
+  catalogViews  CatalogView[]
   products      Product[]
   role          RoleType     @default(USER)
   sessions      Session[]
@@ -181,7 +190,32 @@ model Catalog {
   userId    String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  views     CatalogView[]
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CatalogView {
+  id        String   @id @default(uuid())
+  catalogId String
+  userId    String
+  visitorId String?
+  ipHash    String?
+  userAgent String?  @db.Text
+  browser   String?
+  os        String?
+  device    String?
+  createdAt DateTime @default(now())
+  catalog   Catalog  @relation(fields: [catalogId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([catalogId])
+  @@index([userId])
+  @@index([visitorId])
+  @@index([ipHash])
+  @@index([browser])
+  @@index([device])
+  @@index([userId, visitorId])
+  @@index([createdAt])
 }
 
 model Withdrawal {

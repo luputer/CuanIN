@@ -165,6 +165,11 @@ exports.Prisma.ProductViewScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
   visitorId: 'visitorId',
+  ipHash: 'ipHash',
+  userAgent: 'userAgent',
+  browser: 'browser',
+  os: 'os',
+  device: 'device',
   createdAt: 'createdAt'
 };
 
@@ -258,6 +263,19 @@ exports.Prisma.CatalogScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.CatalogViewScalarFieldEnum = {
+  id: 'id',
+  catalogId: 'catalogId',
+  userId: 'userId',
+  visitorId: 'visitorId',
+  ipHash: 'ipHash',
+  userAgent: 'userAgent',
+  browser: 'browser',
+  os: 'os',
+  device: 'device',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.WithdrawalScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -344,6 +362,7 @@ exports.Prisma.ModelName = {
   User: 'User',
   VerificationToken: 'VerificationToken',
   Catalog: 'Catalog',
+  CatalogView: 'CatalogView',
   Withdrawal: 'Withdrawal'
 };
 

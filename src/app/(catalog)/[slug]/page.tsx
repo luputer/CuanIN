@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, notFound } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -40,6 +40,23 @@ const CATEGORY_STYLE: Record<string, string> = {
   WEBINAR: "bg-cyan-100 text-cyan-700 border-cyan-200",
   KELAS_ONLINE: "bg-amber-100 text-amber-700 border-amber-200",
   DIGITAL_PRODUCT: "bg-emerald-100 text-emerald-700 border-emerald-200",
+};
+
+const VISITOR_ID_KEY = "cuanin_visitor_id";
+
+const getVisitorId = () => {
+  const existingVisitorId = window.localStorage.getItem(VISITOR_ID_KEY);
+  if (existingVisitorId) return existingVisitorId;
+
+  const visitorId =
+    typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : Array.from(crypto.getRandomValues(new Uint32Array(4)))
+          .map((value) => value.toString(36))
+          .join("-");
+
+  window.localStorage.setItem(VISITOR_ID_KEY, visitorId);
+  return visitorId;
 };
 
 // ─── Product Card ─────────────────────────────────────────────────────────────
@@ -184,6 +201,7 @@ export default function CatalogSlugPage() {
 
   const [activeTab, setActiveTab] = useState<TabFilter>("Semua");
   const [searchQuery, setSearchQuery] = useState(""); // State pencarian
+  const recordedCatalogIdRef = useRef<string | null>(null);
 
   const { data: session } = useSession();
 
@@ -191,6 +209,21 @@ export default function CatalogSlugPage() {
     { slug },
     { enabled: !!slug },
   );
+  const { mutate: recordCatalogView } =
+    api.analytics.recordCatalogView.useMutation();
+
+  useEffect(() => {
+    if (!data?.id) return;
+    if (session?.user.id === data.creator.id) return;
+    if (recordedCatalogIdRef.current === data.id) return;
+
+    recordedCatalogIdRef.current = data.id;
+
+    recordCatalogView({
+      catalogId: data.id,
+      visitorId: getVisitorId(),
+    });
+  }, [data?.id, data?.creator.id, recordCatalogView, session?.user.id]);
 
   // ── Loading ──
   if (isLoading) {

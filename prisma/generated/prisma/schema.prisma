@@ -59,11 +59,19 @@ model ProductView {
   id        String   @id @default(uuid())
   productId String
   visitorId String?
+  ipHash    String?
+  userAgent String?  @db.Text
+  browser   String?
+  os        String?
+  device    String?
   createdAt DateTime @default(now())
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
   @@index([visitorId])
+  @@index([ipHash])
+  @@index([browser])
+  @@index([device])
   @@index([productId, visitorId])
   @@index([createdAt])
 }
@@ -145,23 +153,24 @@ model Session {
 }
 
 model User {
-  id            String       @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String?      @unique
-  emailVerified DateTime?    @map("email_verified_at")
+  email         String?       @unique
+  emailVerified DateTime?     @map("email_verified_at")
   image         String?
   banner        String?
   password      String?
-  status        String       @default("active")
-  statusPayment String       @default("free")
-  googleId      String?      @map("google_id")
-  phoneNumber   String?      @map("phone_number")
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  status        String        @default("active")
+  statusPayment String        @default("free")
+  googleId      String?       @map("google_id")
+  phoneNumber   String?       @map("phone_number")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   accounts      Account[]
   catalog       Catalog?
+  catalogViews  CatalogView[]
   products      Product[]
-  role          RoleType     @default(USER)
+  role          RoleType      @default(USER)
   sessions      Session[]
   withdrawals   Withdrawal[]
 }
@@ -175,13 +184,38 @@ model VerificationToken {
 }
 
 model Catalog {
-  id        String   @id @default(uuid())
-  slug      String   @unique
+  id        String        @id @default(uuid())
+  slug      String        @unique
   bio       String?
-  userId    String   @unique
+  userId    String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  views     CatalogView[]
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CatalogView {
+  id        String   @id @default(uuid())
+  catalogId String
+  userId    String
+  visitorId String?
+  ipHash    String?
+  userAgent String?  @db.Text
+  browser   String?
+  os        String?
+  device    String?
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  catalog   Catalog  @relation(fields: [catalogId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([catalogId])
+  @@index([userId])
+  @@index([visitorId])
+  @@index([ipHash])
+  @@index([browser])
+  @@index([device])
+  @@index([userId, visitorId])
+  @@index([createdAt])
 }
 
 model Withdrawal {

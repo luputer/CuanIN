@@ -52,6 +52,20 @@ model Product {
   formFields       FormField[]
   user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   purchases        Purchase[]
+  views            ProductView[]
+}
+
+model ProductView {
+  id        String   @id @default(uuid())
+  productId String
+  visitorId String?
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([visitorId])
+  @@index([productId, visitorId])
+  @@index([createdAt])
 }
 
 model FormField {

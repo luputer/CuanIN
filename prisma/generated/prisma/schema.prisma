@@ -27,12 +27,12 @@ model Profile {
 }
 
 model Product {
-  id               String      @id @default(uuid())
+  id               String        @id @default(uuid())
   name             String
-  shortDescription String?     @db.Text
-  description      String?     @db.Text
+  shortDescription String?       @db.Text
+  description      String?       @db.Text
   price            Decimal
-  type             ProductType @default(WEBINAR)
+  type             ProductType   @default(WEBINAR)
   startDate        DateTime?
   endDate          DateTime?
   link             String?
@@ -41,17 +41,31 @@ model Product {
   duration         String?
   dateDeadline     DateTime?
   quota            Int?
-  notes            String?     @db.Text
-  status           String      @default("published")
+  notes            String?       @db.Text
+  status           String        @default("published")
   userId           String
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
   image            String?
-  slug             String?     @unique @default(cuid())
+  slug             String?       @unique @default(cuid())
   benefit          Json?
   formFields       FormField[]
-  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   purchases        Purchase[]
+  views            ProductView[]
+}
+
+model ProductView {
+  id        String   @id @default(uuid())
+  productId String
+  visitorId String?
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([visitorId])
+  @@index([productId, visitorId])
+  @@index([createdAt])
 }
 
 model FormField {

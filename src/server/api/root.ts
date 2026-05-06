@@ -7,6 +7,7 @@ import { formFieldsRouter } from "./routers/formFields";
 import { purchasesRouter } from "./routers/purchases";
 import { profileRouter } from "./routers/profile";
 import { withdrawalsRouter } from "./routers/withdrawals";
+import { analyticsRouter } from "./routers/analytics";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
@@ -17,6 +18,7 @@ export const appRouter = createTRPCRouter({
   purchases: purchasesRouter,
   profile: profileRouter,
   withdrawals: withdrawalsRouter,
+  analytics: analyticsRouter,
 });
 
 export type AppRouter = typeof appRouter;

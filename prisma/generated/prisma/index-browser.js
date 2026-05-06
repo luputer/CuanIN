@@ -161,6 +161,13 @@ exports.Prisma.ProductScalarFieldEnum = {
   benefit: 'benefit'
 };
 
+exports.Prisma.ProductViewScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  visitorId: 'visitorId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.FormFieldScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
@@ -328,6 +335,7 @@ exports.Prisma.ModelName = {
   Post: 'Post',
   Profile: 'Profile',
   Product: 'Product',
+  ProductView: 'ProductView',
   FormField: 'FormField',
   Purchase: 'Purchase',
   FormAnswer: 'FormAnswer',

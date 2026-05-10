@@ -19,9 +19,12 @@ model Post {
 }
 
 model Profile {
-  id        Int      @id @default(autoincrement())
-  bio       String?
-  userId    Int      @unique
+  id     Int     @id @default(autoincrement())
+  bio    String?
+  banner String?
+  userId String  @unique
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -158,7 +161,6 @@ model User {
   email         String?       @unique
   emailVerified DateTime?     @map("email_verified_at")
   image         String?
-  banner        String?
   password      String?
   status        String        @default("active")
   statusPayment String        @default("free")
@@ -170,6 +172,7 @@ model User {
   catalog       Catalog?
   catalogViews  CatalogView[]
   products      Product[]
+  profile       Profile? // tambah
   role          RoleType      @default(USER)
   sessions      Session[]
   withdrawals   Withdrawal[]
@@ -186,7 +189,6 @@ model VerificationToken {
 model Catalog {
   id        String        @id @default(uuid())
   slug      String        @unique
-  bio       String?
   userId    String        @unique
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt

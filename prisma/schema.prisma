@@ -19,20 +19,23 @@ model Post {
 }
 
 model Profile {
-  id        Int      @id @default(autoincrement())
-  bio       String?
-  userId    Int      @unique
+  id     Int     @id @default(autoincrement())
+  bio    String?
+  banner String?
+  userId String  @unique
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Product {
-  id               String      @id @default(uuid())
+  id               String        @id @default(uuid())
   name             String
-  shortDescription String?     @db.Text
-  description      String?     @db.Text
+  shortDescription String?       @db.Text
+  description      String?       @db.Text
   price            Decimal
-  type             ProductType @default(WEBINAR)
+  type             ProductType   @default(WEBINAR)
   startDate        DateTime?
   endDate          DateTime?
   link             String?
@@ -41,16 +44,16 @@ model Product {
   duration         String?
   dateDeadline     DateTime?
   quota            Int?
-  notes            String?     @db.Text
-  status           String      @default("published")
+  notes            String?       @db.Text
+  status           String        @default("published")
   userId           String
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
   image            String?
-  slug             String?     @unique @default(cuid())
+  slug             String?       @unique @default(cuid())
   benefit          Json?
   formFields       FormField[]
-  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   purchases        Purchase[]
   views            ProductView[]
 }
@@ -153,24 +156,24 @@ model Session {
 }
 
 model User {
-  id            String       @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String?      @unique
-  emailVerified DateTime?    @map("email_verified_at")
+  email         String?       @unique
+  emailVerified DateTime?     @map("email_verified_at")
   image         String?
-  banner        String?
   password      String?
-  status        String       @default("active")
-  statusPayment String       @default("free")
-  googleId      String?      @map("google_id")
-  phoneNumber   String?      @map("phone_number")
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  status        String        @default("active")
+  statusPayment String        @default("free")
+  googleId      String?       @map("google_id")
+  phoneNumber   String?       @map("phone_number")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   accounts      Account[]
   catalog       Catalog?
   catalogViews  CatalogView[]
   products      Product[]
-  role          RoleType     @default(USER)
+  profile       Profile? // tambah
+  role          RoleType      @default(USER)
   sessions      Session[]
   withdrawals   Withdrawal[]
 }
@@ -184,14 +187,13 @@ model VerificationToken {
 }
 
 model Catalog {
-  id        String   @id @default(uuid())
-  slug      String   @unique
-  bio       String?
-  userId    String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String        @id @default(uuid())
+  slug      String        @unique
+  userId    String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
   views     CatalogView[]
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model CatalogView {

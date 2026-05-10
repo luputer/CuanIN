@@ -84,6 +84,19 @@ export const withdrawalsRouter = createTRPCRouter({
   create: protectedProcedure
     .input(withdrawalSchema)
     .mutation(async ({ ctx, input }) => {
+      // Hitung fee
+      const platformFee = Math.round(input.amount * 0.05); // Fee aplikasi 5%
+      const xenditFee = 4000; // Biaya transfer Xendit flat ke bank
+      const totalFee = platformFee + xenditFee;
+      const payoutAmount = input.amount - totalFee;
+
+      if (payoutAmount < 10000) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Nominal penarikan terlalu kecil. Saldo yang diterima (setelah fee 5% + Rp4.000) minimal Rp10.000.",
+        });
+      }
+
       const withdrawal = await ctx.db.$transaction(async (tx) => {
         const balance = await getCreatorBalance(tx, ctx.session.user.id);
 
@@ -99,7 +112,7 @@ export const withdrawalsRouter = createTRPCRouter({
         return await tx.withdrawal.create({
           data: {
             userId: ctx.session.user.id,
-            amount: input.amount,
+            amount: input.amount, // Saldo CuanIN tetap dipotong full (input.amount)
             bankCode: bank.channelCode,
             bankName: bank.name,
             accountNumber: input.accountNumber,
@@ -118,7 +131,7 @@ export const withdrawalsRouter = createTRPCRouter({
         const bank = BANK_OPTIONS[input.bank];
         const payout = await createXenditPayout({
           referenceId: withdrawal.id,
-          amount: input.amount,
+          amount: payoutAmount, // Nominal bersih yang masuk ke rekening kreator
           channelCode: bank.channelCode,
           accountNumber: input.accountNumber,
           accountHolderName: input.accountHolderName,

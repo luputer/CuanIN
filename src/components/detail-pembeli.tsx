@@ -13,7 +13,7 @@ export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBa
 
     if (isLoading) {
         return (
-            <div className="space-y-6">
+        <div className="space-y-6">
                 <div className="bg-slate-50">
                     <div className="bg-slate-50 -mx-4 px-4 mb-2">
                         <div className="flex flex-col gap-1">

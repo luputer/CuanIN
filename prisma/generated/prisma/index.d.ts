@@ -3345,18 +3345,17 @@ export namespace Prisma {
 
   export type ProfileAvgAggregateOutputType = {
     id: number | null
-    userId: number | null
   }
 
   export type ProfileSumAggregateOutputType = {
     id: number | null
-    userId: number | null
   }
 
   export type ProfileMinAggregateOutputType = {
     id: number | null
     bio: string | null
-    userId: number | null
+    banner: string | null
+    userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3364,7 +3363,8 @@ export namespace Prisma {
   export type ProfileMaxAggregateOutputType = {
     id: number | null
     bio: string | null
-    userId: number | null
+    banner: string | null
+    userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3372,6 +3372,7 @@ export namespace Prisma {
   export type ProfileCountAggregateOutputType = {
     id: number
     bio: number
+    banner: number
     userId: number
     createdAt: number
     updatedAt: number
@@ -3381,17 +3382,16 @@ export namespace Prisma {
 
   export type ProfileAvgAggregateInputType = {
     id?: true
-    userId?: true
   }
 
   export type ProfileSumAggregateInputType = {
     id?: true
-    userId?: true
   }
 
   export type ProfileMinAggregateInputType = {
     id?: true
     bio?: true
+    banner?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -3400,6 +3400,7 @@ export namespace Prisma {
   export type ProfileMaxAggregateInputType = {
     id?: true
     bio?: true
+    banner?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -3408,6 +3409,7 @@ export namespace Prisma {
   export type ProfileCountAggregateInputType = {
     id?: true
     bio?: true
+    banner?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -3503,7 +3505,8 @@ export namespace Prisma {
   export type ProfileGroupByOutputType = {
     id: number
     bio: string | null
-    userId: number
+    banner: string | null
+    userId: string
     createdAt: Date
     updatedAt: Date
     _count: ProfileCountAggregateOutputType | null
@@ -3530,44 +3533,63 @@ export namespace Prisma {
   export type ProfileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     bio?: boolean
+    banner?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["profile"]>
 
   export type ProfileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     bio?: boolean
+    banner?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["profile"]>
 
   export type ProfileSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     bio?: boolean
+    banner?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["profile"]>
 
   export type ProfileSelectScalar = {
     id?: boolean
     bio?: boolean
+    banner?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bio" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["profile"]>
+  export type ProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bio" | "banner" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["profile"]>
+  export type ProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type ProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type ProfileIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $ProfilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Profile"
-    objects: {}
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       bio: string | null
-      userId: number
+      banner: string | null
+      userId: string
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["profile"]>
@@ -3964,6 +3986,7 @@ export namespace Prisma {
    */
   export interface Prisma__ProfileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3995,7 +4018,8 @@ export namespace Prisma {
   interface ProfileFieldRefs {
     readonly id: FieldRef<"Profile", 'Int'>
     readonly bio: FieldRef<"Profile", 'String'>
-    readonly userId: FieldRef<"Profile", 'Int'>
+    readonly banner: FieldRef<"Profile", 'String'>
+    readonly userId: FieldRef<"Profile", 'String'>
     readonly createdAt: FieldRef<"Profile", 'DateTime'>
     readonly updatedAt: FieldRef<"Profile", 'DateTime'>
   }
@@ -4015,6 +4039,10 @@ export namespace Prisma {
      */
     omit?: ProfileOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileInclude<ExtArgs> | null
+    /**
      * Filter, which Profile to fetch.
      */
     where: ProfileWhereUniqueInput
@@ -4033,6 +4061,10 @@ export namespace Prisma {
      */
     omit?: ProfileOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileInclude<ExtArgs> | null
+    /**
      * Filter, which Profile to fetch.
      */
     where: ProfileWhereUniqueInput
@@ -4050,6 +4082,10 @@ export namespace Prisma {
      * Omit specific fields from the Profile
      */
     omit?: ProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileInclude<ExtArgs> | null
     /**
      * Filter, which Profile to fetch.
      */
@@ -4099,6 +4135,10 @@ export namespace Prisma {
      */
     omit?: ProfileOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileInclude<ExtArgs> | null
+    /**
      * Filter, which Profile to fetch.
      */
     where?: ProfileWhereInput
@@ -4147,6 +4187,10 @@ export namespace Prisma {
      */
     omit?: ProfileOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileInclude<ExtArgs> | null
+    /**
      * Filter, which Profiles to fetch.
      */
     where?: ProfileWhereInput
@@ -4190,6 +4234,10 @@ export namespace Prisma {
      */
     omit?: ProfileOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileInclude<ExtArgs> | null
+    /**
      * The data needed to create a Profile.
      */
     data: XOR<ProfileCreateInput, ProfileUncheckedCreateInput>
@@ -4223,6 +4271,10 @@ export namespace Prisma {
      */
     data: ProfileCreateManyInput | ProfileCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -4237,6 +4289,10 @@ export namespace Prisma {
      * Omit specific fields from the Profile
      */
     omit?: ProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileInclude<ExtArgs> | null
     /**
      * The data needed to update a Profile.
      */
@@ -4289,6 +4345,10 @@ export namespace Prisma {
      * Limit how many Profiles to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -4303,6 +4363,10 @@ export namespace Prisma {
      * Omit specific fields from the Profile
      */
     omit?: ProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileInclude<ExtArgs> | null
     /**
      * The filter to search for the Profile to update in case it exists.
      */
@@ -4329,6 +4393,10 @@ export namespace Prisma {
      * Omit specific fields from the Profile
      */
     omit?: ProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileInclude<ExtArgs> | null
     /**
      * Filter which Profile to delete.
      */
@@ -4361,6 +4429,10 @@ export namespace Prisma {
      * Omit specific fields from the Profile
      */
     omit?: ProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileInclude<ExtArgs> | null
   }
 
 
@@ -12579,7 +12651,6 @@ export namespace Prisma {
     email: string | null
     emailVerified: Date | null
     image: string | null
-    banner: string | null
     password: string | null
     status: string | null
     statusPayment: string | null
@@ -12596,7 +12667,6 @@ export namespace Prisma {
     email: string | null
     emailVerified: Date | null
     image: string | null
-    banner: string | null
     password: string | null
     status: string | null
     statusPayment: string | null
@@ -12613,7 +12683,6 @@ export namespace Prisma {
     email: number
     emailVerified: number
     image: number
-    banner: number
     password: number
     status: number
     statusPayment: number
@@ -12632,7 +12701,6 @@ export namespace Prisma {
     email?: true
     emailVerified?: true
     image?: true
-    banner?: true
     password?: true
     status?: true
     statusPayment?: true
@@ -12649,7 +12717,6 @@ export namespace Prisma {
     email?: true
     emailVerified?: true
     image?: true
-    banner?: true
     password?: true
     status?: true
     statusPayment?: true
@@ -12666,7 +12733,6 @@ export namespace Prisma {
     email?: true
     emailVerified?: true
     image?: true
-    banner?: true
     password?: true
     status?: true
     statusPayment?: true
@@ -12756,7 +12822,6 @@ export namespace Prisma {
     email: string | null
     emailVerified: Date | null
     image: string | null
-    banner: string | null
     password: string | null
     status: string
     statusPayment: string
@@ -12790,7 +12855,6 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     image?: boolean
-    banner?: boolean
     password?: boolean
     status?: boolean
     statusPayment?: boolean
@@ -12803,6 +12867,7 @@ export namespace Prisma {
     catalog?: boolean | User$catalogArgs<ExtArgs>
     catalogViews?: boolean | User$catalogViewsArgs<ExtArgs>
     products?: boolean | User$productsArgs<ExtArgs>
+    profile?: boolean | User$profileArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     withdrawals?: boolean | User$withdrawalsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -12814,7 +12879,6 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     image?: boolean
-    banner?: boolean
     password?: boolean
     status?: boolean
     statusPayment?: boolean
@@ -12831,7 +12895,6 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     image?: boolean
-    banner?: boolean
     password?: boolean
     status?: boolean
     statusPayment?: boolean
@@ -12848,7 +12911,6 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     image?: boolean
-    banner?: boolean
     password?: boolean
     status?: boolean
     statusPayment?: boolean
@@ -12859,12 +12921,13 @@ export namespace Prisma {
     role?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "banner" | "password" | "status" | "statusPayment" | "googleId" | "phoneNumber" | "createdAt" | "updatedAt" | "role", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "password" | "status" | "statusPayment" | "googleId" | "phoneNumber" | "createdAt" | "updatedAt" | "role", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     catalog?: boolean | User$catalogArgs<ExtArgs>
     catalogViews?: boolean | User$catalogViewsArgs<ExtArgs>
     products?: boolean | User$productsArgs<ExtArgs>
+    profile?: boolean | User$profileArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     withdrawals?: boolean | User$withdrawalsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -12879,6 +12942,7 @@ export namespace Prisma {
       catalog: Prisma.$CatalogPayload<ExtArgs> | null
       catalogViews: Prisma.$CatalogViewPayload<ExtArgs>[]
       products: Prisma.$ProductPayload<ExtArgs>[]
+      profile: Prisma.$ProfilePayload<ExtArgs> | null
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       withdrawals: Prisma.$WithdrawalPayload<ExtArgs>[]
     }
@@ -12888,7 +12952,6 @@ export namespace Prisma {
       email: string | null
       emailVerified: Date | null
       image: string | null
-      banner: string | null
       password: string | null
       status: string
       statusPayment: string
@@ -13295,6 +13358,7 @@ export namespace Prisma {
     catalog<T extends User$catalogArgs<ExtArgs> = {}>(args?: Subset<T, User$catalogArgs<ExtArgs>>): Prisma__CatalogClient<$Result.GetResult<Prisma.$CatalogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     catalogViews<T extends User$catalogViewsArgs<ExtArgs> = {}>(args?: Subset<T, User$catalogViewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CatalogViewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     products<T extends User$productsArgs<ExtArgs> = {}>(args?: Subset<T, User$productsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    profile<T extends User$profileArgs<ExtArgs> = {}>(args?: Subset<T, User$profileArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     withdrawals<T extends User$withdrawalsArgs<ExtArgs> = {}>(args?: Subset<T, User$withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WithdrawalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -13331,7 +13395,6 @@ export namespace Prisma {
     readonly email: FieldRef<"User", 'String'>
     readonly emailVerified: FieldRef<"User", 'DateTime'>
     readonly image: FieldRef<"User", 'String'>
-    readonly banner: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
     readonly status: FieldRef<"User", 'String'>
     readonly statusPayment: FieldRef<"User", 'String'>
@@ -13816,6 +13879,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
+  }
+
+  /**
+   * User.profile
+   */
+  export type User$profileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Profile
+     */
+    select?: ProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Profile
+     */
+    omit?: ProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileInclude<ExtArgs> | null
+    where?: ProfileWhereInput
   }
 
   /**
@@ -14867,7 +14949,6 @@ export namespace Prisma {
   export type CatalogMinAggregateOutputType = {
     id: string | null
     slug: string | null
-    bio: string | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -14876,7 +14957,6 @@ export namespace Prisma {
   export type CatalogMaxAggregateOutputType = {
     id: string | null
     slug: string | null
-    bio: string | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -14885,7 +14965,6 @@ export namespace Prisma {
   export type CatalogCountAggregateOutputType = {
     id: number
     slug: number
-    bio: number
     userId: number
     createdAt: number
     updatedAt: number
@@ -14896,7 +14975,6 @@ export namespace Prisma {
   export type CatalogMinAggregateInputType = {
     id?: true
     slug?: true
-    bio?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -14905,7 +14983,6 @@ export namespace Prisma {
   export type CatalogMaxAggregateInputType = {
     id?: true
     slug?: true
-    bio?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -14914,7 +14991,6 @@ export namespace Prisma {
   export type CatalogCountAggregateInputType = {
     id?: true
     slug?: true
-    bio?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -14996,7 +15072,6 @@ export namespace Prisma {
   export type CatalogGroupByOutputType = {
     id: string
     slug: string
-    bio: string | null
     userId: string
     createdAt: Date
     updatedAt: Date
@@ -15022,7 +15097,6 @@ export namespace Prisma {
   export type CatalogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     slug?: boolean
-    bio?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -15034,7 +15108,6 @@ export namespace Prisma {
   export type CatalogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     slug?: boolean
-    bio?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -15044,7 +15117,6 @@ export namespace Prisma {
   export type CatalogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     slug?: boolean
-    bio?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -15054,13 +15126,12 @@ export namespace Prisma {
   export type CatalogSelectScalar = {
     id?: boolean
     slug?: boolean
-    bio?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type CatalogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "slug" | "bio" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["catalog"]>
+  export type CatalogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "slug" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["catalog"]>
   export type CatalogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     views?: boolean | Catalog$viewsArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -15082,7 +15153,6 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       slug: string
-      bio: string | null
       userId: string
       createdAt: Date
       updatedAt: Date
@@ -15513,7 +15583,6 @@ export namespace Prisma {
   interface CatalogFieldRefs {
     readonly id: FieldRef<"Catalog", 'String'>
     readonly slug: FieldRef<"Catalog", 'String'>
-    readonly bio: FieldRef<"Catalog", 'String'>
     readonly userId: FieldRef<"Catalog", 'String'>
     readonly createdAt: FieldRef<"Catalog", 'DateTime'>
     readonly updatedAt: FieldRef<"Catalog", 'DateTime'>
@@ -18335,6 +18404,7 @@ export namespace Prisma {
   export const ProfileScalarFieldEnum: {
     id: 'id',
     bio: 'bio',
+    banner: 'banner',
     userId: 'userId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -18465,7 +18535,6 @@ export namespace Prisma {
     email: 'email',
     emailVerified: 'emailVerified',
     image: 'image',
-    banner: 'banner',
     password: 'password',
     status: 'status',
     statusPayment: 'statusPayment',
@@ -18491,7 +18560,6 @@ export namespace Prisma {
   export const CatalogScalarFieldEnum: {
     id: 'id',
     slug: 'slug',
-    bio: 'bio',
     userId: 'userId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -18788,33 +18856,40 @@ export namespace Prisma {
     NOT?: ProfileWhereInput | ProfileWhereInput[]
     id?: IntFilter<"Profile"> | number
     bio?: StringNullableFilter<"Profile"> | string | null
-    userId?: IntFilter<"Profile"> | number
+    banner?: StringNullableFilter<"Profile"> | string | null
+    userId?: StringFilter<"Profile"> | string
     createdAt?: DateTimeFilter<"Profile"> | Date | string
     updatedAt?: DateTimeFilter<"Profile"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type ProfileOrderByWithRelationInput = {
     id?: SortOrder
     bio?: SortOrderInput | SortOrder
+    banner?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
   }
 
   export type ProfileWhereUniqueInput = Prisma.AtLeast<{
     id?: number
-    userId?: number
+    userId?: string
     AND?: ProfileWhereInput | ProfileWhereInput[]
     OR?: ProfileWhereInput[]
     NOT?: ProfileWhereInput | ProfileWhereInput[]
     bio?: StringNullableFilter<"Profile"> | string | null
+    banner?: StringNullableFilter<"Profile"> | string | null
     createdAt?: DateTimeFilter<"Profile"> | Date | string
     updatedAt?: DateTimeFilter<"Profile"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "userId">
 
   export type ProfileOrderByWithAggregationInput = {
     id?: SortOrder
     bio?: SortOrderInput | SortOrder
+    banner?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18831,7 +18906,8 @@ export namespace Prisma {
     NOT?: ProfileScalarWhereWithAggregatesInput | ProfileScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Profile"> | number
     bio?: StringNullableWithAggregatesFilter<"Profile"> | string | null
-    userId?: IntWithAggregatesFilter<"Profile"> | number
+    banner?: StringNullableWithAggregatesFilter<"Profile"> | string | null
+    userId?: StringWithAggregatesFilter<"Profile"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Profile"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Profile"> | Date | string
   }
@@ -19452,7 +19528,6 @@ export namespace Prisma {
     email?: StringNullableFilter<"User"> | string | null
     emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
     image?: StringNullableFilter<"User"> | string | null
-    banner?: StringNullableFilter<"User"> | string | null
     password?: StringNullableFilter<"User"> | string | null
     status?: StringFilter<"User"> | string
     statusPayment?: StringFilter<"User"> | string
@@ -19465,6 +19540,7 @@ export namespace Prisma {
     catalog?: XOR<CatalogNullableScalarRelationFilter, CatalogWhereInput> | null
     catalogViews?: CatalogViewListRelationFilter
     products?: ProductListRelationFilter
+    profile?: XOR<ProfileNullableScalarRelationFilter, ProfileWhereInput> | null
     sessions?: SessionListRelationFilter
     withdrawals?: WithdrawalListRelationFilter
   }
@@ -19475,7 +19551,6 @@ export namespace Prisma {
     email?: SortOrderInput | SortOrder
     emailVerified?: SortOrderInput | SortOrder
     image?: SortOrderInput | SortOrder
-    banner?: SortOrderInput | SortOrder
     password?: SortOrderInput | SortOrder
     status?: SortOrder
     statusPayment?: SortOrder
@@ -19488,6 +19563,7 @@ export namespace Prisma {
     catalog?: CatalogOrderByWithRelationInput
     catalogViews?: CatalogViewOrderByRelationAggregateInput
     products?: ProductOrderByRelationAggregateInput
+    profile?: ProfileOrderByWithRelationInput
     sessions?: SessionOrderByRelationAggregateInput
     withdrawals?: WithdrawalOrderByRelationAggregateInput
   }
@@ -19501,7 +19577,6 @@ export namespace Prisma {
     name?: StringNullableFilter<"User"> | string | null
     emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
     image?: StringNullableFilter<"User"> | string | null
-    banner?: StringNullableFilter<"User"> | string | null
     password?: StringNullableFilter<"User"> | string | null
     status?: StringFilter<"User"> | string
     statusPayment?: StringFilter<"User"> | string
@@ -19514,6 +19589,7 @@ export namespace Prisma {
     catalog?: XOR<CatalogNullableScalarRelationFilter, CatalogWhereInput> | null
     catalogViews?: CatalogViewListRelationFilter
     products?: ProductListRelationFilter
+    profile?: XOR<ProfileNullableScalarRelationFilter, ProfileWhereInput> | null
     sessions?: SessionListRelationFilter
     withdrawals?: WithdrawalListRelationFilter
   }, "id" | "email">
@@ -19524,7 +19600,6 @@ export namespace Prisma {
     email?: SortOrderInput | SortOrder
     emailVerified?: SortOrderInput | SortOrder
     image?: SortOrderInput | SortOrder
-    banner?: SortOrderInput | SortOrder
     password?: SortOrderInput | SortOrder
     status?: SortOrder
     statusPayment?: SortOrder
@@ -19547,7 +19622,6 @@ export namespace Prisma {
     email?: StringNullableWithAggregatesFilter<"User"> | string | null
     emailVerified?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
-    banner?: StringNullableWithAggregatesFilter<"User"> | string | null
     password?: StringNullableWithAggregatesFilter<"User"> | string | null
     status?: StringWithAggregatesFilter<"User"> | string
     statusPayment?: StringWithAggregatesFilter<"User"> | string
@@ -19607,7 +19681,6 @@ export namespace Prisma {
     NOT?: CatalogWhereInput | CatalogWhereInput[]
     id?: StringFilter<"Catalog"> | string
     slug?: StringFilter<"Catalog"> | string
-    bio?: StringNullableFilter<"Catalog"> | string | null
     userId?: StringFilter<"Catalog"> | string
     createdAt?: DateTimeFilter<"Catalog"> | Date | string
     updatedAt?: DateTimeFilter<"Catalog"> | Date | string
@@ -19618,7 +19691,6 @@ export namespace Prisma {
   export type CatalogOrderByWithRelationInput = {
     id?: SortOrder
     slug?: SortOrder
-    bio?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -19633,7 +19705,6 @@ export namespace Prisma {
     AND?: CatalogWhereInput | CatalogWhereInput[]
     OR?: CatalogWhereInput[]
     NOT?: CatalogWhereInput | CatalogWhereInput[]
-    bio?: StringNullableFilter<"Catalog"> | string | null
     createdAt?: DateTimeFilter<"Catalog"> | Date | string
     updatedAt?: DateTimeFilter<"Catalog"> | Date | string
     views?: CatalogViewListRelationFilter
@@ -19643,7 +19714,6 @@ export namespace Prisma {
   export type CatalogOrderByWithAggregationInput = {
     id?: SortOrder
     slug?: SortOrder
-    bio?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -19658,7 +19728,6 @@ export namespace Prisma {
     NOT?: CatalogScalarWhereWithAggregatesInput | CatalogScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Catalog"> | string
     slug?: StringWithAggregatesFilter<"Catalog"> | string
-    bio?: StringNullableWithAggregatesFilter<"Catalog"> | string | null
     userId?: StringWithAggregatesFilter<"Catalog"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Catalog"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Catalog"> | Date | string
@@ -19902,30 +19971,34 @@ export namespace Prisma {
 
   export type ProfileCreateInput = {
     bio?: string | null
-    userId: number
+    banner?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutProfileInput
   }
 
   export type ProfileUncheckedCreateInput = {
     id?: number
     bio?: string | null
-    userId: number
+    banner?: string | null
+    userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type ProfileUpdateInput = {
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: IntFieldUpdateOperationsInput | number
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutProfileNestedInput
   }
 
   export type ProfileUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: IntFieldUpdateOperationsInput | number
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19933,14 +20006,15 @@ export namespace Prisma {
   export type ProfileCreateManyInput = {
     id?: number
     bio?: string | null
-    userId: number
+    banner?: string | null
+    userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type ProfileUpdateManyMutationInput = {
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: IntFieldUpdateOperationsInput | number
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19948,7 +20022,8 @@ export namespace Prisma {
   export type ProfileUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: IntFieldUpdateOperationsInput | number
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -20636,7 +20711,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -20649,6 +20723,7 @@ export namespace Prisma {
     catalog?: CatalogCreateNestedOneWithoutUserInput
     catalogViews?: CatalogViewCreateNestedManyWithoutUserInput
     products?: ProductCreateNestedManyWithoutUserInput
+    profile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
   }
@@ -20659,7 +20734,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -20672,6 +20746,7 @@ export namespace Prisma {
     catalog?: CatalogUncheckedCreateNestedOneWithoutUserInput
     catalogViews?: CatalogViewUncheckedCreateNestedManyWithoutUserInput
     products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
   }
@@ -20682,7 +20757,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -20695,6 +20769,7 @@ export namespace Prisma {
     catalog?: CatalogUpdateOneWithoutUserNestedInput
     catalogViews?: CatalogViewUpdateManyWithoutUserNestedInput
     products?: ProductUpdateManyWithoutUserNestedInput
+    profile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
@@ -20705,7 +20780,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -20718,6 +20792,7 @@ export namespace Prisma {
     catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
     catalogViews?: CatalogViewUncheckedUpdateManyWithoutUserNestedInput
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -20728,7 +20803,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -20745,7 +20819,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -20762,7 +20835,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -20818,7 +20890,6 @@ export namespace Prisma {
   export type CatalogCreateInput = {
     id?: string
     slug: string
-    bio?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     views?: CatalogViewCreateNestedManyWithoutCatalogInput
@@ -20828,7 +20899,6 @@ export namespace Prisma {
   export type CatalogUncheckedCreateInput = {
     id?: string
     slug: string
-    bio?: string | null
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20838,7 +20908,6 @@ export namespace Prisma {
   export type CatalogUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     views?: CatalogViewUpdateManyWithoutCatalogNestedInput
@@ -20848,7 +20917,6 @@ export namespace Prisma {
   export type CatalogUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20858,7 +20926,6 @@ export namespace Prisma {
   export type CatalogCreateManyInput = {
     id?: string
     slug: string
-    bio?: string | null
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20867,7 +20934,6 @@ export namespace Prisma {
   export type CatalogUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -20875,7 +20941,6 @@ export namespace Prisma {
   export type CatalogUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21224,6 +21289,11 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type UserScalarRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -21232,6 +21302,7 @@ export namespace Prisma {
   export type ProfileCountOrderByAggregateInput = {
     id?: SortOrder
     bio?: SortOrder
+    banner?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -21239,12 +21310,12 @@ export namespace Prisma {
 
   export type ProfileAvgOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
   }
 
   export type ProfileMaxOrderByAggregateInput = {
     id?: SortOrder
     bio?: SortOrder
+    banner?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -21253,6 +21324,7 @@ export namespace Prisma {
   export type ProfileMinOrderByAggregateInput = {
     id?: SortOrder
     bio?: SortOrder
+    banner?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -21260,7 +21332,6 @@ export namespace Prisma {
 
   export type ProfileSumOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
   }
 
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -21348,11 +21419,6 @@ export namespace Prisma {
     every?: FormFieldWhereInput
     some?: FormFieldWhereInput
     none?: FormFieldWhereInput
-  }
-
-  export type UserScalarRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
   }
 
   export type PurchaseListRelationFilter = {
@@ -21866,6 +21932,11 @@ export namespace Prisma {
     none?: ProductWhereInput
   }
 
+  export type ProfileNullableScalarRelationFilter = {
+    is?: ProfileWhereInput | null
+    isNot?: ProfileWhereInput | null
+  }
+
   export type SessionListRelationFilter = {
     every?: SessionWhereInput
     some?: SessionWhereInput
@@ -21904,7 +21975,6 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
-    banner?: SortOrder
     password?: SortOrder
     status?: SortOrder
     statusPayment?: SortOrder
@@ -21921,7 +21991,6 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
-    banner?: SortOrder
     password?: SortOrder
     status?: SortOrder
     statusPayment?: SortOrder
@@ -21938,7 +22007,6 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
-    banner?: SortOrder
     password?: SortOrder
     status?: SortOrder
     statusPayment?: SortOrder
@@ -21985,7 +22053,6 @@ export namespace Prisma {
   export type CatalogCountOrderByAggregateInput = {
     id?: SortOrder
     slug?: SortOrder
-    bio?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -21994,7 +22061,6 @@ export namespace Prisma {
   export type CatalogMaxOrderByAggregateInput = {
     id?: SortOrder
     slug?: SortOrder
-    bio?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -22003,7 +22069,6 @@ export namespace Prisma {
   export type CatalogMinOrderByAggregateInput = {
     id?: SortOrder
     slug?: SortOrder
-    bio?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -22148,8 +22213,22 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type UserCreateNestedOneWithoutProfileInput = {
+    create?: XOR<UserCreateWithoutProfileInput, UserUncheckedCreateWithoutProfileInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProfileInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
+  }
+
+  export type UserUpdateOneRequiredWithoutProfileNestedInput = {
+    create?: XOR<UserCreateWithoutProfileInput, UserUncheckedCreateWithoutProfileInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProfileInput
+    upsert?: UserUpsertWithoutProfileInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutProfileInput, UserUpdateWithoutProfileInput>, UserUncheckedUpdateWithoutProfileInput>
   }
 
   export type FormFieldCreateNestedManyWithoutProductInput = {
@@ -22533,6 +22612,12 @@ export namespace Prisma {
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
   }
 
+  export type ProfileCreateNestedOneWithoutUserInput = {
+    create?: XOR<ProfileCreateWithoutUserInput, ProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: ProfileCreateOrConnectWithoutUserInput
+    connect?: ProfileWhereUniqueInput
+  }
+
   export type SessionCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -22572,6 +22657,12 @@ export namespace Prisma {
     connectOrCreate?: ProductCreateOrConnectWithoutUserInput | ProductCreateOrConnectWithoutUserInput[]
     createMany?: ProductCreateManyUserInputEnvelope
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type ProfileUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<ProfileCreateWithoutUserInput, ProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: ProfileCreateOrConnectWithoutUserInput
+    connect?: ProfileWhereUniqueInput
   }
 
   export type SessionUncheckedCreateNestedManyWithoutUserInput = {
@@ -22642,6 +22733,16 @@ export namespace Prisma {
     update?: ProductUpdateWithWhereUniqueWithoutUserInput | ProductUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: ProductUpdateManyWithWhereWithoutUserInput | ProductUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type ProfileUpdateOneWithoutUserNestedInput = {
+    create?: XOR<ProfileCreateWithoutUserInput, ProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: ProfileCreateOrConnectWithoutUserInput
+    upsert?: ProfileUpsertWithoutUserInput
+    disconnect?: ProfileWhereInput | boolean
+    delete?: ProfileWhereInput | boolean
+    connect?: ProfileWhereUniqueInput
+    update?: XOR<XOR<ProfileUpdateToOneWithWhereWithoutUserInput, ProfileUpdateWithoutUserInput>, ProfileUncheckedUpdateWithoutUserInput>
   }
 
   export type SessionUpdateManyWithoutUserNestedInput = {
@@ -22722,6 +22823,16 @@ export namespace Prisma {
     update?: ProductUpdateWithWhereUniqueWithoutUserInput | ProductUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: ProductUpdateManyWithWhereWithoutUserInput | ProductUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type ProfileUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<ProfileCreateWithoutUserInput, ProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: ProfileCreateOrConnectWithoutUserInput
+    upsert?: ProfileUpsertWithoutUserInput
+    disconnect?: ProfileWhereInput | boolean
+    delete?: ProfileWhereInput | boolean
+    connect?: ProfileWhereUniqueInput
+    update?: XOR<XOR<ProfileUpdateToOneWithWhereWithoutUserInput, ProfileUpdateWithoutUserInput>, ProfileUncheckedUpdateWithoutUserInput>
   }
 
   export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
@@ -23173,6 +23284,110 @@ export namespace Prisma {
     _max?: NestedEnumWithdrawalStatusFilter<$PrismaModel>
   }
 
+  export type UserCreateWithoutProfileInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    status?: string
+    statusPayment?: string
+    googleId?: string | null
+    phoneNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    role?: $Enums.RoleType
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    catalog?: CatalogCreateNestedOneWithoutUserInput
+    catalogViews?: CatalogViewCreateNestedManyWithoutUserInput
+    products?: ProductCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutProfileInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    status?: string
+    statusPayment?: string
+    googleId?: string | null
+    phoneNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    role?: $Enums.RoleType
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    catalog?: CatalogUncheckedCreateNestedOneWithoutUserInput
+    catalogViews?: CatalogViewUncheckedCreateNestedManyWithoutUserInput
+    products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutProfileInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutProfileInput, UserUncheckedCreateWithoutProfileInput>
+  }
+
+  export type UserUpsertWithoutProfileInput = {
+    update: XOR<UserUpdateWithoutProfileInput, UserUncheckedUpdateWithoutProfileInput>
+    create: XOR<UserCreateWithoutProfileInput, UserUncheckedCreateWithoutProfileInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutProfileInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutProfileInput, UserUncheckedUpdateWithoutProfileInput>
+  }
+
+  export type UserUpdateWithoutProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    statusPayment?: StringFieldUpdateOperationsInput | string
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    catalog?: CatalogUpdateOneWithoutUserNestedInput
+    catalogViews?: CatalogViewUpdateManyWithoutUserNestedInput
+    products?: ProductUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    statusPayment?: StringFieldUpdateOperationsInput | string
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
+    catalogViews?: CatalogViewUncheckedUpdateManyWithoutUserNestedInput
+    products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type FormFieldCreateWithoutProductInput = {
     id?: string
     label: string
@@ -23213,7 +23428,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -23225,6 +23439,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     catalog?: CatalogCreateNestedOneWithoutUserInput
     catalogViews?: CatalogViewCreateNestedManyWithoutUserInput
+    profile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
   }
@@ -23235,7 +23450,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -23247,6 +23461,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     catalog?: CatalogUncheckedCreateNestedOneWithoutUserInput
     catalogViews?: CatalogViewUncheckedCreateNestedManyWithoutUserInput
+    profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
   }
@@ -23378,7 +23593,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -23390,6 +23604,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     catalog?: CatalogUpdateOneWithoutUserNestedInput
     catalogViews?: CatalogViewUpdateManyWithoutUserNestedInput
+    profile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
@@ -23400,7 +23615,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -23412,6 +23626,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
     catalogViews?: CatalogViewUncheckedUpdateManyWithoutUserNestedInput
+    profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -24095,7 +24310,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -24107,6 +24321,7 @@ export namespace Prisma {
     catalog?: CatalogCreateNestedOneWithoutUserInput
     catalogViews?: CatalogViewCreateNestedManyWithoutUserInput
     products?: ProductCreateNestedManyWithoutUserInput
+    profile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
   }
@@ -24117,7 +24332,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -24129,6 +24343,7 @@ export namespace Prisma {
     catalog?: CatalogUncheckedCreateNestedOneWithoutUserInput
     catalogViews?: CatalogViewUncheckedCreateNestedManyWithoutUserInput
     products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
   }
@@ -24155,7 +24370,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -24167,6 +24381,7 @@ export namespace Prisma {
     catalog?: CatalogUpdateOneWithoutUserNestedInput
     catalogViews?: CatalogViewUpdateManyWithoutUserNestedInput
     products?: ProductUpdateManyWithoutUserNestedInput
+    profile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
@@ -24177,7 +24392,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -24189,6 +24403,7 @@ export namespace Prisma {
     catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
     catalogViews?: CatalogViewUncheckedUpdateManyWithoutUserNestedInput
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -24199,7 +24414,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -24212,6 +24426,7 @@ export namespace Prisma {
     catalog?: CatalogCreateNestedOneWithoutUserInput
     catalogViews?: CatalogViewCreateNestedManyWithoutUserInput
     products?: ProductCreateNestedManyWithoutUserInput
+    profile?: ProfileCreateNestedOneWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
   }
 
@@ -24221,7 +24436,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -24234,6 +24448,7 @@ export namespace Prisma {
     catalog?: CatalogUncheckedCreateNestedOneWithoutUserInput
     catalogViews?: CatalogViewUncheckedCreateNestedManyWithoutUserInput
     products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -24259,7 +24474,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -24272,6 +24486,7 @@ export namespace Prisma {
     catalog?: CatalogUpdateOneWithoutUserNestedInput
     catalogViews?: CatalogViewUpdateManyWithoutUserNestedInput
     products?: ProductUpdateManyWithoutUserNestedInput
+    profile?: ProfileUpdateOneWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
 
@@ -24281,7 +24496,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -24294,6 +24508,7 @@ export namespace Prisma {
     catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
     catalogViews?: CatalogViewUncheckedUpdateManyWithoutUserNestedInput
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -24338,7 +24553,6 @@ export namespace Prisma {
   export type CatalogCreateWithoutUserInput = {
     id?: string
     slug: string
-    bio?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     views?: CatalogViewCreateNestedManyWithoutCatalogInput
@@ -24347,7 +24561,6 @@ export namespace Prisma {
   export type CatalogUncheckedCreateWithoutUserInput = {
     id?: string
     slug: string
-    bio?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     views?: CatalogViewUncheckedCreateNestedManyWithoutCatalogInput
@@ -24454,6 +24667,26 @@ export namespace Prisma {
   export type ProductCreateManyUserInputEnvelope = {
     data: ProductCreateManyUserInput | ProductCreateManyUserInput[]
     skipDuplicates?: boolean
+  }
+
+  export type ProfileCreateWithoutUserInput = {
+    bio?: string | null
+    banner?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProfileUncheckedCreateWithoutUserInput = {
+    id?: number
+    bio?: string | null
+    banner?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProfileCreateOrConnectWithoutUserInput = {
+    where: ProfileWhereUniqueInput
+    create: XOR<ProfileCreateWithoutUserInput, ProfileUncheckedCreateWithoutUserInput>
   }
 
   export type SessionCreateWithoutUserInput = {
@@ -24570,7 +24803,6 @@ export namespace Prisma {
   export type CatalogUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     views?: CatalogViewUpdateManyWithoutCatalogNestedInput
@@ -24579,7 +24811,6 @@ export namespace Prisma {
   export type CatalogUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     views?: CatalogViewUncheckedUpdateManyWithoutCatalogNestedInput
@@ -24659,6 +24890,32 @@ export namespace Prisma {
     image?: StringNullableFilter<"Product"> | string | null
     slug?: StringNullableFilter<"Product"> | string | null
     benefit?: JsonNullableFilter<"Product">
+  }
+
+  export type ProfileUpsertWithoutUserInput = {
+    update: XOR<ProfileUpdateWithoutUserInput, ProfileUncheckedUpdateWithoutUserInput>
+    create: XOR<ProfileCreateWithoutUserInput, ProfileUncheckedCreateWithoutUserInput>
+    where?: ProfileWhereInput
+  }
+
+  export type ProfileUpdateToOneWithWhereWithoutUserInput = {
+    where?: ProfileWhereInput
+    data: XOR<ProfileUpdateWithoutUserInput, ProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ProfileUpdateWithoutUserInput = {
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SessionUpsertWithWhereUniqueWithoutUserInput = {
@@ -24764,7 +25021,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -24776,6 +25032,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     catalogViews?: CatalogViewCreateNestedManyWithoutUserInput
     products?: ProductCreateNestedManyWithoutUserInput
+    profile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
   }
@@ -24786,7 +25043,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -24798,6 +25054,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     catalogViews?: CatalogViewUncheckedCreateNestedManyWithoutUserInput
     products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
   }
@@ -24840,7 +25097,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -24852,6 +25108,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     catalogViews?: CatalogViewUpdateManyWithoutUserNestedInput
     products?: ProductUpdateManyWithoutUserNestedInput
+    profile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
@@ -24862,7 +25119,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -24874,6 +25130,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     catalogViews?: CatalogViewUncheckedUpdateManyWithoutUserNestedInput
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -24881,7 +25138,6 @@ export namespace Prisma {
   export type CatalogCreateWithoutViewsInput = {
     id?: string
     slug: string
-    bio?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutCatalogInput
@@ -24890,7 +25146,6 @@ export namespace Prisma {
   export type CatalogUncheckedCreateWithoutViewsInput = {
     id?: string
     slug: string
-    bio?: string | null
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24907,7 +25162,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -24919,6 +25173,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     catalog?: CatalogCreateNestedOneWithoutUserInput
     products?: ProductCreateNestedManyWithoutUserInput
+    profile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
   }
@@ -24929,7 +25184,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -24941,6 +25195,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     catalog?: CatalogUncheckedCreateNestedOneWithoutUserInput
     products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
   }
@@ -24964,7 +25219,6 @@ export namespace Prisma {
   export type CatalogUpdateWithoutViewsInput = {
     id?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutCatalogNestedInput
@@ -24973,7 +25227,6 @@ export namespace Prisma {
   export type CatalogUncheckedUpdateWithoutViewsInput = {
     id?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24996,7 +25249,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -25008,6 +25260,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     catalog?: CatalogUpdateOneWithoutUserNestedInput
     products?: ProductUpdateManyWithoutUserNestedInput
+    profile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
@@ -25018,7 +25271,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -25030,6 +25282,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -25040,7 +25293,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -25053,6 +25305,7 @@ export namespace Prisma {
     catalog?: CatalogCreateNestedOneWithoutUserInput
     catalogViews?: CatalogViewCreateNestedManyWithoutUserInput
     products?: ProductCreateNestedManyWithoutUserInput
+    profile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
@@ -25062,7 +25315,6 @@ export namespace Prisma {
     email?: string | null
     emailVerified?: Date | string | null
     image?: string | null
-    banner?: string | null
     password?: string | null
     status?: string
     statusPayment?: string
@@ -25075,6 +25327,7 @@ export namespace Prisma {
     catalog?: CatalogUncheckedCreateNestedOneWithoutUserInput
     catalogViews?: CatalogViewUncheckedCreateNestedManyWithoutUserInput
     products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -25100,7 +25353,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -25113,6 +25365,7 @@ export namespace Prisma {
     catalog?: CatalogUpdateOneWithoutUserNestedInput
     catalogViews?: CatalogViewUpdateManyWithoutUserNestedInput
     products?: ProductUpdateManyWithoutUserNestedInput
+    profile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
@@ -25122,7 +25375,6 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    banner?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     statusPayment?: StringFieldUpdateOperationsInput | string
@@ -25135,6 +25387,7 @@ export namespace Prisma {
     catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
     catalogViews?: CatalogViewUncheckedUpdateManyWithoutUserNestedInput
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 

@@ -131,6 +131,7 @@ exports.Prisma.PostScalarFieldEnum = {
 exports.Prisma.ProfileScalarFieldEnum = {
   id: 'id',
   bio: 'bio',
+  banner: 'banner',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -237,7 +238,6 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
-  banner: 'banner',
   password: 'password',
   status: 'status',
   statusPayment: 'statusPayment',
@@ -257,7 +257,6 @@ exports.Prisma.VerificationTokenScalarFieldEnum = {
 exports.Prisma.CatalogScalarFieldEnum = {
   id: 'id',
   slug: 'slug',
-  bio: 'bio',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

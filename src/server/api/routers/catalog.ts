@@ -14,7 +14,12 @@ export const catalogRouter = createTRPCRouter({
                             id: true,
                             name: true,
                             image: true,
-                            banner: true,
+                            profile: {
+                                select: {
+                                    bio: true,
+                                    banner: true,
+                                },
+                            },
                             products: {
                                 where: { status: "published" },
                                 orderBy: { createdAt: "desc" },
@@ -29,12 +34,12 @@ export const catalogRouter = createTRPCRouter({
             return {
                 id: catalog.id,
                 slug: catalog.slug,
-                bio: catalog.bio,
+                bio: catalog.user.profile?.bio ?? "",
                 creator: {
                     id: catalog.user.id,
                     name: catalog.user.name,
                     image: catalog.user.image,
-                    banner: catalog.user.banner,
+                    banner: catalog.user.profile?.banner ?? "",
                 },
                 products: catalog.user.products,
             };
@@ -44,28 +49,28 @@ export const catalogRouter = createTRPCRouter({
     getProductById: publicProcedure
         .input(z.object({ slug: z.string(), productSlug: z.string() }))
         .query(async ({ ctx, input }) => {
-            // First, get the catalog to find the user
             const catalog = await ctx.db.catalog.findUnique({
                 where: { slug: input.slug },
                 select: { userId: true },
             });
 
-            if (!catalog) {
-                return null;
-            }
+            if (!catalog) return null;
 
             const product = await ctx.db.product.findFirst({
                 where: {
-                    OR: [
-                        { slug: input.productSlug },
-                        { id: input.productSlug }
-                    ],
+                    OR: [{ slug: input.productSlug }, { id: input.productSlug }],
                     status: "published",
                     userId: catalog.userId,
                 },
                 include: {
                     user: {
                         include: {
+                            profile: {
+                                select: {
+                                    bio: true,
+                                    banner: true,
+                                },
+                            },
                             products: {
                                 where: { status: "published" },
                                 orderBy: { price: "asc" },
@@ -90,7 +95,7 @@ export const catalogRouter = createTRPCRouter({
             return product;
         }),
 
-    // Cek apakah slug tersedia (publik, untuk real-time validation di form)
+    // Cek apakah slug tersedia
     checkSlug: publicProcedure
         .input(z.object({ slug: z.string() }))
         .query(async ({ ctx, input }) => {
@@ -101,15 +106,32 @@ export const catalogRouter = createTRPCRouter({
             return { available: !existing };
         }),
 
-    // Ambil catalog milik user yang login (untuk link di sidebar dashboard)
+    // Ambil catalog milik user yang login
     getMine: protectedProcedure.query(async ({ ctx }) => {
         return await ctx.db.catalog.findUnique({
             where: { userId: ctx.session.user.id },
-            select: { slug: true, bio: true },
+            select: {
+                slug: true,
+                user: {
+                    select: {
+                        profile: {
+                            select: {
+                                bio: true,
+                            },
+                        },
+                    },
+                },
+            },
+        }).then((result) => {
+            if (!result) return null;
+            return {
+                slug: result.slug,
+                bio: result.user.profile?.bio ?? "",
+            };
         });
     }),
 
-    // Buat atau update catalog user
+    // Buat atau update catalog user (slug only, bio & banner via profileRouter)
     upsert: protectedProcedure
         .input(
             z.object({
@@ -118,25 +140,24 @@ export const catalogRouter = createTRPCRouter({
                     .min(3, "Slug minimal 3 karakter")
                     .max(50, "Slug maksimal 50 karakter")
                     .regex(/^[a-z0-9-]+$/, "Hanya huruf kecil, angka, dan tanda hubung (-)"),
-                bio: z.string().max(200).optional(),
-            })
+            }),
         )
         .mutation(async ({ ctx, input }) => {
             try {
                 return await ctx.db.catalog.upsert({
                     where: { userId: ctx.session.user.id },
-                    update: { slug: input.slug, bio: input.bio },
+                    update: { slug: input.slug },
                     create: {
                         slug: input.slug,
-                        bio: input.bio,
                         userId: ctx.session.user.id,
                     },
                 });
             } catch (e: unknown) {
-                // Prisma unique constraint violation (P2002) → slug sudah dipakai
                 if (
-                    typeof e === "object" && e !== null &&
-                    "code" in e && (e as { code: string }).code === "P2002"
+                    typeof e === "object" &&
+                    e !== null &&
+                    "code" in e &&
+                    (e as { code: string }).code === "P2002"
                 ) {
                     throw new Error("Slug sudah dipakai orang lain, pilih nama lain.");
                 }

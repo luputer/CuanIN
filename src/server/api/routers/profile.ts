@@ -12,21 +12,23 @@ export const profileRouter = createTRPCRouter({
         email: true,
         phoneNumber: true,
         image: true,
-        banner: true,
         role: true,
         status: true,
-        catalog: {
+        profile: {           // ← dari Profile
           select: {
             bio: true,
+            banner: true,
           },
         },
       },
     });
+
     if (!user) throw new Error("User not found");
+
     return {
       ...user,
-      bio: user.catalog?.bio ?? "",
-      banner: user.banner ?? "",
+      bio: user.profile?.bio ?? "",
+      banner: user.profile?.banner ?? "",
     };
   }),
 
@@ -42,27 +44,19 @@ export const profileRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { name, phoneNumber, image, banner, password, bio } = input;
+      const { name, phoneNumber, image, password, bio, banner } = input;
 
       type UserUpdateData = {
         name: string;
         phoneNumber?: string | null;
         image?: string | null;
-        banner?: string | null;
         password?: string;
       };
 
-      const updateData: UserUpdateData = {
-        name,
-        phoneNumber,
-        image,
-        banner,
-      };
+      const updateData: UserUpdateData = { name, phoneNumber, image };
 
       if (password && password.trim() !== "") {
-        if (password.length < 8) {
-          throw new Error("Password minimal 8 karakter");
-        }
+        if (password.length < 8) throw new Error("Password minimal 8 karakter");
         updateData.password = await bcrypt.hash(password, 12);
       }
 
@@ -70,21 +64,19 @@ export const profileRouter = createTRPCRouter({
         where: { id: ctx.session.user.id },
         data: {
           ...updateData,
-          ...(bio !== undefined
-            ? {
-                catalog: {
-                  upsert: {
-                    create: {
-                      bio,
-                      slug: `user-${Date.now()}`,
-                    },
-                    update: {
-                      bio,
-                    },
-                  },
-                },
-              }
-            : {}),
+          // bio & banner ke Profile via upsert
+          profile: {
+            upsert: {
+              create: {
+                bio: bio ?? "",
+                banner: banner ?? "",
+              },
+              update: {
+                ...(bio !== undefined && { bio }),
+                ...(banner !== undefined && { banner }),
+              },
+            },
+          },
         },
         select: {
           id: true,
@@ -92,15 +84,19 @@ export const profileRouter = createTRPCRouter({
           email: true,
           phoneNumber: true,
           image: true,
-          banner: true,
-          catalog: {
+          profile: {
             select: {
               bio: true,
+              banner: true,
             },
           },
         },
       });
 
-      return updatedUser;
+      return {
+        ...updatedUser,
+        bio: updatedUser.profile?.bio ?? "",
+        banner: updatedUser.profile?.banner ?? "",
+      };
     }),
 });

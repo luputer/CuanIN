@@ -371,6 +371,34 @@ export default function TransactionPage() {
                       </FormGroup>
                     </div>
 
+                    {Number(withdrawForm.amount) > 0 && (
+                      <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2.5">
+                        <div className="flex justify-between text-[13px] text-slate-600">
+                          <span>Nominal Penarikan</span>
+                          <span>Rp{formatNumberInput(withdrawForm.amount)}</span>
+                        </div>
+                        <div className="flex justify-between text-[13px] text-slate-600">
+                          <span>Biaya Aplikasi (5%)</span>
+                          <span>- Rp{formatNumberInput(Math.round(Number(withdrawForm.amount) * 0.05).toString())}</span>
+                        </div>
+                        <div className="flex justify-between text-[13px] text-slate-600">
+                          <span>Biaya Transfer Bank</span>
+                          <span>- Rp4.000</span>
+                        </div>
+                        <div className="border-t border-slate-200 pt-2.5 mt-2.5 flex justify-between font-semibold text-[15px] text-slate-900">
+                          <span>Total Diterima</span>
+                          <span>
+                            Rp{formatNumberInput(Math.max(0, Number(withdrawForm.amount) - Math.round(Number(withdrawForm.amount) * 0.05) - 4000).toString())}
+                          </span>
+                        </div>
+                        {Number(withdrawForm.amount) - Math.round(Number(withdrawForm.amount) * 0.05) - 4000 < 10000 && (
+                          <p className="text-red-500 text-xs mt-3 pt-2 border-t border-red-100 text-center font-medium">
+                            Minimal saldo diterima harus Rp10.000 setelah dipotong fee.
+                          </p>
+                        )}
+                      </div>
+                    )}
+
                     <DialogFooter className="grid grid-cols-2 gap-4">
                       <DialogClose asChild>
                         <ButtonCancel
@@ -408,8 +436,8 @@ export default function TransactionPage() {
               <span className="text-slate-400">30 hari terakhir</span>
               <span
                 className={`rounded-full px-2 py-1 font-medium ${stats.incomeChange >= 0
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
                   }`}
               >
                 {stats.incomeChange >= 0 ? "+" : ""}
@@ -434,8 +462,8 @@ export default function TransactionPage() {
               <span className="text-slate-400">30 hari terakhir</span>
               <span
                 className={`rounded-full px-2 py-1 font-medium ${stats.transactionsChange >= 0
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
                   }`}
               >
                 {stats.transactionsChange >= 0 ? "+" : ""}

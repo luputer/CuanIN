@@ -6,16 +6,17 @@ export default NextAuth(authConfig).auth;
 export const config = {
     // Matched paths for the middleware
     matcher: [
-        "/dashboard/:path*", 
-        "/webinar/:path*", 
-        "/kelas/:path*", 
-        "/produk-digital/:path*", 
-        "/peserta/:path*", 
-        "/pembayaran/:path*", 
-        "/setup/:path*", 
+        "/dashboard/:path*",
+        "/profile/:path*",
+        "/webinar/:path*",
+        "/kelas/:path*",
+        "/produk-digital/:path*",
+        "/peserta/:path*",
+        "/pembayaran/:path*",
+        "/setup/:path*",
         "/admin/:path*",
-        "/sign-in", 
-        "/sign-up", 
+        "/sign-in",
+        "/sign-up",
         "/"
     ],
 };

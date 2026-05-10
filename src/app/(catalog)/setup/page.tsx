@@ -10,28 +10,32 @@ import { toast } from "sonner";
 export default function CatalogSetupPage() {
     const router = useRouter();
 
-    // Middleware sudah handle auth — langsung fetch data
-    const { data: existing, isLoading } = api.catalog.getMine.useQuery();
+    const { data: existing, isLoading: isLoadingCatalog } = api.catalog.getMine.useQuery();
+    const { data: profile, isLoading: isLoadingProfile } = api.profile.get.useQuery();
+
     const [slug, setSlug] = useState("");
     const [bio, setBio] = useState("");
     const [debouncedSlug, setDebouncedSlug] = useState("");
 
-    // Debounce input slug 500ms sebelum cek ke server
     useEffect(() => {
         const timer = setTimeout(() => setDebouncedSlug(slug), 500);
         return () => clearTimeout(timer);
     }, [slug]);
 
-    // Pre-fill jika sudah ada catalog
+    // Pre-fill slug dari catalog, bio dari profile
     useEffect(() => {
         if (existing?.slug) {
             setSlug(existing.slug);
             setDebouncedSlug(existing.slug);
-            setBio(existing.bio ?? "");
         }
     }, [existing]);
 
-    // Cek ketersediaan slug (skip jika slug sama dengan milik sendiri)
+    useEffect(() => {
+        if (profile?.bio) {
+            setBio(profile.bio);
+        }
+    }, [profile]);
+
     const isOwnSlug = existing?.slug === debouncedSlug;
     const { data: slugCheck, isFetching: isCheckingSlug } = api.catalog.checkSlug.useQuery(
         { slug: debouncedSlug },
@@ -39,21 +43,32 @@ export default function CatalogSetupPage() {
     );
     const slugAvailable = isOwnSlug ? true : slugCheck?.available;
 
-    const upsert = api.catalog.upsert.useMutation({
-        onSuccess: (data) => {
-            toast.success("Catalog berhasil disimpan!");
-            router.push(`/${data.slug}`);
-        },
-        onError: (err) => {
-            toast.error(err.message);
-        },
-    });
+    const upsertCatalog = api.catalog.upsert.useMutation();
+    const updateProfile = api.profile.update.useMutation();
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!slug.trim()) return toast.error("Slug wajib diisi");
         if (!slugAvailable) return toast.error("Slug sudah dipakai, pilih nama lain");
-        upsert.mutate({ slug: slug.trim(), bio: bio.trim() || undefined });
+
+        try {
+            // Simpan slug ke catalog
+            await upsertCatalog.mutateAsync({ slug: slug.trim() });
+
+            // Simpan bio ke profile (name wajib, ambil dari profile atau fallback)
+            await updateProfile.mutateAsync({
+                name: profile?.name ?? "",
+                bio: bio.trim() || undefined,
+            });
+
+            toast.success("Catalog berhasil disimpan!");
+            router.push(`/${slug.trim()}`);
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : "Terjadi kesalahan");
+        }
     };
+
+    const isPending = upsertCatalog.isPending || updateProfile.isPending;
+    const isLoading = isLoadingCatalog || isLoadingProfile;
 
     const previewUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/${slug || "nama-kamu"}`;
 
@@ -65,7 +80,6 @@ export default function CatalogSetupPage() {
         );
     }
 
-    // Slug indicator
     const showIndicator = debouncedSlug.length >= 3;
     const slugIndicator = isCheckingSlug ? (
         <SpinnerIcon className="w-4 h-4 animate-spin text-slate-400" />
@@ -117,14 +131,11 @@ export default function CatalogSetupPage() {
                                     setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))
                                 }
                             />
-                            {/* Indicator */}
                             <span className="pr-3">{slugIndicator}</span>
                         </div>
 
-                        {/* Status pesan */}
                         {showIndicator && (
-                            <p className={`text-sm ${slugAvailable === false ? "text-red-500" : "text-slate-400"
-                                }`}>
+                            <p className={`text-sm ${slugAvailable === false ? "text-red-500" : "text-slate-400"}`}>
                                 {isCheckingSlug
                                     ? "Mengecek ketersediaan..."
                                     : slugAvailable === false
@@ -141,10 +152,7 @@ export default function CatalogSetupPage() {
 
                     {/* Bio */}
                     <div className="space-y-1">
-                        <label className="block text-sm font-medium text-slate-800">
-                            Bio
-                        </label>
-
+                        <label className="block text-sm font-medium text-slate-800">Bio</label>
                         <div className="flex items-start rounded-lg border py-1 px-2 bg-slate-100 focus-within:ring-2 focus-within:ring-cyan-100 focus-within:border-cyan-600 border-slate-300">
                             <textarea
                                 rows={5}
@@ -154,9 +162,7 @@ export default function CatalogSetupPage() {
                                 className="flex-1 px-3 py-2.5 text-sm outline-none bg-transparent resize-none placeholder:text-sm placeholder:text-slate-400"
                             />
                         </div>
-                        <p className="text-xs text-slate-400 ml-auto">
-                            {bio.length}/200
-                        </p>
+                        <p className="text-xs text-slate-400 ml-auto">{bio.length}/200</p>
                     </div>
 
                     {/* URL Preview */}
@@ -171,10 +177,10 @@ export default function CatalogSetupPage() {
                 {/* Save Button */}
                 <button
                     onClick={handleSubmit}
-                    disabled={upsert.isPending || slug.length < 3 || slugAvailable === false || isCheckingSlug}
+                    disabled={isPending || slug.length < 3 || slugAvailable === false || isCheckingSlug}
                     className="w-full mt-4 cursor-pointer rounded-lg border-2 border-slate-800 bg-yellow-200 py-3 text-base font-semibold text-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_rgba(29,41,61)] flex items-center justify-center"
                 >
-                    {upsert.isPending ? (
+                    {isPending ? (
                         <>
                             <SpinnerIcon className="mr-2 h-5 w-5 animate-spin" />
                             Menyimpan...
@@ -187,6 +193,6 @@ export default function CatalogSetupPage() {
                     )}
                 </button>
             </div>
-        </div >
+        </div>
     );
 }

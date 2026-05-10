@@ -19,11 +19,10 @@ model Post {
 }
 
 model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  banner String?
-  userId String  @unique
-
+  id        Int      @id @default(autoincrement())
+  bio       String?
+  banner    String?
+  userId    String   @unique
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -39,12 +38,6 @@ model Product {
   startDate        DateTime?
   endDate          DateTime?
   link             String?
-  format           String?
-  platform         String?
-  duration         String?
-  dateDeadline     DateTime?
-  quota            Int?
-  notes            String?       @db.Text
   status           String        @default("published")
   userId           String
   createdAt        DateTime      @default(now())
@@ -52,22 +45,28 @@ model Product {
   image            String?
   slug             String?       @unique @default(cuid())
   benefit          Json?
+  dateDeadline     DateTime?
+  platform         String?
+  quota            Int?
+  format           String?
+  duration         String?
+  notes            String?       @db.Text
   formFields       FormField[]
   user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  purchases        Purchase[]
   views            ProductView[]
+  purchases        Purchase[]
 }
 
 model ProductView {
   id        String   @id @default(uuid())
   productId String
-  visitorId String?
-  ipHash    String?
-  userAgent String?  @db.Text
-  browser   String?
-  os        String?
-  device    String?
   createdAt DateTime @default(now())
+  visitorId String?
+  browser   String?
+  device    String?
+  ipHash    String?
+  os        String?
+  userAgent String?
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
@@ -103,16 +102,15 @@ model Purchase {
   buyerPhone          String
   amount              Decimal      @default(0)
   status              String       @default("pending")
-  xenditInvoiceId     String?
-  xenditInvoiceUrl    String?
-  xenditPaymentMethod String?
-  paidAt              DateTime?
   createdAt           DateTime     @default(now())
   updatedAt           DateTime     @updatedAt
+  xenditInvoiceId     String?
+  xenditInvoiceUrl    String?
+  paidAt              DateTime?
+  xenditPaymentMethod String?
   answers             FormAnswer[]
   product             Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  @@index([productId])
   @@index([xenditInvoiceId])
 }
 
@@ -168,15 +166,15 @@ model User {
   phoneNumber    String?        @map("phone_number")
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
+  role           RoleType       @default(USER)
   accounts       Account[]
   catalog        Catalog?
   catalogViews   CatalogView[]
   products       Product[]
   profile        Profile?
-  role           RoleType       @default(USER)
   sessions       Session[]
   withdrawals    Withdrawal[]
-  balanceEntries BalanceEntry[] // ← BARU
+  balanceEntries BalanceEntry[]
 }
 
 model VerificationToken {
@@ -193,8 +191,8 @@ model Catalog {
   userId    String        @unique
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
-  views     CatalogView[]
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  views     CatalogView[]
 }
 
 model CatalogView {
@@ -203,7 +201,7 @@ model CatalogView {
   userId    String
   visitorId String?
   ipHash    String?
-  userAgent String?  @db.Text
+  userAgent String?
   browser   String?
   os        String?
   device    String?
@@ -244,17 +242,15 @@ model Withdrawal {
   @@index([xenditPayoutId])
 }
 
-// ─── BARU ────────────────────────────────────────────────────────────────────
 model BalanceEntry {
   id        String           @id @default(uuid())
   userId    String
-  amount    Decimal // positif = kredit, negatif = debit
+  amount    Decimal
   type      BalanceEntryType
-  refId     String? // purchaseId atau withdrawalId
+  refId     String?
   note      String?
   createdAt DateTime         @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([refId])
@@ -291,7 +287,6 @@ enum WithdrawalStatus {
   REVERSED
 }
 
-// ─── BARU ────────────────────────────────────────────────────────────────────
 enum BalanceEntryType {
   PURCHASE_COMPLETED
   WITHDRAWAL_REQUESTED

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, adminProcedure } from "../trpc";
 import { s3Client } from "./s3";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { env } from "~/env";
@@ -74,6 +74,70 @@ export const productsRouter = createTRPCRouter({
             }
         }),
 
+    // Get all products (Admin only) — no userId filter
+    adminGetAll: adminProcedure
+        .input(
+            z.object({
+                page: z.number().min(1).default(1),
+                limit: z.number().min(1).max(100).default(10),
+                search: z.string().optional(),
+                sortBy: z.enum(["name", "createdAt"]).optional().default("createdAt"),
+                sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
+                type: ProductType.optional(),
+                status: z.string().optional().default("ALL"),
+            }).optional()
+        )
+        .query(async ({ ctx, input }) => {
+            try {
+                const page = input?.page ?? 1;
+                const limit = input?.limit ?? 10;
+                const skip = (page - 1) * limit;
+
+                const where = {
+                    ...(input?.type ? { type: input.type } : {}),
+                    ...(input?.search ? {
+                        OR: [
+                            { name: { contains: input.search, mode: 'insensitive' as const } },
+                            { user: { name: { contains: input.search, mode: 'insensitive' as const } } }
+                        ]
+                    } : {}),
+                    ...(input?.status && input.status !== "ALL" ? { status: input.status } : {}),
+                };
+
+                const [items, total] = await Promise.all([
+                    ctx.db.product.findMany({
+                        where,
+                        include: {
+                            user: {
+                                select: {
+                                    name: true,
+                                    email: true,
+                                    image: true,
+                                },
+                            },
+                        },
+                        orderBy: {
+                            [input?.sortBy ?? "createdAt"]: input?.sortOrder ?? "desc"
+                        },
+                        skip,
+                        take: limit,
+                    }),
+                    ctx.db.product.count({ where }),
+                ]);
+
+                return {
+                    items,
+                    total,
+                    page,
+                    limit,
+                    totalPages: Math.ceil(total / limit),
+                };
+            } catch (error) {
+                console.error("!! products.adminGetAll error:", error);
+                throw error;
+            }
+        }),
+
     // Get product by ID — hanya boleh akses milik sendiri
     getById: protectedProcedure
         .input(z.object({ id: z.string() }))
@@ -81,8 +145,31 @@ export const productsRouter = createTRPCRouter({
             return await ctx.db.product.findUnique({
                 where: {
                     id: input.id,
-                    userId: ctx.session.user.id, // ← pastikan milik user ini
+                    userId: ctx.session.user.id,
                 },
+            });
+        }),
+
+    // Get product by ID (Admin only) — can view any product
+    adminGetById: adminProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            return await ctx.db.product.findUnique({
+                where: { id: input.id },
+                include: {
+                    _count: {
+                        select: { purchases: true }
+                    },
+                    user: {
+                        select: {
+                            name: true,
+                            image: true,
+                            catalog: {
+                                select: { slug: true }
+                            }
+                        }
+                    }
+                }
             });
         }),
 

@@ -87,7 +87,7 @@ export default function WebinarDetailPage() {
         switch (status?.toLowerCase()) {
             case "published": return "bg-green-100 rounded-full px-4 py-1 w-fit text-green-700";
             case "unpublished": return "bg-slate-200 rounded-full px-4 py-1 w-fit text-slate-500";
-            case "archived": return "bg-slate-200 rounded-full px-4 py-1 w-fit text-slate-500";
+            case "archived": return "bg-blue-100 rounded-full px-4 py-1 w-fit text-blue-700";
             default: return "bg-slate-200 rounded-full px-4 py-1 w-fit text-slate-500";
         }
     };
@@ -286,10 +286,12 @@ export default function WebinarDetailPage() {
                                     </Row>
 
                                     <Row label="Status">
-                                        <p className={`w-fit font-medium ${getStatusColor(product.status ?? "draft")}`}>
-                                            {product.status === "archived" ? "Selesai" : (product.status
-                                                ? product.status.charAt(0).toUpperCase() + product.status.slice(1)
-                                                : "Draft")}
+                                        <p className={`w-fit font-medium ${getStatusColor(product.endDate && new Date() > new Date(product.endDate) ? "archived" : product.status ?? "draft")}`}>
+                                            {product.endDate && new Date() > new Date(product.endDate) || product.status === "archived"
+                                                ? "Selesai"
+                                                : (product.status
+                                                    ? product.status.charAt(0).toUpperCase() + product.status.slice(1)
+                                                    : "Draft")}
                                         </p>
                                     </Row>
 
@@ -349,6 +351,9 @@ export default function WebinarDetailPage() {
                                     </div>
                                     <div className="shrink-0 w-full lg:w-90 hidden lg:block" />
                                 </div>
+                                <p className="text-slate-500 text-sm mt-4">
+                                    Ditambahkan pada {format(new Date(product.createdAt), "d MMMM yyyy HH:mm", { locale: idLocale })}
+                                </p>
                             </div>
 
                         </div>

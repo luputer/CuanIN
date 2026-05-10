@@ -13,6 +13,7 @@ interface FormGroupProps {
     className?: string;
     align?: "start" | "center";
     labelWidth?: string;
+    layout?: "horizontal" | "vertical";
 }
 
 export const FormGroup = ({
@@ -23,16 +24,19 @@ export const FormGroup = ({
     className,
     align = "center",
     labelWidth = "md:w-[200px]",
+    layout = "horizontal",
 }: FormGroupProps) => (
     <div className={cn(
-        "flex flex-col md:flex-row gap-4 md:gap-10 py-4 last:border-0",
-        align === "center" ? "md:items-center" : "md:items-start",
+        "flex py-4 last:border-0",
+        layout === "horizontal"
+            ? cn("flex-col md:flex-row gap-4 md:gap-10", align === "center" ? "md:items-center" : "md:items-start")
+            : "flex-col gap-2",
         className
     )}>
         <Label className={cn(
             "text-sm text-slate-600 font-medium shrink-0",
-            labelWidth,
-            align === "start" && "md:pt-1"
+            layout === "horizontal" ? labelWidth : "w-full",
+            align === "start" && layout === "horizontal" && "md:pt-1"
         )}>
             {label}
         </Label>

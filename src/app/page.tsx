@@ -8,11 +8,14 @@ import { UsersThreeIcon, CreditCardIcon, GridFourIcon, ChartBarIcon } from "@pho
 import Figure6 from "public/assets/Figure6.png";
 import Figure10 from "public/assets/Figure10.png";
 import Figure11 from "public/assets/Figure11.png";
-import WebinarDashboardPreview from "~/components/ui/webinardashboard";
-import manajemen from "public/assets/manajemen.png"
-import payment from "public/assets/payment.png"
-import form from "public/assets/form.png"
-import dashboard from "public/assets/dashboard.png"
+import CatalogPreview from "~/components/ui/catalog-preview";
+import {
+  ProductManagementMockup,
+  PaymentMockup,
+  FormBuilderMockup,
+  DashboardMockup,
+  StepsIllustrationMockup,
+} from "~/components/ui/feature-mockups";
 
 
 export default function FormateLanding() {
@@ -46,8 +49,8 @@ export default function FormateLanding() {
 
         {/* Dashboard Preview Section */}
         <section className="relative mt-12 md:mt-16 w-full max-w-6xl mx-auto px-4 sm:px-6 mb-20 md:mb-10">
-          <div className="w-full h-[300px] sm:h-[450px] lg:h-[640px] border-2 border-slate-800 rounded-xl flex items-center justify-center bg-cyan-50 shadow-[0px_2px_0px_rgba(29,41,61)] relative z-10">
-            <WebinarDashboardPreview />
+          <div className="w-full h-[300px] sm:h-[450px] lg:h-[640px] rounded-xl flex items-center justify-center bg-cyan-50 shadow-[0px_2px_0px_rgba(29,41,61)] relative z-10">
+            <CatalogPreview />
           </div>
 
           {/* Kotak kecil (overlap) */}
@@ -123,8 +126,8 @@ export default function FormateLanding() {
             <div className="grid grid-cols-1 lg:grid-cols-11 gap-6 md:gap-8">
               {/* Card 1 (lebar besar) */}
               <div className="lg:col-span-6 p-6 rounded-xl border-2 border-slate-800 bg-white transition-all duration-300 hover:-translate-y-2">
-                <div className="w-full h-64 md:h-80 bg-cyan-50 rounded-xl flex items-center justify-center border-2 border-transparent">
-                  <Image src={manajemen} alt="Manajemen" className="w-full h-full object-cover" />
+                <div className="w-full h-64 md:h-80 bg-white rounded-xl flex items-center justify-center border-2 border-slate-800 overflow-hidden">
+                  <ProductManagementMockup />
                 </div>
                 <h3 className="mt-6 text-2xl font-medium text-slate-800">
                   All-in-One Platform
@@ -136,8 +139,8 @@ export default function FormateLanding() {
 
               {/* Card 2 (kecil) */}
               <div className="lg:col-span-5 p-6 rounded-xl border-2 border-slate-800 bg-white transition-all duration-300 hover:-translate-y-2">
-                <div className="w-full h-64 md:h-80 bg-cyan-50 rounded-xl flex items-center justify-center border-2 border-transparent">
-                  <Image src={payment} alt="Form" className="w-full h-full object-contain" />
+                <div className="w-full h-64 md:h-80 bg-white rounded-xl flex items-center justify-center border-2 border-slate-800 overflow-hidden">
+                  <PaymentMockup />
                 </div>
                 <h3 className="mt-6 text-2xl font-medium text-slate-800">
                   Payment Gateway
@@ -149,8 +152,8 @@ export default function FormateLanding() {
 
               {/* Card 3 (kecil) */}
               <div className="lg:col-span-5 p-6 rounded-xl border-2 border-slate-800 bg-white transition-all duration-300 hover:-translate-y-2">
-                <div className="w-full h-64 md:h-80 bg-cyan-50 rounded-xl flex items-center justify-center border-2 border-transparent">
-                  <Image src={form} alt="Form" className="w-full h-full object-contain" />
+                <div className="w-full h-64 md:h-80 bg-white rounded-xl flex items-center justify-center border-2 border-slate-800 overflow-hidden">
+                  <FormBuilderMockup />
                 </div>
                 <h3 className="mt-6 text-2xl font-medium text-slate-800">
                   Kustomisasi Form
@@ -162,8 +165,8 @@ export default function FormateLanding() {
 
               {/* Card 4 (lebar besar) */}
               <div className="lg:col-span-6 p-6 rounded-xl border-2 border-slate-800 bg-white transition-all duration-300 hover:-translate-y-2">
-                <div className="w-full h-64 md:h-80 bg-cyan-50 rounded-xl flex items-center justify-center border-2 border-transparent">
-                  <Image src={dashboard} alt="Dashboard" className="w-full h-full object-cover" />
+                <div className="w-full h-64 md:h-80 bg-white rounded-xl flex items-center justify-center border-2 border-slate-800 overflow-hidden">
+                  <DashboardMockup />
                 </div>
                 <h3 className="mt-6 text-2xl font-medium text-slate-800">
                   Dashboard Analitik
@@ -182,30 +185,7 @@ export default function FormateLanding() {
             {/* KIRI - IMAGE */}
             <div className="w-full lg:w-1/2 h-full sm:h-[400px] lg:h-[600px] bg-cyan-50 flex items-center justify-center rounded-xl border-2 border-slate-800 shadow-[2px_2px_0px_rgba(29,41,61)]">
 
-              {/* MOCKUP CONTENT */}
-              <div className="w-[90%] h-[90%] rounded-2xl border-2 border-slate-800 bg-white p-4 sm:p-6 shadow-[0px_4px_0px_rgba(29,41,61)]">
-
-                {/* Header */}
-                <div className="justify-center text-center mb-4">
-                  <h1 className="text-xl font-semibold text-cyan-600">Daftar</h1>
-                  <p className="text-xs text-slate-700 mt-1">
-                    Buat akun baru
-                  </p>
-                </div>
-
-                {/* Fake input fields (mock only) */}
-                <div className="flex flex-col justify-center items-center space-y-2">
-
-                  <div className="h-8 w-full rounded bg-slate-100 border border-slate-200" />
-                  <div className="h-8 w-full rounded bg-slate-100 border border-slate-200" />
-                  <div className="h-8 w-full rounded bg-slate-100 border border-slate-200" />
-                  <div className="h-8 w-full rounded bg-slate-100 border border-slate-200" />
-
-                  {/* Button */}
-                  <div className="h-9 w-full rounded bg-yellow-200 border-2 border-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] mt-3" />
-                </div>
-
-              </div>
+              <StepsIllustrationMockup />
 
             </div>
 

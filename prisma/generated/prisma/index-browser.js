@@ -147,31 +147,31 @@ exports.Prisma.ProductScalarFieldEnum = {
   startDate: 'startDate',
   endDate: 'endDate',
   link: 'link',
-  format: 'format',
-  platform: 'platform',
-  duration: 'duration',
-  dateDeadline: 'dateDeadline',
-  quota: 'quota',
-  notes: 'notes',
   status: 'status',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   image: 'image',
   slug: 'slug',
-  benefit: 'benefit'
+  benefit: 'benefit',
+  dateDeadline: 'dateDeadline',
+  platform: 'platform',
+  quota: 'quota',
+  format: 'format',
+  duration: 'duration',
+  notes: 'notes'
 };
 
 exports.Prisma.ProductViewScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
+  createdAt: 'createdAt',
   visitorId: 'visitorId',
-  ipHash: 'ipHash',
-  userAgent: 'userAgent',
   browser: 'browser',
-  os: 'os',
   device: 'device',
-  createdAt: 'createdAt'
+  ipHash: 'ipHash',
+  os: 'os',
+  userAgent: 'userAgent'
 };
 
 exports.Prisma.FormFieldScalarFieldEnum = {
@@ -194,12 +194,12 @@ exports.Prisma.PurchaseScalarFieldEnum = {
   buyerPhone: 'buyerPhone',
   amount: 'amount',
   status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   xenditInvoiceId: 'xenditInvoiceId',
   xenditInvoiceUrl: 'xenditInvoiceUrl',
-  xenditPaymentMethod: 'xenditPaymentMethod',
   paidAt: 'paidAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  xenditPaymentMethod: 'xenditPaymentMethod'
 };
 
 exports.Prisma.FormAnswerScalarFieldEnum = {

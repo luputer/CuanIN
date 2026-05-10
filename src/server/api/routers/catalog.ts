@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure, creatorProcedure } from "../trpc";
 
 export const catalogRouter = createTRPCRouter({
     // Ambil data creator + semua produknya berdasarkan slug catalog
@@ -108,7 +108,7 @@ export const catalogRouter = createTRPCRouter({
 
     // Ambil catalog milik user yang login
     getMine: protectedProcedure.query(async ({ ctx }) => {
-        return await ctx.db.catalog.findUnique({
+        const catalog = await ctx.db.catalog.findUnique({
             where: { userId: ctx.session.user.id },
             select: {
                 slug: true,
@@ -122,17 +122,18 @@ export const catalogRouter = createTRPCRouter({
                     },
                 },
             },
-        }).then((result) => {
-            if (!result) return null;
-            return {
-                slug: result.slug,
-                bio: result.user.profile?.bio ?? "",
-            };
         });
+
+        if (!catalog) return null;
+
+        return {
+            slug: catalog.slug,
+            bio: catalog.user.profile?.bio ?? "",
+        };
     }),
 
-    // Buat atau update catalog user (slug only, bio & banner via profileRouter)
-    upsert: protectedProcedure
+    // Buat atau update catalog user
+    upsert: creatorProcedure
         .input(
             z.object({
                 slug: z
@@ -144,6 +145,7 @@ export const catalogRouter = createTRPCRouter({
         )
         .mutation(async ({ ctx, input }) => {
             try {
+                // Upsert catalog (bio & banner dihandle di profileRouter)
                 return await ctx.db.catalog.upsert({
                     where: { userId: ctx.session.user.id },
                     update: { slug: input.slug },

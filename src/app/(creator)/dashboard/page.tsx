@@ -2,7 +2,7 @@
 
 import {
     WalletIcon,
-    ShoppingBagIcon,
+    BasketIcon,
     UsersIcon,
     ChartLineUpIcon,
     ArrowUpRightIcon,
@@ -20,6 +20,7 @@ import {
     Cell,
 } from "recharts";
 import { api } from "~/trpc/react";
+import Link from "next/link";
 
 type CardProps = {
     title: string;
@@ -43,7 +44,7 @@ function Card({
     const isPositive = (change ?? 0) >= 0;
 
     return (
-        <div className={`${bgColor ?? "bg-white"} gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col`}>
+        <div className={`${bgColor ?? "bg-white"} gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col transition-transform hover:scale-101`}>
 
             {/* TOP ROW: ICON & ARROW */}
             <div className="flex justify-between items-start mb-3">
@@ -51,9 +52,9 @@ function Card({
                     {icon}
                 </div>
                 {showArrow && (
-                    <button className="flex items-center justify-center p-1.5 rounded-full bg-cyan-600 text-white cursor-pointer">
+                    <div className="flex items-center justify-center p-1.5 rounded-full bg-cyan-600 text-white cursor-pointer">
                         <ArrowUpRightIcon size={14} weight="bold" />
-                    </button>
+                    </div>
                 )}
             </div>
 
@@ -131,7 +132,7 @@ export default function DashboardPage() {
             {/* Header */}
             <div className="bg-slate-50">
                 <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
-                    <div className="text-2xl font-semibold mb-2 text-cyan-600">Dashboard</div>
+                    <div className="text-2xl font-bold mb-2 text-cyan-600">Dashboard</div>
                     <div className="text-sm font-regular text-slate-600">
                         Selamat datang{data?.userName ? `, ${data.userName}` : ""}. Kelola produk dan pantau penjualan Anda di sini.
                     </div>
@@ -149,32 +150,37 @@ export default function DashboardPage() {
                     </>
                 ) : (
                     <>
-                        <Card
-                            title="Total Penghasilan"
-                            value={formatRupiah(data?.totalIncome ?? 0)}
-                            icon={<WalletIcon weight="fill" className="w-8 h-8" />}
-                            iconColor="text-cyan-600"
-                            bgColor="bg-cyan-50"
-                            showArrow={true}
-                            change={data?.incomeChange}
-                        />
+                        <Link href="/pembayaran" className="block rounded-xl transition-transform hover:scale-101">
+                            <Card
+                                title="Total Penghasilan"
+                                value={formatRupiah(data?.totalIncome ?? 0)}
+                                icon={<WalletIcon weight="fill" className="w-8 h-8" />}
+                                iconColor="text-cyan-600"
+                                bgColor="bg-cyan-50"
+                                showArrow={true}
+                                change={data?.incomeChange}
+                            />
+                        </Link>
                         <Card
                             title="Total Produk"
                             value={(data?.totalProducts ?? 0).toLocaleString("id-ID")}
-                            icon={<ShoppingBagIcon weight="fill" className="w-8 h-8" />}
+                            icon={<BasketIcon weight="fill" className="w-8 h-8" />}
                             iconColor="text-yellow-500"
+                            change={data?.productsChange}
                         />
                         <Card
                             title="Total User"
                             value={(data?.totalUsers ?? 0).toLocaleString("id-ID")}
                             icon={<UsersIcon weight="fill" className="w-8 h-8" />}
                             iconColor="text-orange-500"
+                            change={data?.usersChange}
                         />
                         <Card
                             title="Total Pengunjung"
                             value={(data?.totalVisitors ?? 0).toLocaleString("id-ID")}
                             icon={<ChartLineUpIcon weight="fill" className="w-8 h-8" color="currentColor" />}
                             iconColor="text-green-500"
+                            change={data?.visitorsChange}
                         />
                     </>
                 )}
@@ -183,7 +189,7 @@ export default function DashboardPage() {
             {/* CHART ROW 1 */}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-4">
                 <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
-                    <h2 className="pl-2 font-semibold text-lg mb-6 text-slate-800">Pendapatan Mingguan</h2>
+                    <h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Pendapatan Mingguan</h2>
                     {isLoading ? <ChartSkeleton /> : (
                         <ResponsiveContainer width="100%" height={300}>
                             <AreaChart data={data?.weeklyRevenue ?? []}>
@@ -203,7 +209,7 @@ export default function DashboardPage() {
                                 <YAxis
                                     tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
                                     tickMargin={10}
-                                    width={55}
+                                    width={60}
                                     stroke="#A2F4FD"
                                     tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
                                 />
@@ -225,7 +231,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="lg:col-span-1 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
-                    <h2 className="pl-2 font-semibold text-lg mb-6 text-slate-800">Total per Kategori</h2>
+                    <h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Total per Kategori</h2>
                     {isLoading ? <ChartSkeleton /> : (
                         <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={data?.categoryData ?? []} barCategoryGap="20%">
@@ -260,7 +266,7 @@ export default function DashboardPage() {
             {/* CHART ROW 2 */}
             <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
                 <div className="lg:col-span-1 xl:col-span-3 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
-                    <h2 className="pl-2 font-semibold text-lg mb-6 text-slate-800">Traffic Website</h2>
+                    <h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Traffic Website</h2>
                     {isLoading ? <ChartSkeleton /> : (
                         <ResponsiveContainer width="100%" height={300}>
                             <AreaChart data={data?.trafficData ?? []}>
@@ -280,7 +286,7 @@ export default function DashboardPage() {
                                 <YAxis
                                     tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
                                     tickMargin={10}
-                                    width={55}
+                                    width={40}
                                     stroke="#A2F4FD"
                                 />
                                 <Tooltip formatter={(value) => [value as number | string, "Pengunjung"]} />
@@ -299,7 +305,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
-                    <h2 className="pl-2 font-semibold text-lg mb-6 text-slate-800">Jumlah Pembeli</h2>
+                    <h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Jumlah Pembeli</h2>
                     {isLoading ? <ChartSkeleton /> : (
                         <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={data?.buyerData ?? []} barCategoryGap="20%">
@@ -313,7 +319,7 @@ export default function DashboardPage() {
                                 <YAxis
                                     tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
                                     tickMargin={10}
-                                    width={50}
+                                    width={40}
                                     stroke="#A2F4FD"
                                 />
                                 <Tooltip formatter={(value) => [value as number | string, "Pembeli"]} />

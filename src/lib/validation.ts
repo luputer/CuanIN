@@ -154,7 +154,7 @@ export const productKelasOnlineSchema = z
       .string()
       .min(1, "Link produk wajib diisi")
       .url("Link tidak valid, pastikan format URL benar (https://...)"),
-    duration: z.string().optional(),
+    duration: z.string().min(1, "Durasi wajib diisi"),
     notes: z.string().optional(),
     status: z.string().min(1, "Status wajib dipilih"),
     image: z.string().optional(),
@@ -207,3 +207,21 @@ export const withdrawalSchema = z.object({
 });
 
 export type WithdrawalFormData = z.infer<typeof withdrawalSchema>;
+
+export const creatorSchema = z.object({
+  name: z.string().min(1, "Nama kreator wajib diisi"),
+  email: z.string().email("Format email tidak valid"),
+  phone: z
+    .string()
+    .min(10, "Nomor HP minimal 10 digit")
+    .regex(
+      /^(\+62|62|0)8[1-9][0-9]{6,9}$/,
+      "Format nomor HP tidak valid (contoh: 08123456789)",
+    ),
+  password: z.string().min(6, "Password minimal 6 karakter").optional().or(z.literal("")),
+  image: z.string().optional().nullable(),
+  banner: z.string().optional().nullable(),
+  bio: z.string().optional().nullable(),
+});
+
+export type CreatorFormValues = z.infer<typeof creatorSchema>;

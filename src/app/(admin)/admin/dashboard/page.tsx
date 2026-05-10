@@ -1,12 +1,12 @@
 "use client"
 
 import {
-	Wallet,
-	Bag,
-	Users,
-	ChartLineUp,
-	ArrowUpRight,
-} from "phosphor-react";
+	WalletIcon,
+	BasketIcon,
+	UsersIcon,
+	ChartLineUpIcon,
+	ArrowUpRightIcon,
+} from "@phosphor-icons/react";
 import {
 	XAxis,
 	YAxis,
@@ -19,6 +19,7 @@ import {
 	Area,
 	Cell,
 } from "recharts";
+import { api } from "~/trpc/react";
 
 type CardProps = {
 	title: string;
@@ -27,6 +28,7 @@ type CardProps = {
 	iconColor?: string;
 	bgColor?: string;
 	showArrow?: boolean;
+	change?: number;
 };
 
 function Card({
@@ -36,29 +38,28 @@ function Card({
 	iconColor,
 	bgColor,
 	showArrow,
+	change,
 }: CardProps) {
+	const isPositive = (change ?? 0) >= 0;
 
 	return (
-		<div className={`${bgColor ?? "bg-white"} gap-1 rounded-xl border border-indigo-950 shadow-[0px_1px_0px_rgba(30,27,75)] p-4 flex flex-col`}>
+		<div className={`${bgColor ?? "bg-white"} gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col transition-transform hover:scale-101`}>
 
 			{/* TOP ROW: ICON & ARROW */}
 			<div className="flex justify-between items-start mb-3">
-				{/* MAIN ICON */}
 				<div className={`rounded-full text-2xl ${iconColor}`}>
 					{icon}
 				</div>
-
-				{/* ARROW UP RIGHT */}
 				{showArrow && (
-					<button className="flex items-center justify-center p-1.5 rounded-full bg-cyan-600 text-white cursor-pointer">
-						<ArrowUpRight size={14} weight="bold" />
-					</button>
+					<div className="flex items-center justify-center p-1.5 rounded-full bg-cyan-600 text-white cursor-pointer">
+						<ArrowUpRightIcon size={14} weight="bold" />
+					</div>
 				)}
 			</div>
 
 			{/* TITLE & VALUE */}
 			<div className="flex flex-col gap-1">
-				<p className="text-xs font-semibold text-indigo-950">
+				<p className="text-xs font-semibold text-slate-800">
 					{title}
 				</p>
 				<h2 className="text-lg font-semibold text-cyan-600">
@@ -69,10 +70,37 @@ function Card({
 			{/* INFO */}
 			<div className="mt-1 flex items-center justify-between font-regular text-xs text-slate-600">
 				<span>30 hari terakhir</span>
-				<span className="bg-green-100 px-2 py-1 rounded-full text-xs font-regular text-green-800">30%</span>
+				{change !== undefined && (
+					<span className={`px-2 py-1 rounded-full text-xs font-regular ${isPositive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+						{isPositive ? "+" : ""}{change.toFixed(1)}%
+					</span>
+				)}
 			</div>
-
 		</div>
+	);
+}
+
+function CardSkeleton() {
+	return (
+		<div className="bg-white gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col animate-pulse">
+			<div className="flex justify-between items-start mb-3">
+				<div className="w-8 h-8 rounded-full bg-slate-200" />
+			</div>
+			<div className="flex flex-col gap-2">
+				<div className="h-3 w-24 bg-slate-200 rounded" />
+				<div className="h-5 w-32 bg-slate-200 rounded" />
+			</div>
+			<div className="mt-1 flex items-center justify-between">
+				<div className="h-3 w-20 bg-slate-200 rounded" />
+				<div className="h-5 w-12 bg-slate-200 rounded-full" />
+			</div>
+		</div>
+	);
+}
+
+function ChartSkeleton({ height = 300 }: { height?: number }) {
+	return (
+		<div className="w-full bg-slate-100 rounded-lg animate-pulse" style={{ height }} />
 	);
 }
 
@@ -109,51 +137,64 @@ const buyerData = [
 	{ week: "Minggu 4", total: 100 },
 ];
 
+const CHART_COLORS = ["#FFF085", "#FFB86A"];
+
 export default function DashboardPage() {
+	const isLoading = false; // For now, no loading state
+
 	return (
-		<div className="bg-slate-50">
-			<div className="bg-slate-50 z-40 -mx-4 px-4 pt-4 pb-4 mb-2">
-				<div className="text-2xl font-semibold mb-1 text-indigo-950">Dashboard</div>
-				<div className="text-sm font-regular text-slate-600">Selamat datang, Mason Brooks. Kelola produk dan pantau penjualan Anda di sini.</div>
+		<div className="space-y-6">
+			{/* Header */}
+			<div className="bg-slate-50">
+				<div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
+					<div className="text-2xl font-bold mb-2 text-cyan-600">Dashboard</div>
+					<div className="text-sm font-regular text-slate-600">
+						Selamat datang Admin. Kelola platform dan pantau statistik di sini.
+					</div>
+				</div>
 			</div>
 
 			{/* TOP CARDS */}
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
 				<Card
 					title="Total Penghasilan"
-					value="Rp 12.500.000"
-					icon={<Wallet weight="fill" className="w-8 h-8" />}
+					value="Rp 125.400.000"
+					icon={<WalletIcon weight="fill" className="w-8 h-8" />}
 					iconColor="text-cyan-600"
 					bgColor="bg-cyan-50"
 					showArrow={true}
+					change={12.5}
 				/>
 
 				<Card
 					title="Total Produk"
-					value="120"
-					icon={<Bag weight="fill" className="w-8 h-8" />}
+					value="1.240"
+					icon={<BasketIcon weight="fill" className="w-8 h-8" />}
 					iconColor="text-yellow-500"
+					change={8.2}
 				/>
 
 				<Card
-					title="Total User"
-					value="850"
-					icon={<Users weight="fill" className="w-8 h-8" />}
+					title="Total Kreator"
+					value="450"
+					icon={<UsersIcon weight="fill" className="w-8 h-8" />}
 					iconColor="text-orange-500"
+					change={5.3}
 				/>
 
 				<Card
 					title="Total Pengunjung"
-					value="5.430"
-					icon={<ChartLineUp weight="fill" className="w-8 h-8" color="currentColor" />}
+					value="24.580"
+					icon={<ChartLineUpIcon weight="fill" className="w-8 h-8" color="currentColor" />}
 					iconColor="text-green-500"
+					change={15.7}
 				/>
 			</div>
 
 			{/* CHART ROW 1 */}
 			<div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-4">
-				<div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border-2 border-indigo-950 shadow-[0px_2px_0px_rgba(30,27,75)] p-4 overflow-hidden">
-					<h2 className="pl-2 font-semibold text-lg mb-6 text-indigo-950">Pendapatan Mingguan</h2>
+				<div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
+					<h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Pendapatan Mingguan</h2>
 					<ResponsiveContainer width="100%" height={300}>
 						<AreaChart data={weeklyRevenue}>
 							<defs>
@@ -192,8 +233,8 @@ export default function DashboardPage() {
 					</ResponsiveContainer>
 				</div>
 
-				<div className="lg:col-span-1 bg-white rounded-xl border-2 border-indigo-950 shadow-[0px_2px_0px_rgba(30,27,75)] p-4 overflow-hidden">
-					<h2 className="pl-2 font-semibold text-lg mb-6 text-indigo-950">Total per Kategori</h2>
+				<div className="lg:col-span-1 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
+					<h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Total per Kategori</h2>
 					<ResponsiveContainer width="100%" height={300}>
 						<BarChart data={categoryData} barCategoryGap="20%">
 							<CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
@@ -206,16 +247,15 @@ export default function DashboardPage() {
 							<YAxis
 								tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
 								tickMargin={10}
-								width={30}
+								width={50}
 								stroke="#A2F4FD"
 							/>
 							<Tooltip />
 
 							<Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
-								{categoryData.map((entry, index) => {
-									const colors = ["#FFF085", "#FFB86A"];
-									return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
-								})}
+								{categoryData.map((_, index) => (
+									<Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length] ?? "#FFF085"} />
+								))}
 							</Bar>
 						</BarChart>
 					</ResponsiveContainer>
@@ -224,8 +264,8 @@ export default function DashboardPage() {
 
 			{/* CHART ROW 2 */}
 			<div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
-				<div className="lg:col-span-1 xl:col-span-3 bg-white rounded-xl border-2 border-indigo-950 shadow-[0px_2px_0px_rgba(30,27,75)] p-4 overflow-hidden">
-					<h2 className="pl-2 font-semibold text-lg mb-6 text-indigo-950">Traffic Website</h2>
+				<div className="lg:col-span-1 xl:col-span-3 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
+					<h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Traffic Website</h2>
 					<ResponsiveContainer width="100%" height={300}>
 						<AreaChart data={trafficData}>
 							<defs>
@@ -264,8 +304,8 @@ export default function DashboardPage() {
 					</ResponsiveContainer>
 				</div>
 
-				<div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border-2 border-indigo-950 shadow-[0px_2px_0px_rgba(30,27,75)] p-4 overflow-hidden">
-					<h2 className="pl-2 font-semibold text-lg mb-6 text-indigo-950">Jumlah Pembeli</h2>
+				<div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
+					<h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Jumlah Kreator (Per Minggu)</h2>
 					<ResponsiveContainer width="100%" height={300}>
 						<BarChart data={buyerData} barCategoryGap="20%">
 							<CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
@@ -278,16 +318,15 @@ export default function DashboardPage() {
 							<YAxis
 								tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
 								tickMargin={10}
-								width={30}
+								width={40}
 								stroke="#A2F4FD"
 							/>
 							<Tooltip />
 
 							<Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
-								{buyerData.map((entry, index) => {
-									const colors = ["#FFF085", "#FFB86A"];
-									return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
-								})}
+								{buyerData.map((_, index) => (
+									<Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length] ?? "#FFF085"} />
+								))}
 							</Bar>
 						</BarChart>
 					</ResponsiveContainer>

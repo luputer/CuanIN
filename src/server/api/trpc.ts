@@ -39,3 +39,23 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
         ctx: { session: { ...ctx.session, user: ctx.session.user } },
     });
 });
+
+/** Admin only — must be signed in as ADMIN */
+export const adminProcedure = t.procedure.use(({ ctx, next }) => {
+    if (!ctx.session?.user || ctx.session.user.role !== "ADMIN") {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next({
+        ctx: { session: { ...ctx.session, user: ctx.session.user } },
+    });
+});
+
+/** Creator only — must be signed in as CREATOR */
+export const creatorProcedure = t.procedure.use(({ ctx, next }) => {
+    if (!ctx.session?.user || ctx.session.user.role !== "CREATOR") {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next({
+        ctx: { session: { ...ctx.session, user: ctx.session.user } },
+    });
+});

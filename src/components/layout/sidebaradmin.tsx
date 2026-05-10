@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
-import { SquaresFour, BookOpen, CreditCard, Storefront, List, UserCircleGear } from "phosphor-react";
+import { SquaresFourIcon, BasketIcon, CreditCardIcon, ListIcon, AddressBookIcon } from "@phosphor-icons/react";
 import { usePathname } from "next/navigation";
-import { api } from "~/trpc/react";
 
 // Component kecil (item menu)
 function SidebarItem({
@@ -29,12 +28,12 @@ function SidebarItem({
             <div
                 className={`flex items-center ${isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-2"} rounded-lg cursor-pointer transition-all duration-300 ease-out
         ${active
-                        ? "bg-yellow-200 text-indigo-950 font-semibold text-base border-2 border-indigo-950 shadow-[1px_2px_0px_rgba(30,27,75)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition duration-200 ease-out"
-                        : textClassName ?? "font-semibold text-base text-indigo-950 hover:bg-slate-200"
+                        ? "bg-yellow-200 text-slate-800 font-semibold text-base border-1 border-slate-800 shadow-[1px_2px_0px_rgba(30,27,75)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition duration-200 ease-out"
+                        : textClassName ?? "font-semibold text-base text-slate-800 hover:bg-slate-200"
                     }`}
             >
                 {React.cloneElement(icon, {
-                    className: `w-5 h-5 shrink-0 ${iconClassName ?? "text-indigo-950"}`,
+                    className: `w-5 h-5 shrink-0 ${iconClassName ?? "text-slate-800"}`,
                 })}
                 {!isCollapsed && <span className="whitespace-nowrap">{label}</span>}
             </div>
@@ -48,12 +47,8 @@ export default function SidebarAdmin() {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
 
-    // Fetch data katalog untuk menentukan link
-    const { data: catalog } = api.catalog.getMine.useQuery();
-    const catalogHref = catalog?.slug ? `/${catalog.slug}` : "/setup";
-
     return (
-        <aside className={`sticky top-0 transition-all duration-300 z-50 ease-in-out ${isCollapsed ? "w-20" : "w-64"} h-screen bg-white p-4 text-white border-r-2 border-indigo-950 flex flex-col`}>
+        <aside className={`sticky top-0 transition-all duration-300 z-50 ease-in-out ${isCollapsed ? "w-20" : "w-64"} h-screen bg-white p-4 text-white border-r-1 border-slate-800 flex flex-col`}>
             {/* Header sidebar + Toggle button */}
             <div className={`flex items-center mb-6 mt-2 ${isCollapsed ? "justify-center" : "justify-between px-2"}`}>
                 {!isCollapsed && (
@@ -63,10 +58,10 @@ export default function SidebarAdmin() {
                 )}
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="p-1 rounded-md text-slate-500 border-2 border-transparent hover:border-slate-300 hover:bg-slate-100 transition-all duration-200"
+                    className="p-1 rounded-lg text-slate-500 border-1 border-transparent hover:border-slate-300 hover:bg-slate-100 transition-all duration-200"
                     title={isCollapsed ? "Expand menu" : "Collapse menu"}
                 >
-                    <List size={24} weight="bold" />
+                    <ListIcon size={24} weight="bold" />
                 </button>
             </div>
 
@@ -76,46 +71,36 @@ export default function SidebarAdmin() {
                         MENU
                     </div>
                 ) : (
-                    <div className="border-t-2 border-slate-200 mb-4 mx-2"></div>
+                    <div className="border-t-1 border-slate-200 mb-4 mx-2"></div>
                 )}
 
-                <div className="flex flex-col gap-3 pb-4 border-b-2 border-cyan-600">
+                <div className="flex flex-col gap-3">
                     <SidebarItem
-                        icon={<SquaresFour size={20} weight="fill" />}
+                        icon={<SquaresFourIcon size={20} weight="fill" />}
                         label="Dashboard"
                         href="/admin/dashboard"
                         active={pathname.startsWith("/admin/dashboard")}
                         isCollapsed={isCollapsed}
                     />
                     <SidebarItem
-                        icon={<UserCircleGear size={20} weight="fill" />}
+                        icon={<AddressBookIcon size={20} weight="fill" />}
                         label="Kreator"
                         href="/admin/kreator"
                         active={pathname.startsWith("/admin/kreator")}
                         isCollapsed={isCollapsed}
                     />
                     <SidebarItem
-                        icon={<BookOpen size={20} weight="fill" />}
+                        icon={<BasketIcon size={20} weight="fill" />}
                         label="Produk"
                         href="/admin/produk"
                         active={pathname.startsWith("/admin/produk")}
                         isCollapsed={isCollapsed}
                     />
                     <SidebarItem
-                        icon={<CreditCard size={20} weight="fill" />}
+                        icon={<CreditCardIcon size={20} weight="fill" />}
                         label="Transaksi"
                         href="/admin/transaksi"
                         active={pathname.startsWith("/admin/transaksi")}
-                        isCollapsed={isCollapsed}
-                    />
-                </div>
-                <div className={`mt-4 w-full flex flex-col rounded-lg border-2 border-cyan-600 shadow-[0px_4px_0px_rgba(0,146,184)] hover:-translate-y-[2px] transition duration-200 ease-out hover:border-cyan-700 bg-white hover:bg-cyan-50`}>
-                    <SidebarItem
-                        icon={<Storefront size={20} weight="fill" />}
-                        label="Katalog Saya"
-                        href={catalogHref}
-                        iconClassName="text-cyan-600"
-                        textClassName="text-cyan-600 font-semibold text-base"
                         isCollapsed={isCollapsed}
                     />
                 </div>

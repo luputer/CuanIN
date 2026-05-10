@@ -37,6 +37,7 @@ import {
     TablePagination,
 } from "~/components/ui/table";
 import { Skeleton } from "~/components/ui/skeleton";
+import { TableSkeleton } from "~/components/layout/table-skeleton";
 import SearchInput from "~/components/ui/search";
 import ButtonFilter from "~/components/ui/filter";
 import ActionButton from "~/components/ui/button-add";
@@ -131,7 +132,7 @@ export default function WebinarPage() {
     const getStatusColor = (status: string) => {
         const s = status.toLowerCase();
         switch (s) {
-            case "selesai": return "bg-green-100 text-green-700";
+            case "selesai": return "bg-blue-100 text-blue-700";
             case "published": return "bg-green-100 text-green-700";
             case "unpublished": return "bg-slate-200 text-slate-500";
             default: return "bg-slate-100 text-slate-600";
@@ -162,6 +163,10 @@ export default function WebinarPage() {
     };
 
     // ─── Render ──────────────────────────────────────────────────────────────
+
+    if (isLoading && !webinars) {
+        return <TableSkeleton columns={9} />;
+    }
 
     return (
         <TooltipProvider>
@@ -410,8 +415,8 @@ export default function WebinarPage() {
 
                                             <TableCell className="whitespace-nowrap">
                                                 <div className="flex items-center min-h-[48px]">
-                                                    <span className={`px-4 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.status || "draft")}`}>
-                                                        {getStatusLabel(item.status || "Draft")}
+                                                    <span className={`px-4 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.endDate && new Date() > new Date(item.endDate) ? "selesai" : item.status || "draft")}`}>
+                                                        {getStatusLabel(item.endDate && new Date() > new Date(item.endDate) ? "selesai" : item.status || "draft")}
                                                     </span>
                                                 </div>
                                             </TableCell>

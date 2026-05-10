@@ -36,8 +36,8 @@ const getVisitorId = () => {
     typeof crypto.randomUUID === "function"
       ? crypto.randomUUID()
       : Array.from(crypto.getRandomValues(new Uint32Array(4)))
-          .map((value) => value.toString(36))
-          .join("-");
+        .map((value) => value.toString(36))
+        .join("-");
 
   window.localStorage.setItem(VISITOR_ID_KEY, visitorId);
   return visitorId;
@@ -93,6 +93,11 @@ export default function ProductDetailPage() {
     DIGITAL_PRODUCT: "bg-emerald-100 text-emerald-700 border-emerald-200",
   };
 
+  const isWebinarCompleted =
+    product.type === "WEBINAR" &&
+    ((product.endDate && new Date() > new Date(product.endDate)) ||
+      product.status === "archived");
+
   const InfoItem = ({
     icon,
     label,
@@ -137,7 +142,7 @@ export default function ProductDetailPage() {
       <div className="sticky top-0 z-10 border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
           <Link
-          
+
             href={`/${slug}`}
             className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-slate-100"
           >
@@ -217,13 +222,12 @@ export default function ProductDetailPage() {
                       value={
                         isSameDay
                           ? format(start, "dd MMMM yyyy", { locale: idLocale })
-                          : `${format(start, "dd MMM yyyy", { locale: idLocale })} - ${
-                              end
-                                ? format(end, "dd MMM yyyy", {
-                                    locale: idLocale,
-                                  })
-                                : ""
-                            }`
+                          : `${format(start, "dd MMM yyyy", { locale: idLocale })} - ${end
+                            ? format(end, "dd MMM yyyy", {
+                              locale: idLocale,
+                            })
+                            : ""
+                          }`
                       }
                     />
                   )}
@@ -276,9 +280,9 @@ export default function ProductDetailPage() {
                 {product.name}
               </h3>
 
-              <div className="mb-4 space-y-3">
-                {(product.benefit as string[])?.length > 0 ? (
-                  (product.benefit as string[]).map((item, idx) => (
+              {((product.benefit as string[])?.length ?? 0) > 0 && (
+                <div className="mb-4 space-y-3">
+                  {(product.benefit as string[]).map((item, idx) => (
                     <div
                       key={idx}
                       className="flex gap-3 text-sm text-slate-800"
@@ -289,20 +293,18 @@ export default function ProductDetailPage() {
                       />
                       <span className="min-w-0 wrap-break-word">{item}</span>
                     </div>
-                  ))
-                ) : (
-                  <span className="text-slate-400">Belum ada benefit</span>
-                )}
-              </div>
+                  ))}
+                </div>
+              )}
 
-              {isWebinarOrClass && product.quota && product.quota > 0 && (
+              {product.type === "WEBINAR" && (
                 <div className="flex justify-between border-t pt-3 text-sm">
                   <span className="text-slate-500">Kuota</span>
                   <div className="flex flex-col items-end">
                     <span className="font-regular text-slate-800">
-                      {product.quota} peserta
+                      {product.quota && product.quota > 0 ? `${product.quota} peserta` : "Tak Terbatas"}
                     </span>
-                    {(product._count?.purchases ?? 0) >= product.quota && (
+                    {(product.quota ?? 0) > 0 && (product._count?.purchases ?? 0) >= product.quota! && !isWebinarCompleted && (
                       <span className="text-[10px] font-bold text-red-500 uppercase">Sudah Full</span>
                     )}
                   </div>
@@ -322,7 +324,7 @@ export default function ProductDetailPage() {
 
               <div className="mt-4">
                 {isGratis ? (
-                  <div className="text-xl font-bold text-green-600">Gratis</div>
+                  <div className="text-xl font-semibold text-green-600">Gratis</div>
                 ) : (
                   <div className="text-xl font-bold text-cyan-600">
                     Rp {price.toLocaleString("id-ID")}
@@ -330,12 +332,19 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
-              {product.quota && product.quota > 0 && (product._count?.purchases ?? 0) >= product.quota ? (
+              {isWebinarCompleted ? (
                 <button
                   disabled
                   className="mt-5 w-full rounded-xl bg-slate-300 py-3 font-medium text-slate-500 shadow-sm cursor-not-allowed"
                 >
-                  Kuota sudah full
+                  Webinar sudah selesai
+                </button>
+              ) : product.quota && product.quota > 0 && (product._count?.purchases ?? 0) >= product.quota ? (
+                <button
+                  disabled
+                  className="mt-5 w-full rounded-xl bg-slate-300 py-3 font-medium text-slate-500 shadow-sm cursor-not-allowed"
+                >
+                  Kuota sudah penuh
                 </button>
               ) : (
                 <Link href={`/${slug}/${productSlug}/checkout`}>

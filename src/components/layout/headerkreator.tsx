@@ -80,7 +80,7 @@ export default function HeaderKreator() {
                             {/* Akun Saya */}
                             <button
                                 onClick={() => router.push('/profile')}
-                                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition"
+                                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition cursor-pointer"
                             >
                                 <UserIcon size={20} />
                                 <span>Akun Saya</span>
@@ -92,7 +92,7 @@ export default function HeaderKreator() {
                             {/* Logout */}
                             <button
                                 onClick={() => signOut({ callbackUrl: "/sign-in" })}
-                                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition"
+                                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition cursor-pointer"
                             >
                                 <SignOutIcon size={20} />
                                 <span>Logout</span>

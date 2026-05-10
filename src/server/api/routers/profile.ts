@@ -14,10 +14,15 @@ export const profileRouter = createTRPCRouter({
         image: true,
         role: true,
         status: true,
-        profile: {           // ← dari Profile
+        profile: {
           select: {
             bio: true,
             banner: true,
+          },
+        },
+        catalog: {
+          select: {
+            slug: true,
           },
         },
       },
@@ -53,7 +58,11 @@ export const profileRouter = createTRPCRouter({
         password?: string;
       };
 
-      const updateData: UserUpdateData = { name, phoneNumber, image };
+      const updateData: UserUpdateData = {
+        name,
+        phoneNumber,
+        image,
+      };
 
       if (password && password.trim() !== "") {
         if (password.length < 8) throw new Error("Password minimal 8 karakter");
@@ -64,7 +73,6 @@ export const profileRouter = createTRPCRouter({
         where: { id: ctx.session.user.id },
         data: {
           ...updateData,
-          // bio & banner ke Profile via upsert
           profile: {
             upsert: {
               create: {
@@ -77,6 +85,18 @@ export const profileRouter = createTRPCRouter({
               },
             },
           },
+          ...(ctx.session.user.role === "CREATOR"
+            ? {
+                catalog: {
+                  upsert: {
+                    create: {
+                      slug: `user-${Date.now()}`,
+                    },
+                    update: {},
+                  },
+                },
+              }
+            : {}),
         },
         select: {
           id: true,
@@ -88,6 +108,11 @@ export const profileRouter = createTRPCRouter({
             select: {
               bio: true,
               banner: true,
+            },
+          },
+          catalog: {
+            select: {
+              slug: true,
             },
           },
         },

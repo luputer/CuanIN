@@ -52,8 +52,8 @@ const getVisitorId = () => {
     typeof crypto.randomUUID === "function"
       ? crypto.randomUUID()
       : Array.from(crypto.getRandomValues(new Uint32Array(4)))
-          .map((value) => value.toString(36))
-          .join("-");
+        .map((value) => value.toString(36))
+        .join("-");
 
   window.localStorage.setItem(VISITOR_ID_KEY, visitorId);
   return visitorId;
@@ -252,11 +252,11 @@ export default function CatalogSlugPage() {
 
   const initials = creator.name
     ? creator.name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2)
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2)
     : "??";
 
   return (
@@ -327,11 +327,10 @@ export default function CatalogSlugPage() {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`h-10 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
-                      isActive
+                    className={`h-10 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${isActive
                         ? "border border-cyan-600 bg-cyan-600 text-white"
                         : "border border-slate-400 bg-white text-slate-600 hover:bg-cyan-50"
-                    } `}
+                      } `}
                   >
                     {tab}
                   </button>
@@ -382,7 +381,7 @@ export default function CatalogSlugPage() {
           <div className="mt-12 flex justify-center border-t border-slate-200 pt-10">
             <Link
               href="/dashboard"
-              className="flex items-center gap-2 rounded-full bg-slate-800 px-8 py-3 font-semibold text-white shadow-md transition-all hover:bg-slate-700 hover:shadow-lg active:scale-95"
+              className="flex items-center gap-2 rounded-full bg-slate-800 px-8 py-3 font-semibold text-white shadow-md transition-all hover:bg-slate-700"
             >
               <ArrowLeftIcon className="h-5 w-5" />
               <span>Kembali ke Dashboard</span>

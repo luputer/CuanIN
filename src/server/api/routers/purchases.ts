@@ -5,6 +5,7 @@ import { sendProductEmail } from "../../../lib/nodemailer";
 import { env } from "~/env";
 import { createInvoice as createXenditInvoice } from "~/lib/xendit";
 import { calculatePaymentFee } from "~/lib/utils";
+import { getCreatorBalance } from "~/lib/balance";
 
 const XENDIT_PAYMENT_METHODS = {
   qris: "QRIS",
@@ -22,7 +23,7 @@ const XENDIT_PAYMENT_METHODS = {
 } as const;
 
 export const purchasesRouter = createTRPCRouter({
-  // Create a purchase (public — called from checkout page)
+  // ─── CREATE PURCHASE ────────────────────────────────────────────────────────
   create: publicProcedure
     .input(
       z.object({
@@ -41,7 +42,6 @@ export const purchasesRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // Get the product to determine amount and link
       const product = await ctx.db.product.findUnique({
         where: { id: input.productId, status: "published" },
         select: {
@@ -64,7 +64,6 @@ export const purchasesRouter = createTRPCRouter({
       if (!product)
         throw new Error("Produk tidak ditemukan atau tidak tersedia");
 
-      // Cek Kuota
       if (
         product.quota &&
         product.quota > 0 &&
@@ -85,7 +84,7 @@ export const purchasesRouter = createTRPCRouter({
 
       const price = Number(product.price);
 
-      // Produk gratis → langsung completed
+      // Produk gratis → langsung completed + kredit ledger creator
       if (price === 0) {
         const purchase = await ctx.db.$transaction(async (tx) => {
           const newPurchase = await tx.purchase.create({
@@ -116,6 +115,17 @@ export const purchasesRouter = createTRPCRouter({
             });
           }
 
+          // Produk gratis: kredit Rp 0 ke ledger (untuk audit trail tetap ada)
+          await tx.balanceEntry.create({
+            data: {
+              userId: product.userId,
+              amount: 0,
+              type: "PURCHASE_COMPLETED",
+              refId: newPurchase.id,
+              note: `Produk gratis — ${input.buyerName}`,
+            },
+          });
+
           return newPurchase;
         });
 
@@ -130,33 +140,7 @@ export const purchasesRouter = createTRPCRouter({
         return { status: "free", purchase };
       }
 
-      // Create pending purchase
-      // const purchase = await ctx.db.$transaction(async (tx) => {
-      //     const newPurchase = await tx.purchase.create({
-      //         data: {
-      //             productId: input.productId,
-      //             buyerName: input.buyerName,
-      //             buyerEmail: input.buyerEmail,
-      //             buyerPhone: input.buyerPhone,
-      //             amount: price,
-      //             status: "pending",
-      //         },
-      //     });
-
-      //     // Create form answers if provided
-      //     if (input.answers?.length) {
-      //         await tx.formAnswer.createMany({
-      //             data: input.answers.map((a) => ({
-      //                 purchaseId: newPurchase.id,
-      //                 formFieldId: a.formFieldId,
-      //                 answer: a.answer,
-      //             })),
-      //         });
-      //     }
-
-      //     return newPurchase;
-      // });
-
+      // Produk berbayar → buat purchase pending (kredit ledger di webhook)
       const purchase = await ctx.db.$transaction(async (tx) => {
         const newPurchase = await tx.purchase.create({
           data: {
@@ -192,6 +176,7 @@ export const purchasesRouter = createTRPCRouter({
       return { status: "pending", purchase };
     }),
 
+  // ─── CREATE PAYMENT INVOICE ─────────────────────────────────────────────────
   createPaymentInvoice: publicProcedure
     .input(
       z.object({
@@ -217,9 +202,7 @@ export const purchasesRouter = createTRPCRouter({
         where: { id: input.purchaseId },
         include: {
           product: {
-            select: {
-              name: true,
-            },
+            select: { name: true },
           },
         },
       });
@@ -230,6 +213,7 @@ export const purchasesRouter = createTRPCRouter({
       if (Number(purchase.amount) <= 0)
         throw new Error("Transaksi gratis tidak membutuhkan pembayaran");
 
+      // Return existing invoice jika metode sama
       if (
         purchase.xenditInvoiceUrl &&
         purchase.xenditPaymentMethod ===
@@ -241,6 +225,7 @@ export const purchasesRouter = createTRPCRouter({
         };
       }
 
+      // Return existing invoice jika sudah ada (metode berbeda, tapi invoice sudah dibuat)
       if (purchase.xenditInvoiceUrl && purchase.xenditPaymentMethod) {
         return {
           invoiceUrl: purchase.xenditInvoiceUrl,
@@ -276,7 +261,7 @@ export const purchasesRouter = createTRPCRouter({
       return { invoiceUrl: invoice.invoice_url, xenditInvoiceId: invoice.id };
     }),
 
-  // List all purchases for a product (creator dashboard, with pagination + search)
+  // ─── GET BY PRODUCT ID ──────────────────────────────────────────────────────
   getByProductId: protectedProcedure
     .input(
       z.object({
@@ -288,7 +273,6 @@ export const purchasesRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      // Verify product belongs to user
       const product = await ctx.db.product.findUnique({
         where: { id: input.productId, userId: ctx.session.user.id },
         select: { id: true },
@@ -334,8 +318,7 @@ export const purchasesRouter = createTRPCRouter({
       };
     }),
 
-  // get Purcase by id
-
+  // ─── GET BY ID ──────────────────────────────────────────────────────────────
   getById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -358,7 +341,7 @@ export const purchasesRouter = createTRPCRouter({
       return purchase;
     }),
 
-  // Get single purchase detail with form answers (creator dashboard)
+  // ─── GET DETAIL (creator dashboard) ────────────────────────────────────────
   getDetail: protectedProcedure
     .input(z.object({ purchaseId: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -386,7 +369,7 @@ export const purchasesRouter = createTRPCRouter({
       return purchase;
     }),
 
-  // Count purchases for a product (for product list page)
+  // ─── COUNT BY PRODUCT ID ────────────────────────────────────────────────────
   countByProductId: protectedProcedure
     .input(z.object({ productId: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -395,7 +378,7 @@ export const purchasesRouter = createTRPCRouter({
       });
     }),
 
-  // Batch count purchases for multiple products (for product list page)
+  // ─── BATCH COUNT BY PRODUCT IDS ────────────────────────────────────────────
   countByProductIds: protectedProcedure
     .input(z.object({ productIds: z.array(z.string()) }))
     .query(async ({ ctx, input }) => {
@@ -412,7 +395,7 @@ export const purchasesRouter = createTRPCRouter({
       return countMap;
     }),
 
-  // Get all unique participants across all products owned by the creator
+  // ─── GET ALL PARTICIPANTS ───────────────────────────────────────────────────
   getAllParticipants: protectedProcedure
     .input(
       z.object({
@@ -424,7 +407,6 @@ export const purchasesRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const skip = (input.page - 1) * input.limit;
 
-      // Get all product IDs owned by this creator
       const products = await ctx.db.product.findMany({
         where: { userId: ctx.session.user.id },
         select: { id: true },
@@ -441,7 +423,6 @@ export const purchasesRouter = createTRPCRouter({
         };
       }
 
-      // Define base where clause
       const whereClause = {
         productId: { in: productIds },
         ...(input.search
@@ -464,21 +445,12 @@ export const purchasesRouter = createTRPCRouter({
           : {}),
       };
 
-      // First, get unique emails to handle pagination correctly
-      // Prisma doesn't support easy pagination on groupBy yet for all fields
-      // So we'll get the aggregate data first
       const participantsAggregate = await ctx.db.purchase.groupBy({
         by: ["buyerEmail", "buyerName", "buyerPhone"],
         where: whereClause,
-        _count: {
-          id: true,
-        },
-        _sum: {
-          amount: true,
-        },
-        orderBy: {
-          buyerName: "asc",
-        },
+        _count: { id: true },
+        _sum: { amount: true },
+        orderBy: { buyerName: "asc" },
       });
 
       const total = participantsAggregate.length;
@@ -502,7 +474,8 @@ export const purchasesRouter = createTRPCRouter({
       };
     }),
 
-  // List all purchases for all products owned by the creator (creator dashboard)
+  // ─── GET ALL FOR CREATOR (dashboard utama) ─────────────────────────────────
+  // Balance sekarang dari ledger via getCreatorBalance
   getAllForCreator: protectedProcedure
     .input(
       z.object({
@@ -517,7 +490,6 @@ export const purchasesRouter = createTRPCRouter({
       const limit = input.limit;
       const skip = (page - 1) * limit;
 
-      // Get all product IDs owned by this creator
       const products = await ctx.db.product.findMany({
         where: { userId: ctx.session.user.id },
         select: { id: true },
@@ -535,6 +507,8 @@ export const purchasesRouter = createTRPCRouter({
             totalIncome: 0,
             totalTransactions: 0,
             balance: 0,
+            incomeChange: 0,
+            transactionsChange: 0,
           },
         };
       }
@@ -573,66 +547,44 @@ export const purchasesRouter = createTRPCRouter({
       const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
       const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
 
-      const [
-        items,
-        total,
-        allTimeStats,
-        currentStats,
-        previousStats,
-        activeWithdrawals,
-      ] = await Promise.all([
-        ctx.db.purchase.findMany({
-          where,
-          include: {
-            product: {
-              select: { name: true },
+      const [items, total, allTimeStats, currentStats, previousStats, { balance, totalIncome }] =
+        await Promise.all([
+          ctx.db.purchase.findMany({
+            where,
+            include: {
+              product: { select: { name: true } },
             },
-          },
-          orderBy: { createdAt: "desc" },
-          skip,
-          take: limit,
-        }),
-        ctx.db.purchase.count({ where }),
-        ctx.db.purchase.aggregate({
-          where: {
-            productId: { in: productIds },
-            status: "completed",
-          },
-          _sum: { amount: true },
-          _count: { id: true },
-        }),
-        ctx.db.purchase.aggregate({
-          where: {
-            productId: { in: productIds },
-            status: "completed",
-            createdAt: { gte: thirtyDaysAgo },
-          },
-          _sum: { amount: true },
-          _count: { id: true },
-        }),
-        ctx.db.purchase.aggregate({
-          where: {
-            productId: { in: productIds },
-            status: "completed",
-            createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo },
-          },
-          _sum: { amount: true },
-          _count: { id: true },
-        }),
-        ctx.db.withdrawal.findMany({
-          where: {
-            userId: ctx.session.user.id,
-            status: { in: ["PENDING", "ACCEPTED", "REQUESTED", "SUCCEEDED"] },
-          },
-          select: { amount: true },
-        }),
-      ]);
-
-      const totalIncome = Number(allTimeStats._sum.amount ?? 0);
-      const totalWithdrawn = activeWithdrawals.reduce(
-        (acc, withdrawal) => acc + Number(withdrawal.amount),
-        0,
-      );
+            orderBy: { createdAt: "desc" },
+            skip,
+            take: limit,
+          }),
+          ctx.db.purchase.count({ where }),
+          ctx.db.purchase.aggregate({
+            where: { productId: { in: productIds }, status: "completed" },
+            _sum: { amount: true },
+            _count: { id: true },
+          }),
+          ctx.db.purchase.aggregate({
+            where: {
+              productId: { in: productIds },
+              status: "completed",
+              createdAt: { gte: thirtyDaysAgo },
+            },
+            _sum: { amount: true },
+            _count: { id: true },
+          }),
+          ctx.db.purchase.aggregate({
+            where: {
+              productId: { in: productIds },
+              status: "completed",
+              createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo },
+            },
+            _sum: { amount: true },
+            _count: { id: true },
+          }),
+          // ← Balance sekarang dari ledger, bukan kalkulasi manual
+          getCreatorBalance(ctx.db, ctx.session.user.id),
+        ]);
 
       const calculateChange = (current: number, previous: number) => {
         if (previous === 0) return current > 0 ? 100 : 0;
@@ -646,9 +598,9 @@ export const purchasesRouter = createTRPCRouter({
         limit,
         totalPages: Math.ceil(total / limit),
         stats: {
-          totalIncome,
+          totalIncome,                          // dari ledger
           totalTransactions: allTimeStats._count.id,
-          balance: Math.max(totalIncome - totalWithdrawn, 0),
+          balance,                              // dari ledger
           incomeChange: calculateChange(
             Number(currentStats._sum.amount ?? 0),
             Number(previousStats._sum.amount ?? 0),
@@ -661,7 +613,7 @@ export const purchasesRouter = createTRPCRouter({
       };
     }),
 
-  // Delete single purchase (creator dashboard)
+  // ─── DELETE PURCHASE ────────────────────────────────────────────────────────
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -675,18 +627,15 @@ export const purchasesRouter = createTRPCRouter({
         throw new Error("Kamu tidak memiliki akses ke data ini");
       }
 
-      await ctx.db.purchase.delete({
-        where: { id: input.id },
-      });
+      await ctx.db.purchase.delete({ where: { id: input.id } });
 
       return { success: true };
     }),
 
-  // Get participant detail by email
+  // ─── GET PARTICIPANT DETAIL ─────────────────────────────────────────────────
   getParticipantDetail: protectedProcedure
     .input(z.object({ email: z.string().email() }))
     .query(async ({ ctx, input }) => {
-      // Get all product IDs owned by this creator
       const products = await ctx.db.product.findMany({
         where: { userId: ctx.session.user.id },
         select: { id: true },
@@ -700,7 +649,6 @@ export const purchasesRouter = createTRPCRouter({
         });
       }
 
-      // Get all purchases by this email for this creator's products
       const purchases = await ctx.db.purchase.findMany({
         where: {
           buyerEmail: input.email,
@@ -708,11 +656,7 @@ export const purchasesRouter = createTRPCRouter({
         },
         include: {
           product: {
-            select: {
-              name: true,
-              type: true,
-              format: true,
-},
+            select: { name: true, type: true, format: true },
           },
         },
         orderBy: { createdAt: "desc" },
@@ -725,7 +669,6 @@ export const purchasesRouter = createTRPCRouter({
         });
       }
 
-      // Latest purchase info for basic details
       const latest = purchases[0]!;
 
       return {

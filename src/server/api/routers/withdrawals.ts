@@ -5,10 +5,7 @@ import {
   simulatePayoutSuccess,
 } from "~/lib/xendit";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import {
-  WithdrawalStatus,
-  type PrismaClient,
-} from "../../../../prisma/generated/prisma";
+import { getCreatorBalance } from "~/lib/balance";
 
 const BANK_OPTIONS = {
   bca: { name: "BCA", channelCode: "ID_BCA" },
@@ -18,67 +15,6 @@ const BANK_OPTIONS = {
   cimb: { name: "CIMB Niaga", channelCode: "ID_CIMB" },
   bsi: { name: "BSI", channelCode: "ID_BSI" },
 } as const;
-
-const WITHDRAWAL_DEDUCTING_STATUSES = [
-  WithdrawalStatus.PENDING,
-  WithdrawalStatus.ACCEPTED,
-  WithdrawalStatus.REQUESTED,
-  WithdrawalStatus.SUCCEEDED,
-];
-
-async function getCreatorBalance(
-  db:
-    | PrismaClient
-    | Omit<
-        PrismaClient,
-        | "$connect"
-        | "$disconnect"
-        | "$on"
-        | "$transaction"
-        | "$use"
-        | "$extends"
-      >,
-  userId: string,
-) {
-  const products = await db.product.findMany({
-    where: { userId },
-    select: { id: true },
-  });
-  const productIds = products.map((product) => product.id);
-
-  if (productIds.length === 0) {
-    return { totalIncome: 0, totalWithdrawn: 0, balance: 0 };
-  }
-
-  const [completedPurchases, activeWithdrawals] = await Promise.all([
-    db.purchase.findMany({
-      where: { productId: { in: productIds }, status: "completed" },
-      select: { amount: true },
-    }),
-    db.withdrawal.findMany({
-      where: {
-        userId,
-        status: { in: WITHDRAWAL_DEDUCTING_STATUSES },
-      },
-      select: { amount: true },
-    }),
-  ]);
-
-  const totalIncome = completedPurchases.reduce(
-    (acc, purchase) => acc + Number(purchase.amount),
-    0,
-  );
-  const totalWithdrawn = activeWithdrawals.reduce(
-    (acc, withdrawal) => acc + Number(withdrawal.amount),
-    0,
-  );
-
-  return {
-    totalIncome,
-    totalWithdrawn,
-    balance: Math.max(totalIncome - totalWithdrawn, 0),
-  };
-}
 
 export const withdrawalsRouter = createTRPCRouter({
   create: protectedProcedure
@@ -109,7 +45,7 @@ export const withdrawalsRouter = createTRPCRouter({
 
         const bank = BANK_OPTIONS[input.bank];
 
-        return await tx.withdrawal.create({
+        const newWithdrawal = await tx.withdrawal.create({
           data: {
             userId: ctx.session.user.id,
             amount: input.amount, // Saldo CuanIN tetap dipotong full (input.amount)
@@ -125,6 +61,19 @@ export const withdrawalsRouter = createTRPCRouter({
               Date.now().toString(),
           },
         });
+
+        // Catat di ledger (debit)
+        await tx.balanceEntry.create({
+          data: {
+            userId: ctx.session.user.id,
+            amount: -input.amount,
+            type: "WITHDRAWAL_REQUESTED",
+            refId: newWithdrawal.id,
+            note: `Penarikan saldo ke ${bank.name} (${input.accountNumber})`,
+          },
+        });
+
+        return newWithdrawal;
       });
 
       try {
@@ -159,14 +108,26 @@ export const withdrawalsRouter = createTRPCRouter({
         }
         return updated;
       } catch (error) {
-        await ctx.db.withdrawal.update({
-          where: { id: withdrawal.id },
-          data: {
-            status: "FAILED",
-            failureMessage:
-              error instanceof Error ? error.message : "Gagal membuat payout",
-          },
-        });
+        // Jika gagal buat payout di Xendit, kembalikan saldo di ledger
+        await ctx.db.$transaction([
+          ctx.db.withdrawal.update({
+            where: { id: withdrawal.id },
+            data: {
+              status: "FAILED",
+              failureMessage:
+                error instanceof Error ? error.message : "Gagal membuat payout",
+            },
+          }),
+          ctx.db.balanceEntry.create({
+            data: {
+              userId: ctx.session.user.id,
+              amount: withdrawal.amount,
+              type: "WITHDRAWAL_FAILED",
+              refId: withdrawal.id,
+              note: `Gagal payout: ${error instanceof Error ? error.message : "Gagal membuat payout"} — saldo dikembalikan`,
+            },
+          }),
+        ]);
 
         throw new TRPCError({
           code: "BAD_REQUEST",

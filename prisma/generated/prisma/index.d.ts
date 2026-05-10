@@ -83,6 +83,11 @@ export type CatalogView = $Result.DefaultSelection<Prisma.$CatalogViewPayload>
  * 
  */
 export type Withdrawal = $Result.DefaultSelection<Prisma.$WithdrawalPayload>
+/**
+ * Model BalanceEntry
+ * 
+ */
+export type BalanceEntry = $Result.DefaultSelection<Prisma.$BalanceEntryPayload>
 
 /**
  * Enums
@@ -129,6 +134,16 @@ export const WithdrawalStatus: {
 
 export type WithdrawalStatus = (typeof WithdrawalStatus)[keyof typeof WithdrawalStatus]
 
+
+export const BalanceEntryType: {
+  PURCHASE_COMPLETED: 'PURCHASE_COMPLETED',
+  WITHDRAWAL_REQUESTED: 'WITHDRAWAL_REQUESTED',
+  WITHDRAWAL_FAILED: 'WITHDRAWAL_FAILED',
+  WITHDRAWAL_REVERSED: 'WITHDRAWAL_REVERSED'
+};
+
+export type BalanceEntryType = (typeof BalanceEntryType)[keyof typeof BalanceEntryType]
+
 }
 
 export type ProductType = $Enums.ProductType
@@ -146,6 +161,10 @@ export const FieldType: typeof $Enums.FieldType
 export type WithdrawalStatus = $Enums.WithdrawalStatus
 
 export const WithdrawalStatus: typeof $Enums.WithdrawalStatus
+
+export type BalanceEntryType = $Enums.BalanceEntryType
+
+export const BalanceEntryType: typeof $Enums.BalanceEntryType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -404,6 +423,16 @@ export class PrismaClient<
     * ```
     */
   get withdrawal(): Prisma.WithdrawalDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.balanceEntry`: Exposes CRUD operations for the **BalanceEntry** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BalanceEntries
+    * const balanceEntries = await prisma.balanceEntry.findMany()
+    * ```
+    */
+  get balanceEntry(): Prisma.BalanceEntryDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -858,7 +887,8 @@ export namespace Prisma {
     VerificationToken: 'VerificationToken',
     Catalog: 'Catalog',
     CatalogView: 'CatalogView',
-    Withdrawal: 'Withdrawal'
+    Withdrawal: 'Withdrawal',
+    BalanceEntry: 'BalanceEntry'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -877,7 +907,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "post" | "profile" | "product" | "productView" | "formField" | "purchase" | "formAnswer" | "account" | "session" | "user" | "verificationToken" | "catalog" | "catalogView" | "withdrawal"
+      modelProps: "post" | "profile" | "product" | "productView" | "formField" | "purchase" | "formAnswer" | "account" | "session" | "user" | "verificationToken" | "catalog" | "catalogView" | "withdrawal" | "balanceEntry"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1917,6 +1947,80 @@ export namespace Prisma {
           }
         }
       }
+      BalanceEntry: {
+        payload: Prisma.$BalanceEntryPayload<ExtArgs>
+        fields: Prisma.BalanceEntryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BalanceEntryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BalanceEntryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BalanceEntryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BalanceEntryPayload>
+          }
+          findFirst: {
+            args: Prisma.BalanceEntryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BalanceEntryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BalanceEntryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BalanceEntryPayload>
+          }
+          findMany: {
+            args: Prisma.BalanceEntryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BalanceEntryPayload>[]
+          }
+          create: {
+            args: Prisma.BalanceEntryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BalanceEntryPayload>
+          }
+          createMany: {
+            args: Prisma.BalanceEntryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BalanceEntryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BalanceEntryPayload>[]
+          }
+          delete: {
+            args: Prisma.BalanceEntryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BalanceEntryPayload>
+          }
+          update: {
+            args: Prisma.BalanceEntryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BalanceEntryPayload>
+          }
+          deleteMany: {
+            args: Prisma.BalanceEntryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BalanceEntryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BalanceEntryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BalanceEntryPayload>[]
+          }
+          upsert: {
+            args: Prisma.BalanceEntryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BalanceEntryPayload>
+          }
+          aggregate: {
+            args: Prisma.BalanceEntryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBalanceEntry>
+          }
+          groupBy: {
+            args: Prisma.BalanceEntryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BalanceEntryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BalanceEntryCountArgs<ExtArgs>
+            result: $Utils.Optional<BalanceEntryCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2027,6 +2131,7 @@ export namespace Prisma {
     catalog?: CatalogOmit
     catalogView?: CatalogViewOmit
     withdrawal?: WithdrawalOmit
+    balanceEntry?: BalanceEntryOmit
   }
 
   /* Types for Logging */
@@ -2223,6 +2328,7 @@ export namespace Prisma {
     products: number
     sessions: number
     withdrawals: number
+    balanceEntries: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2231,6 +2337,7 @@ export namespace Prisma {
     products?: boolean | UserCountOutputTypeCountProductsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     withdrawals?: boolean | UserCountOutputTypeCountWithdrawalsArgs
+    balanceEntries?: boolean | UserCountOutputTypeCountBalanceEntriesArgs
   }
 
   // Custom InputTypes
@@ -2277,6 +2384,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountWithdrawalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: WithdrawalWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountBalanceEntriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BalanceEntryWhereInput
   }
 
 
@@ -12870,6 +12984,7 @@ export namespace Prisma {
     profile?: boolean | User$profileArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     withdrawals?: boolean | User$withdrawalsArgs<ExtArgs>
+    balanceEntries?: boolean | User$balanceEntriesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -12930,6 +13045,7 @@ export namespace Prisma {
     profile?: boolean | User$profileArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     withdrawals?: boolean | User$withdrawalsArgs<ExtArgs>
+    balanceEntries?: boolean | User$balanceEntriesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -12945,6 +13061,7 @@ export namespace Prisma {
       profile: Prisma.$ProfilePayload<ExtArgs> | null
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       withdrawals: Prisma.$WithdrawalPayload<ExtArgs>[]
+      balanceEntries: Prisma.$BalanceEntryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -13361,6 +13478,7 @@ export namespace Prisma {
     profile<T extends User$profileArgs<ExtArgs> = {}>(args?: Subset<T, User$profileArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     withdrawals<T extends User$withdrawalsArgs<ExtArgs> = {}>(args?: Subset<T, User$withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WithdrawalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    balanceEntries<T extends User$balanceEntriesArgs<ExtArgs> = {}>(args?: Subset<T, User$balanceEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BalanceEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13946,6 +14064,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: WithdrawalScalarFieldEnum | WithdrawalScalarFieldEnum[]
+  }
+
+  /**
+   * User.balanceEntries
+   */
+  export type User$balanceEntriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BalanceEntry
+     */
+    select?: BalanceEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BalanceEntry
+     */
+    omit?: BalanceEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BalanceEntryInclude<ExtArgs> | null
+    where?: BalanceEntryWhereInput
+    orderBy?: BalanceEntryOrderByWithRelationInput | BalanceEntryOrderByWithRelationInput[]
+    cursor?: BalanceEntryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BalanceEntryScalarFieldEnum | BalanceEntryScalarFieldEnum[]
   }
 
   /**
@@ -18378,6 +18520,1124 @@ export namespace Prisma {
 
 
   /**
+   * Model BalanceEntry
+   */
+
+  export type AggregateBalanceEntry = {
+    _count: BalanceEntryCountAggregateOutputType | null
+    _avg: BalanceEntryAvgAggregateOutputType | null
+    _sum: BalanceEntrySumAggregateOutputType | null
+    _min: BalanceEntryMinAggregateOutputType | null
+    _max: BalanceEntryMaxAggregateOutputType | null
+  }
+
+  export type BalanceEntryAvgAggregateOutputType = {
+    amount: Decimal | null
+  }
+
+  export type BalanceEntrySumAggregateOutputType = {
+    amount: Decimal | null
+  }
+
+  export type BalanceEntryMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    amount: Decimal | null
+    type: $Enums.BalanceEntryType | null
+    refId: string | null
+    note: string | null
+    createdAt: Date | null
+  }
+
+  export type BalanceEntryMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    amount: Decimal | null
+    type: $Enums.BalanceEntryType | null
+    refId: string | null
+    note: string | null
+    createdAt: Date | null
+  }
+
+  export type BalanceEntryCountAggregateOutputType = {
+    id: number
+    userId: number
+    amount: number
+    type: number
+    refId: number
+    note: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type BalanceEntryAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type BalanceEntrySumAggregateInputType = {
+    amount?: true
+  }
+
+  export type BalanceEntryMinAggregateInputType = {
+    id?: true
+    userId?: true
+    amount?: true
+    type?: true
+    refId?: true
+    note?: true
+    createdAt?: true
+  }
+
+  export type BalanceEntryMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    amount?: true
+    type?: true
+    refId?: true
+    note?: true
+    createdAt?: true
+  }
+
+  export type BalanceEntryCountAggregateInputType = {
+    id?: true
+    userId?: true
+    amount?: true
+    type?: true
+    refId?: true
+    note?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type BalanceEntryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BalanceEntry to aggregate.
+     */
+    where?: BalanceEntryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BalanceEntries to fetch.
+     */
+    orderBy?: BalanceEntryOrderByWithRelationInput | BalanceEntryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BalanceEntryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BalanceEntries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BalanceEntries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BalanceEntries
+    **/
+    _count?: true | BalanceEntryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BalanceEntryAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BalanceEntrySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BalanceEntryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BalanceEntryMaxAggregateInputType
+  }
+
+  export type GetBalanceEntryAggregateType<T extends BalanceEntryAggregateArgs> = {
+        [P in keyof T & keyof AggregateBalanceEntry]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBalanceEntry[P]>
+      : GetScalarType<T[P], AggregateBalanceEntry[P]>
+  }
+
+
+
+
+  export type BalanceEntryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BalanceEntryWhereInput
+    orderBy?: BalanceEntryOrderByWithAggregationInput | BalanceEntryOrderByWithAggregationInput[]
+    by: BalanceEntryScalarFieldEnum[] | BalanceEntryScalarFieldEnum
+    having?: BalanceEntryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BalanceEntryCountAggregateInputType | true
+    _avg?: BalanceEntryAvgAggregateInputType
+    _sum?: BalanceEntrySumAggregateInputType
+    _min?: BalanceEntryMinAggregateInputType
+    _max?: BalanceEntryMaxAggregateInputType
+  }
+
+  export type BalanceEntryGroupByOutputType = {
+    id: string
+    userId: string
+    amount: Decimal
+    type: $Enums.BalanceEntryType
+    refId: string | null
+    note: string | null
+    createdAt: Date
+    _count: BalanceEntryCountAggregateOutputType | null
+    _avg: BalanceEntryAvgAggregateOutputType | null
+    _sum: BalanceEntrySumAggregateOutputType | null
+    _min: BalanceEntryMinAggregateOutputType | null
+    _max: BalanceEntryMaxAggregateOutputType | null
+  }
+
+  type GetBalanceEntryGroupByPayload<T extends BalanceEntryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BalanceEntryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BalanceEntryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BalanceEntryGroupByOutputType[P]>
+            : GetScalarType<T[P], BalanceEntryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BalanceEntrySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    amount?: boolean
+    type?: boolean
+    refId?: boolean
+    note?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["balanceEntry"]>
+
+  export type BalanceEntrySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    amount?: boolean
+    type?: boolean
+    refId?: boolean
+    note?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["balanceEntry"]>
+
+  export type BalanceEntrySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    amount?: boolean
+    type?: boolean
+    refId?: boolean
+    note?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["balanceEntry"]>
+
+  export type BalanceEntrySelectScalar = {
+    id?: boolean
+    userId?: boolean
+    amount?: boolean
+    type?: boolean
+    refId?: boolean
+    note?: boolean
+    createdAt?: boolean
+  }
+
+  export type BalanceEntryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "amount" | "type" | "refId" | "note" | "createdAt", ExtArgs["result"]["balanceEntry"]>
+  export type BalanceEntryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type BalanceEntryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type BalanceEntryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $BalanceEntryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BalanceEntry"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      amount: Prisma.Decimal
+      type: $Enums.BalanceEntryType
+      refId: string | null
+      note: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["balanceEntry"]>
+    composites: {}
+  }
+
+  type BalanceEntryGetPayload<S extends boolean | null | undefined | BalanceEntryDefaultArgs> = $Result.GetResult<Prisma.$BalanceEntryPayload, S>
+
+  type BalanceEntryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BalanceEntryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BalanceEntryCountAggregateInputType | true
+    }
+
+  export interface BalanceEntryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BalanceEntry'], meta: { name: 'BalanceEntry' } }
+    /**
+     * Find zero or one BalanceEntry that matches the filter.
+     * @param {BalanceEntryFindUniqueArgs} args - Arguments to find a BalanceEntry
+     * @example
+     * // Get one BalanceEntry
+     * const balanceEntry = await prisma.balanceEntry.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BalanceEntryFindUniqueArgs>(args: SelectSubset<T, BalanceEntryFindUniqueArgs<ExtArgs>>): Prisma__BalanceEntryClient<$Result.GetResult<Prisma.$BalanceEntryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one BalanceEntry that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BalanceEntryFindUniqueOrThrowArgs} args - Arguments to find a BalanceEntry
+     * @example
+     * // Get one BalanceEntry
+     * const balanceEntry = await prisma.balanceEntry.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BalanceEntryFindUniqueOrThrowArgs>(args: SelectSubset<T, BalanceEntryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BalanceEntryClient<$Result.GetResult<Prisma.$BalanceEntryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BalanceEntry that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BalanceEntryFindFirstArgs} args - Arguments to find a BalanceEntry
+     * @example
+     * // Get one BalanceEntry
+     * const balanceEntry = await prisma.balanceEntry.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BalanceEntryFindFirstArgs>(args?: SelectSubset<T, BalanceEntryFindFirstArgs<ExtArgs>>): Prisma__BalanceEntryClient<$Result.GetResult<Prisma.$BalanceEntryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BalanceEntry that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BalanceEntryFindFirstOrThrowArgs} args - Arguments to find a BalanceEntry
+     * @example
+     * // Get one BalanceEntry
+     * const balanceEntry = await prisma.balanceEntry.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BalanceEntryFindFirstOrThrowArgs>(args?: SelectSubset<T, BalanceEntryFindFirstOrThrowArgs<ExtArgs>>): Prisma__BalanceEntryClient<$Result.GetResult<Prisma.$BalanceEntryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more BalanceEntries that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BalanceEntryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BalanceEntries
+     * const balanceEntries = await prisma.balanceEntry.findMany()
+     * 
+     * // Get first 10 BalanceEntries
+     * const balanceEntries = await prisma.balanceEntry.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const balanceEntryWithIdOnly = await prisma.balanceEntry.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BalanceEntryFindManyArgs>(args?: SelectSubset<T, BalanceEntryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BalanceEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a BalanceEntry.
+     * @param {BalanceEntryCreateArgs} args - Arguments to create a BalanceEntry.
+     * @example
+     * // Create one BalanceEntry
+     * const BalanceEntry = await prisma.balanceEntry.create({
+     *   data: {
+     *     // ... data to create a BalanceEntry
+     *   }
+     * })
+     * 
+     */
+    create<T extends BalanceEntryCreateArgs>(args: SelectSubset<T, BalanceEntryCreateArgs<ExtArgs>>): Prisma__BalanceEntryClient<$Result.GetResult<Prisma.$BalanceEntryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many BalanceEntries.
+     * @param {BalanceEntryCreateManyArgs} args - Arguments to create many BalanceEntries.
+     * @example
+     * // Create many BalanceEntries
+     * const balanceEntry = await prisma.balanceEntry.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BalanceEntryCreateManyArgs>(args?: SelectSubset<T, BalanceEntryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BalanceEntries and returns the data saved in the database.
+     * @param {BalanceEntryCreateManyAndReturnArgs} args - Arguments to create many BalanceEntries.
+     * @example
+     * // Create many BalanceEntries
+     * const balanceEntry = await prisma.balanceEntry.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BalanceEntries and only return the `id`
+     * const balanceEntryWithIdOnly = await prisma.balanceEntry.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BalanceEntryCreateManyAndReturnArgs>(args?: SelectSubset<T, BalanceEntryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BalanceEntryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a BalanceEntry.
+     * @param {BalanceEntryDeleteArgs} args - Arguments to delete one BalanceEntry.
+     * @example
+     * // Delete one BalanceEntry
+     * const BalanceEntry = await prisma.balanceEntry.delete({
+     *   where: {
+     *     // ... filter to delete one BalanceEntry
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BalanceEntryDeleteArgs>(args: SelectSubset<T, BalanceEntryDeleteArgs<ExtArgs>>): Prisma__BalanceEntryClient<$Result.GetResult<Prisma.$BalanceEntryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one BalanceEntry.
+     * @param {BalanceEntryUpdateArgs} args - Arguments to update one BalanceEntry.
+     * @example
+     * // Update one BalanceEntry
+     * const balanceEntry = await prisma.balanceEntry.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BalanceEntryUpdateArgs>(args: SelectSubset<T, BalanceEntryUpdateArgs<ExtArgs>>): Prisma__BalanceEntryClient<$Result.GetResult<Prisma.$BalanceEntryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more BalanceEntries.
+     * @param {BalanceEntryDeleteManyArgs} args - Arguments to filter BalanceEntries to delete.
+     * @example
+     * // Delete a few BalanceEntries
+     * const { count } = await prisma.balanceEntry.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BalanceEntryDeleteManyArgs>(args?: SelectSubset<T, BalanceEntryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BalanceEntries.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BalanceEntryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BalanceEntries
+     * const balanceEntry = await prisma.balanceEntry.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BalanceEntryUpdateManyArgs>(args: SelectSubset<T, BalanceEntryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BalanceEntries and returns the data updated in the database.
+     * @param {BalanceEntryUpdateManyAndReturnArgs} args - Arguments to update many BalanceEntries.
+     * @example
+     * // Update many BalanceEntries
+     * const balanceEntry = await prisma.balanceEntry.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more BalanceEntries and only return the `id`
+     * const balanceEntryWithIdOnly = await prisma.balanceEntry.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BalanceEntryUpdateManyAndReturnArgs>(args: SelectSubset<T, BalanceEntryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BalanceEntryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one BalanceEntry.
+     * @param {BalanceEntryUpsertArgs} args - Arguments to update or create a BalanceEntry.
+     * @example
+     * // Update or create a BalanceEntry
+     * const balanceEntry = await prisma.balanceEntry.upsert({
+     *   create: {
+     *     // ... data to create a BalanceEntry
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BalanceEntry we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BalanceEntryUpsertArgs>(args: SelectSubset<T, BalanceEntryUpsertArgs<ExtArgs>>): Prisma__BalanceEntryClient<$Result.GetResult<Prisma.$BalanceEntryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of BalanceEntries.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BalanceEntryCountArgs} args - Arguments to filter BalanceEntries to count.
+     * @example
+     * // Count the number of BalanceEntries
+     * const count = await prisma.balanceEntry.count({
+     *   where: {
+     *     // ... the filter for the BalanceEntries we want to count
+     *   }
+     * })
+    **/
+    count<T extends BalanceEntryCountArgs>(
+      args?: Subset<T, BalanceEntryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BalanceEntryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BalanceEntry.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BalanceEntryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BalanceEntryAggregateArgs>(args: Subset<T, BalanceEntryAggregateArgs>): Prisma.PrismaPromise<GetBalanceEntryAggregateType<T>>
+
+    /**
+     * Group by BalanceEntry.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BalanceEntryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BalanceEntryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BalanceEntryGroupByArgs['orderBy'] }
+        : { orderBy?: BalanceEntryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BalanceEntryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBalanceEntryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BalanceEntry model
+   */
+  readonly fields: BalanceEntryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BalanceEntry.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BalanceEntryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BalanceEntry model
+   */
+  interface BalanceEntryFieldRefs {
+    readonly id: FieldRef<"BalanceEntry", 'String'>
+    readonly userId: FieldRef<"BalanceEntry", 'String'>
+    readonly amount: FieldRef<"BalanceEntry", 'Decimal'>
+    readonly type: FieldRef<"BalanceEntry", 'BalanceEntryType'>
+    readonly refId: FieldRef<"BalanceEntry", 'String'>
+    readonly note: FieldRef<"BalanceEntry", 'String'>
+    readonly createdAt: FieldRef<"BalanceEntry", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BalanceEntry findUnique
+   */
+  export type BalanceEntryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BalanceEntry
+     */
+    select?: BalanceEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BalanceEntry
+     */
+    omit?: BalanceEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BalanceEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which BalanceEntry to fetch.
+     */
+    where: BalanceEntryWhereUniqueInput
+  }
+
+  /**
+   * BalanceEntry findUniqueOrThrow
+   */
+  export type BalanceEntryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BalanceEntry
+     */
+    select?: BalanceEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BalanceEntry
+     */
+    omit?: BalanceEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BalanceEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which BalanceEntry to fetch.
+     */
+    where: BalanceEntryWhereUniqueInput
+  }
+
+  /**
+   * BalanceEntry findFirst
+   */
+  export type BalanceEntryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BalanceEntry
+     */
+    select?: BalanceEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BalanceEntry
+     */
+    omit?: BalanceEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BalanceEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which BalanceEntry to fetch.
+     */
+    where?: BalanceEntryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BalanceEntries to fetch.
+     */
+    orderBy?: BalanceEntryOrderByWithRelationInput | BalanceEntryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BalanceEntries.
+     */
+    cursor?: BalanceEntryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BalanceEntries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BalanceEntries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BalanceEntries.
+     */
+    distinct?: BalanceEntryScalarFieldEnum | BalanceEntryScalarFieldEnum[]
+  }
+
+  /**
+   * BalanceEntry findFirstOrThrow
+   */
+  export type BalanceEntryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BalanceEntry
+     */
+    select?: BalanceEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BalanceEntry
+     */
+    omit?: BalanceEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BalanceEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which BalanceEntry to fetch.
+     */
+    where?: BalanceEntryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BalanceEntries to fetch.
+     */
+    orderBy?: BalanceEntryOrderByWithRelationInput | BalanceEntryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BalanceEntries.
+     */
+    cursor?: BalanceEntryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BalanceEntries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BalanceEntries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BalanceEntries.
+     */
+    distinct?: BalanceEntryScalarFieldEnum | BalanceEntryScalarFieldEnum[]
+  }
+
+  /**
+   * BalanceEntry findMany
+   */
+  export type BalanceEntryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BalanceEntry
+     */
+    select?: BalanceEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BalanceEntry
+     */
+    omit?: BalanceEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BalanceEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which BalanceEntries to fetch.
+     */
+    where?: BalanceEntryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BalanceEntries to fetch.
+     */
+    orderBy?: BalanceEntryOrderByWithRelationInput | BalanceEntryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BalanceEntries.
+     */
+    cursor?: BalanceEntryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BalanceEntries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BalanceEntries.
+     */
+    skip?: number
+    distinct?: BalanceEntryScalarFieldEnum | BalanceEntryScalarFieldEnum[]
+  }
+
+  /**
+   * BalanceEntry create
+   */
+  export type BalanceEntryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BalanceEntry
+     */
+    select?: BalanceEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BalanceEntry
+     */
+    omit?: BalanceEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BalanceEntryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a BalanceEntry.
+     */
+    data: XOR<BalanceEntryCreateInput, BalanceEntryUncheckedCreateInput>
+  }
+
+  /**
+   * BalanceEntry createMany
+   */
+  export type BalanceEntryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BalanceEntries.
+     */
+    data: BalanceEntryCreateManyInput | BalanceEntryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BalanceEntry createManyAndReturn
+   */
+  export type BalanceEntryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BalanceEntry
+     */
+    select?: BalanceEntrySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BalanceEntry
+     */
+    omit?: BalanceEntryOmit<ExtArgs> | null
+    /**
+     * The data used to create many BalanceEntries.
+     */
+    data: BalanceEntryCreateManyInput | BalanceEntryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BalanceEntryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BalanceEntry update
+   */
+  export type BalanceEntryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BalanceEntry
+     */
+    select?: BalanceEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BalanceEntry
+     */
+    omit?: BalanceEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BalanceEntryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a BalanceEntry.
+     */
+    data: XOR<BalanceEntryUpdateInput, BalanceEntryUncheckedUpdateInput>
+    /**
+     * Choose, which BalanceEntry to update.
+     */
+    where: BalanceEntryWhereUniqueInput
+  }
+
+  /**
+   * BalanceEntry updateMany
+   */
+  export type BalanceEntryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BalanceEntries.
+     */
+    data: XOR<BalanceEntryUpdateManyMutationInput, BalanceEntryUncheckedUpdateManyInput>
+    /**
+     * Filter which BalanceEntries to update
+     */
+    where?: BalanceEntryWhereInput
+    /**
+     * Limit how many BalanceEntries to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BalanceEntry updateManyAndReturn
+   */
+  export type BalanceEntryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BalanceEntry
+     */
+    select?: BalanceEntrySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BalanceEntry
+     */
+    omit?: BalanceEntryOmit<ExtArgs> | null
+    /**
+     * The data used to update BalanceEntries.
+     */
+    data: XOR<BalanceEntryUpdateManyMutationInput, BalanceEntryUncheckedUpdateManyInput>
+    /**
+     * Filter which BalanceEntries to update
+     */
+    where?: BalanceEntryWhereInput
+    /**
+     * Limit how many BalanceEntries to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BalanceEntryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BalanceEntry upsert
+   */
+  export type BalanceEntryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BalanceEntry
+     */
+    select?: BalanceEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BalanceEntry
+     */
+    omit?: BalanceEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BalanceEntryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the BalanceEntry to update in case it exists.
+     */
+    where: BalanceEntryWhereUniqueInput
+    /**
+     * In case the BalanceEntry found by the `where` argument doesn't exist, create a new BalanceEntry with this data.
+     */
+    create: XOR<BalanceEntryCreateInput, BalanceEntryUncheckedCreateInput>
+    /**
+     * In case the BalanceEntry was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BalanceEntryUpdateInput, BalanceEntryUncheckedUpdateInput>
+  }
+
+  /**
+   * BalanceEntry delete
+   */
+  export type BalanceEntryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BalanceEntry
+     */
+    select?: BalanceEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BalanceEntry
+     */
+    omit?: BalanceEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BalanceEntryInclude<ExtArgs> | null
+    /**
+     * Filter which BalanceEntry to delete.
+     */
+    where: BalanceEntryWhereUniqueInput
+  }
+
+  /**
+   * BalanceEntry deleteMany
+   */
+  export type BalanceEntryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BalanceEntries to delete
+     */
+    where?: BalanceEntryWhereInput
+    /**
+     * Limit how many BalanceEntries to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * BalanceEntry without action
+   */
+  export type BalanceEntryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BalanceEntry
+     */
+    select?: BalanceEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BalanceEntry
+     */
+    omit?: BalanceEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BalanceEntryInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -18605,6 +19865,19 @@ export namespace Prisma {
   export type WithdrawalScalarFieldEnum = (typeof WithdrawalScalarFieldEnum)[keyof typeof WithdrawalScalarFieldEnum]
 
 
+  export const BalanceEntryScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    amount: 'amount',
+    type: 'type',
+    refId: 'refId',
+    note: 'note',
+    createdAt: 'createdAt'
+  };
+
+  export type BalanceEntryScalarFieldEnum = (typeof BalanceEntryScalarFieldEnum)[keyof typeof BalanceEntryScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -18781,6 +20054,20 @@ export namespace Prisma {
    * Reference to a field of type 'WithdrawalStatus[]'
    */
   export type ListEnumWithdrawalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WithdrawalStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'BalanceEntryType'
+   */
+  export type EnumBalanceEntryTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BalanceEntryType'>
+    
+
+
+  /**
+   * Reference to a field of type 'BalanceEntryType[]'
+   */
+  export type ListEnumBalanceEntryTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BalanceEntryType[]'>
     
 
 
@@ -19543,6 +20830,7 @@ export namespace Prisma {
     profile?: XOR<ProfileNullableScalarRelationFilter, ProfileWhereInput> | null
     sessions?: SessionListRelationFilter
     withdrawals?: WithdrawalListRelationFilter
+    balanceEntries?: BalanceEntryListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -19566,6 +20854,7 @@ export namespace Prisma {
     profile?: ProfileOrderByWithRelationInput
     sessions?: SessionOrderByRelationAggregateInput
     withdrawals?: WithdrawalOrderByRelationAggregateInput
+    balanceEntries?: BalanceEntryOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -19592,6 +20881,7 @@ export namespace Prisma {
     profile?: XOR<ProfileNullableScalarRelationFilter, ProfileWhereInput> | null
     sessions?: SessionListRelationFilter
     withdrawals?: WithdrawalListRelationFilter
+    balanceEntries?: BalanceEntryListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -19921,6 +21211,73 @@ export namespace Prisma {
     failureMessage?: StringNullableWithAggregatesFilter<"Withdrawal"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Withdrawal"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Withdrawal"> | Date | string
+  }
+
+  export type BalanceEntryWhereInput = {
+    AND?: BalanceEntryWhereInput | BalanceEntryWhereInput[]
+    OR?: BalanceEntryWhereInput[]
+    NOT?: BalanceEntryWhereInput | BalanceEntryWhereInput[]
+    id?: StringFilter<"BalanceEntry"> | string
+    userId?: StringFilter<"BalanceEntry"> | string
+    amount?: DecimalFilter<"BalanceEntry"> | Decimal | DecimalJsLike | number | string
+    type?: EnumBalanceEntryTypeFilter<"BalanceEntry"> | $Enums.BalanceEntryType
+    refId?: StringNullableFilter<"BalanceEntry"> | string | null
+    note?: StringNullableFilter<"BalanceEntry"> | string | null
+    createdAt?: DateTimeFilter<"BalanceEntry"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type BalanceEntryOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    type?: SortOrder
+    refId?: SortOrderInput | SortOrder
+    note?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type BalanceEntryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: BalanceEntryWhereInput | BalanceEntryWhereInput[]
+    OR?: BalanceEntryWhereInput[]
+    NOT?: BalanceEntryWhereInput | BalanceEntryWhereInput[]
+    userId?: StringFilter<"BalanceEntry"> | string
+    amount?: DecimalFilter<"BalanceEntry"> | Decimal | DecimalJsLike | number | string
+    type?: EnumBalanceEntryTypeFilter<"BalanceEntry"> | $Enums.BalanceEntryType
+    refId?: StringNullableFilter<"BalanceEntry"> | string | null
+    note?: StringNullableFilter<"BalanceEntry"> | string | null
+    createdAt?: DateTimeFilter<"BalanceEntry"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type BalanceEntryOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    type?: SortOrder
+    refId?: SortOrderInput | SortOrder
+    note?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: BalanceEntryCountOrderByAggregateInput
+    _avg?: BalanceEntryAvgOrderByAggregateInput
+    _max?: BalanceEntryMaxOrderByAggregateInput
+    _min?: BalanceEntryMinOrderByAggregateInput
+    _sum?: BalanceEntrySumOrderByAggregateInput
+  }
+
+  export type BalanceEntryScalarWhereWithAggregatesInput = {
+    AND?: BalanceEntryScalarWhereWithAggregatesInput | BalanceEntryScalarWhereWithAggregatesInput[]
+    OR?: BalanceEntryScalarWhereWithAggregatesInput[]
+    NOT?: BalanceEntryScalarWhereWithAggregatesInput | BalanceEntryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"BalanceEntry"> | string
+    userId?: StringWithAggregatesFilter<"BalanceEntry"> | string
+    amount?: DecimalWithAggregatesFilter<"BalanceEntry"> | Decimal | DecimalJsLike | number | string
+    type?: EnumBalanceEntryTypeWithAggregatesFilter<"BalanceEntry"> | $Enums.BalanceEntryType
+    refId?: StringNullableWithAggregatesFilter<"BalanceEntry"> | string | null
+    note?: StringNullableWithAggregatesFilter<"BalanceEntry"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"BalanceEntry"> | Date | string
   }
 
   export type PostCreateInput = {
@@ -20726,6 +22083,7 @@ export namespace Prisma {
     profile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -20749,6 +22107,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -20772,6 +22131,7 @@ export namespace Prisma {
     profile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -20795,6 +22155,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -21158,6 +22519,75 @@ export namespace Prisma {
     failureMessage?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BalanceEntryCreateInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    type: $Enums.BalanceEntryType
+    refId?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutBalanceEntriesInput
+  }
+
+  export type BalanceEntryUncheckedCreateInput = {
+    id?: string
+    userId: string
+    amount: Decimal | DecimalJsLike | number | string
+    type: $Enums.BalanceEntryType
+    refId?: string | null
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type BalanceEntryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumBalanceEntryTypeFieldUpdateOperationsInput | $Enums.BalanceEntryType
+    refId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutBalanceEntriesNestedInput
+  }
+
+  export type BalanceEntryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumBalanceEntryTypeFieldUpdateOperationsInput | $Enums.BalanceEntryType
+    refId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BalanceEntryCreateManyInput = {
+    id?: string
+    userId: string
+    amount: Decimal | DecimalJsLike | number | string
+    type: $Enums.BalanceEntryType
+    refId?: string | null
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type BalanceEntryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumBalanceEntryTypeFieldUpdateOperationsInput | $Enums.BalanceEntryType
+    refId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BalanceEntryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumBalanceEntryTypeFieldUpdateOperationsInput | $Enums.BalanceEntryType
+    refId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -21949,6 +23379,12 @@ export namespace Prisma {
     none?: WithdrawalWhereInput
   }
 
+  export type BalanceEntryListRelationFilter = {
+    every?: BalanceEntryWhereInput
+    some?: BalanceEntryWhereInput
+    none?: BalanceEntryWhereInput
+  }
+
   export type AccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -21966,6 +23402,10 @@ export namespace Prisma {
   }
 
   export type WithdrawalOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type BalanceEntryOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -22195,6 +23635,61 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumWithdrawalStatusFilter<$PrismaModel>
     _max?: NestedEnumWithdrawalStatusFilter<$PrismaModel>
+  }
+
+  export type EnumBalanceEntryTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.BalanceEntryType | EnumBalanceEntryTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.BalanceEntryType[] | ListEnumBalanceEntryTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BalanceEntryType[] | ListEnumBalanceEntryTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumBalanceEntryTypeFilter<$PrismaModel> | $Enums.BalanceEntryType
+  }
+
+  export type BalanceEntryCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    type?: SortOrder
+    refId?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type BalanceEntryAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type BalanceEntryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    type?: SortOrder
+    refId?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type BalanceEntryMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    type?: SortOrder
+    refId?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type BalanceEntrySumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type EnumBalanceEntryTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BalanceEntryType | EnumBalanceEntryTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.BalanceEntryType[] | ListEnumBalanceEntryTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BalanceEntryType[] | ListEnumBalanceEntryTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumBalanceEntryTypeWithAggregatesFilter<$PrismaModel> | $Enums.BalanceEntryType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBalanceEntryTypeFilter<$PrismaModel>
+    _max?: NestedEnumBalanceEntryTypeFilter<$PrismaModel>
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -22632,6 +24127,13 @@ export namespace Prisma {
     connect?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
   }
 
+  export type BalanceEntryCreateNestedManyWithoutUserInput = {
+    create?: XOR<BalanceEntryCreateWithoutUserInput, BalanceEntryUncheckedCreateWithoutUserInput> | BalanceEntryCreateWithoutUserInput[] | BalanceEntryUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BalanceEntryCreateOrConnectWithoutUserInput | BalanceEntryCreateOrConnectWithoutUserInput[]
+    createMany?: BalanceEntryCreateManyUserInputEnvelope
+    connect?: BalanceEntryWhereUniqueInput | BalanceEntryWhereUniqueInput[]
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -22677,6 +24179,13 @@ export namespace Prisma {
     connectOrCreate?: WithdrawalCreateOrConnectWithoutUserInput | WithdrawalCreateOrConnectWithoutUserInput[]
     createMany?: WithdrawalCreateManyUserInputEnvelope
     connect?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
+  }
+
+  export type BalanceEntryUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<BalanceEntryCreateWithoutUserInput, BalanceEntryUncheckedCreateWithoutUserInput> | BalanceEntryCreateWithoutUserInput[] | BalanceEntryUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BalanceEntryCreateOrConnectWithoutUserInput | BalanceEntryCreateOrConnectWithoutUserInput[]
+    createMany?: BalanceEntryCreateManyUserInputEnvelope
+    connect?: BalanceEntryWhereUniqueInput | BalanceEntryWhereUniqueInput[]
   }
 
   export type EnumRoleTypeFieldUpdateOperationsInput = {
@@ -22773,6 +24282,20 @@ export namespace Prisma {
     deleteMany?: WithdrawalScalarWhereInput | WithdrawalScalarWhereInput[]
   }
 
+  export type BalanceEntryUpdateManyWithoutUserNestedInput = {
+    create?: XOR<BalanceEntryCreateWithoutUserInput, BalanceEntryUncheckedCreateWithoutUserInput> | BalanceEntryCreateWithoutUserInput[] | BalanceEntryUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BalanceEntryCreateOrConnectWithoutUserInput | BalanceEntryCreateOrConnectWithoutUserInput[]
+    upsert?: BalanceEntryUpsertWithWhereUniqueWithoutUserInput | BalanceEntryUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: BalanceEntryCreateManyUserInputEnvelope
+    set?: BalanceEntryWhereUniqueInput | BalanceEntryWhereUniqueInput[]
+    disconnect?: BalanceEntryWhereUniqueInput | BalanceEntryWhereUniqueInput[]
+    delete?: BalanceEntryWhereUniqueInput | BalanceEntryWhereUniqueInput[]
+    connect?: BalanceEntryWhereUniqueInput | BalanceEntryWhereUniqueInput[]
+    update?: BalanceEntryUpdateWithWhereUniqueWithoutUserInput | BalanceEntryUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: BalanceEntryUpdateManyWithWhereWithoutUserInput | BalanceEntryUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: BalanceEntryScalarWhereInput | BalanceEntryScalarWhereInput[]
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -22861,6 +24384,20 @@ export namespace Prisma {
     update?: WithdrawalUpdateWithWhereUniqueWithoutUserInput | WithdrawalUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: WithdrawalUpdateManyWithWhereWithoutUserInput | WithdrawalUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: WithdrawalScalarWhereInput | WithdrawalScalarWhereInput[]
+  }
+
+  export type BalanceEntryUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<BalanceEntryCreateWithoutUserInput, BalanceEntryUncheckedCreateWithoutUserInput> | BalanceEntryCreateWithoutUserInput[] | BalanceEntryUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BalanceEntryCreateOrConnectWithoutUserInput | BalanceEntryCreateOrConnectWithoutUserInput[]
+    upsert?: BalanceEntryUpsertWithWhereUniqueWithoutUserInput | BalanceEntryUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: BalanceEntryCreateManyUserInputEnvelope
+    set?: BalanceEntryWhereUniqueInput | BalanceEntryWhereUniqueInput[]
+    disconnect?: BalanceEntryWhereUniqueInput | BalanceEntryWhereUniqueInput[]
+    delete?: BalanceEntryWhereUniqueInput | BalanceEntryWhereUniqueInput[]
+    connect?: BalanceEntryWhereUniqueInput | BalanceEntryWhereUniqueInput[]
+    update?: BalanceEntryUpdateWithWhereUniqueWithoutUserInput | BalanceEntryUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: BalanceEntryUpdateManyWithWhereWithoutUserInput | BalanceEntryUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: BalanceEntryScalarWhereInput | BalanceEntryScalarWhereInput[]
   }
 
   export type CatalogViewCreateNestedManyWithoutCatalogInput = {
@@ -22963,6 +24500,24 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutWithdrawalsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutWithdrawalsInput, UserUpdateWithoutWithdrawalsInput>, UserUncheckedUpdateWithoutWithdrawalsInput>
+  }
+
+  export type UserCreateNestedOneWithoutBalanceEntriesInput = {
+    create?: XOR<UserCreateWithoutBalanceEntriesInput, UserUncheckedCreateWithoutBalanceEntriesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBalanceEntriesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumBalanceEntryTypeFieldUpdateOperationsInput = {
+    set?: $Enums.BalanceEntryType
+  }
+
+  export type UserUpdateOneRequiredWithoutBalanceEntriesNestedInput = {
+    create?: XOR<UserCreateWithoutBalanceEntriesInput, UserUncheckedCreateWithoutBalanceEntriesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBalanceEntriesInput
+    upsert?: UserUpsertWithoutBalanceEntriesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutBalanceEntriesInput, UserUpdateWithoutBalanceEntriesInput>, UserUncheckedUpdateWithoutBalanceEntriesInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -23284,6 +24839,23 @@ export namespace Prisma {
     _max?: NestedEnumWithdrawalStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumBalanceEntryTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.BalanceEntryType | EnumBalanceEntryTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.BalanceEntryType[] | ListEnumBalanceEntryTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BalanceEntryType[] | ListEnumBalanceEntryTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumBalanceEntryTypeFilter<$PrismaModel> | $Enums.BalanceEntryType
+  }
+
+  export type NestedEnumBalanceEntryTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BalanceEntryType | EnumBalanceEntryTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.BalanceEntryType[] | ListEnumBalanceEntryTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BalanceEntryType[] | ListEnumBalanceEntryTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumBalanceEntryTypeWithAggregatesFilter<$PrismaModel> | $Enums.BalanceEntryType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBalanceEntryTypeFilter<$PrismaModel>
+    _max?: NestedEnumBalanceEntryTypeFilter<$PrismaModel>
+  }
+
   export type UserCreateWithoutProfileInput = {
     id?: string
     name?: string | null
@@ -23304,6 +24876,7 @@ export namespace Prisma {
     products?: ProductCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutProfileInput = {
@@ -23326,6 +24899,7 @@ export namespace Prisma {
     products?: ProductUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutProfileInput = {
@@ -23364,6 +24938,7 @@ export namespace Prisma {
     products?: ProductUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProfileInput = {
@@ -23386,6 +24961,7 @@ export namespace Prisma {
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type FormFieldCreateWithoutProductInput = {
@@ -23442,6 +25018,7 @@ export namespace Prisma {
     profile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutProductsInput = {
@@ -23464,6 +25041,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutProductsInput = {
@@ -23607,6 +25185,7 @@ export namespace Prisma {
     profile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProductsInput = {
@@ -23629,6 +25208,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type PurchaseUpsertWithWhereUniqueWithoutProductInput = {
@@ -24324,6 +25904,7 @@ export namespace Prisma {
     profile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -24346,6 +25927,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -24384,6 +25966,7 @@ export namespace Prisma {
     profile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -24406,6 +25989,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -24428,6 +26012,7 @@ export namespace Prisma {
     products?: ProductCreateNestedManyWithoutUserInput
     profile?: ProfileCreateNestedOneWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -24450,6 +26035,7 @@ export namespace Prisma {
     products?: ProductUncheckedCreateNestedManyWithoutUserInput
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -24488,6 +26074,7 @@ export namespace Prisma {
     products?: ProductUpdateManyWithoutUserNestedInput
     profile?: ProfileUpdateOneWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -24510,6 +26097,7 @@ export namespace Prisma {
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -24755,6 +26343,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type BalanceEntryCreateWithoutUserInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    type: $Enums.BalanceEntryType
+    refId?: string | null
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type BalanceEntryUncheckedCreateWithoutUserInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    type: $Enums.BalanceEntryType
+    refId?: string | null
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type BalanceEntryCreateOrConnectWithoutUserInput = {
+    where: BalanceEntryWhereUniqueInput
+    create: XOR<BalanceEntryCreateWithoutUserInput, BalanceEntryUncheckedCreateWithoutUserInput>
+  }
+
+  export type BalanceEntryCreateManyUserInputEnvelope = {
+    data: BalanceEntryCreateManyUserInput | BalanceEntryCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
     where: AccountWhereUniqueInput
     update: XOR<AccountUpdateWithoutUserInput, AccountUncheckedUpdateWithoutUserInput>
@@ -24981,6 +26597,35 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Withdrawal"> | Date | string
   }
 
+  export type BalanceEntryUpsertWithWhereUniqueWithoutUserInput = {
+    where: BalanceEntryWhereUniqueInput
+    update: XOR<BalanceEntryUpdateWithoutUserInput, BalanceEntryUncheckedUpdateWithoutUserInput>
+    create: XOR<BalanceEntryCreateWithoutUserInput, BalanceEntryUncheckedCreateWithoutUserInput>
+  }
+
+  export type BalanceEntryUpdateWithWhereUniqueWithoutUserInput = {
+    where: BalanceEntryWhereUniqueInput
+    data: XOR<BalanceEntryUpdateWithoutUserInput, BalanceEntryUncheckedUpdateWithoutUserInput>
+  }
+
+  export type BalanceEntryUpdateManyWithWhereWithoutUserInput = {
+    where: BalanceEntryScalarWhereInput
+    data: XOR<BalanceEntryUpdateManyMutationInput, BalanceEntryUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type BalanceEntryScalarWhereInput = {
+    AND?: BalanceEntryScalarWhereInput | BalanceEntryScalarWhereInput[]
+    OR?: BalanceEntryScalarWhereInput[]
+    NOT?: BalanceEntryScalarWhereInput | BalanceEntryScalarWhereInput[]
+    id?: StringFilter<"BalanceEntry"> | string
+    userId?: StringFilter<"BalanceEntry"> | string
+    amount?: DecimalFilter<"BalanceEntry"> | Decimal | DecimalJsLike | number | string
+    type?: EnumBalanceEntryTypeFilter<"BalanceEntry"> | $Enums.BalanceEntryType
+    refId?: StringNullableFilter<"BalanceEntry"> | string | null
+    note?: StringNullableFilter<"BalanceEntry"> | string | null
+    createdAt?: DateTimeFilter<"BalanceEntry"> | Date | string
+  }
+
   export type CatalogViewCreateWithoutCatalogInput = {
     id?: string
     visitorId?: string | null
@@ -25035,6 +26680,7 @@ export namespace Prisma {
     profile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCatalogInput = {
@@ -25057,6 +26703,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCatalogInput = {
@@ -25111,6 +26758,7 @@ export namespace Prisma {
     profile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCatalogInput = {
@@ -25133,6 +26781,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CatalogCreateWithoutViewsInput = {
@@ -25176,6 +26825,7 @@ export namespace Prisma {
     profile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCatalogViewsInput = {
@@ -25198,6 +26848,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCatalogViewsInput = {
@@ -25263,6 +26914,7 @@ export namespace Prisma {
     profile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCatalogViewsInput = {
@@ -25285,6 +26937,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutWithdrawalsInput = {
@@ -25307,6 +26960,7 @@ export namespace Prisma {
     products?: ProductCreateNestedManyWithoutUserInput
     profile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutWithdrawalsInput = {
@@ -25329,6 +26983,7 @@ export namespace Prisma {
     products?: ProductUncheckedCreateNestedManyWithoutUserInput
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    balanceEntries?: BalanceEntryUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutWithdrawalsInput = {
@@ -25367,6 +27022,7 @@ export namespace Prisma {
     products?: ProductUpdateManyWithoutUserNestedInput
     profile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWithdrawalsInput = {
@@ -25389,6 +27045,115 @@ export namespace Prisma {
     products?: ProductUncheckedUpdateManyWithoutUserNestedInput
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    balanceEntries?: BalanceEntryUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutBalanceEntriesInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    status?: string
+    statusPayment?: string
+    googleId?: string | null
+    phoneNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    role?: $Enums.RoleType
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    catalog?: CatalogCreateNestedOneWithoutUserInput
+    catalogViews?: CatalogViewCreateNestedManyWithoutUserInput
+    products?: ProductCreateNestedManyWithoutUserInput
+    profile?: ProfileCreateNestedOneWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutBalanceEntriesInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    status?: string
+    statusPayment?: string
+    googleId?: string | null
+    phoneNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    role?: $Enums.RoleType
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    catalog?: CatalogUncheckedCreateNestedOneWithoutUserInput
+    catalogViews?: CatalogViewUncheckedCreateNestedManyWithoutUserInput
+    products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutBalanceEntriesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutBalanceEntriesInput, UserUncheckedCreateWithoutBalanceEntriesInput>
+  }
+
+  export type UserUpsertWithoutBalanceEntriesInput = {
+    update: XOR<UserUpdateWithoutBalanceEntriesInput, UserUncheckedUpdateWithoutBalanceEntriesInput>
+    create: XOR<UserCreateWithoutBalanceEntriesInput, UserUncheckedCreateWithoutBalanceEntriesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutBalanceEntriesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutBalanceEntriesInput, UserUncheckedUpdateWithoutBalanceEntriesInput>
+  }
+
+  export type UserUpdateWithoutBalanceEntriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    statusPayment?: StringFieldUpdateOperationsInput | string
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    catalog?: CatalogUpdateOneWithoutUserNestedInput
+    catalogViews?: CatalogViewUpdateManyWithoutUserNestedInput
+    products?: ProductUpdateManyWithoutUserNestedInput
+    profile?: ProfileUpdateOneWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutBalanceEntriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    statusPayment?: StringFieldUpdateOperationsInput | string
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    catalog?: CatalogUncheckedUpdateOneWithoutUserNestedInput
+    catalogViews?: CatalogViewUncheckedUpdateManyWithoutUserNestedInput
+    products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type FormFieldCreateManyProductInput = {
@@ -25672,6 +27437,15 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type BalanceEntryCreateManyUserInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    type: $Enums.BalanceEntryType
+    refId?: string | null
+    note?: string | null
+    createdAt?: Date | string
+  }
+
   export type AccountUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
@@ -25895,6 +27669,33 @@ export namespace Prisma {
     failureMessage?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BalanceEntryUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumBalanceEntryTypeFieldUpdateOperationsInput | $Enums.BalanceEntryType
+    refId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BalanceEntryUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumBalanceEntryTypeFieldUpdateOperationsInput | $Enums.BalanceEntryType
+    refId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BalanceEntryUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumBalanceEntryTypeFieldUpdateOperationsInput | $Enums.BalanceEntryType
+    refId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CatalogViewCreateManyCatalogInput = {

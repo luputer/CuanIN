@@ -293,6 +293,16 @@ exports.Prisma.WithdrawalScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.BalanceEntryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  amount: 'amount',
+  type: 'type',
+  refId: 'refId',
+  note: 'note',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -348,6 +358,13 @@ exports.WithdrawalStatus = exports.$Enums.WithdrawalStatus = {
   REVERSED: 'REVERSED'
 };
 
+exports.BalanceEntryType = exports.$Enums.BalanceEntryType = {
+  PURCHASE_COMPLETED: 'PURCHASE_COMPLETED',
+  WITHDRAWAL_REQUESTED: 'WITHDRAWAL_REQUESTED',
+  WITHDRAWAL_FAILED: 'WITHDRAWAL_FAILED',
+  WITHDRAWAL_REVERSED: 'WITHDRAWAL_REVERSED'
+};
+
 exports.Prisma.ModelName = {
   Post: 'Post',
   Profile: 'Profile',
@@ -362,7 +379,8 @@ exports.Prisma.ModelName = {
   VerificationToken: 'VerificationToken',
   Catalog: 'Catalog',
   CatalogView: 'CatalogView',
-  Withdrawal: 'Withdrawal'
+  Withdrawal: 'Withdrawal',
+  BalanceEntry: 'BalanceEntry'
 };
 
 /**

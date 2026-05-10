@@ -102,18 +102,18 @@ model Purchase {
   buyerEmail          String
   buyerPhone          String
   amount              Decimal      @default(0)
-  status              String       @default("pending") // ubah default ke pending
-  xenditInvoiceId     String? // tambah
-  xenditInvoiceUrl    String? // tambah
-  xenditPaymentMethod String? // tambah
-  paidAt              DateTime? // tambah
+  status              String       @default("pending")
+  xenditInvoiceId     String?
+  xenditInvoiceUrl    String?
+  xenditPaymentMethod String?
+  paidAt              DateTime?
   createdAt           DateTime     @default(now())
   updatedAt           DateTime     @updatedAt
   answers             FormAnswer[]
   product             Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
-  @@index([xenditInvoiceId]) // tambah
+  @@index([xenditInvoiceId])
 }
 
 model FormAnswer {
@@ -156,26 +156,27 @@ model Session {
 }
 
 model User {
-  id            String        @id @default(cuid())
-  name          String?
-  email         String?       @unique
-  emailVerified DateTime?     @map("email_verified_at")
-  image         String?
-  password      String?
-  status        String        @default("active")
-  statusPayment String        @default("free")
-  googleId      String?       @map("google_id")
-  phoneNumber   String?       @map("phone_number")
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  accounts      Account[]
-  catalog       Catalog?
-  catalogViews  CatalogView[]
-  products      Product[]
-  profile       Profile? // tambah
-  role          RoleType      @default(USER)
-  sessions      Session[]
-  withdrawals   Withdrawal[]
+  id             String         @id @default(cuid())
+  name           String?
+  email          String?        @unique
+  emailVerified  DateTime?      @map("email_verified_at")
+  image          String?
+  password       String?
+  status         String         @default("active")
+  statusPayment  String         @default("free")
+  googleId       String?        @map("google_id")
+  phoneNumber    String?        @map("phone_number")
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  accounts       Account[]
+  catalog        Catalog?
+  catalogViews   CatalogView[]
+  products       Product[]
+  profile        Profile?
+  role           RoleType       @default(USER)
+  sessions       Session[]
+  withdrawals    Withdrawal[]
+  balanceEntries BalanceEntry[] // ← BARU
 }
 
 model VerificationToken {
@@ -243,6 +244,23 @@ model Withdrawal {
   @@index([xenditPayoutId])
 }
 
+// ─── BARU ────────────────────────────────────────────────────────────────────
+model BalanceEntry {
+  id        String           @id @default(uuid())
+  userId    String
+  amount    Decimal // positif = kredit, negatif = debit
+  type      BalanceEntryType
+  refId     String? // purchaseId atau withdrawalId
+  note      String?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([refId])
+  @@index([userId, createdAt])
+}
+
 enum ProductType {
   WEBINAR
   DIGITAL_PRODUCT
@@ -271,4 +289,12 @@ enum WithdrawalStatus {
   FAILED
   CANCELLED
   REVERSED
+}
+
+// ─── BARU ────────────────────────────────────────────────────────────────────
+enum BalanceEntryType {
+  PURCHASE_COMPLETED
+  WITHDRAWAL_REQUESTED
+  WITHDRAWAL_FAILED
+  WITHDRAWAL_REVERSED
 }

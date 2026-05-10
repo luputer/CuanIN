@@ -378,8 +378,8 @@ export default function TransactionPage() {
                           <span>Rp{formatNumberInput(withdrawForm.amount)}</span>
                         </div>
                         <div className="flex justify-between text-[13px] text-slate-600">
-                          <span>Biaya Aplikasi (5%)</span>
-                          <span>- Rp{formatNumberInput(Math.round(Number(withdrawForm.amount) * 0.05).toString())}</span>
+                          <span>Biaya Aplikasi (2%)</span>
+                          <span>- Rp{formatNumberInput(Math.round(Number(withdrawForm.amount) * 0.02).toString())}</span>
                         </div>
                         <div className="flex justify-between text-[13px] text-slate-600">
                           <span>Biaya Transfer Bank</span>
@@ -388,10 +388,10 @@ export default function TransactionPage() {
                         <div className="border-t border-slate-200 pt-2.5 mt-2.5 flex justify-between font-semibold text-[15px] text-slate-900">
                           <span>Total Diterima</span>
                           <span>
-                            Rp{formatNumberInput(Math.max(0, Number(withdrawForm.amount) - Math.round(Number(withdrawForm.amount) * 0.05) - 4000).toString())}
+                            Rp{formatNumberInput(Math.max(0, Number(withdrawForm.amount) - Math.round(Number(withdrawForm.amount) * 0.02) - 4000).toString())}
                           </span>
                         </div>
-                        {Number(withdrawForm.amount) - Math.round(Number(withdrawForm.amount) * 0.05) - 4000 < 10000 && (
+                        {Number(withdrawForm.amount) - Math.round(Number(withdrawForm.amount) * 0.02) - 4000 < 10000 && (
                           <p className="text-red-500 text-xs mt-3 pt-2 border-t border-red-100 text-center font-medium">
                             Minimal saldo diterima harus Rp10.000 setelah dipotong fee.
                           </p>

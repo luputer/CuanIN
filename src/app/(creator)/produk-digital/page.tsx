@@ -13,11 +13,11 @@ import { toast } from "sonner";
 
 // Icons
 import {
-  CaretUpIcon,
-  CaretDownIcon,
-  EyeIcon,
-  TrashIcon,
-  CopyIcon,
+    CaretUpIcon,
+    CaretDownIcon,
+    PencilIcon,
+    TrashIcon,
+    CopyIcon,
 } from "@phosphor-icons/react";
 
 // Internal & Utils
@@ -26,527 +26,573 @@ import { cn } from "~/lib/utils";
 
 // Components
 import {
-  Table,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableBody,
-  TableCell,
-  TablePagination,
+    Table,
+    TableHead,
+    TableHeader,
+    TableRow,
+    TableBody,
+    TableCell,
+    TablePagination,
 } from "~/components/ui/table";
 import { Skeleton } from "~/components/ui/skeleton";
+import { TableSkeleton } from "~/components/layout/table-skeleton";
 import SearchInput from "~/components/ui/search";
 import ButtonFilter from "~/components/ui/filter";
 import ActionButton from "~/components/ui/button-add";
 import ConfirmDialog from "~/components/ui/confirm-dialog";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
 } from "~/components/ui/tooltip";
 import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
 } from "~/components/ui/dropdown-menu";
 
 export default function DigitalProductPage() {
-  // ─── States & Hooks ──────────────────────────────────────────────────────
+    // ─── States & Hooks ──────────────────────────────────────────────────────
 
-  const utils = api.useUtils();
-  const router = useRouter();
+    const utils = api.useUtils();
+    const router = useRouter();
 
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [sortBy, setSortBy] = useState<"name" | "createdAt">("createdAt");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [sortBy, setSortBy] = useState<"name" | "createdAt">("createdAt");
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-  const [priceTypeFilter, setPriceTypeFilter] = useState<
-    "ALL" | "FREE" | "PAID"
-  >("ALL");
-  const [statusFilter, setStatusFilter] = useState<string>("ALL");
+    const [priceTypeFilter, setPriceTypeFilter] = useState<"ALL" | "FREE" | "PAID">("ALL");
+    const [statusFilter, setStatusFilter] = useState<string>("ALL");
 
-  // ─── Effects ─────────────────────────────────────────────────────────────
+    // ─── Effects ─────────────────────────────────────────────────────────────
 
-  // Debounce search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(search);
-      setPage(1); // Reset to page 1 on search
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [search]);
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+            setPage(1); // Reset to page 1 on search
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [search]);
 
-  // ─── API ─────────────────────────────────────────────────────────────────
+    // ─── API ─────────────────────────────────────────────────────────────────
 
-  const { data, isLoading } = api.products.getAll.useQuery(
-    {
-      type: "DIGITAL_PRODUCT",
-      page: page || 1,
-      limit: limit || 10,
-      search: debouncedSearch || undefined,
-      sortBy,
-      sortOrder,
-      priceType: priceTypeFilter,
-      status: statusFilter,
-    },
-    {
-      placeholderData: (prev) => prev,
-    },
-  );
+    const { data, isLoading } = api.products.getAll.useQuery({
+        type: "DIGITAL_PRODUCT",
+        page: page || 1,
+        limit: limit || 10,
+        search: debouncedSearch || undefined,
+        sortBy,
+        sortOrder,
+        priceType: priceTypeFilter,
+        status: statusFilter,
+    }, {
+        placeholderData: (prev) => prev,
+    });
 
-  const products = data?.items;
-  const total = data?.total ?? 0;
-  const totalPages = data?.totalPages ?? 1;
+    const products = data?.items;
+    const total = data?.total ?? 0;
+    const totalPages = data?.totalPages ?? 1;
 
-  const isFiltered =
-    debouncedSearch !== "" ||
-    priceTypeFilter !== "ALL" ||
-    statusFilter !== "ALL";
+    const isFiltered = debouncedSearch !== "" || priceTypeFilter !== "ALL" || statusFilter !== "ALL";
 
-  // Fetch buyer counts for all products
-  const productIds = products?.map((p) => p.id) ?? [];
-  const { data: buyerCounts } = api.purchases.countByProductIds.useQuery(
-    { productIds },
-    { enabled: productIds.length > 0 },
-  );
+    // Fetch buyer counts for all products
+    const productIds = products?.map(p => p.id) ?? [];
+    const { data: buyerCounts } = api.purchases.countByProductIds.useQuery(
+        { productIds },
+        { enabled: productIds.length > 0 }
+    );
 
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const deleteProduct = api.products.delete.useMutation({
-    onSuccess: () => {
-      void utils.products.getAll.invalidate();
-      toast.success("Produk Digital berhasil dihapus");
-      setDeleteId(null);
-    },
-    onError: (error) => {
-      toast.error(`Gagal menghapus produk: ${error.message}`);
-      setDeleteId(null);
-    },
-  });
+    const deleteProduct = api.products.delete.useMutation({
+        onSuccess: () => {
+            void utils.products.getAll.invalidate();
+            toast.success("Produk digital berhasil dihapus");
+            setDeleteId(null);
+        },
+        onError: (error) => {
+            toast.error(`Gagal menghapus produk: ${error.message}`);
+            setDeleteId(null);
+        },
+    });
 
-  const productToDelete = products?.find((p) => p.id === deleteId);
+    const productToDelete = products?.find((p) => p.id === deleteId);
 
-  // ─── Helpers ─────────────────────────────────────────────────────────────
+    // ─── Helpers ─────────────────────────────────────────────────────────────
 
-  const getStatusColor = (status: string) => {
-    const s = status.toLowerCase();
-    switch (s) {
-      case "published":
-        return "bg-green-100 text-green-700";
-      case "unpublished":
-        return "bg-slate-200 text-slate-500";
-      default:
-        return "bg-slate-100 text-slate-600";
+    const getStatusColor = (status: string) => {
+        const s = status.toLowerCase();
+        switch (s) {
+            case "published": return "bg-green-100 text-green-700";
+            case "unpublished": return "bg-slate-200 text-slate-500";
+            default: return "bg-slate-100 text-slate-600";
+        }
+    };
+
+    const getStatusLabel = (status: string) => {
+        const s = status.toLowerCase();
+        switch (s) {
+            case "published": return "Published";
+            case "unpublished": return "Unpublished";
+            default: return status;
+        }
+    };
+
+    const { data: catalog } = api.catalog.getMine.useQuery();
+    const handleCopyLink = (itemId: string, itemSlug: string | null) => {
+        if (!catalog?.slug) {
+            toast.error("Gagal menyalin link: Catalog belum siap");
+            return;
+        }
+        const host = window.location.origin;
+        const productSlug = itemSlug ?? itemId;
+        const publicUrl = `${host}/${catalog.slug}/${productSlug}`;
+        void navigator.clipboard.writeText(publicUrl);
+        toast.success("Link produk disalin!");
+    };
+
+    // ─── Render ──────────────────────────────────────────────────────────────
+
+    if (isLoading && !products) {
+        return <TableSkeleton columns={9} />;
     }
-  };
 
-  const getStatusLabel = (status: string) => {
-    const s = status.toLowerCase();
-    switch (s) {
-      case "published":
-        return "Published";
-      case "unpublished":
-        return "Unpublished";
-      default:
-        return status;
-    }
-  };
-
-  const { data: catalog } = api.catalog.getMine.useQuery();
-  const handleCopyLink = (itemId: string, itemSlug: string | null) => {
-    if (!catalog?.slug) {
-      toast.error("Gagal menyalin link: Catalog belum siap");
-      return;
-    }
-    const host = window.location.origin;
-    const productSlug = itemSlug ?? itemId;
-    const publicUrl = `${host}/${catalog.slug}/${productSlug}`;
-    void navigator.clipboard.writeText(publicUrl);
-    toast.success("Link produk disalin!");
-  };
-
-  // ─── Render ──────────────────────────────────────────────────────────────
-
-  return (
-    <TooltipProvider>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="bg-slate-50">
-          <div className="sticky top-[74px] z-40 -mx-4 mb-2 bg-slate-50 px-4">
-            <div className="mb-2 text-2xl font-bold text-cyan-600">
-              Produk Digital
-            </div>
-            <div className="font-regular text-sm text-slate-600">
-              Pantau dan kelola semua produk digital yang kamu buat.
-            </div>
-          </div>
-        </div>
-
-        {/* Toolbar */}
-        <div className="flex flex-col justify-between gap-4 md:flex-row">
-          {/* Search */}
-          <SearchInput
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari berdasarkan Nama Produk"
-          />
-
-          {/* Actions */}
-          <div className="flex gap-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <ButtonFilter
-                  label={`Tipe: ${priceTypeFilter === "ALL" ? "Semua" : priceTypeFilter === "FREE" ? "Gratis" : "Berbayar"}`}
-                />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[160px]">
-                <DropdownMenuRadioGroup
-                  value={priceTypeFilter}
-                  onValueChange={(v) =>
-                    setPriceTypeFilter(v as "ALL" | "FREE" | "PAID")
-                  }
-                >
-                  <DropdownMenuRadioItem value="ALL">
-                    Semua Tipe
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="FREE">
-                    Gratis
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="PAID">
-                    Berbayar
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <ButtonFilter
-                  label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "published" ? "Published" : statusFilter === "unpublished" ? "Unpublished" : "Selesai"}`}
-                />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[160px]">
-                <DropdownMenuRadioGroup
-                  value={statusFilter}
-                  onValueChange={setStatusFilter}
-                >
-                  <DropdownMenuRadioItem value="ALL">
-                    Semua Status
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="published">
-                    Published
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="unpublished">
-                    Unpublished
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <ActionButton
-              href="/produk-digital/create"
-              label="Tambah Produk Digital"
-            />
-          </div>
-        </div>
-
-        {/* Table */}
-        <div className="">
-          <Table
-            pagination={
-              <TablePagination
-                page={page}
-                totalPages={totalPages}
-                limit={limit}
-                total={total}
-                onPageChange={setPage}
-                onLimitChange={setLimit}
-              />
-            }
-          >
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[5%] text-center">No</TableHead>
-                <TableHead
-                  className="group w-[18%] cursor-pointer transition-colors select-none hover:text-slate-900"
-                  onClick={() => {
-                    if (sortBy === "name") {
-                      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-                    } else {
-                      setSortBy("name");
-                      setSortOrder("asc");
-                    }
-                  }}
-                >
-                  <div className="flex items-center gap-2">
-                    Nama
-                    <div className="flex h-4 flex-col justify-center">
-                      <CaretUpIcon
-                        weight={
-                          sortBy === "name" && sortOrder === "asc"
-                            ? "bold"
-                            : "regular"
-                        }
-                        className={cn(
-                          "-mb-1 h-4 w-4",
-                          sortBy === "name" && sortOrder === "asc"
-                            ? "text-slate-800"
-                            : "text-slate-400 group-hover:text-slate-400",
-                        )}
-                      />
-                      <CaretDownIcon
-                        weight={
-                          sortBy === "name" && sortOrder === "desc"
-                            ? "bold"
-                            : "regular"
-                        }
-                        className={cn(
-                          "h-4 w-4",
-                          sortBy === "name" && sortOrder === "desc"
-                            ? "text-slate-800"
-                            : "text-slate-400 group-hover:text-slate-400",
-                        )}
-                      />
+    return (
+        <TooltipProvider>
+            <div className="w-full max-w-7xl mx-auto space-y-6">
+                {/* Header */}
+                <div className="bg-slate-50">
+                    <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-2">
+                        <div className="text-2xl font-bold mb-2 text-cyan-600">Produk Digital</div>
+                        <div className="text-sm font-regular text-slate-600">Pantau dan kelola semua produk digital yang kamu buat.</div>
                     </div>
-                  </div>
-                </TableHead>
-                <TableHead className="w-[12%]">Thumbnail</TableHead>
-                <TableHead className="w-[12%]">Format</TableHead>
-                <TableHead className="w-[10%]">Tipe</TableHead>
-                <TableHead className="w-[12%]">Harga</TableHead>
-                <TableHead className="w-[12%]">Pembeli</TableHead>
-                <TableHead className="w-[14%]">Status</TableHead>
-                <TableHead className="w-[5%] text-left">Aksi</TableHead>
-              </TableRow>
-            </TableHeader>
+                </div>
 
-            <TableBody>
-              {isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <TableRow data-type="body" key={i}>
-                    <TableCell>
-                      <Skeleton className="mx-auto h-4 w-4" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-32" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-12 w-12 rounded-md" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-16" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-12" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-20" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-12" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-6 w-20 rounded-full" />
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex justify-center gap-3">
-                        <Skeleton className="h-5 w-5" />
-                        <Skeleton className="h-5 w-5" />
-                        <Skeleton className="h-5 w-5" />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : products?.length === 0 ? (
-                <TableRow className="text-center">
-                  <TableCell colSpan={9} className="py-20">
-                    <div className="flex flex-col items-center gap-1">
-                      {isFiltered ? (
-                        <span className="text-slate-500">
-                          Hasil pencarian atau filter tidak ditemukan.
-                        </span>
-                      ) : (
-                        <>
-                          <span className="text-slate-500">
-                            Belum ada produk digital.
-                          </span>
-                          <Link
+                {/* Toolbar */}
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    {/* Search */}
+                    <SearchInput
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="Cari berdasarkan Nama Produk"
+                        className="w-full sm:flex-1 min-w-[280px]"
+                    />
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <ButtonFilter
+                                    className="flex-1 lg:flex-none"
+                                    label={`Tipe: ${priceTypeFilter === "ALL" ? "Semua" : priceTypeFilter === "FREE" ? "Gratis" : "Berbayar"}`}
+                                />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-[160px]">
+                                <DropdownMenuRadioGroup value={priceTypeFilter} onValueChange={(v) => setPriceTypeFilter(v as "ALL" | "FREE" | "PAID")}>
+                                    <DropdownMenuRadioItem value="ALL">Semua Tipe</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="FREE">Gratis</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="PAID">Berbayar</DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <ButtonFilter
+                                    className="flex-1 lg:flex-none"
+                                    label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "published" ? "Published" : statusFilter === "unpublished" ? "Unpublished" : "Selesai"}`}
+                                />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-[160px]">
+                                <DropdownMenuRadioGroup value={statusFilter} onValueChange={setStatusFilter}>
+                                    <DropdownMenuRadioItem value="ALL">Semua Status</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="published">Published</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="unpublished">Unpublished</DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        <ActionButton
                             href="/produk-digital/create"
-                            className="font-medium text-cyan-600 hover:underline"
-                          >
-                            Yuk, buat produk digital pertamamu!
-                          </Link>
-                        </>
-                      )}
+                            label="Tambah Produk"
+                            responsive
+                        />
                     </div>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                products?.map((item, index) => {
-                  const priceNum = Number(item.price);
-                  const rowNumber = (page - 1) * limit + index + 1;
-                  return (
-                    <TableRow key={item.id} data-type="body">
-                      <TableCell className="text-center font-medium">
-                        {rowNumber}
-                      </TableCell>
+                </div>
 
-                      <TableCell className="whitespace-nowrap">
-                        <div className="flex min-h-[48px] items-center">
-                          <Link
-                            href={`/produk-digital/${item.id}`}
-                            className="transition-colors hover:text-cyan-600"
-                          >
-                            {item.name}
-                          </Link>
-                        </div>
-                      </TableCell>
-
-                      <TableCell className="whitespace-nowrap">
-                        <div className="h-12 w-12 overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
-                          {item.image ? (
-                            <Image
-                              src={item.image}
-                              alt={item.name}
-                              width={48}
-                              height={48}
-                              unoptimized
-                              className="h-full w-full object-cover"
+                {/* Table (Desktop/Tablet) */}
+                <div className="hidden sm:block w-full pb-2">
+                    <Table
+                        pagination={
+                            <TablePagination
+                                page={page}
+                                totalPages={totalPages}
+                                limit={limit}
+                                total={total}
+                                onPageChange={setPage}
+                                onLimitChange={setLimit}
                             />
-                          ) : (
-                            <div className="flex h-full w-full items-center justify-center text-[10px] text-slate-400 italic">
-                              No image
+                        }
+                    >
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-[5%] text-center">No</TableHead>
+                                <TableHead
+                                    className="w-[38%] cursor-pointer select-none hover:text-slate-900 transition-colors group"
+                                    onClick={() => {
+                                        if (sortBy === "name") {
+                                            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+                                        } else {
+                                            setSortBy("name");
+                                            setSortOrder("asc");
+                                        }
+                                    }}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        Nama
+                                        <div className="flex flex-col h-4 justify-center">
+                                            <CaretUpIcon
+                                                weight={sortBy === "name" && sortOrder === "asc" ? "bold" : "regular"}
+                                                className={cn("w-4 h-4 -mb-1", sortBy === "name" && sortOrder === "asc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
+                                            />
+                                            <CaretDownIcon
+                                                weight={sortBy === "name" && sortOrder === "desc" ? "bold" : "regular"}
+                                                className={cn("w-4 h-4", sortBy === "name" && sortOrder === "desc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
+                                            />
+                                        </div>
+                                    </div>
+                                </TableHead>
+                                <TableHead className="w-[6%]">Thumbnail</TableHead>
+                                <TableHead className="w-[13%]">Format</TableHead>
+                                <TableHead className="w-[6%]">Tipe</TableHead>
+                                <TableHead className="w-[15%]">Harga</TableHead>
+                                <TableHead className="w-[6%]">Pembeli</TableHead>
+                                <TableHead className="w-[6%]">Status</TableHead>
+                                <TableHead className="text-left w-[5%]">Aksi</TableHead>
+                            </TableRow>
+                        </TableHeader>
+
+                        <TableBody>
+                            {isLoading ? (
+                                Array.from({ length: 5 }).map((_, i) => (
+                                    <TableRow data-type="body" key={i}>
+                                        <TableCell><Skeleton className="h-4 w-4 mx-auto" /></TableCell>
+                                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                                        <TableCell><Skeleton className="h-12 w-12 rounded-md" /></TableCell>
+                                        <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                                        <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                                        <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                                        <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                                        <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+                                        <TableCell>
+                                            <div className="flex justify-center gap-3">
+                                                <Skeleton className="h-5 w-5" />
+                                                <Skeleton className="h-5 w-5" />
+                                                <Skeleton className="h-5 w-5" />
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : products?.length === 0 ? (
+                                <TableRow className="text-center">
+                                    <TableCell colSpan={9} className="py-20">
+                                        <div className="flex flex-col items-center gap-1">
+                                            {isFiltered ? (
+                                                <span className="text-slate-500">Hasil pencarian atau filter tidak ditemukan.</span>
+                                            ) : (
+                                                <>
+                                                    <span className="text-slate-500">Belum ada produk digital.</span>
+                                                    <Link href="/produk-digital/create" className="text-cyan-600 font-medium hover:underline">
+                                                        Yuk, buat produk digital pertamamu!
+                                                    </Link>
+                                                </>
+                                            )}
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ) : (
+                                products?.map((item, index) => {
+                                    const priceNum = Number(item.price);
+                                    const rowNumber = (page - 1) * limit + index + 1;
+                                    return (
+                                        <TableRow key={item.id} data-type="body">
+                                            <TableCell className="text-center font-medium">
+                                                {rowNumber}
+                                            </TableCell>
+
+                                            <TableCell className="max-w-[360px] leading-normal">
+                                                <div className="flex items-center min-h-[48px] py-1">
+                                                    <Link href={`/produk-digital/${item.id}`} className="hover:text-cyan-600 transition-colors font-medium text-slate-800 line-clamp-2 break-words leading-normal">
+                                                        {item.name}
+                                                    </Link>
+                                                </div>
+                                            </TableCell>
+
+                                            <TableCell>
+                                                <div className="w-12 h-12 bg-slate-100 overflow-hidden border border-slate-200 rounded-lg">
+                                                    {item.image ? (
+                                                        <Image
+                                                            src={item.image}
+                                                            alt={item.name}
+                                                            width={48}
+                                                            height={48}
+                                                            unoptimized
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center text-[10px] text-slate-400 italic">
+                                                            No image
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </TableCell>
+
+                                            <TableCell className="font-medium whitespace-nowrap text-slate-600">
+                                                <div className="flex min-h-[48px] items-center">
+                                                    {item.format ?? "-"}
+                                                </div>
+                                            </TableCell>
+
+                                            <TableCell className="whitespace-nowrap">
+                                                <div className="flex items-center min-h-[48px]">
+                                                    {priceNum > 0 ? "Berbayar" : "Gratis"}
+                                                </div>
+                                            </TableCell>
+
+                                            <TableCell className="whitespace-nowrap">
+                                                <div className="flex items-center min-h-[48px]">
+                                                    {priceNum === 0 ? "Rp 0" : `Rp ${priceNum.toLocaleString("id-ID")}`}
+                                                </div>
+                                            </TableCell>
+
+                                            <TableCell className="whitespace-nowrap">
+                                                <div className="flex items-center gap-3 min-h-[48px]">
+                                                    <span>{buyerCounts?.[item.id] ?? 0}</span>
+                                                    <button
+                                                        onClick={() => router.push(`/produk-digital/${item.id}?tab=user`)}
+                                                        className="text-sm text-cyan-600 px-4 py-1 border border-cyan-600 rounded-lg hover:bg-cyan-50 font-medium transition-colors cursor-pointer"
+                                                    >
+                                                        Lihat
+                                                    </button>
+                                                </div>
+                                            </TableCell>
+
+                                            <TableCell className="whitespace-nowrap">
+                                                <div className="flex items-center min-h-[48px]">
+                                                    <span className={`px-4 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.status || "draft")}`}>
+                                                        {getStatusLabel(item.status || "draft")}
+                                                    </span>
+                                                </div>
+                                            </TableCell>
+
+                                            <TableCell className="px-6 py-4 text-right">
+                                                <div className="flex justify-start items-center gap-3">
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <button onClick={() => router.push(`/produk-digital/${item.id}`)}>
+                                                                <PencilIcon className="w-[22px] h-[22px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
+                                                            </button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>Lihat Detail</TooltipContent>
+                                                    </Tooltip>
+
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <button onClick={() => setDeleteId(item.id)}>
+                                                                <TrashIcon className="w-[22px] h-[22px] text-red-600 cursor-pointer hover:text-red-700" />
+                                                            </button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>Hapus Produk</TooltipContent>
+                                                    </Tooltip>
+
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <button onClick={() => handleCopyLink(item.id, item.slug ?? null)}>
+                                                                <CopyIcon className="w-[22px] h-[22px] text-yellow-500 cursor-pointer hover:text-yellow-600" />
+                                                            </button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>Salin Link Produk</TooltipContent>
+                                                    </Tooltip>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+
+                {/* Mobile Cards (Only visible on mobile) */}
+                <div className="space-y-4 sm:hidden">
+                    {isLoading ? (
+                        Array.from({ length: 3 }).map((_, i) => (
+                            <div key={i} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3 animate-pulse">
+                                <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                                    <Skeleton className="h-4 w-8" />
+                                    <Skeleton className="h-6 w-20 rounded-full" />
+                                </div>
+                                <div className="flex gap-3">
+                                    <Skeleton className="h-16 w-16 rounded-lg shrink-0" />
+                                    <div className="space-y-2 flex-1">
+                                        <Skeleton className="h-4 w-3/4" />
+                                        <Skeleton className="h-3 w-1/2" />
+                                        <Skeleton className="h-3 w-1/3" />
+                                    </div>
+                                </div>
                             </div>
-                          )}
+                        ))
+                    ) : products?.length === 0 ? (
+                        <div className="text-center py-8 bg-white border border-slate-800 rounded-xl p-4 text-slate-500">
+                            {isFiltered ? (
+                                "Hasil pencarian atau filter tidak ditemukan."
+                            ) : (
+                                <>
+                                    <span>Belum ada produk digital.</span>
+                                    <br />
+                                    <Link href="/produk-digital/create" className="text-cyan-600 font-medium hover:underline mt-1 inline-block">
+                                        Yuk, buat produk digital pertamamu!
+                                    </Link>
+                                </>
+                            )}
                         </div>
-                      </TableCell>
+                    ) : (
+                        products?.map((item, index) => {
+                            const priceNum = Number(item.price);
+                            const rowNumber = (page - 1) * limit + index + 1;
+                            const statusKey = item.status || "draft";
 
-                      <TableCell className="font-medium whitespace-nowrap text-slate-600">
-                        <div className="flex min-h-[48px] items-center">
-                          {item.format ?? "-"}
+                            return (
+                                <div key={item.id} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3">
+                                    <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                                        <span className="text-xs font-semibold text-slate-400"># {rowNumber}</span>
+                                        <span className={`px-3 py-0.5 rounded-full text-xs font-medium ${getStatusColor(statusKey)}`}>
+                                            {getStatusLabel(statusKey)}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex gap-3 items-start">
+                                        {/* Thumbnail */}
+                                        <div className="w-16 h-16 bg-slate-100 overflow-hidden border border-slate-200 rounded-lg shrink-0">
+                                            {item.image ? (
+                                                <Image
+                                                    src={item.image}
+                                                    alt={item.name}
+                                                    width={64}
+                                                    height={64}
+                                                    unoptimized
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-[8px] text-slate-400 italic">
+                                                    No image
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Content info */}
+                                        <div className="space-y-1.5 flex-1 min-w-0">
+                                            <Link href={`/produk-digital/${item.id}`} className="font-semibold text-slate-800 hover:text-cyan-600 break-words line-clamp-2">
+                                                {item.name}
+                                            </Link>
+
+                                            <div className="text-xs text-slate-500">
+                                                <span className="font-medium text-slate-400">Format: </span>
+                                                {item.format ?? "-"}
+                                            </div>
+
+                                            <div className="flex justify-between items-center text-xs">
+                                                <div>
+                                                    <span className="font-medium text-slate-400">Harga: </span>
+                                                    <span className="font-semibold text-slate-700">
+                                                        {priceNum === 0 ? "Gratis" : `Rp ${priceNum.toLocaleString("id-ID")}`}
+                                                    </span>
+                                                </div>
+
+                                                <div>
+                                                    <span className="font-medium text-slate-400">Pembeli: </span>
+                                                    <span className="font-semibold text-slate-700">{buyerCounts?.[item.id] ?? 0}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex justify-between items-center pt-2.5 border-t border-slate-100 gap-2">
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => router.push(`/produk-digital/${item.id}`)}
+                                                className="p-2 rounded-lg text-cyan-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
+                                                title="Lihat Detail"
+                                            >
+                                                <PencilIcon className="w-5 h-5" />
+                                            </button>
+
+                                            <button
+                                                onClick={() => setDeleteId(item.id)}
+                                                className="p-2 rounded-lg text-red-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
+                                                title="Hapus Produk"
+                                            >
+                                                <TrashIcon className="w-5 h-5" />
+                                            </button>
+                                        </div>
+
+                                        <button
+                                            onClick={() => handleCopyLink(item.id, item.slug ?? null)}
+                                            className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-yellow-600 border border-yellow-600 rounded-lg hover:bg-yellow-50 transition cursor-pointer"
+                                        >
+                                            <CopyIcon className="w-4 h-4" />
+                                            <span>Salin Link</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    )}
+
+                    {/* Mobile Pagination */}
+                    {products && products.length > 0 && (
+                        <div className="bg-white border border-slate-800 rounded-xl p-4 shadow-[1.5px_1.5px_0px_rgba(29,41,61)]">
+                            <TablePagination
+                                page={page}
+                                totalPages={totalPages}
+                                limit={limit}
+                                total={total}
+                                onPageChange={setPage}
+                                onLimitChange={setLimit}
+                            />
                         </div>
-                      </TableCell>
+                    )}
+                </div>
 
-                      <TableCell className="whitespace-nowrap">
-                        <div className="flex min-h-[48px] items-center">
-                          {priceNum > 0 ? "Berbayar" : "Gratis"}
-                        </div>
-                      </TableCell>
-
-                      <TableCell className="whitespace-nowrap">
-                        <div className="flex min-h-[48px] items-center">
-                          {priceNum === 0
-                            ? "Rp 0"
-                            : `Rp ${priceNum.toLocaleString("id-ID")}`}
-                        </div>
-                      </TableCell>
-
-                      <TableCell className="whitespace-nowrap">
-                        <div className="flex min-h-[48px] items-center gap-3">
-                          <span>{buyerCounts?.[item.id] ?? 0}</span>
-                          <button
-                            onClick={() =>
-                              router.push(`/produk-digital/${item.id}?tab=user`)
-                            }
-                            className="cursor-pointer rounded-lg border border-cyan-600 px-4 py-1 text-sm font-medium text-cyan-600 transition-colors hover:bg-cyan-50"
-                          >
-                            Lihat
-                          </button>
-                        </div>
-                      </TableCell>
-
-                      <TableCell className="whitespace-nowrap">
-                        <div className="flex min-h-[48px] items-center">
-                          <span
-                            className={`rounded-full px-4 py-1 text-[13px] leading-tight font-medium ${getStatusColor(item.status)}`}
-                          >
-                            {getStatusLabel(item.status)}
-                          </span>
-                        </div>
-                      </TableCell>
-
-                      <TableCell className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-start gap-3">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <button
-                                onClick={() =>
-                                  router.push(`/produk-digital/${item.id}`)
-                                }
-                              >
-                                <EyeIcon className="h-[24px] w-[24px] cursor-pointer text-cyan-600 hover:text-cyan-700" />
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent>Lihat Detail</TooltipContent>
-                          </Tooltip>
-
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <button onClick={() => setDeleteId(item.id)}>
-                                <TrashIcon className="h-[24px] w-[24px] cursor-pointer text-red-600 hover:text-red-700" />
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent>Hapus Produk</TooltipContent>
-                          </Tooltip>
-
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <button
-                                onClick={() =>
-                                  handleCopyLink(item.id, item.slug ?? null)
-                                }
-                              >
-                                <CopyIcon className="h-[24px] w-[24px] cursor-pointer text-yellow-500 hover:text-yellow-600" />
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent>Salin Link Produk</TooltipContent>
-                          </Tooltip>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        <ConfirmDialog
-          open={!!deleteId}
-          onOpenChange={(open) => !open && setDeleteId(null)}
-          icon={
-            <TrashIcon
-              size={52}
-              className="rounded-full bg-red-100 p-3 text-red-500"
-              weight="regular"
-            />
-          }
-          title="Hapus Produk Digital?"
-          description={
-            <>
-              Kamu yakin ingin menghapus{" "}
-              <span className="font-semibold text-slate-800">
-                &quot;{productToDelete?.name}&quot;
-              </span>
-              ?
-              <br />
-              Tindakan ini tidak bisa dibatalkan.
-            </>
-          }
-          confirmText="Ya, Hapus"
-          confirmClassName="bg-red-500 hover:bg-red-600 text-white"
-          loading={deleteProduct.isPending}
-          onConfirm={() => {
-            if (deleteId) deleteProduct.mutate({ id: deleteId });
-          }}
-        />
-      </div>
-    </TooltipProvider>
-  );
+                <ConfirmDialog
+                    open={!!deleteId}
+                    onOpenChange={(open) => !open && setDeleteId(null)}
+                    icon={<TrashIcon size={52} className="bg-red-100 rounded-full p-3 text-red-500" weight="regular" />}
+                    title="Hapus Produk Digital?"
+                    description={
+                        <>
+                            Kamu yakin ingin menghapus {" "}
+                            <span className="font-semibold text-slate-800">&quot;{productToDelete?.name}&quot;</span>?
+                            <br />
+                            Tindakan ini tidak bisa dibatalkan.
+                        </>
+                    }
+                    confirmText="Ya, Hapus"
+                    confirmClassName="bg-red-500 hover:bg-red-600 text-white"
+                    loading={deleteProduct.isPending}
+                    onConfirm={() => {
+                        if (deleteId) deleteProduct.mutate({ id: deleteId });
+                    }}
+                />
+            </div>
+        </TooltipProvider>
+    );
 }

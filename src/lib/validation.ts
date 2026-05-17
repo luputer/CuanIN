@@ -36,7 +36,7 @@ export const webinarSchema = z
       .max(200, "Ringkasan maksimal 200 karakter")
       .optional(),
     description: z.string().min(1, "Deskripsi wajib diisi"),
-    priceType: z.enum(["free", "paid"]),
+    priceType: z.enum(["free", "paid"]).default("free"),
     price: z.number().min(0, "Harga tidak boleh negatif").optional(),
     platform: z.string().min(1, "Platform wajib dipilih"),
     platformCustom: z.string().optional(),
@@ -54,19 +54,15 @@ export const webinarSchema = z
       .min(0, "Kuota tidak boleh negatif"),
     benefit: z.array(z.string()).optional(),
     image: z.string().optional(),
+    images: z.array(z.string()).max(4).optional(),
+    enableVoucher: z.boolean().default(false),
+    vouchers: z.array(z.string()).optional(),
+    enableNotes: z.boolean().default(false),
+    enableDiscount: z.boolean().default(false),
+    enableQuota: z.boolean().default(false),
+    discountPrice: z.number().min(0).optional(),
   })
-  .refine(
-    (data) => {
-      if (data.priceType === "paid") {
-        return data.price !== undefined && data.price > 0;
-      }
-      return true;
-    },
-    {
-      message: "Harga wajib diisi untuk webinar berbayar",
-      path: ["price"],
-    },
-  )
+
   .refine(
     (data) => {
       if (data.dateStart && data.dateEnd) {
@@ -102,6 +98,18 @@ export const webinarSchema = z
       message: "Nama platform wajib diisi jika memilih 'Lainnya'",
       path: ["platformCustom"],
     },
+  )
+  .refine(
+    (data) => {
+      if (data.enableDiscount && data.price !== undefined && data.discountPrice !== undefined) {
+        return data.discountPrice < data.price;
+      }
+      return true;
+    },
+    {
+      message: "Harga diskon harus lebih rendah dari harga asli",
+      path: ["discountPrice"],
+    }
   );
 
 export const baseProductDigitalSchema = z.object({
@@ -118,25 +126,47 @@ export const baseProductDigitalSchema = z.object({
     .min(1, "Link produk wajib diisi")
     .url("Link tidak valid, pastikan format URL benar (https://...)"),
   format: z.string().optional(),
+  platform: z.string().optional(),
+  platformCustom: z.string().optional(),
   duration: z.string().optional(),
   notes: z.string().optional(),
   status: z.string().min(1, "Status wajib dipilih"),
   image: z.string().optional(),
   benefit: z.array(z.string()).optional(),
+  quota: z.number().optional(),
+  enableQuota: z.boolean().default(false),
+  enableVoucher: z.boolean().default(false),
+  vouchers: z.array(z.string()).optional(),
+  enableNotes: z.boolean().default(false),
+  enableDiscount: z.boolean().default(false),
+  discountPrice: z.number().min(0).optional(),
 });
 
-export const productDigitalSchema = baseProductDigitalSchema.refine(
-  (data) => {
-    if (data.priceType === "paid") {
-      return data.price !== undefined && data.price > 0;
+export const productDigitalSchema = baseProductDigitalSchema
+  .refine(
+    (data) => {
+      if (data.priceType === "paid") {
+        return data.price !== undefined && data.price > 0;
+      }
+      return true;
+    },
+    {
+      message: "Harga wajib diisi untuk produk berbayar",
+      path: ["price"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.enableDiscount && data.price !== undefined && data.discountPrice !== undefined) {
+        return data.discountPrice < data.price;
+      }
+      return true;
+    },
+    {
+      message: "Harga diskon harus lebih rendah dari harga asli",
+      path: ["discountPrice"],
     }
-    return true;
-  },
-  {
-    message: "Harga wajib diisi untuk produk berbayar",
-    path: ["price"],
-  },
-);
+  );
 
 export type DigitalProductFormValues = z.infer<typeof baseProductDigitalSchema>;
 
@@ -154,11 +184,20 @@ export const productKelasOnlineSchema = z
       .string()
       .min(1, "Link produk wajib diisi")
       .url("Link tidak valid, pastikan format URL benar (https://...)"),
+    platform: z.string().optional(),
+    platformCustom: z.string().optional(),
     duration: z.string().min(1, "Durasi wajib diisi"),
     notes: z.string().optional(),
     status: z.string().min(1, "Status wajib dipilih"),
     image: z.string().optional(),
     benefit: z.array(z.string()).optional(),
+    quota: z.number().optional(),
+    enableQuota: z.boolean().default(false),
+    enableVoucher: z.boolean().default(false),
+    vouchers: z.array(z.string()).optional(),
+    enableNotes: z.boolean().default(false),
+    enableDiscount: z.boolean().default(false),
+    discountPrice: z.number().min(0).optional(),
   })
   .refine(
     (data) => {
@@ -171,6 +210,18 @@ export const productKelasOnlineSchema = z
       message: "Harga wajib diisi untuk produk berbayar",
       path: ["price"],
     },
+  )
+  .refine(
+    (data) => {
+      if (data.enableDiscount && data.price !== undefined && data.discountPrice !== undefined) {
+        return data.discountPrice < data.price;
+      }
+      return true;
+    },
+    {
+      message: "Harga diskon harus lebih rendah dari harga asli",
+      path: ["discountPrice"],
+    }
   );
 
 // schema withdrawlScema

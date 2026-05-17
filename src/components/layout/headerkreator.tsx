@@ -1,5 +1,5 @@
 "use client";
-import { CaretDownIcon, UserIcon, SignOutIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, UserIcon, SignOutIcon, ListIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
@@ -7,7 +7,11 @@ import { useRouter } from "next/navigation";
 import { useRef, useEffect } from "react";
 import { api } from "~/trpc/react";
 
-export default function HeaderKreator() {
+export default function HeaderKreator({
+    onMenuClick,
+}: {
+    onMenuClick?: () => void;
+} = {}) {
     const [open, setOpen] = useState(false);
     const { data: session } = useSession();
 
@@ -38,7 +42,14 @@ export default function HeaderKreator() {
     }, []);
 
     return (
-        <header className="sticky top-0 z-50 bg-white px-12 py-3 flex items-center justify-end border-b border-slate-800">
+        <header className="sticky top-0 z-50 bg-white px-4 sm:px-6 py-3 flex items-center justify-between border-b border-slate-800">
+            {/* Hamburger Menu Button */}
+            <button
+                onClick={onMenuClick}
+                className="p-2 -ml-2 rounded-lg text-slate-700 hover:bg-slate-100 border border-transparent hover:border-slate-300 transition cursor-pointer"
+            >
+                <ListIcon size={24} weight="bold" />
+            </button>
 
             <div className="flex items-center gap-4">
 

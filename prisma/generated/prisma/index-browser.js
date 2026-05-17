@@ -152,6 +152,8 @@ exports.Prisma.ProductScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   image: 'image',
+  images: 'images',
+  discountPrice: 'discountPrice',
   slug: 'slug',
   benefit: 'benefit',
   dateDeadline: 'dateDeadline',
@@ -303,6 +305,22 @@ exports.Prisma.BalanceEntryScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.VoucherScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  type: 'type',
+  discount: 'discount',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  status: 'status',
+  usageType: 'usageType',
+  usageLimit: 'usageLimit',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -365,6 +383,11 @@ exports.BalanceEntryType = exports.$Enums.BalanceEntryType = {
   WITHDRAWAL_REVERSED: 'WITHDRAWAL_REVERSED'
 };
 
+exports.VoucherType = exports.$Enums.VoucherType = {
+  PERSEN: 'PERSEN',
+  NOMINAL: 'NOMINAL'
+};
+
 exports.Prisma.ModelName = {
   Post: 'Post',
   Profile: 'Profile',
@@ -380,7 +403,8 @@ exports.Prisma.ModelName = {
   Catalog: 'Catalog',
   CatalogView: 'CatalogView',
   Withdrawal: 'Withdrawal',
-  BalanceEntry: 'BalanceEntry'
+  BalanceEntry: 'BalanceEntry',
+  Voucher: 'Voucher'
 };
 
 /**

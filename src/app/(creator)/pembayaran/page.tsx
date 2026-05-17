@@ -213,13 +213,15 @@ export default function TransactionPage() {
 
   return (
     <TooltipProvider>
-      <div className="space-y-8">
+      <div className="w-full max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-cyan-600">Daftar Transaksi</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Lihat pemasukan, saldo tersedia, dan tarik dana kapan saja.
-          </p>
+        <div className="bg-slate-50">
+          <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-2">
+            <div className="text-2xl font-bold mb-2 text-cyan-600">Daftar Transaksi</div>
+            <div className="text-sm font-regular text-slate-600">
+              Lihat pemasukan, saldo tersedia, dan tarik dana kapan saja.
+            </div>
+          </div>
         </div>
 
         {/* Stats Card */}
@@ -230,7 +232,7 @@ export default function TransactionPage() {
               <WalletIcon className="h-5 w-5 text-cyan-600" weight="fill" />
               <span className="text-sm font-medium">Saldo saat ini</span>
             </div>
-            <div className="flex items-end justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <h2 className="text-2xl font-semibold text-cyan-600">
                 {isLoading && !data ? (
                   <Skeleton className="h-8 w-40" />
@@ -392,7 +394,7 @@ export default function TransactionPage() {
                           </span>
                         </div>
                         {Number(withdrawForm.amount) - Math.round(Number(withdrawForm.amount) * 0.02) - 4000 < 10000 && (
-                          <p className="text-red-500 text-xs mt-3 pt-2 border-t border-red-100 text-center font-medium">
+                           <p className="text-red-500 text-xs mt-3 pt-2 border-t border-red-100 text-center font-medium">
                             Minimal saldo diterima harus Rp10.000 setelah dipotong fee.
                           </p>
                         )}
@@ -474,19 +476,23 @@ export default function TransactionPage() {
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-col justify-between gap-4 md:flex-row">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           {/* Search */}
           <SearchInput
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Cari berdasarkan ID, Produk, atau Nama Pembeli"
+            className="w-full sm:flex-1 min-w-[280px]"
           />
 
           {/* Filter */}
-          <div className="flex gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <ButtonFilter label={`Status: ${getStatusLabel(status)}`} />
+                <ButtonFilter
+                  className="flex-1 lg:flex-none"
+                  label={`Status: ${getStatusLabel(status)}`}
+                />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[180px]">
                 <DropdownMenuRadioGroup
@@ -514,156 +520,248 @@ export default function TransactionPage() {
           </div>
         </div>
 
-        {/* Table */}
-        <Table
-          pagination={
-            <TablePagination
-              page={page}
-              totalPages={totalPages}
-              limit={limit}
-              total={totalItems}
-              onPageChange={setPage}
-              onLimitChange={setLimit}
-            />
-          }
-        >
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[5%] text-center">No</TableHead>
-              <TableHead className="w-[10%] whitespace-nowrap">ID</TableHead>
-              <TableHead className="w-[12%] whitespace-nowrap">Total</TableHead>
-              <TableHead className="w-[10%] whitespace-nowrap">
-                Metode
-              </TableHead>
-              <TableHead className="w-[18%] whitespace-nowrap">
-                Pembeli
-              </TableHead>
-              <TableHead className="w-[20%] whitespace-nowrap">
-                Produk
-              </TableHead>
-              <TableHead className="w-[15%] whitespace-nowrap">
-                Tanggal
-              </TableHead>
-              <TableHead className="w-[10%] text-center whitespace-nowrap">
-                Status
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading && !data ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i} data-type="body">
-                  <TableCell>
-                    <Skeleton className="mx-auto h-4 w-4" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-16" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-24" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-20" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-32" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-40" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-32" />
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    <Skeleton className="h-6 w-20 rounded-full" />
+        {/* Table (Desktop/Tablet) */}
+        <div className="hidden sm:block w-full pb-2">
+          <Table
+            pagination={
+              <TablePagination
+                page={page}
+                totalPages={totalPages}
+                limit={limit}
+                total={totalItems}
+                onPageChange={setPage}
+                onLimitChange={setLimit}
+              />
+            }
+          >
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[5%] text-center whitespace-nowrap">No</TableHead>
+                <TableHead className="w-[10%] whitespace-nowrap">ID</TableHead>
+                <TableHead className="w-[12%] whitespace-nowrap">Total</TableHead>
+                <TableHead className="w-[10%] whitespace-nowrap">
+                  Metode
+                </TableHead>
+                <TableHead className="w-[18%] whitespace-nowrap">
+                  Pembeli
+                </TableHead>
+                <TableHead className="w-[20%] whitespace-nowrap">
+                  Produk
+                </TableHead>
+                <TableHead className="w-[15%] whitespace-nowrap">
+                  Tanggal
+                </TableHead>
+                <TableHead className="w-[10%] text-center whitespace-nowrap">
+                  Status
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading && !data ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i} data-type="body">
+                    <TableCell>
+                      <Skeleton className="mx-auto h-4 w-4" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-40" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <Skeleton className="h-6 w-20 rounded-full" />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : transactions.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={8}
+                    className="py-20 text-center text-slate-500"
+                  >
+                    Tidak ada transaksi ditemukan
                   </TableCell>
                 </TableRow>
-              ))
-            ) : transactions.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={8}
-                  className="py-20 text-center text-slate-500"
-                >
-                  Tidak ada transaksi ditemukan
-                </TableCell>
-              </TableRow>
-            ) : (
-              transactions.map((item, index) => (
-                <TableRow key={item.id} data-type="body">
-                  <TableCell className="text-center font-medium">
-                    <div className="flex min-h-[48px] items-center justify-center">
-                      {(page - 1) * limit + index + 1}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="flex min-h-[48px] max-w-[80px] items-center truncate text-xs font-medium text-slate-400">
-                          {item.id}
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>ID: {item.id}</TooltipContent>
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    <div className="flex min-h-[48px] items-center font-medium text-slate-800">
-                      {formatCurrency(Number(item.amount))}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="flex min-h-[48px] max-w-[80px] items-center truncate text-slate-600">
+              ) : (
+                transactions.map((item, index) => (
+                  <TableRow key={item.id} data-type="body">
+                    <TableCell className="text-center font-medium">
+                      <div className="flex min-h-[48px] items-center justify-center">
+                        {(page - 1) * limit + index + 1}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex min-h-[48px] max-w-[80px] items-center truncate text-xs font-medium text-slate-400">
+                            {item.id}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>ID: {item.id}</TooltipContent>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <div className="flex min-h-[48px] items-center font-medium text-slate-800">
+                        {formatCurrency(Number(item.amount))}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex min-h-[48px] max-w-[80px] items-center truncate text-slate-600">
+                            {item.xenditPaymentMethod ?? "-"}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
                           {item.xenditPaymentMethod ?? "-"}
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {item.xenditPaymentMethod ?? "-"}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="flex min-h-[48px] max-w-[140px] items-center truncate text-slate-600">
-                          {item.buyerName}
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>{item.buyerName}</TooltipContent>
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="flex min-h-[48px] max-w-[180px] items-center truncate text-slate-600">
-                          {item.product.name}
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>{item.product.name}</TooltipContent>
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    <div className="flex min-h-[48px] items-center text-slate-600">
-                      {format(new Date(item.createdAt), "dd MMM yyyy HH:mm", {
-                        locale: id,
-                      })}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex min-h-[48px] max-w-[140px] items-center truncate text-slate-600">
+                            {item.buyerName}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>{item.buyerName}</TooltipContent>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex min-h-[48px] max-w-[180px] items-center truncate text-slate-600">
+                            {item.product.name}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>{item.product.name}</TooltipContent>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <div className="flex min-h-[48px] items-center text-slate-600">
+                        {format(new Date(item.createdAt), "dd MMM yyyy HH:mm", {
+                          locale: id,
+                        })}
+                      </div>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <div className="flex min-h-[48px] items-center justify-center">
+                        <span
+                          className={`rounded-full px-4 py-1 text-[13px] leading-tight font-medium ${getStatusColor(item.status)}`}
+                        >
+                          {getStatusLabel(item.status)}
+                        </span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Mobile Cards (Only visible on mobile) */}
+        <div className="space-y-4 sm:hidden">
+          {isLoading && !data ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3 animate-pulse">
+                <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                  <Skeleton className="h-4 w-12" />
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                </div>
+                <div className="space-y-2 flex-1">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-1/2" />
+                  <Skeleton className="h-3 w-1/3" />
+                </div>
+              </div>
+            ))
+          ) : transactions.length === 0 ? (
+            <div className="text-center py-8 bg-white border border-slate-800 rounded-xl p-4 text-slate-500">
+              Tidak ada transaksi ditemukan
+            </div>
+          ) : (
+            transactions.map((item, index) => {
+              const rowNumber = (page - 1) * limit + index + 1;
+              return (
+                <div key={item.id} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3">
+                  <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                    <span className="text-xs font-semibold text-slate-400"># {rowNumber}</span>
+                    <span
+                      className={`rounded-full px-3 py-0.5 text-xs font-medium ${getStatusColor(item.status)}`}
+                    >
+                      {getStatusLabel(item.status)}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 flex-1 min-w-0">
+                    <div className="font-semibold text-slate-800 break-words leading-normal">
+                      {item.product.name}
                     </div>
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    <div className="flex min-h-[48px] items-center justify-center">
-                      <span
-                        className={`rounded-full px-4 py-1 text-[13px] leading-tight font-medium ${getStatusColor(item.status)}`}
-                      >
-                        {getStatusLabel(item.status)}
+
+                    <div className="text-xs text-slate-500">
+                      <span className="font-medium text-slate-400">ID Transaksi: </span>
+                      <span className="font-mono text-[11px] text-slate-600">{item.id}</span>
+                    </div>
+
+                    <div className="text-xs text-slate-500">
+                      <span className="font-medium text-slate-400">Pembeli: </span>
+                      <span className="font-medium text-slate-700">{item.buyerName}</span>
+                    </div>
+
+                    <div className="text-xs text-slate-500">
+                      <span className="font-medium text-slate-400">Metode: </span>
+                      <span className="font-medium text-slate-700">{item.xenditPaymentMethod ?? "-"}</span>
+                    </div>
+
+                    <div className="text-xs text-slate-500">
+                      <span className="font-medium text-slate-400">Tanggal: </span>
+                      <span className="text-slate-600">
+                        {format(new Date(item.createdAt), "dd MMM yyyy HH:mm", {
+                          locale: id,
+                        })}
                       </span>
                     </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+
+                    <div className="text-xs pt-1">
+                      <span className="font-medium text-slate-400">Total: </span>
+                      <span className="font-bold text-cyan-600 text-sm">
+                        {formatCurrency(Number(item.amount))}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+
+          {/* Mobile Pagination */}
+          {transactions && transactions.length > 0 && (
+            <div className="bg-white border border-slate-800 rounded-xl p-4 shadow-[1.5px_1.5px_0px_rgba(29,41,61)]">
+              <TablePagination
+                page={page}
+                totalPages={totalPages}
+                limit={limit}
+                total={totalItems}
+                onPageChange={setPage}
+                onLimitChange={setLimit}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </TooltipProvider>
   );

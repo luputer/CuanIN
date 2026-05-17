@@ -18,6 +18,7 @@ interface ButtonAddProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   loadingLabel?: string;
   icon?: ButtonIcon;
   variant?: "primary" | "secondary";
+  responsive?: boolean;
 }
 
 export default function ButtonAdd({
@@ -30,6 +31,7 @@ export default function ButtonAdd({
   icon: Icon = PlusIcon,
   onClick,
   variant = "primary",
+  responsive = false,
   ...props
 }: ButtonAddProps) {
   const content = (
@@ -37,19 +39,20 @@ export default function ButtonAdd({
       {isLoading ? (
         <>
           <CircleNotchIcon className="h-5 w-5 animate-spin" />
-          <span>{loadingLabel}</span>
+          <span className={cn(responsive && "hidden sm:inline")}>{loadingLabel}</span>
         </>
       ) : (
         <>
           <Icon className="h-5 w-5" weight={weight} />
-          <span>{label}</span>
+          <span className={cn(responsive && "hidden sm:inline")}>{label}</span>
         </>
       )}
     </>
   );
 
   const classes = cn(
-    "w-fit flex items-center justify-center gap-2 px-6 py-2",
+    "w-fit h-10 flex items-center justify-center gap-2 whitespace-nowrap",
+    responsive ? "px-3 sm:px-6" : "px-6",
     "border rounded-lg",
     variant === "primary"
       ? "text-sm font-semibold text-white bg-cyan-600 hover:bg-cyan-700 border-slate-800 shadow-[1.5px_1.5px_0px_rgba(29,41,61)]"

@@ -28,7 +28,7 @@ export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
     );
 
     const form = useForm<WebinarFormValues>({
-        resolver: zodResolver(webinarSchema),
+        resolver: zodResolver(webinarSchema) as any,
         defaultValues: {
             priceType: "free",
             platform: "zoom",
@@ -37,10 +37,17 @@ export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
             quota: 0,
             notes: "",
             benefit: isEdit ? [] : ["", "", ""],
+            enableVoucher: true,
+            vouchers: [],
+            enableNotes: false,
+            enableDiscount: false,
+            discountPrice: 0,
+            image: "",
+            images: [],
         },
     });
 
-    const { control, reset, setValue, handleSubmit } = form;
+    const { control, reset, setValue, getValues, watch, handleSubmit } = form;
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -53,13 +60,15 @@ export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
     useEffect(() => {
         if (product && isEdit) {
             const priceVal = Number(product.price);
+            const isStandardPlatform = ["zoom", "google-meet"].includes(product.platform ?? "");
             reset({
                 name: product.name,
                 shortDescription: product.shortDescription ?? "",
                 description: product.description ?? "",
-                priceType: priceVal === 0 ? "free" : "paid",
+                priceType: priceVal > 0 ? "paid" : "free",
                 price: priceVal,
-                platform: product.platform ?? "zoom",
+                platform: isStandardPlatform ? (product.platform ?? "zoom") : "other",
+                platformCustom: isStandardPlatform ? "" : (product.platform ?? ""),
                 link: product.link ?? "",
                 notes: product.notes ?? "",
                 status: product.status ?? "unpublished",
@@ -68,14 +77,70 @@ export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
                 dateEnd: product.endDate ?? undefined,
                 dateDeadline: product.dateDeadline ?? undefined,
                 benefit: (product.benefit as string[]) ?? [],
+                images: (product.images as string[]) ?? [],
+                vouchers: (product.vouchers as any[])?.map((v: any) => v.id) ?? [],
+                discountPrice: Number(product.discountPrice) || 0,
+                enableVoucher: true,
+                enableNotes: !!product.notes,
+                enableDiscount: Number(product.discountPrice) > 0,
+                enableQuota: (product.quota ?? 0) > 0,
+                image: product.image ?? "",
             });
             if (product.image) setPreviewUrl(product.image);
         }
     }, [product, reset, isEdit, setPreviewUrl]);
 
+    const images = watch("images") || [];
+
+    const onFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const url = await handleFileUpload(e);
+        if (url) {
+            const currentImages = getValues("images") || [];
+            if (currentImages.length < 4) {
+                const newImages = [...currentImages, url];
+                setValue("images", newImages, { shouldValidate: true, shouldDirty: true });
+                // Main image is the first one if not set
+                if (!getValues("image")) {
+                    setValue("image", url, { shouldValidate: true, shouldDirty: true });
+                }
+            } else {
+                toast.error("Maksimal 4 gambar");
+            }
+        }
+        e.target.value = "";
+    };
+
+    const handlePriceAdjust = (step: number) => {
+        const currentPrice = getValues("price") || 0;
+        setValue("price", Math.max(0, currentPrice + step), { shouldValidate: true, shouldDirty: true });
+    };
+
+    const handleDiscountPriceAdjust = (step: number) => {
+        const currentPrice = getValues("discountPrice") || 0;
+        setValue("discountPrice", Math.max(0, currentPrice + step), { shouldValidate: true, shouldDirty: true });
+    };
+
+    const handleQuotaAdjust = (step: number) => {
+        const currentQuota = getValues("quota") || 0;
+        setValue("quota", Math.max(0, currentQuota + step), { shouldValidate: true, shouldDirty: true });
+    };
+
+    const removeImage = (index: number) => {
+        const currentImages = getValues("images") || [];
+        const newImages = currentImages.filter((_, i) => i !== index);
+        setValue("images", newImages, { shouldValidate: true, shouldDirty: true });
+        // Update main image if we removed it
+        if (getValues("image") === currentImages[index]) {
+            setValue("image", newImages[0] || "", { shouldValidate: true, shouldDirty: true });
+        }
+    };
+
     const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const url = await handleFileUpload(e);
-        if (url) setValue("image", url, { shouldValidate: true });
+        if (url) {
+            setValue("image", url, { shouldValidate: true, shouldDirty: true });
+        }
+        e.target.value = "";
     };
 
     const updateMutation = api.products.update.useMutation({
@@ -98,17 +163,20 @@ export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
                 name: data.name,
                 shortDescription: data.shortDescription,
                 description: data.description,
-                price: data.priceType === "free" ? 0 : (data.price ?? 0),
+                price: data.price ?? 0,
                 platform: actualPlatform,
                 link: data.link ?? undefined,
-                notes: data.notes ?? undefined,
+                vouchers: data.enableVoucher ? data.vouchers : [],
+                discountPrice: data.enableDiscount ? data.discountPrice : null,
+                notes: data.enableNotes ? data.notes : null,
                 status: data.status,
                 startDate: data.dateStart,
                 endDate: data.dateEnd,
                 dateDeadline: data.dateDeadline,
-                quota: data.quota,
+                quota: data.enableQuota ? data.quota : 0,
                 image: data.image,
-                benefit: data.benefit?.filter((b) => b.trim() !== ""),
+                images: data.images,
+                benefit: data.benefit?.filter((b: string) => b.trim() !== ""),
             });
         }
     });
@@ -121,6 +189,12 @@ export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
         uploading,
         previewUrl,
         onFileChange,
+        onFilesChange,
+        removeImage,
+        handlePriceAdjust,
+        handleDiscountPriceAdjust,
+        handleQuotaAdjust,
+        images,
         onSubmit,
         isPending: updateMutation.isPending,
         isLoadingProduct,

@@ -1,0 +1,567 @@
+"use client"
+
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import {
+    ArrowLeftIcon,
+    CaretDownIcon,
+    CopyIcon,
+    TrashIcon,
+    CheckIcon
+} from "@phosphor-icons/react";
+import { format } from "date-fns";
+import { id as idLocale } from "date-fns/locale";
+import { toast } from "sonner";
+import { api } from "~/trpc/react";
+import { Button } from "~/components/ui/button";
+import { FormInput, FormSelect, SectionHeader } from "~/components/ui/form-layout";
+import { Calendar } from "~/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import ConfirmDialog from "~/components/ui/confirm-dialog";
+import { Skeleton } from "~/components/ui/skeleton";
+import { cn } from "~/lib/utils";
+import ButtonSave from "~/components/ui/button-save";
+import type { DateRange as DayPickerDateRange } from "react-day-picker";
+
+type DateRange = DayPickerDateRange;
+
+const Label = ({ children }: { children: React.ReactNode }) => (
+    <div className="w-full text-slate-500 text-sm font-medium leading-6 mb-1">{children}</div>
+);
+
+const Row = ({ label, error, children, extra }: { label: string; error?: string; children: React.ReactNode, extra?: React.ReactNode }) => (
+    <div className="flex flex-col items-start pb-5 gap-0.5 w-full">
+        <div className="flex items-center justify-between w-full mb-1">
+            <Label>{label}</Label>
+            {extra}
+        </div>
+        <div className="flex-1 w-full text-slate-800 text-sm font-medium leading-6">
+            {children}
+            {error && <span className="text-red-500 text-xs mt-1 block">{error}</span>}
+        </div>
+    </div>
+);
+
+function DateTimeRangePicker({
+    startDate,
+    endDate,
+    onChange,
+}: {
+    startDate?: Date;
+    endDate?: Date;
+    onChange: (range: { startDate?: Date; endDate?: Date }) => void;
+}) {
+    const [range, setRange] = useState<DateRange | undefined>(
+        startDate || endDate ? { from: startDate, to: endDate } : undefined
+    );
+
+    useEffect(() => {
+        setRange(startDate || endDate ? { from: startDate, to: endDate } : undefined);
+    }, [startDate, endDate]);
+
+    const updateRange = (nextRange: DateRange | undefined) => {
+        setRange(nextRange);
+
+        const from = nextRange?.from;
+        const to = nextRange?.to;
+
+        onChange({ startDate: from, endDate: to });
+    };
+
+    const label = startDate && endDate
+        ? `${format(startDate, "d MMM yyyy", { locale: idLocale })} - ${format(endDate, "d MMM yyyy", { locale: idLocale })}`
+        : startDate
+            ? `${format(startDate, "d MMM yyyy", { locale: idLocale })} - Pilih akhir`
+            : "Pilih rentang tanggal mulai dan akhir";
+
+    return (
+        <Popover>
+            <PopoverTrigger asChild>
+                <Button
+                    variant="outline"
+                    className="w-full justify-between text-left bg-white border-slate-400 hover:bg-slate-50 h-[52px] px-4 rounded-lg focus:ring-2 focus:ring-cyan-600/50 transition-all shadow-none"
+                >
+                    <span className="text-sm text-left text-slate-700">{label}</span>
+                    <CaretDownIcon className="h-4 w-4 text-slate-400" />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[520px] p-0" align="start">
+                <div className="p-4">
+                    <Calendar
+                        mode="range"
+                        selected={range}
+                        onSelect={(next) => updateRange(next as DateRange)}
+                        initialFocus
+                    />
+                    <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-500">
+                        Klik tanggal awal terlebih dahulu, lalu pilih tanggal akhir.
+                    </div>
+                </div>
+            </PopoverContent>
+        </Popover>
+    );
+}
+
+export default function VoucherDetailPage() {
+    const params = useParams();
+    const router = useRouter();
+    const id = params?.id as string;
+    const utils = api.useUtils();
+
+    const { data: voucher, isLoading } = api.vouchers.getById.useQuery(
+        { id },
+        { enabled: !!id }
+    );
+
+    // Fetch creator's products list
+    const { data: productsData } = api.products.getAll.useQuery(
+        { limit: 100 }
+    );
+    const productsList = productsData?.items ?? [];
+
+    const [name, setName] = useState("");
+    const [code, setCode] = useState("");
+    const [type, setType] = useState<"PERSEN" | "NOMINAL">("PERSEN");
+    const [discount, setDiscount] = useState(0);
+    const [startDate, setStartDate] = useState<Date | undefined>();
+    const [endDate, setEndDate] = useState<Date | undefined>();
+    const [status, setStatus] = useState<"aktif" | "nonaktif" | "expired">("aktif");
+    const [usageType, setUsageType] = useState<"ALL_PRODUCTS" | "SELECTED_PRODUCTS" | "SINGLE_CHECKOUT">("ALL_PRODUCTS");
+    const [usageLimit, setUsageLimit] = useState<number | undefined>();
+    const [isLimitEnabled, setIsLimitEnabled] = useState(false);
+    
+    // Multi-selected products list state
+    const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+
+    const [copiedCode, setCopiedCode] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+    useEffect(() => {
+        if (voucher) {
+            setName(voucher.name ?? "");
+            setCode(voucher.code);
+            setType(voucher.type);
+            setDiscount(Number(voucher.discount));
+            setStartDate(new Date(voucher.startDate));
+            setEndDate(new Date(voucher.endDate));
+            setStatus(voucher.status as "aktif" | "nonaktif" | "expired");
+            setUsageType(voucher.usageType as any || "ALL_PRODUCTS");
+            setUsageLimit(voucher.usageLimit ?? undefined);
+            setIsLimitEnabled(!!voucher.usageLimit);
+            if (voucher.products) {
+                setSelectedProductIds(voucher.products.map((p: any) => p.id));
+            }
+        }
+    }, [voucher]);
+
+    const isDirty = voucher ? (
+        name !== (voucher.name ?? "") ||
+        code !== voucher.code ||
+        type !== voucher.type ||
+        discount !== Number(voucher.discount) ||
+        startDate?.getTime() !== new Date(voucher.startDate).getTime() ||
+        endDate?.getTime() !== new Date(voucher.endDate).getTime() ||
+        status !== voucher.status ||
+        usageType !== (voucher.usageType || "ALL_PRODUCTS") ||
+        usageLimit !== (voucher.usageLimit ?? undefined) ||
+        JSON.stringify(selectedProductIds.slice().sort()) !== JSON.stringify((voucher.products || []).map((p: any) => p.id).slice().sort())
+    ) : false;
+
+    const updateMutation = api.vouchers.update.useMutation({
+        onSuccess: () => {
+            toast.success("Voucher berhasil diperbarui");
+            void utils.vouchers.getAll.invalidate();
+            router.push("/voucher");
+        },
+        onError: (error) => {
+            toast.error(error.message || "Gagal menyimpan voucher");
+        },
+    });
+
+    const deleteMutation = api.vouchers.delete.useMutation({
+        onSuccess: () => {
+            toast.success("Voucher berhasil dihapus");
+            void utils.vouchers.getAll.invalidate();
+            router.push("/voucher");
+        },
+        onError: (error) => {
+            toast.error(error.message || "Gagal menghapus voucher");
+            setShowDeleteConfirm(false);
+        }
+    });
+
+    const handleCopyCode = () => {
+        navigator.clipboard.writeText(code);
+        setCopiedCode(true);
+        setTimeout(() => setCopiedCode(false), 2000);
+        toast.success("Kode voucher disalin");
+    };
+
+    const handleDelete = () => {
+        deleteMutation.mutate({ id });
+    };
+
+    const handleSubmit = async () => {
+        if (!name.trim()) {
+            toast.error("Nama voucher wajib diisi");
+            return;
+        }
+
+        if (!code.trim()) {
+            toast.error("Kode voucher wajib diisi");
+            return;
+        }
+
+        if (!startDate || !endDate) {
+            toast.error("Periode mulai dan berakhir wajib diisi");
+            return;
+        }
+
+        if (startDate > endDate) {
+            toast.error("Tanggal selesai harus sama atau lebih besar dari tanggal mulai");
+            return;
+        }
+
+        updateMutation.mutate({
+            id,
+            name: name.trim(),
+            code: code.trim(),
+            type,
+            discount,
+            startDate: startDate.toISOString(),
+            endDate: endDate.toISOString(),
+            status,
+            usageType,
+            usageLimit: isLimitEnabled ? usageLimit : null,
+            productIds: usageType === "SELECTED_PRODUCTS" ? selectedProductIds : [],
+        });
+    };
+
+    if (isLoading || !voucher) {
+        return (
+            <div className="w-full space-y-6">
+                <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-48" />
+                    <Skeleton className="h-10 w-32" />
+                </div>
+                <Skeleton className="h-8 w-64" />
+                <div className="bg-white rounded-xl overflow-hidden border border-slate-200 p-6 space-y-6">
+                    <Skeleton className="h-6 w-40" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-40 w-full" />
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="w-full max-w-7xl mx-auto">
+            <div className="space-y-6">
+                {/* Header */}
+                <div className="bg-slate-50">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sticky top-[74px] bg-slate-50 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 pt-2 pb-0">
+                        <div className="flex-1 flex flex-col gap-1 min-w-0">
+                            <Link
+                                href="/voucher"
+                                className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
+                            >
+                                <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                                <span className="leading-none">Kembali ke Daftar</span>
+                            </Link>
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                                <h1 className="text-xl font-medium text-slate-800 break-words max-w-full">
+                                    {voucher.code}
+                                </h1>
+                                <span className={cn(
+                                    "px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wider",
+                                    voucher.status === "aktif"
+                                        ? "bg-green-100 text-green-700 border border-green-200"
+                                        : voucher.status === "expired"
+                                            ? "bg-red-100 text-red-700 border border-red-200"
+                                            : "bg-slate-200 text-slate-500 border border-slate-300"
+                                )}>
+                                    {voucher.status === "aktif" ? "Aktif" : voucher.status === "expired" ? "Expired" : "Nonaktif"}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 sm:gap-3">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border-cyan-600 hover:bg-cyan-50 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
+                                onClick={handleCopyCode}
+                            >
+                                {copiedCode ? (
+                                    <CheckIcon className="w-4 h-4 text-cyan-600" />
+                                ) : (
+                                    <CopyIcon className="w-4 h-4 text-cyan-600" />
+                                )}
+                                <span className="text-sm font-regular text-cyan-600 whitespace-nowrap">
+                                    Copy Code
+                                </span>
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex items-center justify-center h-10 w-10 p-0 bg-white border-red-500 hover:bg-red-100 hover:shadow-sm rounded-lg transition-all cursor-pointer shrink-0"
+                                onClick={() => setShowDeleteConfirm(true)}
+                            >
+                                <TrashIcon className="w-4 h-4 text-red-500" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Form Box */}
+                <div className="rounded-xl border border-slate-800 overflow-hidden bg-white">
+                    <div className="flex-1 min-w-0 bg-white rounded-xl px-4 py-2 sm:px-8 sm:py-8">
+                        <SectionHeader title="Informasi Voucher" />
+
+                        <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start pt-6">
+                            {/* Kiri: Informasi Voucher */}
+                            <div className="flex-1 min-w-0 w-full space-y-0">
+                                {/* Nama Voucher */}
+                                <Row label="Nama Voucher">
+                                    <FormInput
+                                        value={name}
+                                        onChange={(event) => setName(event.target.value)}
+                                        placeholder="Masukkan nama voucher"
+                                    />
+                                </Row>
+
+                                {/* Kode Voucher */}
+                                <Row label="Kode Voucher">
+                                    <FormInput
+                                        value={code}
+                                        onChange={(event) => setCode(event.target.value)}
+                                        placeholder="Masukkan kode voucher"
+                                    />
+                                </Row>
+
+                                {/* Tipe & Diskon */}
+                                <div className="grid gap-4 md:grid-cols-2">
+                                    <Row label="Tipe">
+                                        <FormSelect value={type} onChange={(event) => setType(event.target.value as "PERSEN" | "NOMINAL")}>
+                                            <option value="PERSEN">Persen</option>
+                                            <option value="NOMINAL">Nominal</option>
+                                        </FormSelect>
+                                    </Row>
+
+                                    <Row label="Diskon">
+                                        <FormInput
+                                            type="number"
+                                            min={0}
+                                            step={type === "PERSEN" ? 1 : 1000}
+                                            value={discount}
+                                            onChange={(event) => setDiscount(Number(event.target.value))}
+                                            prefix={type === "PERSEN" ? "%" : "Rp"}
+                                        />
+                                    </Row>
+                                </div>
+
+                                {/* Status */}
+                                <Row label="Status">
+                                    <FormSelect value={status} onChange={(event) => setStatus(event.target.value as "aktif" | "nonaktif" | "expired")}>
+                                        <option value="aktif">Aktif</option>
+                                        <option value="nonaktif">Nonaktif</option>
+                                        <option value="expired">Expired</option>
+                                    </FormSelect>
+                                </Row>
+
+                                {/* Jenis Penggunaan was moved to right column */}
+                            </div>
+
+                            {/* Kanan: Sidebar Metadata */}
+                            <div className="shrink-0 w-full lg:w-[400px] space-y-6">
+                                {/* Periode Berlaku */}
+                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <p className="text-slate-700 text-sm font-semibold mb-3">Periode Berlaku</p>
+                                    <div className="space-y-4">
+                                        <Row label="Pilih rentang tanggal mulai dan akhir">
+                                            <DateTimeRangePicker
+                                                startDate={startDate}
+                                                endDate={endDate}
+                                                onChange={({ startDate, endDate }) => {
+                                                    setStartDate(startDate);
+                                                    setEndDate(endDate);
+                                                }}
+                                            />
+                                        </Row>
+                                    </div>
+                                </div>
+
+                                {/* Penggunaan */}
+                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <p className="text-slate-700 text-sm font-semibold mb-3">Penggunaan</p>
+                                    <div className="space-y-4">
+                                        <Row label="Jenis Penggunaan">
+                                            <div className="flex flex-col gap-2 mt-1">
+                                                <label className="flex items-center gap-2 cursor-pointer">
+                                                    <input
+                                                        type="radio"
+                                                        name="usageType"
+                                                        value="ALL_PRODUCTS"
+                                                        checked={usageType === "ALL_PRODUCTS"}
+                                                        onChange={() => setUsageType("ALL_PRODUCTS")}
+                                                        className="w-4 h-4 text-cyan-600 focus:ring-cyan-600 border-slate-300"
+                                                    />
+                                                    <span className="text-sm font-medium text-slate-700">Terapkan ke Semua Produk</span>
+                                                </label>
+
+                                                <label className="flex items-center gap-2 cursor-pointer">
+                                                    <input
+                                                        type="radio"
+                                                        name="usageType"
+                                                        value="SELECTED_PRODUCTS"
+                                                        checked={usageType === "SELECTED_PRODUCTS"}
+                                                        onChange={() => setUsageType("SELECTED_PRODUCTS")}
+                                                        className="w-4 h-4 text-cyan-600 focus:ring-cyan-600 border-slate-300"
+                                                    />
+                                                    <span className="text-sm font-medium text-slate-700">Terapkan ke Produk Pilihan</span>
+                                                </label>
+
+                                                <label className="flex items-center gap-2 cursor-pointer">
+                                                    <input
+                                                        type="radio"
+                                                        name="usageType"
+                                                        value="SINGLE_CHECKOUT"
+                                                        checked={usageType === "SINGLE_CHECKOUT"}
+                                                        onChange={() => setUsageType("SINGLE_CHECKOUT")}
+                                                        className="w-4 h-4 text-cyan-600 focus:ring-cyan-600 border-slate-300"
+                                                    />
+                                                    <span className="text-sm font-medium text-slate-700">Terapkan hanya untuk 1x Checkout</span>
+                                                </label>
+                                            </div>
+
+                                            {usageType === "SELECTED_PRODUCTS" && (
+                                                <div className="animate-in fade-in slide-in-from-top-2 duration-200 border border-slate-200 rounded-lg p-2.5 bg-white mt-2 space-y-2">
+                                                    <span className="text-xs font-semibold text-slate-600 block">Pilih Produk:</span>
+                                                    <div className="max-h-[140px] overflow-y-auto space-y-1.5 pr-1">
+                                                        {productsList.length === 0 ? (
+                                                            <p className="text-xs text-slate-400 italic">Belum ada produk digital/webinar.</p>
+                                                        ) : (
+                                                            productsList.map((prod) => {
+                                                                const isChecked = selectedProductIds.includes(prod.id);
+                                                                return (
+                                                                    <label
+                                                                        key={prod.id}
+                                                                        className={cn(
+                                                                            "flex items-center justify-between p-2 rounded border cursor-pointer transition-colors text-xs",
+                                                                            isChecked
+                                                                                ? "border-cyan-600 bg-cyan-50/50"
+                                                                                : "border-slate-200 hover:bg-slate-50"
+                                                                        )}
+                                                                    >
+                                                                        <div className="flex items-center gap-2">
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                checked={isChecked}
+                                                                                onChange={() => {
+                                                                                    if (isChecked) {
+                                                                                        setSelectedProductIds(selectedProductIds.filter(id => id !== prod.id));
+                                                                                    } else {
+                                                                                        setSelectedProductIds([...selectedProductIds, prod.id]);
+                                                                                    }
+                                                                                }}
+                                                                                className="w-3.5 h-3.5 text-cyan-600 focus:ring-cyan-600 rounded border-slate-300"
+                                                                            />
+                                                                            <span className="font-medium text-slate-700">{prod.name}</span>
+                                                                        </div>
+                                                                        <span className="text-[9px] font-semibold text-slate-400 bg-slate-100 border px-1 rounded uppercase shrink-0">
+                                                                            {prod.type === "DIGITAL_PRODUCT" ? "Digital" : prod.type === "WEBINAR" ? "Webinar" : "Kelas"}
+                                                                        </span>
+                                                                    </label>
+                                                                );
+                                                            })
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </Row>
+
+                                        {/* Toggle Batasi Jumlah Voucher */}
+                                        <div className="space-y-2 pt-2">
+                                            <div className="flex items-center justify-between py-1">
+                                                <label className="text-sm font-medium text-slate-700">Batasi Jumlah Voucher</label>
+                                                <label className="relative inline-flex items-center cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="sr-only peer"
+                                                        checked={isLimitEnabled}
+                                                        onChange={() => {
+                                                            if (isLimitEnabled) {
+                                                                setUsageLimit(undefined);
+                                                            } else {
+                                                                setUsageLimit(voucher.usageLimit ?? 10);
+                                                            }
+                                                            setIsLimitEnabled(!isLimitEnabled);
+                                                        }}
+                                                    />
+                                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                                </label>
+                                            </div>
+
+                                            {isLimitEnabled && (
+                                                <div className="animate-in fade-in slide-in-from-top-2 duration-200 pt-2">
+                                                    <Row label="Maksimal Penggunaan Voucher">
+                                                        <FormInput
+                                                            type="number"
+                                                            min={1}
+                                                            value={usageLimit ?? ""}
+                                                            onChange={(event) => setUsageLimit(event.target.value ? Number(event.target.value) : undefined)}
+                                                            placeholder="Masukkan kuota penggunaan"
+                                                        />
+                                                    </Row>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer Action Buttons */}
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-center mt-4 pt-4 border-t border-slate-200 gap-4 w-full">
+                            <p className="text-slate-500 text-sm text-left w-full sm:w-auto">
+                                Terakhir diperbarui {format(new Date(voucher.updatedAt), "d MMMM yyyy, HH:mm", { locale: idLocale })}
+                            </p>
+                            <div className="w-full sm:w-auto flex justify-end">
+                                <ButtonSave
+                                    onClick={handleSubmit}
+                                    isLoading={updateMutation.isPending}
+                                    disabled={!isDirty}
+                                    label="Simpan Perubahan"
+                                    loadingLabel="Menyimpan..."
+                                    weight="bold"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Confirm Delete Dialog */}
+                <ConfirmDialog
+                    open={showDeleteConfirm}
+                    onOpenChange={(open) => !open && setShowDeleteConfirm(false)}
+                    icon={<TrashIcon size={52} className="bg-red-100 rounded-full p-3 text-red-500" weight="regular" />}
+                    title="Hapus Voucher?"
+                    description={
+                        <>
+                            Kamu yakin ingin menghapus voucher{" "}
+                            <span className="font-semibold text-slate-800">&quot;{voucher?.code}&quot;</span>?
+                            <br />
+                            Tindakan ini bersifat permanen dan tidak bisa dibatalkan.
+                        </>
+                    }
+                    confirmText="Ya, Hapus"
+                    confirmClassName="bg-red-500 hover:bg-red-600 text-white"
+                    loading={deleteMutation.isPending}
+                    onConfirm={handleDelete}
+                />
+            </div>
+        </div>
+    );
+}

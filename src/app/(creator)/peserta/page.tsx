@@ -73,27 +73,28 @@ export default function UserPage() {
 
 	return (
 		<TooltipProvider>
-			<div className="space-y-6">
+			<div className="w-full max-w-7xl mx-auto space-y-6">
 				{/* Header */}
 				<div className="bg-slate-50">
-					<div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
+					<div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-2">
 						<div className="text-2xl font-bold mb-2 text-cyan-600">Daftar User</div>
 						<div className="text-sm font-regular text-slate-600">Pantau semua user yang membeli produkmu.</div>
 					</div>
 				</div>
 
 				{/* Toolbar */}
-				<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+				<div className="flex flex-wrap items-center justify-between gap-4">
 					{/* Search */}
 					<SearchInput
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 						placeholder="Cari berdasarkan Nama atau Email"
+						className="w-full sm:flex-1 min-w-[280px]"
 					/>
 				</div>
 
-				{/* Table */}
-				<div className="">
+				{/* Table (Desktop/Tablet) */}
+				<div className="hidden sm:block w-full pb-2">
 					<Table
 						pagination={
 							<TablePagination
@@ -108,8 +109,8 @@ export default function UserPage() {
 					>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-[5%] text-center">No</TableHead>
-								<TableHead className="w-[20%]">
+								<TableHead className="w-[5%] text-center whitespace-nowrap">No</TableHead>
+								<TableHead className="w-[20%] whitespace-nowrap">
 									<div className="flex items-center gap-2 cursor-pointer hover:text-slate-900 transition-colors group">
 										Nama
 										<div className="flex flex-col h-4 justify-center">
@@ -118,11 +119,11 @@ export default function UserPage() {
 										</div>
 									</div>
 								</TableHead>
-								<TableHead className="w-[20%]">Email</TableHead>
-								<TableHead className="w-[15%]">Nomor Hp</TableHead>
-								<TableHead className="w-[15%] text-center">Produk Dibeli</TableHead>
-								<TableHead className="w-[15%]">Total Transaksi</TableHead>
-								<TableHead className="text-left w-[10%]">Aksi</TableHead>
+								<TableHead className="w-[20%] whitespace-nowrap">Email</TableHead>
+								<TableHead className="w-[15%] whitespace-nowrap">Nomor Hp</TableHead>
+								<TableHead className="w-[15%] text-center whitespace-nowrap">Produk Dibeli</TableHead>
+								<TableHead className="w-[15%] whitespace-nowrap">Total Transaksi</TableHead>
+								<TableHead className="text-left w-[10%] whitespace-nowrap">Aksi</TableHead>
 							</TableRow>
 						</TableHeader>
 
@@ -175,7 +176,7 @@ export default function UserPage() {
 
 											<TableCell className="whitespace-nowrap">
 												<div className="flex items-center min-h-[48px] text-slate-600">
-													{item.phone}
+													{item.phone || "-"}
 												</div>
 											</TableCell>
 
@@ -197,9 +198,8 @@ export default function UserPage() {
 														<TooltipTrigger asChild>
 															<Link
 																href={`/peserta/${encodeURIComponent(item.email)}`}
-																className="text-cyan-600 cursor-pointer hover:text-cyan-700 transition-colors"
 															>
-																<EyeIcon size={24} weight="regular" />
+																<EyeIcon className="w-[22px] h-[22px] text-cyan-600 cursor-pointer hover:text-cyan-700 transition-colors" />
 															</Link>
 														</TooltipTrigger>
 														<TooltipContent>Lihat Detail</TooltipContent>
@@ -212,6 +212,95 @@ export default function UserPage() {
 							)}
 						</TableBody>
 					</Table>
+				</div>
+
+				{/* Mobile Cards (Only visible on mobile) */}
+				<div className="space-y-4 sm:hidden">
+					{isLoading ? (
+						Array.from({ length: 3 }).map((_, i) => (
+							<div key={i} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3 animate-pulse">
+								<div className="flex justify-between items-center border-b border-slate-100 pb-2">
+									<Skeleton className="h-4 w-8" />
+									<Skeleton className="h-6 w-20 rounded-full" />
+								</div>
+								<div className="space-y-2 flex-1">
+									<Skeleton className="h-4 w-3/4" />
+									<Skeleton className="h-3 w-1/2" />
+									<Skeleton className="h-3 w-1/3" />
+								</div>
+							</div>
+						))
+					) : participants.length === 0 ? (
+						<div className="text-center py-8 bg-white border border-slate-800 rounded-xl p-4 text-slate-500">
+							Tidak ada data peserta ditemukan.
+						</div>
+					) : (
+						participants.map((item, index) => {
+							const rowNumber = (page - 1) * limit + index + 1;
+							return (
+								<div key={index} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3">
+									<div className="flex justify-between items-center border-b border-slate-100 pb-2">
+										<span className="text-xs font-semibold text-slate-400"># {rowNumber}</span>
+									</div>
+
+									<div className="space-y-2 flex-1 min-w-0">
+										<Link href={`/peserta/${encodeURIComponent(item.email)}`} className="font-semibold text-slate-800 hover:text-cyan-600 break-words line-clamp-2">
+											{item.name}
+										</Link>
+
+										<div className="text-xs text-slate-500 break-words">
+											<span className="font-medium text-slate-400">Email: </span>
+											{item.email}
+										</div>
+
+										<div className="text-xs text-slate-500">
+											<span className="font-medium text-slate-400">Nomor HP: </span>
+											{item.phone || "-"}
+										</div>
+
+										<div className="flex justify-between items-center text-xs pt-1">
+											<div>
+												<span className="font-medium text-slate-400">Produk Dibeli: </span>
+												<span className="font-semibold text-slate-700">{item.productsBought}</span>
+											</div>
+
+											<div>
+												<span className="font-medium text-slate-400">Total Transaksi: </span>
+												<span className="font-semibold text-slate-700">
+													Rp {item.totalTransaction.toLocaleString("id-ID")}
+												</span>
+											</div>
+										</div>
+									</div>
+
+									{/* Action Buttons */}
+									<div className="flex justify-end items-center pt-2.5 border-t border-slate-100 gap-2">
+										<Link
+											href={`/peserta/${encodeURIComponent(item.email)}`}
+											className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-cyan-600 border border-cyan-600 rounded-lg hover:bg-cyan-50 transition cursor-pointer"
+										>
+											<EyeIcon className="w-4 h-4" />
+											<span>Lihat Detail</span>
+										</Link>
+									</div>
+								</div>
+							);
+						})
+					)}
+
+					{/* Mobile Pagination */}
+					{participants && participants.length > 0 && (
+						<div className="bg-white border border-slate-800 rounded-xl p-4 shadow-[1.5px_1.5px_0px_rgba(29,41,61)]">
+							<TablePagination
+								page={page}
+								totalPages={totalPages}
+								limit={limit}
+								total={total}
+								onPageChange={setPage}
+								onLimitChange={setLimit}
+							/>
+						</div>
+					)}
 				</div>
 			</div>
 		</TooltipProvider>

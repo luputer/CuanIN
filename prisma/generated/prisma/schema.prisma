@@ -43,6 +43,9 @@ model Product {
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
   image            String?
+  images           Json?
+  vouchers         Voucher[]
+  discountPrice    Decimal?
   slug             String?       @unique @default(cuid())
   benefit          Json?
   dateDeadline     DateTime?
@@ -175,6 +178,7 @@ model User {
   sessions       Session[]
   withdrawals    Withdrawal[]
   balanceEntries BalanceEntry[]
+  vouchers       Voucher[]
 }
 
 model VerificationToken {
@@ -292,4 +296,29 @@ enum BalanceEntryType {
   WITHDRAWAL_REQUESTED
   WITHDRAWAL_FAILED
   WITHDRAWAL_REVERSED
+}
+
+enum VoucherType {
+  PERSEN
+  NOMINAL
+}
+
+model Voucher {
+  id         String      @id @default(uuid())
+  code       String      @unique
+  name       String?
+  type       VoucherType @default(PERSEN)
+  discount   Decimal
+  startDate  DateTime
+  endDate    DateTime
+  status     String      @default("aktif") // aktif, nonaktif, expired
+  usageType  String      @default("ALL_PRODUCTS") // ALL_PRODUCTS, SELECTED_PRODUCTS, SINGLE_CHECKOUT
+  usageLimit Int?
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products   Product[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([userId])
 }

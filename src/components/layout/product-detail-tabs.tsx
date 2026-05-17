@@ -17,9 +17,10 @@ interface ProductDetailTabsProps {
     buyerCount: number;
     children: React.ReactNode;
     className?: string;
+    hidePembeli?: boolean;
 }
 
-export function ProductDetailTabs({ defaultTab, buyerCount, children, className }: ProductDetailTabsProps) {
+export function ProductDetailTabs({ defaultTab, buyerCount, children, className, hidePembeli }: ProductDetailTabsProps) {
     const [activeTab, setActiveTab] = useState(defaultTab);
 
     const TabButton = ({ value, label, count }: { value: string; label: string; count?: number }) => {
@@ -28,7 +29,7 @@ export function ProductDetailTabs({ defaultTab, buyerCount, children, className 
             <button
                 onClick={() => setActiveTab(value)}
                 className={cn(
-                    "relative pt-6 pb-4 px-4 transition-all cursor-pointer text-center text-md border-b-4 -mb-[1px]",
+                    "flex-1 sm:flex-initial relative pt-5 pb-3 sm:pt-6 sm:pb-4 px-2 sm:px-4 transition-all cursor-pointer text-center text-sm sm:text-base border-b-4 -mb-[1px] whitespace-nowrap",
                     isActive
                         ? cn("z-20 font-semibold", ACTIVE_TAB_CLASSES)
                         : "font-normal text-slate-500 hover:text-slate-800 border-transparent"
@@ -43,10 +44,10 @@ export function ProductDetailTabs({ defaultTab, buyerCount, children, className 
         <TabsContext.Provider value={{ activeTab, setActiveTab }}>
             <div className="flex flex-col">
                 <div className={cn("bg-cyan-50 border-b border-cyan-200 px-4 sm:px-10", className)}>
-                    <div className="flex gap-6 sm:gap-10 items-end -mb-[1px] overflow-x-auto no-scrollbar">
+                    <div className="flex w-full gap-2 sm:gap-10 items-end -mb-[1px] overflow-x-auto no-scrollbar">
                         <TabButton value="detail" label="Detail Produk" />
-                        <TabButton value="user" label="Pembeli" count={buyerCount} />
                         <TabButton value="form" label="Kustomisasi Form" />
+                        {!hidePembeli && <TabButton value="user" label="Pembeli" count={buyerCount} />}
                     </div>
                 </div>
                 <div className="relative z-10">

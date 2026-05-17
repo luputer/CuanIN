@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
-import { SquaresFourIcon, VideoCameraIcon, BookOpenIcon, CloudArrowUpIcon, UsersIcon, CreditCardIcon, StorefrontIcon, ListIcon } from "@phosphor-icons/react";
+import { SquaresFourIcon, VideoCameraIcon, BookOpenIcon, CloudArrowUpIcon, UsersIcon, CreditCardIcon, StorefrontIcon, ListIcon, TagIcon, XIcon } from "@phosphor-icons/react";
 import { usePathname } from "next/navigation";
 import { api } from "~/trpc/react";
+import { useEffect } from "react";
 
 // Component kecil (item menu)
 function SidebarItem({
@@ -44,30 +45,43 @@ function SidebarItem({
 
 
 // Sidebar utama
-export default function SidebarKreator() {
+export default function SidebarKreator({
+    isMobile = false,
+    onCloseMobile,
+    isCollapsed: controlledIsCollapsed = false,
+}: {
+    isMobile?: boolean;
+    onCloseMobile?: () => void;
+    isCollapsed?: boolean;
+} = {}) {
     const pathname = usePathname();
-    const [isCollapsed, setIsCollapsed] = useState(false);
 
     // Fetch data katalog untuk menentukan link
     const { data: catalog } = api.catalog.getMine.useQuery();
     const catalogHref = catalog?.slug ? `/${catalog.slug}` : "/setup";
 
+    const isCollapsed = isMobile ? false : controlledIsCollapsed;
+    const asideWidth = isCollapsed ? "w-20" : "w-64";
+    const showCollapsed = isCollapsed;
+
     return (
-        <aside className={`sticky top-0 transition-all duration-300 z-50 ease-in-out ${isCollapsed ? "w-20" : "w-64"} h-screen bg-white p-4 text-white border-r-1 border-slate-800 flex flex-col`}>
+        <aside className={`transition-all duration-300 z-50 ease-in-out ${asideWidth} h-screen bg-white p-4 text-white border-r-1 border-slate-800 flex flex-col ${!isMobile ? "sticky top-0" : ""}`}>
             {/* Header sidebar + Toggle button */}
-            <div className={`flex items-center mb-6 mt-2 ${isCollapsed ? "justify-center" : "justify-between px-2"}`}>
-                {!isCollapsed && (
+            <div className={`flex items-center mb-6 mt-2 ${showCollapsed ? "justify-center" : "justify-between px-2"}`}>
+                {!showCollapsed && (
                     <div className="text-yellow-500 text-2xl font-bold">
                         <Link href="/">CuanIN</Link>
                     </div>
                 )}
-                <button
-                    onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="p-1 rounded-lg text-slate-500 border-1 border-transparent hover:border-slate-300 hover:bg-slate-100 transition-all duration-200"
-                    title={isCollapsed ? "Expand menu" : "Collapse menu"}
-                >
-                    <ListIcon size={24} weight="bold" />
-                </button>
+                {isMobile && (
+                    <button
+                        onClick={onCloseMobile}
+                        className="p-1 rounded-lg text-slate-500 border-1 border-transparent hover:border-slate-300 hover:bg-slate-100 transition-all duration-200 cursor-pointer"
+                        title="Tutup Menu"
+                    >
+                        <XIcon size={24} className="text-slate-800" weight="bold" />
+                    </button>
+                )}
             </div>
 
             <div className="flex flex-col flex-1 overflow-y-auto overflow-visible no-scrollbar px-1">
@@ -79,7 +93,7 @@ export default function SidebarKreator() {
                     <div className="border-t-1 border-slate-200 mb-4 mx-2"></div>
                 )}
 
-                <div className="flex flex-col gap-3 pb-4 border-b-1 border-cyan-600">
+                <div className="flex flex-col gap-3 pb-6 border-b-1 border-cyan-600">
                     <SidebarItem
                         icon={<SquaresFourIcon size={20} weight="fill" />}
                         label="Dashboard"
@@ -115,6 +129,15 @@ export default function SidebarKreator() {
                         active={pathname.startsWith("/peserta")}
                         isCollapsed={isCollapsed}
                     />
+
+                    {!isCollapsed ? (
+                        <div className="mt-4 pl-3 text-slate-500 text-sm font-bold tracking-wider">
+                            PENJUALAN
+                        </div>
+                    ) : (
+                        <div className="border-t-1 border-slate-200 mt-2 mx-2"></div>
+                    )}
+
                     <SidebarItem
                         icon={<CreditCardIcon size={20} weight="fill" />}
                         label="Transaksi"
@@ -122,8 +145,15 @@ export default function SidebarKreator() {
                         active={pathname.startsWith("/pembayaran")}
                         isCollapsed={isCollapsed}
                     />
+                    <SidebarItem
+                        icon={<TagIcon size={20} weight="fill" />}
+                        label="Voucher"
+                        href="/voucher"
+                        active={pathname.startsWith("/voucher")}
+                        isCollapsed={isCollapsed}
+                    />
                 </div>
-                <div className={`mt-4 w-full flex flex-col items-center rounded-lg border-1 border-cyan-600 shadow-[0px_2px_0px_rgba(0,146,184)] transition duration-200 ease-out hover:border-cyan-700 bg-white hover:bg-cyan-50`}>
+                <div className={`mt-6 w-full flex flex-col items-center rounded-lg border-1 border-cyan-600 shadow-[0px_2px_0px_rgba(0,146,184)] transition duration-200 ease-out hover:border-cyan-700 bg-white hover:bg-cyan-50`}>
                     <SidebarItem
                         icon={<StorefrontIcon size={20} weight="fill" />}
                         label="Katalog Saya"

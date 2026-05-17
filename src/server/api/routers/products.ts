@@ -147,6 +147,9 @@ export const productsRouter = createTRPCRouter({
                     id: input.id,
                     userId: ctx.session.user.id,
                 },
+                include: {
+                    vouchers: true,
+                },
             });
         }),
 
@@ -192,6 +195,9 @@ export const productsRouter = createTRPCRouter({
                 quota: z.number().optional(),
                 benefit: z.array(z.string()).optional(),
                 image: z.string().optional(),
+                images: z.any().optional(),
+                vouchers: z.array(z.string()).optional(),
+                discountPrice: z.number().optional(),
                 status: z.string().optional(),
                 notes: z.string().optional(),
             })
@@ -213,9 +219,13 @@ export const productsRouter = createTRPCRouter({
                 slug = `${baseSlug}-${counter++}`;
             }
 
+            const { vouchers, ...data } = input;
             return await ctx.db.product.create({
                 data: {
-                    ...input,
+                    ...data,
+                    vouchers: vouchers ? {
+                        connect: vouchers.map(id => ({ id }))
+                    } : undefined,
                     slug,
                     userId: ctx.session.user.id,
                 },
@@ -234,7 +244,7 @@ export const productsRouter = createTRPCRouter({
                 type: ProductType.optional(),
                 startDate: z.date().optional(),
                 endDate: z.date().optional(),
-                link: z.string().optional(),
+                link: z.string().nullish(),
                 format: z.string().optional(),
                 platform: z.string().optional(),
                 duration: z.string().optional(),
@@ -242,7 +252,10 @@ export const productsRouter = createTRPCRouter({
                 quota: z.number().optional(),
                 benefit: z.array(z.string()).optional(),
                 image: z.string().optional(),
-                notes: z.string().optional(),
+                images: z.any().optional(),
+                vouchers: z.array(z.string()).optional(),
+                discountPrice: z.number().nullish(),
+                notes: z.string().nullish(),
                 status: z.string().optional(),
             })
         )
@@ -271,9 +284,17 @@ export const productsRouter = createTRPCRouter({
                 }
             }
 
+            const { vouchers, ...updateData } = rest;
             return await ctx.db.product.update({
                 where: { id },
-                data: { ...rest, ...(name ? { name } : {}), ...(slug ? { slug } : {}) },
+                data: { 
+                    ...updateData, 
+                    vouchers: vouchers ? {
+                        set: vouchers.map(id => ({ id }))
+                    } : undefined,
+                    ...(name ? { name } : {}), 
+                    ...(slug ? { slug } : {}) 
+                },
             });
         }),
 

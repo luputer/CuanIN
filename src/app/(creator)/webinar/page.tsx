@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import {
     CaretUpIcon,
     CaretDownIcon,
-    EyeIcon,
+    PencilIcon,
     TrashIcon,
     CopyIcon,
 } from "@phosphor-icons/react";
@@ -170,29 +170,33 @@ export default function WebinarPage() {
 
     return (
         <TooltipProvider>
-            <div className="space-y-6">
+            <div className="w-full max-w-7xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="bg-slate-50">
-                    <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
+                    <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-2">
                         <div className="text-2xl font-bold mb-2 text-cyan-600">Webinar</div>
                         <div className="text-sm font-regular text-slate-600">Pantau dan kelola semua webinar yang kamu buat.</div>
                     </div>
                 </div>
 
                 {/* Toolbar */}
-                <div className="flex flex-col md:flex-row justify-between gap-4">
+                <div className="flex flex-wrap items-center justify-between gap-4">
                     {/* Search */}
                     <SearchInput
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Cari berdasarkan Nama Webinar"
+                        className="w-full sm:flex-1 min-w-[280px]"
                     />
 
                     {/* Actions */}
-                    <div className="flex gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <ButtonFilter label={`Tipe: ${priceTypeFilter === "ALL" ? "Semua" : priceTypeFilter === "FREE" ? "Gratis" : "Berbayar"}`} />
+                                <ButtonFilter
+                                    className="flex-1 lg:flex-none"
+                                    label={`Tipe: ${priceTypeFilter === "ALL" ? "Semua" : priceTypeFilter === "FREE" ? "Gratis" : "Berbayar"}`}
+                                />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-[160px]">
                                 <DropdownMenuRadioGroup value={priceTypeFilter} onValueChange={(v) => setPriceTypeFilter(v as "ALL" | "FREE" | "PAID")}>
@@ -205,7 +209,10 @@ export default function WebinarPage() {
 
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <ButtonFilter label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "published" ? "Published" : statusFilter === "unpublished" ? "Unpublished" : "Selesai"}`} />
+                                <ButtonFilter
+                                    className="flex-1 lg:flex-none"
+                                    label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "published" ? "Published" : statusFilter === "unpublished" ? "Unpublished" : "Selesai"}`}
+                                />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-[160px]">
                                 <DropdownMenuRadioGroup value={statusFilter} onValueChange={setStatusFilter}>
@@ -220,12 +227,13 @@ export default function WebinarPage() {
                         <ActionButton
                             href="/webinar/create"
                             label="Tambah Webinar"
+                            responsive
                         />
                     </div>
                 </div>
 
-                {/* Table */}
-                <div className="">
+                {/* Table (Desktop/Tablet) */}
+                <div className="hidden sm:block w-full pb-2">
                     <Table
                         pagination={
                             <TablePagination
@@ -242,7 +250,7 @@ export default function WebinarPage() {
                             <TableRow>
                                 <TableHead className="w-[5%] text-center">No</TableHead>
                                 <TableHead
-                                    className="w-[18%] cursor-pointer select-none hover:text-slate-900 transition-colors group"
+                                    className="w-[38%] cursor-pointer select-none hover:text-slate-900 transition-colors group"
                                     onClick={() => {
                                         if (sortBy === "name") {
                                             setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -266,9 +274,9 @@ export default function WebinarPage() {
                                         </div>
                                     </div>
                                 </TableHead>
-                                <TableHead className="w-[12%]">Thumbnail</TableHead>
+                                <TableHead className="w-[6%]">Thumbnail</TableHead>
                                 <TableHead
-                                    className="w-[12%] cursor-pointer select-none hover:text-slate-900 transition-colors group"
+                                    className="w-[13%] cursor-pointer select-none hover:text-slate-900 transition-colors group"
                                     onClick={() => {
                                         if (sortBy === "startDate") {
                                             setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -292,10 +300,10 @@ export default function WebinarPage() {
                                         </div>
                                     </div>
                                 </TableHead>
-                                <TableHead className="w-[10%]">Tipe</TableHead>
-                                <TableHead className="w-[12%]">Harga</TableHead>
-                                <TableHead className="w-[12%]">Pembeli</TableHead>
-                                <TableHead className="w-[14%]">Status</TableHead>
+                                <TableHead className="w-[6%]">Tipe</TableHead>
+                                <TableHead className="w-[15%]">Harga</TableHead>
+                                <TableHead className="w-[6%]">Pembeli</TableHead>
+                                <TableHead className="w-[6%]">Status</TableHead>
                                 <TableHead className="text-left w-[5%]">Aksi</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -348,15 +356,15 @@ export default function WebinarPage() {
                                                 {rowNumber}
                                             </TableCell>
 
-                                            <TableCell className="whitespace-nowrap">
-                                                <div className="flex items-center min-h-[48px]">
-                                                    <Link href={`/webinar/${item.id}`} className="hover:text-cyan-600 transition-colors">
+                                            <TableCell className="max-w-[360px] leading-normal">
+                                                <div className="flex items-center min-h-[48px] py-1">
+                                                    <Link href={`/webinar/${item.id}`} className="hover:text-cyan-600 transition-colors font-medium text-slate-800 line-clamp-2 break-words leading-normal">
                                                         {item.name}
                                                     </Link>
                                                 </div>
                                             </TableCell>
 
-                                            <TableCell className="whitespace-nowrap">
+                                            <TableCell>
                                                 <div className="w-12 h-12 bg-slate-100 overflow-hidden border border-slate-200 rounded-lg">
                                                     {item.image ? (
                                                         <Image
@@ -426,7 +434,7 @@ export default function WebinarPage() {
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <button onClick={() => router.push(`/webinar/${item.id}`)}>
-                                                                <EyeIcon className="w-[24px] h-[24px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
+                                                                <PencilIcon className="w-[22px] h-[22px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
                                                             </button>
                                                         </TooltipTrigger>
                                                         <TooltipContent>Lihat Detail</TooltipContent>
@@ -435,7 +443,7 @@ export default function WebinarPage() {
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <button onClick={() => setDeleteId(item.id)}>
-                                                                <TrashIcon className="w-[24px] h-[24px] text-red-600 cursor-pointer hover:text-red-700" />
+                                                                <TrashIcon className="w-[22px] h-[22px] text-red-600 cursor-pointer hover:text-red-700" />
                                                             </button>
                                                         </TooltipTrigger>
                                                         <TooltipContent>Hapus Webinar</TooltipContent>
@@ -444,7 +452,7 @@ export default function WebinarPage() {
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <button onClick={() => handleCopyLink(item.id, item.slug ?? null)}>
-                                                                <CopyIcon className="w-[24px] h-[24px] text-yellow-500 cursor-pointer hover:text-yellow-600" />
+                                                                <CopyIcon className="w-[22px] h-[22px] text-yellow-500 cursor-pointer hover:text-yellow-600" />
                                                             </button>
                                                         </TooltipTrigger>
                                                         <TooltipContent>Salin Link Webinar</TooltipContent>
@@ -457,6 +465,150 @@ export default function WebinarPage() {
                             )}
                         </TableBody>
                     </Table>
+                </div>
+
+                {/* Mobile Cards (Only visible on mobile) */}
+                <div className="space-y-4 sm:hidden">
+                    {isLoading ? (
+                        Array.from({ length: 3 }).map((_, i) => (
+                            <div key={i} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3 animate-pulse">
+                                <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                                    <Skeleton className="h-4 w-8" />
+                                    <Skeleton className="h-6 w-20 rounded-full" />
+                                </div>
+                                <div className="flex gap-3">
+                                    <Skeleton className="h-16 w-16 rounded-lg shrink-0" />
+                                    <div className="space-y-2 flex-1">
+                                        <Skeleton className="h-4 w-3/4" />
+                                        <Skeleton className="h-3 w-1/2" />
+                                        <Skeleton className="h-3 w-1/3" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    ) : webinars?.length === 0 ? (
+                        <div className="text-center py-8 bg-white border border-slate-800 rounded-xl p-4 text-slate-500">
+                            {isFiltered ? (
+                                "Hasil pencarian atau filter tidak ditemukan."
+                            ) : (
+                                <>
+                                    <span>Belum ada webinar.</span>
+                                    <br />
+                                    <Link href="/webinar/create" className="text-cyan-600 font-medium hover:underline mt-1 inline-block">
+                                        Yuk, buat webinar pertamamu!
+                                    </Link>
+                                </>
+                            )}
+                        </div>
+                    ) : (
+                        webinars?.map((item, index) => {
+                            const priceNum = Number(item.price);
+                            const rowNumber = (page - 1) * limit + index + 1;
+                            const isFinished = item.endDate && new Date() > new Date(item.endDate);
+                            const statusKey = isFinished ? "selesai" : item.status || "draft";
+
+                            return (
+                                <div key={item.id} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3">
+                                    <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                                        <span className="text-xs font-semibold text-slate-400"># {rowNumber}</span>
+                                        <span className={`px-3 py-0.5 rounded-full text-xs font-medium ${getStatusColor(statusKey)}`}>
+                                            {getStatusLabel(statusKey)}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex gap-3 items-start">
+                                        {/* Thumbnail */}
+                                        <div className="w-16 h-16 bg-slate-100 overflow-hidden border border-slate-200 rounded-lg shrink-0">
+                                            {item.image ? (
+                                                <Image
+                                                    src={item.image}
+                                                    alt={item.name}
+                                                    width={64}
+                                                    height={64}
+                                                    unoptimized
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-[8px] text-slate-400 italic">
+                                                    No image
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Content info */}
+                                        <div className="space-y-1.5 flex-1 min-w-0">
+                                            <Link href={`/webinar/${item.id}`} className="font-semibold text-slate-800 hover:text-cyan-600 break-words line-clamp-2">
+                                                {item.name}
+                                            </Link>
+
+                                            <div className="text-xs text-slate-500">
+                                                <span className="font-medium text-slate-400">Jadwal: </span>
+                                                {item.startDate ? format(new Date(item.startDate), "d MMM yyyy", { locale: idLocale }) : "-"}
+                                                {item.startDate ? ` (${format(new Date(item.startDate), "HH:mm")})` : ""}
+                                            </div>
+
+                                            <div className="flex justify-between items-center text-xs">
+                                                <div>
+                                                    <span className="font-medium text-slate-400">Harga: </span>
+                                                    <span className="font-semibold text-slate-700">
+                                                        {priceNum === 0 ? "Gratis" : `Rp ${priceNum.toLocaleString("id-ID")}`}
+                                                    </span>
+                                                </div>
+
+                                                <div>
+                                                    <span className="font-medium text-slate-400">Pembeli: </span>
+                                                    <span className="font-semibold text-slate-700">{buyerCounts?.[item.id] ?? 0}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex justify-between items-center pt-2.5 border-t border-slate-100 gap-2">
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => router.push(`/webinar/${item.id}`)}
+                                                className="p-2 rounded-lg text-cyan-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
+                                                title="Lihat Detail"
+                                            >
+                                                <PencilIcon className="w-5 h-5" />
+                                            </button>
+
+                                            <button
+                                                onClick={() => setDeleteId(item.id)}
+                                                className="p-2 rounded-lg text-red-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
+                                                title="Hapus Webinar"
+                                            >
+                                                <TrashIcon className="w-5 h-5" />
+                                            </button>
+                                        </div>
+
+                                        <button
+                                            onClick={() => handleCopyLink(item.id, item.slug ?? null)}
+                                            className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-yellow-600 border border-yellow-600 rounded-lg hover:bg-yellow-50 transition cursor-pointer"
+                                        >
+                                            <CopyIcon className="w-4 h-4" />
+                                            <span>Salin Link</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    )}
+
+                    {/* Mobile Pagination */}
+                    {webinars && webinars.length > 0 && (
+                        <div className="bg-white border border-slate-800 rounded-xl p-4 shadow-[1.5px_1.5px_0px_rgba(29,41,61)]">
+                            <TablePagination
+                                page={page}
+                                totalPages={totalPages}
+                                limit={limit}
+                                total={total}
+                                onPageChange={setPage}
+                                onLimitChange={setLimit}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 <ConfirmDialog

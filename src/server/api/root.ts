@@ -9,6 +9,7 @@ import { profileRouter } from "./routers/profile";
 import { withdrawalsRouter } from "./routers/withdrawals";
 import { analyticsRouter } from "./routers/analytics";
 import { creatorsRouter } from "./routers/creators";
+import { vouchersRouter } from "./routers/vouchers";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
@@ -21,6 +22,7 @@ export const appRouter = createTRPCRouter({
   withdrawals: withdrawalsRouter,
   analytics: analyticsRouter,
   creators: creatorsRouter,
+  vouchers: vouchersRouter,
 });
 
 export type AppRouter = typeof appRouter;

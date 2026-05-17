@@ -43,7 +43,7 @@ export default function ButtonSave({
                 </>
             ) : (
                 <>
-                    {Icon && <Icon className="h-4 w-4" weight={weight} />}
+                    {Icon && <Icon className="h-5 w-5" weight={weight} />}
                     <span>{label}</span>
                 </>
             )}

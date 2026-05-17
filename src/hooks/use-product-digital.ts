@@ -25,12 +25,22 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
     );
 
     const form = useForm<DigitalProductFormValues>({
-        resolver: zodResolver(productDigitalSchema),
+        resolver: zodResolver(productDigitalSchema) as any,
         defaultValues: {
             priceType: "free",
             status: "published",
             price: 0,
-            benefit: isEdit ? [] : ["", "", ""],
+            benefit: isEdit ? [] : [""],
+            platform: "zoom",
+            platformCustom: "",
+            quota: 0,
+            enableQuota: false,
+            enableNotes: false,
+            notes: "",
+            enableVoucher: true,
+            vouchers: [],
+            enableDiscount: false,
+            discountPrice: 0,
         },
     });
 
@@ -47,6 +57,7 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
     useEffect(() => {
         if (product && isEdit) {
             const priceVal = Number(product.price);
+            const discVal = Number(product.discountPrice ?? 0);
             reset({
                 name: product.name,
                 shortDescription: product.shortDescription ?? "",
@@ -55,11 +66,20 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
                 price: priceVal,
                 link: product.link ?? "",
                 format: product.format ?? undefined,
+                platform: product.platform ?? "zoom",
+                platformCustom: "",
                 duration: product.duration ?? undefined,
                 status: product.status ?? "published",
-                notes: "",
+                notes: product.notes ?? "",
+                enableNotes: !!product.notes,
                 image: product.image ?? undefined,
                 benefit: (product.benefit as string[]) ?? [],
+                quota: product.quota ?? 0,
+                enableQuota: (product.quota ?? 0) > 0,
+                vouchers: product.vouchers?.map((v) => v.id) ?? [],
+                enableVoucher: true,
+                enableDiscount: discVal > 0,
+                discountPrice: discVal,
             });
             if (product.image) setPreviewUrl(product.image);
         }
@@ -94,31 +114,42 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
     });
 
     const onSubmit = handleSubmit((data) => {
+        const actualPlatform = data.platform === "other" ? data.platformCustom : data.platform;
         if (isEdit && id) {
             updateMutation.mutate({
                 id,
                 name: data.name,
                 shortDescription: data.shortDescription,
                 description: data.description,
-                price: data.priceType === "free" ? 0 : (data.price ?? 0),
+                price: data.price ?? 0,
                 link: data.link,
                 format: data.format,
+                platform: actualPlatform,
                 duration: data.duration,
                 status: data.status,
                 image: data.image,
                 benefit: data.benefit?.filter((b) => b.trim() !== ""),
+                quota: data.enableQuota ? data.quota : 0,
+                notes: data.enableNotes ? data.notes : undefined,
+                vouchers: data.enableVoucher ? data.vouchers : [],
+                discountPrice: data.enableDiscount ? data.discountPrice : undefined,
             });
         } else {
             createMutation.mutate({
                 name: data.name,
                 description: data.description,
-                price: data.priceType === "free" ? 0 : (data.price ?? 0),
+                price: data.price ?? 0,
                 type: "DIGITAL_PRODUCT",
                 link: data.link,
                 format: data.format,
+                platform: actualPlatform,
                 duration: data.duration,
                 image: data.image,
                 benefit: data.benefit?.filter((b) => b.trim() !== ""),
+                quota: data.enableQuota ? data.quota : 0,
+                notes: data.enableNotes ? data.notes : undefined,
+                vouchers: data.enableVoucher ? data.vouchers : [],
+                discountPrice: data.enableDiscount ? data.discountPrice : undefined,
             });
         }
     });

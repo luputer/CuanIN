@@ -356,7 +356,7 @@ export default function DigitalProductPage() {
 
                                             <TableCell className="font-medium whitespace-nowrap text-slate-600">
                                                 <div className="flex min-h-[48px] items-center">
-                                                    {item.format ?? "-"}
+                                                    {item.contentType ?? "-"}
                                                 </div>
                                             </TableCell>
 
@@ -400,7 +400,7 @@ export default function DigitalProductPage() {
                                                                 <PencilIcon className="w-[22px] h-[22px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
                                                             </button>
                                                         </TooltipTrigger>
-                                                        <TooltipContent>Lihat Detail</TooltipContent>
+                                                        <TooltipContent>Detail & Edit</TooltipContent>
                                                     </Tooltip>
 
                                                     <Tooltip>
@@ -504,8 +504,8 @@ export default function DigitalProductPage() {
                                             </Link>
 
                                             <div className="text-xs text-slate-500">
-                                                <span className="font-medium text-slate-400">Format: </span>
-                                                {item.format ?? "-"}
+                                                <span className="font-medium text-slate-400">Tipe Konten: </span>
+                                                {item.contentType ?? "-"}
                                             </div>
 
                                             <div className="flex justify-between items-center text-xs">
@@ -530,7 +530,7 @@ export default function DigitalProductPage() {
                                             <button
                                                 onClick={() => router.push(`/produk-digital/${item.id}`)}
                                                 className="p-2 rounded-lg text-cyan-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
-                                                title="Lihat Detail"
+                                                title="Detail & Edit"
                                             >
                                                 <PencilIcon className="w-5 h-5" />
                                             </button>

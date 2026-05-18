@@ -38,7 +38,7 @@ export const webinarSchema = z
     description: z.string().min(1, "Deskripsi wajib diisi"),
     priceType: z.enum(["free", "paid"]).default("free"),
     price: z.number().min(0, "Harga tidak boleh negatif").optional(),
-    platform: z.string().min(1, "Platform wajib dipilih"),
+    contentType: z.string().min(1, "Platform wajib dipilih"),
     platformCustom: z.string().optional(),
     link: z
       .string()
@@ -49,7 +49,7 @@ export const webinarSchema = z
     dateStart: z.date({ required_error: "Waktu mulai wajib diisi" }),
     dateEnd: z.date({ required_error: "Waktu selesai wajib diisi" }),
     dateDeadline: z.date({ required_error: "Batas pendaftaran wajib diisi" }),
-    quota: z
+    capacity: z
       .number({ required_error: "Kuota wajib diisi" })
       .min(0, "Kuota tidak boleh negatif"),
     benefit: z.array(z.string()).optional(),
@@ -89,7 +89,7 @@ export const webinarSchema = z
   )
   .refine(
     (data) => {
-      if (data.platform === "other") {
+      if (data.contentType === "other") {
         return !!data.platformCustom && data.platformCustom.trim().length > 0;
       }
       return true;
@@ -125,15 +125,15 @@ export const baseProductDigitalSchema = z.object({
     .string()
     .min(1, "Link produk wajib diisi")
     .url("Link tidak valid, pastikan format URL benar (https://...)"),
-  format: z.string().optional(),
-  platform: z.string().optional(),
+  contentType: z.string().optional(),
   platformCustom: z.string().optional(),
   duration: z.string().optional(),
   notes: z.string().optional(),
   status: z.string().min(1, "Status wajib dipilih"),
   image: z.string().optional(),
+  images: z.array(z.string()).max(4).optional(),
   benefit: z.array(z.string()).optional(),
-  quota: z.number().optional(),
+  capacity: z.number().optional(),
   enableQuota: z.boolean().default(false),
   enableVoucher: z.boolean().default(false),
   vouchers: z.array(z.string()).optional(),
@@ -184,14 +184,15 @@ export const productKelasOnlineSchema = z
       .string()
       .min(1, "Link produk wajib diisi")
       .url("Link tidak valid, pastikan format URL benar (https://...)"),
-    platform: z.string().optional(),
+    contentType: z.string().optional(),
     platformCustom: z.string().optional(),
     duration: z.string().min(1, "Durasi wajib diisi"),
     notes: z.string().optional(),
     status: z.string().min(1, "Status wajib dipilih"),
     image: z.string().optional(),
+    images: z.array(z.string()).max(4).optional(),
     benefit: z.array(z.string()).optional(),
-    quota: z.number().optional(),
+    capacity: z.number().optional(),
     enableQuota: z.boolean().default(false),
     enableVoucher: z.boolean().default(false),
     vouchers: z.array(z.string()).optional(),

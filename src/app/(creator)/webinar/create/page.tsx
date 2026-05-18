@@ -206,10 +206,10 @@ export default function CreateWebinarPage() {
         resolver: zodResolver(webinarSchema) as any,
         defaultValues: {
             priceType: "free",
-            platform: "zoom",
+            contentType: "zoom",
             status: "published",
             price: 0,
-            quota: 0,
+            capacity: 0,
             notes: "",
             benefit: ["", "", ""],
             enableVoucher: false,
@@ -260,9 +260,9 @@ export default function CreateWebinarPage() {
     };
 
     const handleQuotaAdjust = (amount: number) => {
-        const currentQuota = Number(getValues("quota") ?? 0);
+        const currentQuota = Number(getValues("capacity") ?? 0);
         const newQuota = Math.max(0, currentQuota + amount);
-        setValue("quota", newQuota, { shouldValidate: true });
+        setValue("capacity", newQuota, { shouldValidate: true });
     };
 
     const onFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -328,7 +328,7 @@ export default function CreateWebinarPage() {
     });
 
     const onSubmit = (data: WebinarFormValues) => {
-        const actualPlatform = data.platform === "other" ? data.platformCustom : data.platform;
+        const actualContentType = data.contentType === "other" ? data.platformCustom : data.contentType;
 
         createWebinar.mutate({
             type: "WEBINAR",
@@ -336,14 +336,14 @@ export default function CreateWebinarPage() {
             shortDescription: data.shortDescription,
             description: data.description,
             price: data.priceType === "free" ? 0 : (data.price ?? 0),
-            platform: actualPlatform,
+            contentType: actualContentType,
             link: data.link ?? undefined,
             notes: data.enableNotes ? data.notes : undefined,
             status: data.status,
             startDate: data.dateStart,
             endDate: data.dateEnd,
             dateDeadline: data.dateDeadline,
-            quota: data.enableQuota ? data.quota : 0,
+            capacity: data.enableQuota ? data.capacity : 0,
             benefit: data.benefit?.filter((b) => b.trim() !== ""),
             image: data.image,
             images: data.images,
@@ -668,10 +668,10 @@ export default function CreateWebinarPage() {
                                     <div className="bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
                                         <SectionHeader title="Akses Webinar" className="mb-4 text-base" />
 
-                                        <Row label="Platform" error={errors.platform?.message ?? errors.platformCustom?.message}>
+                                        <Row label="Platform" error={errors.contentType?.message ?? errors.platformCustom?.message}>
                                             <div className="space-y-2 w-full">
                                                 <FormSelect
-                                                    {...register("platform", {
+                                                    {...register("contentType", {
                                                         onChange: (e: React.ChangeEvent<HTMLSelectElement>) => {
                                                             if (e.target.value !== "other") {
                                                                 setValue("platformCustom", "");
@@ -683,7 +683,7 @@ export default function CreateWebinarPage() {
                                                     <option value="google-meet">Google Meet</option>
                                                     <option value="other">Lainnya</option>
                                                 </FormSelect>
-                                                {watch("platform") === "other" && (
+                                                {watch("contentType") === "other" && (
                                                     <FormInput
                                                         placeholder="Nama platform"
                                                         className="animate-in fade-in slide-in-from-top-1 duration-200"
@@ -762,7 +762,7 @@ export default function CreateWebinarPage() {
                                                 <div className="animate-in fade-in slide-in-from-top-2 duration-200">
                                                     <Controller
                                                         control={control}
-                                                        name="quota"
+                                                        name="capacity"
                                                         render={({ field: { onChange, value, ref } }) => (
                                                             <FormInput
                                                                 ref={ref}

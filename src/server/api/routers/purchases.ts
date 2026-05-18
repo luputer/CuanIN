@@ -50,7 +50,7 @@ export const purchasesRouter = createTRPCRouter({
           price: true,
           link: true,
           userId: true,
-          quota: true,
+          capacity: true,
           _count: {
             select: {
               purchases: {
@@ -65,9 +65,9 @@ export const purchasesRouter = createTRPCRouter({
         throw new Error("Produk tidak ditemukan atau tidak tersedia");
 
       if (
-        product.quota &&
-        product.quota > 0 &&
-        product._count.purchases >= product.quota
+        product.capacity &&
+        product.capacity > 0 &&
+        product._count.purchases >= product.capacity
       ) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -656,7 +656,7 @@ export const purchasesRouter = createTRPCRouter({
         },
         include: {
           product: {
-            select: { name: true, type: true, format: true },
+            select: { name: true, type: true, contentType: true },
           },
         },
         orderBy: { createdAt: "desc" },

@@ -49,9 +49,8 @@ model Product {
   slug             String?       @unique @default(cuid())
   benefit          Json?
   dateDeadline     DateTime?
-  platform         String?
-  quota            Int?
-  format           String?
+  contentType      String?
+  capacity         Int?
   duration         String?
   notes            String?       @db.Text
   formFields       FormField[]

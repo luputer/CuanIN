@@ -131,7 +131,7 @@ export default function ProductDetailPage() {
 
   const metaLabel =
     product.type === "DIGITAL_PRODUCT"
-      ? product.format
+      ? product.contentType
       : product.type === "KELAS_ONLINE"
         ? product.duration
         : null;
@@ -206,11 +206,11 @@ export default function ProductDetailPage() {
                   )}
 
                   {/* PLATFORM */}
-                  {isWebinarOrClass && product.platform && (
+                  {isWebinarOrClass && product.contentType && (
                     <InfoItem
                       icon={<MapPinIcon className="h-5 w-5" />}
                       label="Platform"
-                      value={product.platform}
+                      value={product.contentType}
                     />
                   )}
 
@@ -302,9 +302,9 @@ export default function ProductDetailPage() {
                   <span className="text-slate-500">Kuota</span>
                   <div className="flex flex-col items-end">
                     <span className="font-regular text-slate-800">
-                      {product.quota && product.quota > 0 ? `${product.quota} peserta` : "Tak Terbatas"}
+                      {product.capacity && product.capacity > 0 ? `${product.capacity} peserta` : "Tak Terbatas"}
                     </span>
-                    {(product.quota ?? 0) > 0 && (product._count?.purchases ?? 0) >= product.quota! && !isWebinarCompleted && (
+                    {(product.capacity ?? 0) > 0 && (product._count?.purchases ?? 0) >= product.capacity! && !isWebinarCompleted && (
                       <span className="text-[10px] font-bold text-red-500 uppercase">Sudah Full</span>
                     )}
                   </div>
@@ -339,7 +339,7 @@ export default function ProductDetailPage() {
                 >
                   Webinar sudah selesai
                 </button>
-              ) : product.quota && product.quota > 0 && (product._count?.purchases ?? 0) >= product.quota ? (
+              ) : product.capacity && product.capacity > 0 && (product._count?.purchases ?? 0) >= product.capacity ? (
                 <button
                   disabled
                   className="mt-5 w-full rounded-xl bg-slate-300 py-3 font-medium text-slate-500 shadow-sm cursor-not-allowed"

@@ -31,10 +31,10 @@ export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
         resolver: zodResolver(webinarSchema) as any,
         defaultValues: {
             priceType: "free",
-            platform: "zoom",
+            contentType: "zoom",
             status: "unpublished",
             price: 0,
-            quota: 0,
+            capacity: 0,
             notes: "",
             benefit: isEdit ? [] : ["", "", ""],
             enableVoucher: true,
@@ -60,19 +60,19 @@ export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
     useEffect(() => {
         if (product && isEdit) {
             const priceVal = Number(product.price);
-            const isStandardPlatform = ["zoom", "google-meet"].includes(product.platform ?? "");
+            const isStandardPlatform = ["zoom", "google-meet"].includes(product.contentType ?? "");
             reset({
                 name: product.name,
                 shortDescription: product.shortDescription ?? "",
                 description: product.description ?? "",
                 priceType: priceVal > 0 ? "paid" : "free",
                 price: priceVal,
-                platform: isStandardPlatform ? (product.platform ?? "zoom") : "other",
-                platformCustom: isStandardPlatform ? "" : (product.platform ?? ""),
+                contentType: isStandardPlatform ? (product.contentType ?? "zoom") : "other",
+                platformCustom: isStandardPlatform ? "" : (product.contentType ?? ""),
                 link: product.link ?? "",
                 notes: product.notes ?? "",
                 status: product.status ?? "unpublished",
-                quota: product.quota ?? 0,
+                capacity: product.capacity ?? 0,
                 dateStart: product.startDate ?? undefined,
                 dateEnd: product.endDate ?? undefined,
                 dateDeadline: product.dateDeadline ?? undefined,
@@ -83,7 +83,7 @@ export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
                 enableVoucher: true,
                 enableNotes: !!product.notes,
                 enableDiscount: Number(product.discountPrice) > 0,
-                enableQuota: (product.quota ?? 0) > 0,
+                enableQuota: (product.capacity ?? 0) > 0,
                 image: product.image ?? "",
             });
             if (product.image) setPreviewUrl(product.image);
@@ -121,8 +121,8 @@ export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
     };
 
     const handleQuotaAdjust = (step: number) => {
-        const currentQuota = getValues("quota") || 0;
-        setValue("quota", Math.max(0, currentQuota + step), { shouldValidate: true, shouldDirty: true });
+        const currentQuota = getValues("capacity") || 0;
+        setValue("capacity", Math.max(0, currentQuota + step), { shouldValidate: true, shouldDirty: true });
     };
 
     const removeImage = (index: number) => {
@@ -157,14 +157,14 @@ export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
 
     const onSubmit = handleSubmit((data) => {
         if (isEdit && id) {
-            const actualPlatform = data.platform === "other" ? data.platformCustom : data.platform;
+            const actualPlatform = data.contentType === "other" ? data.platformCustom : data.contentType;
             updateMutation.mutate({
                 id,
                 name: data.name,
                 shortDescription: data.shortDescription,
                 description: data.description,
                 price: data.price ?? 0,
-                platform: actualPlatform,
+                contentType: actualPlatform,
                 link: data.link ?? undefined,
                 vouchers: data.enableVoucher ? data.vouchers : [],
                 discountPrice: data.enableDiscount ? data.discountPrice : null,
@@ -173,7 +173,7 @@ export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
                 startDate: data.dateStart,
                 endDate: data.dateEnd,
                 dateDeadline: data.dateDeadline,
-                quota: data.enableQuota ? data.quota : 0,
+                capacity: data.enableQuota ? data.capacity : 0,
                 image: data.image,
                 images: data.images,
                 benefit: data.benefit?.filter((b: string) => b.trim() !== ""),

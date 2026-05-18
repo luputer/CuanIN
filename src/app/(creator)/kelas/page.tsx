@@ -400,7 +400,7 @@ export default function KelasOnlinePage() {
                                                                 <PencilIcon className="w-[22px] h-[22px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
                                                             </button>
                                                         </TooltipTrigger>
-                                                        <TooltipContent>Lihat Detail</TooltipContent>
+                                                        <TooltipContent>Detail & Edit</TooltipContent>
                                                     </Tooltip>
 
                                                     <Tooltip>
@@ -530,7 +530,7 @@ export default function KelasOnlinePage() {
                                             <button
                                                 onClick={() => router.push(`/kelas/${item.id}`)}
                                                 className="p-2 rounded-lg text-cyan-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
-                                                title="Lihat Detail"
+                                                title="Detail & Edit"
                                             >
                                                 <PencilIcon className="w-5 h-5" />
                                             </button>

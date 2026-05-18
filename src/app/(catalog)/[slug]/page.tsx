@@ -70,7 +70,7 @@ function ProductCard({
   image,
   slug,
   startDate,
-  format,
+  contentType,
   duration,
 }: {
   productSlug: string;
@@ -81,7 +81,7 @@ function ProductCard({
   image?: string | null;
   slug: string;
   startDate?: Date | null;
-  format?: string | null;
+  contentType?: string | null;
   duration?: string | null;
 }) {
   const isGratis = price === 0;
@@ -110,11 +110,11 @@ function ProductCard({
       );
     }
 
-    if (type === "DIGITAL_PRODUCT" && format) {
+    if (type === "DIGITAL_PRODUCT" && contentType) {
       return (
         <span className="flex items-center gap-1 text-xs font-medium text-slate-800">
           <FileIcon weight="fill" />
-          {format}
+          {contentType}
         </span>
       );
     }
@@ -368,7 +368,7 @@ export default function CatalogSlugPage() {
                   price={Number(product.price)}
                   image={product.image}
                   startDate={product.startDate}
-                  format={product.format}
+                  contentType={product.contentType}
                   duration={product.duration}
                 />
               ))}

@@ -661,10 +661,10 @@ export default function WebinarDetailPage() {
                                         <div className="bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
                                             <SectionHeader title="Akses Webinar" className="mb-4 text-base" />
 
-                                            <Row label="Platform" error={errors.platform?.message ?? errors.platformCustom?.message}>
+                                            <Row label="Platform" error={errors.contentType?.message ?? errors.platformCustom?.message}>
                                                 <div className="space-y-2 w-full">
                                                     <FormSelect
-                                                        {...register("platform", {
+                                                        {...register("contentType", {
                                                             onChange: (e: React.ChangeEvent<HTMLSelectElement>) => {
                                                                 if (e.target.value !== "other") {
                                                                     setValue("platformCustom", "");
@@ -676,7 +676,7 @@ export default function WebinarDetailPage() {
                                                         <option value="google-meet">Google Meet</option>
                                                         <option value="other">Lainnya</option>
                                                     </FormSelect>
-                                                    {watch("platform") === "other" && (
+                                                    {watch("contentType") === "other" && (
                                                         <FormInput
                                                             placeholder="Nama platform"
                                                             className="animate-in fade-in slide-in-from-top-1 duration-200"
@@ -755,7 +755,7 @@ export default function WebinarDetailPage() {
                                                     <div className="animate-in fade-in slide-in-from-top-2 duration-200">
                                                         <Controller
                                                             control={control}
-                                                            name="quota"
+                                                            name="capacity"
                                                             render={({ field: { onChange, value, ref } }) => (
                                                                 <FormInput
                                                                     ref={ref}

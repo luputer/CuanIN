@@ -247,18 +247,18 @@ export default function AdminCreatorProductDetailPage() {
                             {/* Webinar-specific */}
                             {isWebinar && (
                                 <Row label="Platform">
-                                    {product.platform ? (
-                                        <span className="capitalize">{product.platform}</span>
+                                    {product.contentType ? (
+                                        <span className="capitalize">{product.contentType}</span>
                                     ) : "-"}
                                 </Row>
                             )}
 
                             {/* Digital-specific */}
                             {isDigital && (
-                                <Row label="Format">
+                                <Row label="Tipe Konten">
                                     <p className="w-fit font-medium bg-slate-100 text-slate-700 px-4 py-1 rounded-full">
-                                        {product.format
-                                            ? product.format.charAt(0).toUpperCase() + product.format.slice(1)
+                                        {product.contentType
+                                            ? product.contentType.charAt(0).toUpperCase() + product.contentType.slice(1)
                                             : "-"}
                                     </p>
                                 </Row>
@@ -350,7 +350,7 @@ export default function AdminCreatorProductDetailPage() {
                                         {product.dateDeadline ? format(new Date(product.dateDeadline), "d MMMM yyyy, HH:mm", { locale: idLocale }) : "-"}
                                     </Row>
                                     <Row label="Kuota">
-                                        {product.quota ? (Number(product.quota) === 0 ? "Tidak Terbatas" : product.quota) : "Tidak Terbatas"}
+                                        {product.capacity ? (Number(product.capacity) === 0 ? "Tidak Terbatas" : product.capacity) : "Tidak Terbatas"}
                                     </Row>
                                 </div>
                                 <div className="shrink-0 w-full lg:w-90 hidden lg:block" />

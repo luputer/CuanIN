@@ -31,9 +31,9 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
             status: "published",
             price: 0,
             benefit: isEdit ? [] : [""],
-            platform: "zoom",
+            contentType: "",
             platformCustom: "",
-            quota: 0,
+            capacity: 0,
             enableQuota: false,
             enableNotes: false,
             notes: "",
@@ -41,6 +41,8 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
             vouchers: [],
             enableDiscount: false,
             discountPrice: 0,
+            image: "",
+            images: [],
         },
     });
 
@@ -51,13 +53,14 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
         name: "benefit" as never,
     });
 
-    const { uploading, previewUrl, handleFileUpload, setPreviewUrl } = useImageUpload("products");
+    const { uploading, handleFileUpload } = useImageUpload("products");
 
     // Pre-fill form when data loads (Edit mode)
     useEffect(() => {
         if (product && isEdit) {
             const priceVal = Number(product.price);
             const discVal = Number(product.discountPrice ?? 0);
+            const isStandardFormat = ["PDF", "Video", "Template", "E-book", "ZIP"].includes(product.contentType ?? "");
             reset({
                 name: product.name,
                 shortDescription: product.shortDescription ?? "",
@@ -65,29 +68,51 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
                 priceType: priceVal === 0 ? "free" : "paid",
                 price: priceVal,
                 link: product.link ?? "",
-                format: product.format ?? undefined,
-                platform: product.platform ?? "zoom",
-                platformCustom: "",
+                contentType: isStandardFormat ? (product.contentType ?? "") : "other",
+                platformCustom: isStandardFormat ? "" : (product.contentType ?? ""),
                 duration: product.duration ?? undefined,
                 status: product.status ?? "published",
                 notes: product.notes ?? "",
                 enableNotes: !!product.notes,
                 image: product.image ?? undefined,
+                images: (product.images as string[]) ?? [],
                 benefit: (product.benefit as string[]) ?? [],
-                quota: product.quota ?? 0,
-                enableQuota: (product.quota ?? 0) > 0,
+                capacity: product.capacity ?? 0,
+                enableQuota: (product.capacity ?? 0) > 0,
                 vouchers: product.vouchers?.map((v) => v.id) ?? [],
                 enableVoucher: true,
                 enableDiscount: discVal > 0,
                 discountPrice: discVal,
             });
-            if (product.image) setPreviewUrl(product.image);
         }
-    }, [product, reset, isEdit, setPreviewUrl]);
+    }, [product, reset, isEdit]);
 
-    const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const url = await handleFileUpload(e);
-        if (url) setValue("image", url, { shouldValidate: true });
+        if (url) {
+            const currentImages = form.getValues("images") || [];
+            if (currentImages.length < 4) {
+                const newImages = [...currentImages, url];
+                setValue("images", newImages, { shouldValidate: true, shouldDirty: true });
+                // Main image is the first one if not set
+                if (!form.getValues("image")) {
+                    setValue("image", url, { shouldValidate: true, shouldDirty: true });
+                }
+            } else {
+                toast.error("Maksimal 4 gambar");
+            }
+        }
+        e.target.value = "";
+    };
+
+    const removeImage = (index: number) => {
+        const currentImages = form.getValues("images") || [];
+        const newImages = currentImages.filter((_, i) => i !== index);
+        setValue("images", newImages, { shouldValidate: true, shouldDirty: true });
+        // Update main image if we removed it
+        if (form.getValues("image") === currentImages[index]) {
+            setValue("image", newImages[0] || "", { shouldValidate: true, shouldDirty: true });
+        }
     };
 
     const createMutation = api.products.create.useMutation({
@@ -114,7 +139,7 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
     });
 
     const onSubmit = handleSubmit((data) => {
-        const actualPlatform = data.platform === "other" ? data.platformCustom : data.platform;
+        const actualContentType = data.contentType === "other" ? data.platformCustom : data.contentType;
         if (isEdit && id) {
             updateMutation.mutate({
                 id,
@@ -123,13 +148,13 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
                 description: data.description,
                 price: data.price ?? 0,
                 link: data.link,
-                format: data.format,
-                platform: actualPlatform,
+                contentType: actualContentType,
                 duration: data.duration,
                 status: data.status,
                 image: data.image,
+                images: data.images,
                 benefit: data.benefit?.filter((b) => b.trim() !== ""),
-                quota: data.enableQuota ? data.quota : 0,
+                capacity: data.enableQuota ? data.capacity : 0,
                 notes: data.enableNotes ? data.notes : undefined,
                 vouchers: data.enableVoucher ? data.vouchers : [],
                 discountPrice: data.enableDiscount ? data.discountPrice : undefined,
@@ -141,12 +166,12 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
                 price: data.price ?? 0,
                 type: "DIGITAL_PRODUCT",
                 link: data.link,
-                format: data.format,
-                platform: actualPlatform,
+                contentType: actualContentType,
                 duration: data.duration,
                 image: data.image,
+                images: data.images,
                 benefit: data.benefit?.filter((b) => b.trim() !== ""),
-                quota: data.enableQuota ? data.quota : 0,
+                capacity: data.enableQuota ? data.capacity : 0,
                 notes: data.enableNotes ? data.notes : undefined,
                 vouchers: data.enableVoucher ? data.vouchers : [],
                 discountPrice: data.enableDiscount ? data.discountPrice : undefined,
@@ -160,8 +185,8 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
         append,
         remove,
         uploading,
-        previewUrl,
-        onFileChange,
+        onFilesChange,
+        removeImage,
         onSubmit,
         isPending: createMutation.isPending || updateMutation.isPending,
         isLoadingProduct,

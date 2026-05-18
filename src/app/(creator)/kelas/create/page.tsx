@@ -22,10 +22,9 @@ import {
     CaretDownIcon,
     CaretUpIcon,
     CircleNotchIcon,
-    ImageIcon,
     PlusIcon,
     TrashIcon,
-    PencilSimpleIcon,
+    X,
 } from "@phosphor-icons/react";
 
 // Internal & Utils
@@ -156,14 +155,15 @@ type KelasOnlineFormValues = {
     priceType: "free" | "paid";
     price?: number;
     link: string;
-    platform?: string;
+    contentType?: string;
     platformCustom?: string;
     duration: string;
     notes?: string;
     status: string;
     image?: string;
+    images?: string[];
     benefit?: string[];
-    quota?: number;
+    capacity?: number;
     enableQuota?: boolean;
     enableVoucher?: boolean;
     vouchers?: string[];
@@ -210,7 +210,6 @@ export default function CreateKelasPage() {
     const [customFields, setCustomFields] = useState<FormField[]>([]);
 
     const {
-        previewUrl,
         uploading,
         handleFileUpload,
     } = useImageUpload("products");
@@ -222,9 +221,9 @@ export default function CreateKelasPage() {
             status: "published",
             price: 0,
             benefit: [""],
-            platform: "zoom",
+            contentType: "zoom",
             platformCustom: "",
-            quota: 0,
+            capacity: 0,
             enableQuota: false,
             enableNotes: false,
             notes: "",
@@ -232,6 +231,8 @@ export default function CreateKelasPage() {
             vouchers: [],
             enableDiscount: false,
             discountPrice: 0,
+            image: "",
+            images: [],
         },
     });
 
@@ -247,6 +248,7 @@ export default function CreateKelasPage() {
 
     const priceType = watch("priceType");
     const description = watch("description");
+    const images = watch("images") || [];
 
     const [benefits, setBenefits] = useState<string[]>([""]);
 
@@ -307,15 +309,36 @@ export default function CreateKelasPage() {
     };
 
     const handleQuotaAdjust = (amount: number) => {
-        const currentQuota = Number(getValues("quota") ?? 0);
+        const currentQuota = Number(getValues("capacity") ?? 0);
         const newQuota = Math.max(0, currentQuota + amount);
-        setValue("quota", newQuota, { shouldValidate: true });
+        setValue("capacity", newQuota, { shouldValidate: true });
     };
 
-    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const url = await handleFileUpload(e);
         if (url) {
-            setValue("image", url, { shouldValidate: true });
+            const currentImages = getValues("images") || [];
+            if (currentImages.length < 4) {
+                const newImages = [...currentImages, url];
+                setValue("images", newImages, { shouldValidate: true });
+                // Main image is the first one if not set
+                if (!getValues("image")) {
+                    setValue("image", url, { shouldValidate: true });
+                }
+            } else {
+                toast.error("Maksimal 4 gambar");
+            }
+        }
+        e.target.value = "";
+    };
+
+    const removeImage = (index: number) => {
+        const currentImages = getValues("images") || [];
+        const newImages = currentImages.filter((_, i) => i !== index);
+        setValue("images", newImages, { shouldValidate: true });
+        // Update main image if we removed it
+        if (getValues("image") === currentImages[index]) {
+            setValue("image", newImages[0] || "", { shouldValidate: true });
         }
     };
 
@@ -354,7 +377,7 @@ export default function CreateKelasPage() {
     });
 
     const onSubmit = (data: KelasOnlineFormValues) => {
-        const actualPlatform = data.platform === "other" ? data.platformCustom : data.platform;
+        const actualContentType = data.contentType === "other" ? data.platformCustom : data.contentType;
 
         createProduct.mutate({
             type: "KELAS_ONLINE",
@@ -362,13 +385,14 @@ export default function CreateKelasPage() {
             shortDescription: data.shortDescription,
             description: data.description,
             price: data.price ?? 0,
-            platform: actualPlatform,
+            contentType: actualContentType,
             link: data.link,
             duration: data.duration,
             status: data.status,
             benefit: benefits.filter((b) => b.trim() !== ""),
             image: data.image,
-            quota: data.enableQuota ? data.quota : 0,
+            images: data.images,
+            capacity: data.enableQuota ? data.capacity : 0,
             notes: data.enableNotes ? data.notes : undefined,
             vouchers: data.enableVoucher ? data.vouchers : [],
             discountPrice: data.enableDiscount ? data.discountPrice : undefined,
@@ -614,55 +638,65 @@ export default function CreateKelasPage() {
                                 <div className="shrink-0 w-full lg:w-[400px] space-y-6">
                                     {/* Gambar Thumbnail */}
                                     <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                        <p className="text-slate-700 text-sm font-semibold mb-3">Gambar Thumbnail</p>
-                                        <div
-                                            onClick={() => fileInputRef.current?.click()}
-                                            className="w-full aspect-square bg-white rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 relative group cursor-pointer"
-                                        >
-                                            {previewUrl ? (
-                                                <>
+                                        <p className="text-slate-700 text-sm font-semibold mb-3">Thumbnail</p>
+                                        <div className="flex flex-wrap gap-3 items-start">
+                                            {/* List of images */}
+                                            {images.map((img: string, index: number) => (
+                                                <div key={index} className="relative group shrink-0 w-24 aspect-square">
                                                     <Image
-                                                        src={previewUrl}
-                                                        alt="Thumbnail"
+                                                        src={img}
+                                                        alt={`Thumbnail ${index + 1}`}
                                                         fill
                                                         unoptimized
-                                                        className="w-full h-full object-cover group-hover:opacity-75 transition-opacity"
+                                                        className="object-cover rounded-xl border border-slate-200"
                                                     />
-                                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10">
-                                                        <div className="bg-white/90 p-2 rounded-full shadow-md text-slate-800">
-                                                            <PencilSimpleIcon size={24} weight="bold" />
-                                                        </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeImage(index)}
+                                                        className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md border border-slate-200 text-slate-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                                                    >
+                                                        <X size={12} weight="bold" />
+                                                    </button>
+                                                </div>
+                                            ))}
+
+                                            {/* Add Button (only if < 4) */}
+                                            {images.length < 4 && (
+                                                <div
+                                                    onClick={() => fileInputRef.current?.click()}
+                                                    className="relative group shrink-0 w-24 aspect-square cursor-pointer"
+                                                >
+                                                    <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-500 group-hover:bg-cyan-50">
+                                                        {uploading ? (
+                                                            <CircleNotchIcon className="animate-spin text-cyan-600" size={24} />
+                                                        ) : (
+                                                            <div className="flex flex-col items-center gap-1 text-slate-400">
+                                                                <PlusIcon size={24} weight="bold" />
+                                                                <span className="text-[10px] font-medium">Tambah</span>
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                    {uploading && (
-                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                                                            <CircleNotchIcon className="animate-spin text-white" size={32} />
-                                                        </div>
-                                                    )}
-                                                </>
-                                            ) : (
-                                                <div className="flex flex-col items-center gap-2 text-slate-400 group-hover:text-cyan-600 transition-colors">
-                                                    <ImageIcon className="w-12 h-12" />
-                                                    <span className="text-xs">Unggah Gambar</span>
+                                                    <input
+                                                        ref={fileInputRef}
+                                                        type="file"
+                                                        className="hidden"
+                                                        accept="image/*"
+                                                        onChange={onFilesChange}
+                                                    />
                                                 </div>
                                             )}
                                         </div>
-                                        <input
-                                            ref={fileInputRef}
-                                            type="file"
-                                            className="hidden"
-                                            accept="image/*"
-                                            onChange={handleImageChange}
-                                        />
+                                        <p className="text-[12px] text-slate-400 mt-3 leading-tight italic">Maksimal 4 gambar. JPG/PNG, 1:1 direkomendasikan</p>
                                     </div>
 
                                     {/* Akses Kelas */}
                                     <div className="bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
                                         <SectionHeader title="Akses Kelas" className="mb-4 text-base" />
 
-                                        <Row label="Platform" error={errors.platform?.message ?? errors.platformCustom?.message}>
+                                        <Row label="Platform" error={errors.contentType?.message ?? errors.platformCustom?.message}>
                                             <div className="space-y-2 w-full">
                                                 <FormSelect
-                                                    {...register("platform", {
+                                                    {...register("contentType", {
                                                         onChange: (e: React.ChangeEvent<HTMLSelectElement>) => {
                                                             if (e.target.value !== "other") {
                                                                     setValue("platformCustom", "");
@@ -675,7 +709,7 @@ export default function CreateKelasPage() {
                                                     <option value="website">Website Kelas</option>
                                                     <option value="other">Lainnya</option>
                                                 </FormSelect>
-                                                {watch("platform") === "other" && (
+                                                {watch("contentType") === "other" && (
                                                     <FormInput
                                                         placeholder="Nama platform"
                                                         className="animate-in fade-in slide-in-from-top-1 duration-200"
@@ -717,7 +751,7 @@ export default function CreateKelasPage() {
                                                 <div className="animate-in fade-in slide-in-from-top-2 duration-200">
                                                     <Controller
                                                         control={control}
-                                                        name="quota"
+                                                        name="capacity"
                                                         render={({ field: { onChange, value, ref } }) => (
                                                             <FormInput
                                                                 ref={ref}

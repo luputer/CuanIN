@@ -4717,13 +4717,13 @@ export namespace Prisma {
   export type ProductAvgAggregateOutputType = {
     price: Decimal | null
     discountPrice: Decimal | null
-    quota: number | null
+    capacity: number | null
   }
 
   export type ProductSumAggregateOutputType = {
     price: Decimal | null
     discountPrice: Decimal | null
-    quota: number | null
+    capacity: number | null
   }
 
   export type ProductMinAggregateOutputType = {
@@ -4744,9 +4744,8 @@ export namespace Prisma {
     discountPrice: Decimal | null
     slug: string | null
     dateDeadline: Date | null
-    platform: string | null
-    quota: number | null
-    format: string | null
+    contentType: string | null
+    capacity: number | null
     duration: string | null
     notes: string | null
   }
@@ -4769,9 +4768,8 @@ export namespace Prisma {
     discountPrice: Decimal | null
     slug: string | null
     dateDeadline: Date | null
-    platform: string | null
-    quota: number | null
-    format: string | null
+    contentType: string | null
+    capacity: number | null
     duration: string | null
     notes: string | null
   }
@@ -4796,9 +4794,8 @@ export namespace Prisma {
     slug: number
     benefit: number
     dateDeadline: number
-    platform: number
-    quota: number
-    format: number
+    contentType: number
+    capacity: number
     duration: number
     notes: number
     _all: number
@@ -4808,13 +4805,13 @@ export namespace Prisma {
   export type ProductAvgAggregateInputType = {
     price?: true
     discountPrice?: true
-    quota?: true
+    capacity?: true
   }
 
   export type ProductSumAggregateInputType = {
     price?: true
     discountPrice?: true
-    quota?: true
+    capacity?: true
   }
 
   export type ProductMinAggregateInputType = {
@@ -4835,9 +4832,8 @@ export namespace Prisma {
     discountPrice?: true
     slug?: true
     dateDeadline?: true
-    platform?: true
-    quota?: true
-    format?: true
+    contentType?: true
+    capacity?: true
     duration?: true
     notes?: true
   }
@@ -4860,9 +4856,8 @@ export namespace Prisma {
     discountPrice?: true
     slug?: true
     dateDeadline?: true
-    platform?: true
-    quota?: true
-    format?: true
+    contentType?: true
+    capacity?: true
     duration?: true
     notes?: true
   }
@@ -4887,9 +4882,8 @@ export namespace Prisma {
     slug?: true
     benefit?: true
     dateDeadline?: true
-    platform?: true
-    quota?: true
-    format?: true
+    contentType?: true
+    capacity?: true
     duration?: true
     notes?: true
     _all?: true
@@ -5001,9 +4995,8 @@ export namespace Prisma {
     slug: string | null
     benefit: JsonValue | null
     dateDeadline: Date | null
-    platform: string | null
-    quota: number | null
-    format: string | null
+    contentType: string | null
+    capacity: number | null
     duration: string | null
     notes: string | null
     _count: ProductCountAggregateOutputType | null
@@ -5047,9 +5040,8 @@ export namespace Prisma {
     slug?: boolean
     benefit?: boolean
     dateDeadline?: boolean
-    platform?: boolean
-    quota?: boolean
-    format?: boolean
+    contentType?: boolean
+    capacity?: boolean
     duration?: boolean
     notes?: boolean
     vouchers?: boolean | Product$vouchersArgs<ExtArgs>
@@ -5080,9 +5072,8 @@ export namespace Prisma {
     slug?: boolean
     benefit?: boolean
     dateDeadline?: boolean
-    platform?: boolean
-    quota?: boolean
-    format?: boolean
+    contentType?: boolean
+    capacity?: boolean
     duration?: boolean
     notes?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5108,9 +5099,8 @@ export namespace Prisma {
     slug?: boolean
     benefit?: boolean
     dateDeadline?: boolean
-    platform?: boolean
-    quota?: boolean
-    format?: boolean
+    contentType?: boolean
+    capacity?: boolean
     duration?: boolean
     notes?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5136,14 +5126,13 @@ export namespace Prisma {
     slug?: boolean
     benefit?: boolean
     dateDeadline?: boolean
-    platform?: boolean
-    quota?: boolean
-    format?: boolean
+    contentType?: boolean
+    capacity?: boolean
     duration?: boolean
     notes?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "shortDescription" | "description" | "price" | "type" | "startDate" | "endDate" | "link" | "status" | "userId" | "createdAt" | "updatedAt" | "image" | "images" | "discountPrice" | "slug" | "benefit" | "dateDeadline" | "platform" | "quota" | "format" | "duration" | "notes", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "shortDescription" | "description" | "price" | "type" | "startDate" | "endDate" | "link" | "status" | "userId" | "createdAt" | "updatedAt" | "image" | "images" | "discountPrice" | "slug" | "benefit" | "dateDeadline" | "contentType" | "capacity" | "duration" | "notes", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     vouchers?: boolean | Product$vouchersArgs<ExtArgs>
     formFields?: boolean | Product$formFieldsArgs<ExtArgs>
@@ -5188,9 +5177,8 @@ export namespace Prisma {
       slug: string | null
       benefit: Prisma.JsonValue | null
       dateDeadline: Date | null
-      platform: string | null
-      quota: number | null
-      format: string | null
+      contentType: string | null
+      capacity: number | null
       duration: string | null
       notes: string | null
     }, ExtArgs["result"]["product"]>
@@ -5640,9 +5628,8 @@ export namespace Prisma {
     readonly slug: FieldRef<"Product", 'String'>
     readonly benefit: FieldRef<"Product", 'Json'>
     readonly dateDeadline: FieldRef<"Product", 'DateTime'>
-    readonly platform: FieldRef<"Product", 'String'>
-    readonly quota: FieldRef<"Product", 'Int'>
-    readonly format: FieldRef<"Product", 'String'>
+    readonly contentType: FieldRef<"Product", 'String'>
+    readonly capacity: FieldRef<"Product", 'Int'>
     readonly duration: FieldRef<"Product", 'String'>
     readonly notes: FieldRef<"Product", 'String'>
   }
@@ -21157,9 +21144,8 @@ export namespace Prisma {
     slug: 'slug',
     benefit: 'benefit',
     dateDeadline: 'dateDeadline',
-    platform: 'platform',
-    quota: 'quota',
-    format: 'format',
+    contentType: 'contentType',
+    capacity: 'capacity',
     duration: 'duration',
     notes: 'notes'
   };
@@ -21721,9 +21707,8 @@ export namespace Prisma {
     slug?: StringNullableFilter<"Product"> | string | null
     benefit?: JsonNullableFilter<"Product">
     dateDeadline?: DateTimeNullableFilter<"Product"> | Date | string | null
-    platform?: StringNullableFilter<"Product"> | string | null
-    quota?: IntNullableFilter<"Product"> | number | null
-    format?: StringNullableFilter<"Product"> | string | null
+    contentType?: StringNullableFilter<"Product"> | string | null
+    capacity?: IntNullableFilter<"Product"> | number | null
     duration?: StringNullableFilter<"Product"> | string | null
     notes?: StringNullableFilter<"Product"> | string | null
     vouchers?: VoucherListRelationFilter
@@ -21753,9 +21738,8 @@ export namespace Prisma {
     slug?: SortOrderInput | SortOrder
     benefit?: SortOrderInput | SortOrder
     dateDeadline?: SortOrderInput | SortOrder
-    platform?: SortOrderInput | SortOrder
-    quota?: SortOrderInput | SortOrder
-    format?: SortOrderInput | SortOrder
+    contentType?: SortOrderInput | SortOrder
+    capacity?: SortOrderInput | SortOrder
     duration?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     vouchers?: VoucherOrderByRelationAggregateInput
@@ -21788,9 +21772,8 @@ export namespace Prisma {
     discountPrice?: DecimalNullableFilter<"Product"> | Decimal | DecimalJsLike | number | string | null
     benefit?: JsonNullableFilter<"Product">
     dateDeadline?: DateTimeNullableFilter<"Product"> | Date | string | null
-    platform?: StringNullableFilter<"Product"> | string | null
-    quota?: IntNullableFilter<"Product"> | number | null
-    format?: StringNullableFilter<"Product"> | string | null
+    contentType?: StringNullableFilter<"Product"> | string | null
+    capacity?: IntNullableFilter<"Product"> | number | null
     duration?: StringNullableFilter<"Product"> | string | null
     notes?: StringNullableFilter<"Product"> | string | null
     vouchers?: VoucherListRelationFilter
@@ -21820,9 +21803,8 @@ export namespace Prisma {
     slug?: SortOrderInput | SortOrder
     benefit?: SortOrderInput | SortOrder
     dateDeadline?: SortOrderInput | SortOrder
-    platform?: SortOrderInput | SortOrder
-    quota?: SortOrderInput | SortOrder
-    format?: SortOrderInput | SortOrder
+    contentType?: SortOrderInput | SortOrder
+    capacity?: SortOrderInput | SortOrder
     duration?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     _count?: ProductCountOrderByAggregateInput
@@ -21855,9 +21837,8 @@ export namespace Prisma {
     slug?: StringNullableWithAggregatesFilter<"Product"> | string | null
     benefit?: JsonNullableWithAggregatesFilter<"Product">
     dateDeadline?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
-    platform?: StringNullableWithAggregatesFilter<"Product"> | string | null
-    quota?: IntNullableWithAggregatesFilter<"Product"> | number | null
-    format?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    contentType?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    capacity?: IntNullableWithAggregatesFilter<"Product"> | number | null
     duration?: StringNullableWithAggregatesFilter<"Product"> | string | null
     notes?: StringNullableWithAggregatesFilter<"Product"> | string | null
   }
@@ -23019,9 +23000,8 @@ export namespace Prisma {
     slug?: string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: Date | string | null
-    platform?: string | null
-    quota?: number | null
-    format?: string | null
+    contentType?: string | null
+    capacity?: number | null
     duration?: string | null
     notes?: string | null
     vouchers?: VoucherCreateNestedManyWithoutProductsInput
@@ -23051,9 +23031,8 @@ export namespace Prisma {
     slug?: string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: Date | string | null
-    platform?: string | null
-    quota?: number | null
-    format?: string | null
+    contentType?: string | null
+    capacity?: number | null
     duration?: string | null
     notes?: string | null
     vouchers?: VoucherUncheckedCreateNestedManyWithoutProductsInput
@@ -23081,9 +23060,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     vouchers?: VoucherUpdateManyWithoutProductsNestedInput
@@ -23113,9 +23091,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     vouchers?: VoucherUncheckedUpdateManyWithoutProductsNestedInput
@@ -23144,9 +23121,8 @@ export namespace Prisma {
     slug?: string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: Date | string | null
-    platform?: string | null
-    quota?: number | null
-    format?: string | null
+    contentType?: string | null
+    capacity?: number | null
     duration?: string | null
     notes?: string | null
   }
@@ -23170,9 +23146,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -23197,9 +23172,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -24668,9 +24642,8 @@ export namespace Prisma {
     slug?: SortOrder
     benefit?: SortOrder
     dateDeadline?: SortOrder
-    platform?: SortOrder
-    quota?: SortOrder
-    format?: SortOrder
+    contentType?: SortOrder
+    capacity?: SortOrder
     duration?: SortOrder
     notes?: SortOrder
   }
@@ -24678,7 +24651,7 @@ export namespace Prisma {
   export type ProductAvgOrderByAggregateInput = {
     price?: SortOrder
     discountPrice?: SortOrder
-    quota?: SortOrder
+    capacity?: SortOrder
   }
 
   export type ProductMaxOrderByAggregateInput = {
@@ -24699,9 +24672,8 @@ export namespace Prisma {
     discountPrice?: SortOrder
     slug?: SortOrder
     dateDeadline?: SortOrder
-    platform?: SortOrder
-    quota?: SortOrder
-    format?: SortOrder
+    contentType?: SortOrder
+    capacity?: SortOrder
     duration?: SortOrder
     notes?: SortOrder
   }
@@ -24724,9 +24696,8 @@ export namespace Prisma {
     discountPrice?: SortOrder
     slug?: SortOrder
     dateDeadline?: SortOrder
-    platform?: SortOrder
-    quota?: SortOrder
-    format?: SortOrder
+    contentType?: SortOrder
+    capacity?: SortOrder
     duration?: SortOrder
     notes?: SortOrder
   }
@@ -24734,7 +24705,7 @@ export namespace Prisma {
   export type ProductSumOrderByAggregateInput = {
     price?: SortOrder
     discountPrice?: SortOrder
-    quota?: SortOrder
+    capacity?: SortOrder
   }
 
   export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
@@ -27434,9 +27405,8 @@ export namespace Prisma {
     slug?: string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: Date | string | null
-    platform?: string | null
-    quota?: number | null
-    format?: string | null
+    contentType?: string | null
+    capacity?: number | null
     duration?: string | null
     notes?: string | null
     vouchers?: VoucherCreateNestedManyWithoutProductsInput
@@ -27465,9 +27435,8 @@ export namespace Prisma {
     slug?: string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: Date | string | null
-    platform?: string | null
-    quota?: number | null
-    format?: string | null
+    contentType?: string | null
+    capacity?: number | null
     duration?: string | null
     notes?: string | null
     vouchers?: VoucherUncheckedCreateNestedManyWithoutProductsInput
@@ -27510,9 +27479,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     vouchers?: VoucherUpdateManyWithoutProductsNestedInput
@@ -27541,9 +27509,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     vouchers?: VoucherUncheckedUpdateManyWithoutProductsNestedInput
@@ -27594,9 +27561,8 @@ export namespace Prisma {
     slug?: string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: Date | string | null
-    platform?: string | null
-    quota?: number | null
-    format?: string | null
+    contentType?: string | null
+    capacity?: number | null
     duration?: string | null
     notes?: string | null
     vouchers?: VoucherCreateNestedManyWithoutProductsInput
@@ -27625,9 +27591,8 @@ export namespace Prisma {
     slug?: string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: Date | string | null
-    platform?: string | null
-    quota?: number | null
-    format?: string | null
+    contentType?: string | null
+    capacity?: number | null
     duration?: string | null
     notes?: string | null
     vouchers?: VoucherUncheckedCreateNestedManyWithoutProductsInput
@@ -27697,9 +27662,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     vouchers?: VoucherUpdateManyWithoutProductsNestedInput
@@ -27728,9 +27692,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     vouchers?: VoucherUncheckedUpdateManyWithoutProductsNestedInput
@@ -27781,9 +27744,8 @@ export namespace Prisma {
     slug?: string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: Date | string | null
-    platform?: string | null
-    quota?: number | null
-    format?: string | null
+    contentType?: string | null
+    capacity?: number | null
     duration?: string | null
     notes?: string | null
     vouchers?: VoucherCreateNestedManyWithoutProductsInput
@@ -27812,9 +27774,8 @@ export namespace Prisma {
     slug?: string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: Date | string | null
-    platform?: string | null
-    quota?: number | null
-    format?: string | null
+    contentType?: string | null
+    capacity?: number | null
     duration?: string | null
     notes?: string | null
     vouchers?: VoucherUncheckedCreateNestedManyWithoutProductsInput
@@ -27873,9 +27834,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     vouchers?: VoucherUpdateManyWithoutProductsNestedInput
@@ -27904,9 +27864,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     vouchers?: VoucherUncheckedUpdateManyWithoutProductsNestedInput
@@ -28394,9 +28353,8 @@ export namespace Prisma {
     slug?: string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: Date | string | null
-    platform?: string | null
-    quota?: number | null
-    format?: string | null
+    contentType?: string | null
+    capacity?: number | null
     duration?: string | null
     notes?: string | null
     vouchers?: VoucherCreateNestedManyWithoutProductsInput
@@ -28424,9 +28382,8 @@ export namespace Prisma {
     slug?: string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: Date | string | null
-    platform?: string | null
-    quota?: number | null
-    format?: string | null
+    contentType?: string | null
+    capacity?: number | null
     duration?: string | null
     notes?: string | null
     vouchers?: VoucherUncheckedCreateNestedManyWithoutProductsInput
@@ -28733,9 +28690,8 @@ export namespace Prisma {
     slug?: StringNullableFilter<"Product"> | string | null
     benefit?: JsonNullableFilter<"Product">
     dateDeadline?: DateTimeNullableFilter<"Product"> | Date | string | null
-    platform?: StringNullableFilter<"Product"> | string | null
-    quota?: IntNullableFilter<"Product"> | number | null
-    format?: StringNullableFilter<"Product"> | string | null
+    contentType?: StringNullableFilter<"Product"> | string | null
+    capacity?: IntNullableFilter<"Product"> | number | null
     duration?: StringNullableFilter<"Product"> | string | null
     notes?: StringNullableFilter<"Product"> | string | null
   }
@@ -29492,9 +29448,8 @@ export namespace Prisma {
     slug?: string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: Date | string | null
-    platform?: string | null
-    quota?: number | null
-    format?: string | null
+    contentType?: string | null
+    capacity?: number | null
     duration?: string | null
     notes?: string | null
     formFields?: FormFieldCreateNestedManyWithoutProductInput
@@ -29523,9 +29478,8 @@ export namespace Prisma {
     slug?: string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: Date | string | null
-    platform?: string | null
-    quota?: number | null
-    format?: string | null
+    contentType?: string | null
+    capacity?: number | null
     duration?: string | null
     notes?: string | null
     formFields?: FormFieldUncheckedCreateNestedManyWithoutProductInput
@@ -29914,9 +29868,8 @@ export namespace Prisma {
     slug?: string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: Date | string | null
-    platform?: string | null
-    quota?: number | null
-    format?: string | null
+    contentType?: string | null
+    capacity?: number | null
     duration?: string | null
     notes?: string | null
   }
@@ -30065,9 +30018,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     vouchers?: VoucherUpdateManyWithoutProductsNestedInput
@@ -30095,9 +30047,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     vouchers?: VoucherUncheckedUpdateManyWithoutProductsNestedInput
@@ -30125,9 +30076,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -30342,9 +30292,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     formFields?: FormFieldUpdateManyWithoutProductNestedInput
@@ -30373,9 +30322,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     formFields?: FormFieldUncheckedUpdateManyWithoutProductNestedInput
@@ -30403,9 +30351,8 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     benefit?: NullableJsonNullValueInput | InputJsonValue
     dateDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    platform?: NullableStringFieldUpdateOperationsInput | string | null
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
-    format?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: NullableStringFieldUpdateOperationsInput | string | null
+    capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
   }

@@ -157,9 +157,8 @@ exports.Prisma.ProductScalarFieldEnum = {
   slug: 'slug',
   benefit: 'benefit',
   dateDeadline: 'dateDeadline',
-  platform: 'platform',
-  quota: 'quota',
-  format: 'format',
+  contentType: 'contentType',
+  capacity: 'capacity',
   duration: 'duration',
   notes: 'notes'
 };

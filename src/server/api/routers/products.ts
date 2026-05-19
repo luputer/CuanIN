@@ -28,18 +28,59 @@ export const productsRouter = createTRPCRouter({
                 const limit = input?.limit ?? 10;
                 const skip = (page - 1) * limit;
 
-                const where = {
-                    userId: ctx.session.user.id,
-                    ...(input?.type ? { type: input.type } : {}),
-                    ...(input?.search ? {
+                const now = new Date();
+                const andClauses: any[] = [];
+
+                andClauses.push({ userId: ctx.session.user.id });
+
+                if (input?.type) {
+                    andClauses.push({ type: input.type });
+                }
+
+                if (input?.search) {
+                    andClauses.push({
                         name: {
                             contains: input.search,
                             mode: 'insensitive' as const,
                         }
-                    } : {}),
-                    ...(input?.status && input.status !== "ALL" ? { status: input.status } : {}),
-                    ...(input?.priceType === "FREE" ? { price: { equals: 0 } } : input?.priceType === "PAID" ? { price: { gt: 0 } } : {}),
-                };
+                    });
+                }
+
+                if (input?.priceType === "FREE") {
+                    andClauses.push({ price: { equals: 0 } });
+                } else if (input?.priceType === "PAID") {
+                    andClauses.push({ price: { gt: 0 } });
+                }
+
+                if (input?.status && input.status !== "ALL") {
+                    if (input.status === "published") {
+                        andClauses.push({
+                            status: "published",
+                            OR: [
+                                { type: { not: "WEBINAR" } },
+                                { endDate: null },
+                                { endDate: { gte: now } }
+                            ]
+                        });
+                    } else if (input.status === "selesai") {
+                        andClauses.push({
+                            OR: [
+                                { status: "archived" },
+                                {
+                                    status: "published",
+                                    type: "WEBINAR",
+                                    endDate: { lt: now }
+                                }
+                            ]
+                        });
+                    } else if (input.status === "unpublished") {
+                        andClauses.push({ status: "unpublished" });
+                    } else {
+                        andClauses.push({ status: input.status });
+                    }
+                }
+
+                const where = { AND: andClauses };
 
                 const [items, total] = await Promise.all([
                     ctx.db.product.findMany({
@@ -93,16 +134,51 @@ export const productsRouter = createTRPCRouter({
                 const limit = input?.limit ?? 10;
                 const skip = (page - 1) * limit;
 
-                const where = {
-                    ...(input?.type ? { type: input.type } : {}),
-                    ...(input?.search ? {
+                const now = new Date();
+                const andClauses: any[] = [];
+
+                if (input?.type) {
+                    andClauses.push({ type: input.type });
+                }
+
+                if (input?.search) {
+                    andClauses.push({
                         OR: [
                             { name: { contains: input.search, mode: 'insensitive' as const } },
                             { user: { name: { contains: input.search, mode: 'insensitive' as const } } }
                         ]
-                    } : {}),
-                    ...(input?.status && input.status !== "ALL" ? { status: input.status } : {}),
-                };
+                    });
+                }
+
+                if (input?.status && input.status !== "ALL") {
+                    if (input.status === "published") {
+                        andClauses.push({
+                            status: "published",
+                            OR: [
+                                { type: { not: "WEBINAR" } },
+                                { endDate: null },
+                                { endDate: { gte: now } }
+                            ]
+                        });
+                    } else if (input.status === "selesai") {
+                        andClauses.push({
+                            OR: [
+                                { status: "archived" },
+                                {
+                                    status: "published",
+                                    type: "WEBINAR",
+                                    endDate: { lt: now }
+                                }
+                            ]
+                        });
+                    } else if (input.status === "unpublished") {
+                        andClauses.push({ status: "unpublished" });
+                    } else {
+                        andClauses.push({ status: input.status });
+                    }
+                }
+
+                const where = andClauses.length > 0 ? { AND: andClauses } : {};
 
                 const [items, total] = await Promise.all([
                     ctx.db.product.findMany({

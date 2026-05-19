@@ -217,26 +217,59 @@ export const creatorsRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const skip = (input.page - 1) * input.limit;
 
-      const where = {
-        userId: input.creatorId,
-        ...(input.type ? { type: input.type } : {}),
-        ...(input.search
-          ? {
-              name: {
-                contains: input.search,
-                mode: "insensitive" as const,
-              },
-            }
-          : {}),
-        ...(input.status && input.status !== "ALL"
-          ? { status: input.status }
-          : {}),
-        ...(input.priceType === "FREE"
-          ? { price: { equals: 0 } }
-          : input.priceType === "PAID"
-          ? { price: { gt: 0 } }
-          : {}),
-      };
+      const now = new Date();
+      const andClauses: any[] = [];
+
+      andClauses.push({ userId: input.creatorId });
+
+      if (input.type) {
+        andClauses.push({ type: input.type });
+      }
+
+      if (input.search) {
+        andClauses.push({
+          name: {
+            contains: input.search,
+            mode: "insensitive" as const,
+          },
+        });
+      }
+
+      if (input.priceType === "FREE") {
+        andClauses.push({ price: { equals: 0 } });
+      } else if (input.priceType === "PAID") {
+        andClauses.push({ price: { gt: 0 } });
+      }
+
+      if (input.status && input.status !== "ALL") {
+        if (input.status === "published") {
+          andClauses.push({
+            status: "published",
+            OR: [
+              { type: { not: "WEBINAR" } },
+              { endDate: null },
+              { endDate: { gte: now } }
+            ]
+          });
+        } else if (input.status === "selesai") {
+          andClauses.push({
+            OR: [
+              { status: "archived" },
+              {
+                status: "published",
+                type: "WEBINAR",
+                endDate: { lt: now }
+              }
+            ]
+          });
+        } else if (input.status === "unpublished") {
+          andClauses.push({ status: "unpublished" });
+        } else {
+          andClauses.push({ status: input.status });
+        }
+      }
+
+      const where = { AND: andClauses };
 
       const [items, total] = await Promise.all([
         ctx.db.product.findMany({

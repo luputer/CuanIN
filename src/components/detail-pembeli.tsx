@@ -13,29 +13,43 @@ export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBa
 
     if (isLoading) {
         return (
-        <div className="space-y-6">
-                <div className="bg-slate-50">
-                    <div className="bg-slate-50 -mx-4 px-4 mb-2">
-                        <div className="flex flex-col gap-1">
-                            <Skeleton className="h-4 w-32 mb-2" />
-                            <Skeleton className="h-8 w-64" />
-                        </div>
-                    </div>
+            <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-6 animate-pulse">
+                {/* Header */}
+                <div className="flex items-center gap-2 mb-2">
+                    <Skeleton className="h-5 w-5 rounded-md" />
+                    <Skeleton className="h-8 w-48 rounded-md" />
                 </div>
 
-                <div className="bg-white rounded-xl border border-slate-800 overflow-hidden">
-                    <div className="bg-cyan-50 px-10 py-6 border-b border-slate-800">
-                        <Skeleton className="h-7 w-48" />
-                    </div>
-                    <div className="px-10 py-8 space-y-6">
-                        <Skeleton className="h-6 w-40 border-b border-cyan-600 pb-4 mb-4" />
-                        <div className="space-y-4">
-                            {[1, 2, 3].map((i) => (
-                                <div key={i} className="flex flex-col md:flex-row gap-10">
-                                    <Skeleton className="h-5 w-50" />
-                                    <Skeleton className="flex-1 h-13 rounded-lg" />
-                                </div>
-                            ))}
+                <div className="bg-white overflow-hidden">
+                    <div className="py-4 sm:py-6 px-0 sm:px-6 space-y-6">
+                        {/* Section 1 */}
+                        <div>
+                            <div className="flex justify-between items-center mb-3">
+                                <Skeleton className="h-5 w-32" />
+                            </div>
+                            <div className="space-y-4">
+                                {[1, 2, 3].map((i) => (
+                                    <div key={i} className="flex flex-col md:flex-row md:items-center gap-2 md:gap-10 pb-5">
+                                        <Skeleton className="h-4 w-40" />
+                                        <Skeleton className="flex-1 h-[52px] rounded-lg" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Section 2 */}
+                        <div className="pt-6">
+                            <div className="flex justify-between items-center mb-3">
+                                <Skeleton className="h-5 w-32" />
+                            </div>
+                            <div className="space-y-4">
+                                {[1, 2].map((i) => (
+                                    <div key={i} className="flex flex-col md:flex-row md:items-center gap-2 md:gap-10 pb-5">
+                                        <Skeleton className="h-4 w-40" />
+                                        <Skeleton className="flex-1 h-[52px] rounded-lg" />
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -132,7 +132,8 @@ export default function WebinarPage() {
     const getStatusColor = (status: string) => {
         const s = status.toLowerCase();
         switch (s) {
-            case "selesai": return "bg-blue-100 text-blue-700";
+            case "selesai":
+            case "archived": return "bg-blue-100 text-blue-700";
             case "published": return "bg-green-100 text-green-700";
             case "unpublished": return "bg-slate-200 text-slate-500";
             default: return "bg-slate-100 text-slate-600";
@@ -142,7 +143,8 @@ export default function WebinarPage() {
     const getStatusLabel = (status: string) => {
         const s = status.toLowerCase();
         switch (s) {
-            case "selesai": return "Selesai";
+            case "selesai":
+            case "archived": return "Selesai";
             case "published": return "Published";
             case "unpublished": return "Unpublished";
             default: return status;
@@ -312,19 +314,53 @@ export default function WebinarPage() {
                             {isLoading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
                                     <TableRow data-type="body" key={i}>
-                                        <TableCell><Skeleton className="h-4 w-4 mx-auto" /></TableCell>
-                                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                                        <TableCell><Skeleton className="h-12 w-12 rounded-md" /></TableCell>
-                                        <TableCell><Skeleton className="h-8 w-24" /></TableCell>
-                                        <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                                        <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                                        <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                                        <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+                                        <TableCell className="text-center font-medium whitespace-nowrap">
+                                            <div className="flex items-center justify-center min-h-[48px]">
+                                                <Skeleton className="h-4 w-4" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="max-w-[360px]">
+                                            <div className="flex items-center min-h-[48px] py-1">
+                                                <Skeleton className="h-4 w-48" />
+                                            </div>
+                                        </TableCell>
                                         <TableCell>
-                                            <div className="flex justify-center gap-3">
-                                                <Skeleton className="h-5 w-5" />
-                                                <Skeleton className="h-5 w-5" />
-                                                <Skeleton className="h-5 w-5" />
+                                            <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="w-12 h-12 rounded-lg" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex flex-col justify-center min-h-[48px] space-y-1.5">
+                                                <Skeleton className="h-4 w-24" />
+                                                <Skeleton className="h-3 w-16" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="h-4 w-12" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="h-4 w-16" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center gap-3 min-h-[48px]">
+                                                <Skeleton className="h-4 w-4" />
+                                                <Skeleton className="h-[28px] w-[56px] rounded-lg" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="h-[26px] w-[90px] rounded-full" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="px-6 py-4 text-right">
+                                            <div className="flex justify-start items-center gap-3">
+                                                <Skeleton className="w-[22px] h-[22px]" />
+                                                <Skeleton className="w-[22px] h-[22px]" />
+                                                <Skeleton className="w-[22px] h-[22px]" />
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -423,9 +459,15 @@ export default function WebinarPage() {
 
                                             <TableCell className="whitespace-nowrap">
                                                 <div className="flex items-center min-h-[48px]">
-                                                    <span className={`px-4 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.endDate && new Date() > new Date(item.endDate) ? "selesai" : item.status || "draft")}`}>
-                                                        {getStatusLabel(item.endDate && new Date() > new Date(item.endDate) ? "selesai" : item.status || "draft")}
-                                                    </span>
+                                                    {(() => {
+                                                        const isFinished = item.status === "archived" || (item.endDate && new Date() > new Date(item.endDate));
+                                                        const currentStatus = isFinished ? "selesai" : (item.status || "draft");
+                                                        return (
+                                                            <span className={`px-4 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(currentStatus)}`}>
+                                                                {getStatusLabel(currentStatus)}
+                                                            </span>
+                                                        );
+                                                    })()}
                                                 </div>
                                             </TableCell>
 
@@ -504,7 +546,7 @@ export default function WebinarPage() {
                         webinars?.map((item, index) => {
                             const priceNum = Number(item.price);
                             const rowNumber = (page - 1) * limit + index + 1;
-                            const isFinished = item.endDate && new Date() > new Date(item.endDate);
+                            const isFinished = item.status === "archived" || (item.endDate && new Date() > new Date(item.endDate));
                             const statusKey = isFinished ? "selesai" : item.status || "draft";
 
                             return (

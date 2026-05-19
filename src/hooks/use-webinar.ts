@@ -30,7 +30,6 @@ export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
     const form = useForm<WebinarFormValues>({
         resolver: zodResolver(webinarSchema) as any,
         defaultValues: {
-            priceType: "free",
             contentType: "zoom",
             status: "unpublished",
             price: 0,
@@ -65,7 +64,6 @@ export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
                 name: product.name,
                 shortDescription: product.shortDescription ?? "",
                 description: product.description ?? "",
-                priceType: priceVal > 0 ? "paid" : "free",
                 price: priceVal,
                 contentType: isStandardPlatform ? (product.contentType ?? "zoom") : "other",
                 platformCustom: isStandardPlatform ? "" : (product.contentType ?? ""),

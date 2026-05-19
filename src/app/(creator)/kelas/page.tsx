@@ -283,19 +283,52 @@ export default function KelasOnlinePage() {
                             {isLoading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
                                     <TableRow data-type="body" key={i}>
-                                        <TableCell><Skeleton className="h-4 w-4 mx-auto" /></TableCell>
-                                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                                        <TableCell><Skeleton className="h-12 w-12 rounded-md" /></TableCell>
-                                        <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                                        <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                                        <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                                        <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                                        <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+                                        <TableCell className="text-center font-medium whitespace-nowrap">
+                                            <div className="flex items-center justify-center min-h-[48px]">
+                                                <Skeleton className="h-4 w-4" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="max-w-[360px]">
+                                            <div className="flex items-center min-h-[48px] py-1">
+                                                <Skeleton className="h-4 w-48" />
+                                            </div>
+                                        </TableCell>
                                         <TableCell>
-                                            <div className="flex justify-center gap-3">
-                                                <Skeleton className="h-5 w-5" />
-                                                <Skeleton className="h-5 w-5" />
-                                                <Skeleton className="h-5 w-5" />
+                                            <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="w-12 h-12 rounded-lg" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="h-4 w-16" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="h-4 w-12" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="h-4 w-16" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center gap-3 min-h-[48px]">
+                                                <Skeleton className="h-4 w-4" />
+                                                <Skeleton className="h-[28px] w-[56px] rounded-lg" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="h-[26px] w-[90px] rounded-full" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="px-6 py-4 text-right">
+                                            <div className="flex justify-start items-center gap-3">
+                                                <Skeleton className="w-[22px] h-[22px]" />
+                                                <Skeleton className="w-[22px] h-[22px]" />
+                                                <Skeleton className="w-[22px] h-[22px]" />
                                             </div>
                                         </TableCell>
                                     </TableRow>

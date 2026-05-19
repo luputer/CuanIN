@@ -27,12 +27,12 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
     const form = useForm<DigitalProductFormValues>({
         resolver: zodResolver(productDigitalSchema) as any,
         defaultValues: {
-            priceType: "free",
             status: "published",
             price: 0,
             benefit: isEdit ? [] : [""],
             contentType: "",
             platformCustom: "",
+            duration: "",
             capacity: 0,
             enableQuota: false,
             enableNotes: false,
@@ -65,7 +65,6 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
                 name: product.name,
                 shortDescription: product.shortDescription ?? "",
                 description: product.description ?? "",
-                priceType: priceVal === 0 ? "free" : "paid",
                 price: priceVal,
                 link: product.link ?? "",
                 contentType: isStandardFormat ? (product.contentType ?? "") : "other",

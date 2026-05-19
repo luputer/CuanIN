@@ -89,7 +89,8 @@ export default function CreatorProductsPage() {
     const getStatusColor = (status: string) => {
         const s = status.toLowerCase();
         switch (s) {
-            case "selesai": return "bg-blue-100 text-blue-700";
+            case "selesai":
+            case "archived": return "bg-blue-100 text-blue-700";
             case "published": return "bg-green-100 text-green-700";
             case "unpublished": return "bg-slate-200 text-slate-500";
             default: return "bg-slate-100 text-slate-600";
@@ -99,7 +100,8 @@ export default function CreatorProductsPage() {
     const getStatusLabel = (status: string) => {
         const s = status.toLowerCase();
         switch (s) {
-            case "selesai": return "Selesai";
+            case "selesai":
+            case "archived": return "Selesai";
             case "published": return "Published";
             case "unpublished": return "Unpublished";
             default: return status;
@@ -271,7 +273,7 @@ export default function CreatorProductsPage() {
                                 products?.map((item, index) => {
                                     const priceNum = Number(item.price);
                                     const rowNumber = (page - 1) * limit + index + 1;
-                                    const isFinished = item.endDate && new Date() > new Date(item.endDate);
+                                    const isFinished = item.status === "archived" || (item.endDate && new Date() > new Date(item.endDate));
                                     const currentStatus = isFinished ? "selesai" : (item.status || "draft");
 
                                     return (

@@ -149,25 +149,37 @@ export default function Pembeli({ productId }: { productId: string }) {
                             {isLoading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
                                     <TableRow data-type="body" key={i}>
-                                        <TableCell className="text-center h-20">
-                                            <Skeleton className="h-4 w-4 mx-auto" />
+                                        <TableCell className="text-center font-medium whitespace-nowrap">
+                                            <div className="flex items-center justify-center min-h-12">
+                                                <Skeleton className="h-4 w-4" />
+                                            </div>
                                         </TableCell>
-                                        <TableCell>
-                                            <Skeleton className="h-4 w-32" />
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-12">
+                                                <Skeleton className="h-4 w-32" />
+                                            </div>
                                         </TableCell>
-                                        <TableCell>
-                                            <Skeleton className="h-4 w-40" />
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-12">
+                                                <Skeleton className="h-4 w-40" />
+                                            </div>
                                         </TableCell>
-                                        <TableCell>
-                                            <Skeleton className="h-4 w-24" />
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-12">
+                                                <Skeleton className="h-4 w-24" />
+                                            </div>
                                         </TableCell>
-                                        <TableCell>
-                                            <Skeleton className="h-4 w-28" />
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-12">
+                                                <Skeleton className="h-4 w-28" />
+                                            </div>
                                         </TableCell>
-                                        <TableCell>
-                                            <Skeleton className="h-6.5 w-22.5 rounded-full" />
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-12">
+                                                <Skeleton className="h-[26px] w-[90px] rounded-full" />
+                                            </div>
                                         </TableCell>
-                                        <TableCell className="text-right">
+                                        <TableCell className="px-6 py-4 text-right">
                                             <div className="flex items-center gap-3">
                                                 <Skeleton className="h-6 w-6 rounded-md" />
                                             </div>

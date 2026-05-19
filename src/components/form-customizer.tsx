@@ -436,35 +436,45 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
 
   if (!isControlled && isLoading) {
     return (
-      <div className="animate-pulse rounded-b-xl border border-slate-200 bg-[#f0f9fa] p-4 md:p-6">
-        <div className="max-w-3xl w-full flex justify-center items-center">
-          <Skeleton className="mb-2 h-6 w-48" />
-          <div className="mb-6 h-0.5 w-full bg-[#00B4D8] opacity-20"></div>
+      <div className="bg-white px-4 py-6 sm:px-8 sm:py-8 animate-pulse">
+        {/* Section Header */}
+        <div className="flex justify-between items-center mb-3">
+          <Skeleton className="h-6 w-56" />
+        </div>
 
-          <div className="mb-6 space-y-4">
-            {[1, 2].map((i) => (
-              <div
-                key={i}
-                className="flex gap-4 rounded-lg border border-slate-200 bg-white p-5"
-              >
-                <Skeleton className="mt-6 h-4.5 w-4.5" />
+        <div className="max-w-4xl w-full items-center mx-auto">
+          <div className="py-4 pb-8">
+            <div className="space-y-4">
+              {[1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-2 rounded-lg border border-slate-800 bg-white p-3.5 sm:gap-4 sm:p-5"
+                >
+                  <Skeleton className="h-6 w-6 rounded" />
 
-                <div className="flex-1 space-y-4">
-                  <div className="flex flex-col justify-between gap-4 border-b border-slate-100 pb-4 md:flex-row md:items-center">
-                    <Skeleton className="h-10 flex-1 md:max-w-[60%]" />
-                    <div className="flex items-center gap-4">
-                      <Skeleton className="h-10 w-32 rounded-md" />
-                      <Skeleton className="h-6 w-6 rounded-md" />
+                  <div className="flex-1 space-y-3 sm:space-y-4">
+                    <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center md:gap-4">
+                      <div className="w-full flex-1 md:max-w-[60%] pb-1.5">
+                        <Skeleton className="h-8 w-full rounded" />
+                      </div>
+                      <div className="flex items-center gap-3 w-full md:w-auto">
+                        <Skeleton className="h-8 w-36 rounded" />
+                        <Skeleton className="h-8 w-8 rounded" />
+                      </div>
+                    </div>
+
+                    <div className="pt-1">
+                      <Skeleton className="mb-2 h-4 w-24" />
+                      <Skeleton className="h-6 w-48 rounded" />
                     </div>
                   </div>
-
-                  <div className="pt-2">
-                    <Skeleton className="mb-4 h-4 w-24" />
-                    <Skeleton className="h-6 w-48 border-b border-slate-100 pb-2" />
-                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <Skeleton className="h-[46px] w-full rounded-lg" />
           </div>
         </div>
       </div>

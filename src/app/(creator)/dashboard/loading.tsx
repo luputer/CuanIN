@@ -2,11 +2,13 @@ import { Skeleton } from "~/components/ui/skeleton";
 
 export default function Loading() {
     return (
-        <div className="space-y-6">
-            {/* Page title */}
-            <div>
-                <Skeleton className="h-8 w-48 mb-2" />
-                <Skeleton className="h-4 w-80" />
+        <div className="w-full max-w-7xl mx-auto space-y-6 animate-pulse">
+            {/* Header */}
+            <div className="bg-slate-50">
+                <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-2">
+                    <Skeleton className="h-8 w-48 mb-2" />
+                    <Skeleton className="h-4 w-80" />
+                </div>
             </div>
 
             {/* TOP CARDS — 4 columns */}

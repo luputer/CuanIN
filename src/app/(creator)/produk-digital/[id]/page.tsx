@@ -178,7 +178,6 @@ export default function ProdukDigitalDetailPage() {
 
     const { register, watch, setValue, getValues, control, formState: { errors, isDirty } } = form;
     const description = watch("description");
-    const priceType = watch("priceType");
     const images = watch("images") || [];
 
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -392,13 +391,13 @@ export default function ProdukDigitalDetailPage() {
                                 <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start pt-6">
                                     {/* Kiri: Informasi Produk */}
                                     <div className="flex-1 min-w-0 w-full space-y-0">
-                                        <Row label="Nama Produk" error={errors.name?.message}>
-                                            <FormInput placeholder="Masukkan nama produk" {...register("name")} />
+                                        <Row label="Nama Produk Digital" error={errors.name?.message}>
+                                            <FormInput placeholder="Masukkan nama produk digital" {...register("name")} />
                                         </Row>
 
                                         <Row label="Ringkasan" error={errors.shortDescription?.message}>
                                             <FormTextarea
-                                                placeholder="Masukkan ringkasan tentang produk ini"
+                                                placeholder="Masukkan ringkasan tentang produk produk digital ini"
                                                 maxLength={200}
                                                 {...register("shortDescription")}
                                             />
@@ -408,7 +407,7 @@ export default function ProdukDigitalDetailPage() {
                                         <Row label="Deskripsi Lengkap" error={errors.description?.message}>
                                             <div data-color-mode="light" className="relative border border-slate-400 rounded-lg overflow-hidden group">
                                                 <MDEditor
-                                                    textareaProps={{ placeholder: "Masukkan deskripsi lengkap tentang produk ini" }}
+                                                    textareaProps={{ placeholder: "Masukkan deskripsi lengkap tentang produk digital ini" }}
                                                     value={description ?? ""}
                                                     onChange={(val) => setValue("description", val ?? "")}
                                                     height={editorHeight}
@@ -427,12 +426,12 @@ export default function ProdukDigitalDetailPage() {
                                             </div>
                                         </Row>
 
-                                        <Row label="Keuntungan / Benefit" error={errors.benefit?.message}>
+                                        <Row label="Keuntungan" error={errors.benefit?.message}>
                                             <div className="space-y-3 flex flex-col w-full">
                                                 {fields.map((field, index) => (
                                                     <div key={field.id} className="flex gap-2">
                                                         <FormInput
-                                                            placeholder={`Benefit ${index + 1}`}
+                                                            placeholder={`Keuntungan ${index + 1}`}
                                                             className="flex-1"
                                                             {...register(`benefit.${index}` as const)}
                                                         />
@@ -451,7 +450,7 @@ export default function ProdukDigitalDetailPage() {
                                                     className="flex justify-center items-center gap-2 bg-white border border-slate-400 rounded-lg py-2 px-4 text-sm font-regular text-slate-800 hover:bg-slate-100 w-fit cursor-pointer"
                                                 >
                                                     <PlusIcon className="h-4 w-4" weight="regular" />
-                                                    <span>Tambah Benefit</span>
+                                                    <span>Tambah Keuntungan</span>
                                                 </button>
                                             </div>
                                         </Row>
@@ -532,67 +531,85 @@ export default function ProdukDigitalDetailPage() {
                                             </Row>
                                         )}
 
-                                        <Row label="Status">
-                                            <FormSelect {...register("status")}>
-                                                <option value="published">Published</option>
-                                                <option value="unpublished">Unpublished</option>
-                                            </FormSelect>
-                                        </Row>
-
-                                        {/* Pengaturan Tambahan */}
+                                        {/* Detail Produk Digital */}
                                         <div className="pt-8">
-                                            <SectionHeader title="Pengaturan Tambahan" />
-                                            <div className="space-y-6 pt-6">
-                                                {/* Voucher Toggle */}
-                                                <div className="space-y-2">
-                                                    <div className="flex items-center justify-between">
-                                                        <label className="text-sm font-medium text-slate-700">Aktifkan Voucher</label>
+                                            <SectionHeader title="Detail Produk Digital" />
+                                            <div className="space-y-0 pt-6">
+                                                <Row label="Tipe Konten" error={errors.contentType?.message ?? errors.platformCustom?.message}>
+                                                    <div className="space-y-2 w-full">
+                                                        <FormSelect
+                                                            {...register("contentType", {
+                                                                onChange: (e: React.ChangeEvent<HTMLSelectElement>) => {
+                                                                    if (e.target.value !== "other") {
+                                                                        setValue("platformCustom", "");
+                                                                    }
+                                                                }
+                                                            })}
+                                                        >
+                                                            <option value="PDF">PDF</option>
+                                                            <option value="Video">Video</option>
+                                                            <option value="Template">Template</option>
+                                                            <option value="E-book">E-book</option>
+                                                            <option value="ZIP">ZIP</option>
+                                                            <option value="other">Lainnya</option>
+                                                        </FormSelect>
+                                                        {watch("contentType") === "other" && (
+                                                            <FormInput
+                                                                placeholder="Format file (contoh: EPUB, MP4, dll.)"
+                                                                className="animate-in fade-in slide-in-from-top-1 duration-200"
+                                                                {...register("platformCustom")}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                </Row>
+
+                                                <Row label="Link Akses" error={errors.link?.message}>
+                                                    <FormInput placeholder="https://..." {...register("link")} />
+                                                </Row>
+
+                                                <Row
+                                                    label="Batasi Stok"
+                                                    error={errors.capacity?.message}
+                                                    extra={
                                                         <label className="relative inline-flex items-center cursor-pointer">
                                                             <input
                                                                 type="checkbox"
                                                                 className="sr-only peer"
-                                                                {...register("enableVoucher")}
+                                                                {...register("enableQuota")}
                                                             />
-                                                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                                            <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-4 rtl:peer-checked:after:-translate-x-4 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-cyan-600"></div>
                                                         </label>
-                                                    </div>
-
-                                                    {watch("enableVoucher") && (
+                                                    }
+                                                >
+                                                    {watch("enableQuota") && (
                                                         <div className="animate-in fade-in slide-in-from-top-2 duration-200">
-                                                            <VoucherSelector
-                                                                selectedIds={watch("vouchers") || []}
-                                                                onChange={(ids) => setValue("vouchers", ids)}
+                                                            <Controller
+                                                                control={control}
+                                                                name="capacity"
+                                                                render={({ field: { onChange, value, ref } }) => (
+                                                                    <FormInput
+                                                                        ref={ref}
+                                                                        value={value ?? ""}
+                                                                        onChange={(e) => {
+                                                                            const val = e.target.value.replace(/[^0-9]/g, "");
+                                                                            onChange(val === "" ? undefined : Number(val));
+                                                                        }}
+                                                                        suffix={
+                                                                            <div className="flex flex-col">
+                                                                                <button type="button" onClick={() => handleQuotaAdjust(1)} className="cursor-pointer">
+                                                                                    <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                                                </button>
+                                                                                <button type="button" onClick={() => handleQuotaAdjust(-1)} className="cursor-pointer">
+                                                                                    <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                                                </button>
+                                                                            </div>
+                                                                        }
+                                                                    />
+                                                                )}
                                                             />
                                                         </div>
                                                     )}
-                                                </div>
-
-                                                {/* Notes Toggle */}
-                                                <div className="space-y-2">
-                                                    <div className="flex items-center justify-between">
-                                                        <label className="text-sm font-medium text-slate-700">Catatan Khusus di Email</label>
-                                                        <label className="relative inline-flex items-center cursor-pointer">
-                                                            <input
-                                                                type="checkbox"
-                                                                className="sr-only peer"
-                                                                {...register("enableNotes")}
-                                                            />
-                                                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
-                                                        </label>
-                                                    </div>
-
-                                                    {watch("enableNotes") && (
-                                                        <div className="animate-in fade-in slide-in-from-top-2 duration-200">
-                                                            <Row label="" error={errors.notes?.message}>
-                                                                <FormTextarea
-                                                                    placeholder="Masukkan catatan khusus yang akan dikirim ke email pembeli (misal: link download, petunjuk lisensi, dsb)"
-                                                                    className="min-h-[60px]"
-                                                                    {...register("notes")}
-                                                                />
-                                                            </Row>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                </Row>
                                             </div>
                                         </div>
                                     </div>
@@ -652,87 +669,73 @@ export default function ProdukDigitalDetailPage() {
                                             <p className="text-[12px] text-slate-400 mt-3 leading-tight italic">Maksimal 4 gambar. JPG/PNG, 1:1 direkomendasikan</p>
                                         </div>
 
-                                        {/* Akses Produk Digital */}
-                                        <div className="bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
-                                            <SectionHeader title="Akses Produk Digital" className="mb-4 text-base" />
-
-                                            <Row label="Tipe Konten" error={errors.contentType?.message ?? errors.platformCustom?.message}>
-                                                <div className="space-y-2 w-full">
-                                                    <FormSelect
-                                                        {...register("contentType", {
-                                                            onChange: (e: React.ChangeEvent<HTMLSelectElement>) => {
-                                                                if (e.target.value !== "other") {
-                                                                    setValue("platformCustom", "");
-                                                                }
-                                                            }
-                                                        })}
-                                                    >
-                                                        <option value="PDF">PDF</option>
-                                                        <option value="Video">Video</option>
-                                                        <option value="Template">Template</option>
-                                                        <option value="E-book">E-book</option>
-                                                        <option value="ZIP">ZIP</option>
-                                                        <option value="other">Lainnya</option>
-                                                    </FormSelect>
-                                                    {watch("contentType") === "other" && (
-                                                        <FormInput
-                                                            placeholder="Format file (contoh: EPUB, MP4, dll.)"
-                                                            className="animate-in fade-in slide-in-from-top-1 duration-200"
-                                                            {...register("platformCustom")}
-                                                        />
-                                                    )}
-                                                </div>
-                                            </Row>
-
-                                            <Row label="Link Akses Produk" error={errors.link?.message}>
-                                                <FormInput placeholder="https://..." {...register("link")} />
-                                            </Row>
+                                        {/* Status */}
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                            <p className="text-slate-700 text-sm font-semibold mb-3">Status</p>
+                                            <FormSelect {...register("status")}>
+                                                <option value="published">Published</option>
+                                                <option value="unpublished">Unpublished</option>
+                                            </FormSelect>
+                                            {errors.status?.message && (
+                                                <span className="text-red-500 text-xs mt-1 block">{errors.status.message}</span>
+                                            )}
                                         </div>
 
-                                        {/* Pengaturan Stok */}
-                                        <div className="bg-slate-50 px-4 pt-2 pb-4 rounded-xl border border-slate-200">
-                                            <SectionHeader title="Pengaturan Stok" className="mb-4 text-base" />
-                                            <div className="space-y-2">
-                                                <div className="flex items-center justify-between py-1">
-                                                    <label className="text-sm font-medium text-slate-700">Batasi Stok</label>
-                                                    <label className="relative inline-flex items-center cursor-pointer">
-                                                        <input
-                                                            type="checkbox"
-                                                            className="sr-only peer"
-                                                            {...register("enableQuota")}
-                                                        />
-                                                        <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
-                                                    </label>
+                                        {/* Pengaturan Tambahan */}
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                            <p className="text-slate-700 text-sm font-semibold mb-3">Pengaturan Tambahan</p>
+                                            <div className="space-y-4 pt-2">
+                                                {/* Voucher Toggle */}
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center justify-between">
+                                                        <label className="text-sm font-medium text-slate-700">Aktifkan Voucher</label>
+                                                        <label className="relative inline-flex items-center cursor-pointer">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="sr-only peer"
+                                                                {...register("enableVoucher")}
+                                                            />
+                                                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                                        </label>
+                                                    </div>
+
+                                                    {watch("enableVoucher") && (
+                                                        <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+                                                            <VoucherSelector
+                                                                selectedIds={watch("vouchers") || []}
+                                                                onChange={(ids) => setValue("vouchers", ids)}
+                                                            />
+                                                        </div>
+                                                    )}
                                                 </div>
 
-                                                {watch("enableQuota") && (
-                                                    <div className="animate-in fade-in slide-in-from-top-2 duration-200">
-                                                        <Controller
-                                                            control={control}
-                                                            name="capacity"
-                                                            render={({ field: { onChange, value, ref } }) => (
-                                                                <FormInput
-                                                                    ref={ref}
-                                                                    value={value ?? ""}
-                                                                    onChange={(e) => {
-                                                                        const val = e.target.value.replace(/[^0-9]/g, "");
-                                                                        onChange(val === "" ? undefined : Number(val));
-                                                                    }}
-                                                                    suffix={
-                                                                        <div className="flex flex-col">
-                                                                            <button type="button" onClick={() => handleQuotaAdjust(1)} className="cursor-pointer">
-                                                                                <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
-                                                                            </button>
-                                                                            <button type="button" onClick={() => handleQuotaAdjust(-1)} className="cursor-pointer">
-                                                                                <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
-                                                                            </button>
-                                                                        </div>
-                                                                    }
-                                                                />
-                                                            )}
-                                                        />
+                                                {/* Notes Toggle */}
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center justify-between">
+                                                        <label className="text-sm font-medium text-slate-700">Catatan Khusus di Email</label>
+                                                        <label className="relative inline-flex items-center cursor-pointer">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="sr-only peer"
+                                                                {...register("enableNotes")}
+                                                            />
+                                                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                                        </label>
                                                     </div>
-                                                )}
+
+                                                    {watch("enableNotes") && (
+                                                        <div className="animate-in fade-in slide-in-from-top-2 duration-200 space-y-1">
+                                                            <FormTextarea
+                                                                placeholder="Masukkan catatan khusus yang akan dikirim ke email pembeli (misal: link grup WA, dll)"
+                                                                className="min-h-[60px]"
+                                                                {...register("notes")}
+                                                            />
+                                                            {errors.notes?.message && (
+                                                                <span className="text-red-500 text-xs mt-1 block">{errors.notes.message}</span>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

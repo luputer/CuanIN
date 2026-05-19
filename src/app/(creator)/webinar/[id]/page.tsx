@@ -291,24 +291,65 @@ export default function WebinarDetailPage() {
     //  Skeleton loading
     if (isLoadingProduct) {
         return (
-            <div className="w-full space-y-6">
-                <div className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-48" />
-                    <Skeleton className="h-10 w-32" />
-                </div>
-                <Skeleton className="h-8 w-64" />
+            <div className="w-full max-w-7xl mx-auto animate-pulse">
+                <div className="space-y-6">
+                    {/* Header */}
+                    <div className="bg-slate-50">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 -mx-6 px-6 pt-2 pb-0">
+                            <div className="flex-1 flex flex-col gap-1.5">
+                                {/* Back link */}
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Skeleton className="h-4 w-4" />
+                                    <Skeleton className="h-4 w-32" />
+                                </div>
+                                {/* Title and Badge */}
+                                <div className="flex items-center gap-3">
+                                    <Skeleton className="h-7 w-64 rounded-md" />
+                                    <Skeleton className="h-6 w-16 rounded-full" />
+                                </div>
+                            </div>
 
-                <div className="bg-white rounded-xl overflow-hidden border border-slate-200">
-                    <div className="flex border-b border-slate-200">
-                        <Skeleton className="h-14 flex-1" />
-                        <Skeleton className="h-14 flex-1" />
-                        <Skeleton className="h-14 flex-1" />
+                            {/* Buttons */}
+                            <div className="flex items-center gap-2 sm:gap-3">
+                                <Skeleton className="h-10 w-36 rounded-lg" />
+                                <Skeleton className="h-10 w-10 rounded-lg" />
+                            </div>
+                        </div>
                     </div>
-                    <div className="p-6 space-y-6">
-                        <Skeleton className="h-6 w-40" />
-                        <Skeleton className="h-12 w-full" />
-                        <Skeleton className="h-12 w-full" />
-                        <Skeleton className="h-40 w-full" />
+
+                    {/* Tabs / Card */}
+                    <div className="rounded-xl border border-slate-800 overflow-hidden bg-white">
+                        {/* Tab Headers */}
+                        <div className="flex border-b border-slate-800 bg-[#f9fafb] h-[52px] items-center px-4 gap-6">
+                            <Skeleton className="h-6 w-24 rounded" />
+                            <Skeleton className="h-6 w-24 rounded" />
+                            <Skeleton className="h-6 w-24 rounded" />
+                        </div>
+                        {/* Tab Content Skeleton */}
+                        <div className="px-4 py-6 sm:px-8 sm:py-8 space-y-6">
+                            <div className="flex justify-between items-center mb-3">
+                                <Skeleton className="h-6 w-48" />
+                            </div>
+
+                            <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start pt-6">
+                                {/* Left Form Area */}
+                                <div className="flex-1 min-w-0 space-y-6 w-full">
+                                    {[1, 2, 3].map((i) => (
+                                        <div key={i} className="space-y-2">
+                                            <Skeleton className="h-4 w-32" />
+                                            <Skeleton className="h-[52px] w-full rounded-lg" />
+                                        </div>
+                                    ))}
+                                </div>
+                                {/* Right Sidebar */}
+                                <div className="shrink-0 w-full lg:w-[400px] space-y-6">
+                                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                                        <Skeleton className="h-5 w-24" />
+                                        <Skeleton className="h-[200px] w-full rounded-lg" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -344,7 +385,7 @@ export default function WebinarDetailPage() {
                             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                                 <h1 className="text-xl font-medium text-slate-800 break-words max-w-full">{product.name}</h1>
                                 <div className={cn(
-                                    "px-2 py-0.5 rounded-full text-sm font-semibold tracking-wider",
+                                    "px-2 py-0.5 rounded-full text-xs font-semibold tracking-wider",
                                     (watch("price") ?? 0) > 0
                                         ? "bg-amber-100 text-amber-700 border border-amber-200"
                                         : "bg-emerald-100 text-emerald-700 border border-emerald-200"
@@ -407,7 +448,7 @@ export default function WebinarDetailPage() {
                                         >
                                             <div data-color-mode="light" className="relative border border-slate-400 rounded-lg overflow-hidden group">
                                                 <MDEditor
-                                                    textareaProps={{ placeholder: "Masukkan deskripsi lengkap tentang webinar" }}
+                                                    textareaProps={{ placeholder: "Masukkan deskripsi lengkap tentang webinar ini" }}
                                                     value={watch("description") ?? ""}
                                                     onChange={(val) => setValue("description", val ?? "")}
                                                     height={editorHeight}
@@ -427,22 +468,24 @@ export default function WebinarDetailPage() {
                                             </div>
                                         </Row>
 
-                                        <Row label="Manfaat" error={errors.benefit?.message}>
+                                        <Row label="Keuntungan" error={errors.benefit?.message}>
                                             <div className="flex flex-col space-y-3">
                                                 {fields.map((field, index) => (
-                                                    <div key={field.id} className="flex gap-2">
+                                                    <div key={field.id} className="w-full">
                                                         <FormInput
-                                                            placeholder={`Manfaat ${index + 1}`}
-                                                            className="flex-1"
+                                                            placeholder={`Keuntungan ${index + 1}`}
+                                                            className="w-full"
                                                             {...register(`benefit.${index}` as const)}
+                                                            suffix={
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => remove(index)}
+                                                                    className="text-slate-400 hover:text-red-500 transition-colors p-1 cursor-pointer"
+                                                                >
+                                                                    <X size={16} weight="bold" />
+                                                                </button>
+                                                            }
                                                         />
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => remove(index)}
-                                                            className="flex h-[52px] w-[52px] items-center justify-center rounded-lg bg-white border border-slate-300 text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors shrink-0 cursor-pointer"
-                                                        >
-                                                            <TrashIcon className="h-5 w-5 translate-y-[0.5px]" weight="bold" />
-                                                        </button>
                                                     </div>
                                                 ))}
                                                 <button
@@ -451,34 +494,62 @@ export default function WebinarDetailPage() {
                                                     className="flex justify-center items-center gap-2 bg-white border border-slate-400 rounded-lg py-2 px-4 text-sm font-regular text-slate-800 hover:bg-slate-100 w-fit cursor-pointer"
                                                 >
                                                     <PlusIcon className="h-4 w-4" weight="regular" />
-                                                    <span>Tambah Manfaat</span>
+                                                    <span>Tambah Keuntungan</span>
                                                 </button>
                                             </div>
                                         </Row>
 
 
 
-                                        <>
-                                            <Row
-                                                label="Harga"
-                                                error={errors.price?.message}
-                                                extra={
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-[12px] font-medium text-slate-500 tracking-wider">Diskon</span>
-                                                        <label className="relative inline-flex items-center cursor-pointer">
-                                                            <input
-                                                                type="checkbox"
-                                                                className="sr-only peer"
-                                                                {...register("enableDiscount")}
-                                                            />
-                                                            <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-4 rtl:peer-checked:after:-translate-x-4 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-cyan-600"></div>
-                                                        </label>
-                                                    </div>
-                                                }
-                                            >
+                                        <Row
+                                            label="Harga"
+                                            error={errors.price?.message}
+                                            extra={
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[12px] font-medium text-slate-500 tracking-wider">Diskon</span>
+                                                    <label className="relative inline-flex items-center cursor-pointer">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="sr-only peer"
+                                                            {...register("enableDiscount")}
+                                                        />
+                                                        <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-4 rtl:peer-checked:after:-translate-x-4 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-cyan-600"></div>
+                                                    </label>
+                                                </div>
+                                            }
+                                        >
+                                            <Controller
+                                                control={control}
+                                                name="price"
+                                                render={({ field: { onChange, value, ref } }) => (
+                                                    <FormInput
+                                                        ref={ref}
+                                                        prefix="Rp"
+                                                        value={formatNumberInput((value ?? 0).toString())}
+                                                        onChange={(e) => {
+                                                            const rawValue = e.target.value.replace(/\D/g, "");
+                                                            onChange(rawValue ? Number(rawValue) : 0);
+                                                        }}
+                                                        suffix={
+                                                            <div className="flex flex-col">
+                                                                <button type="button" onClick={() => handlePriceAdjust(1000)} className="cursor-pointer">
+                                                                    <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                                </button>
+                                                                <button type="button" onClick={() => handlePriceAdjust(-1000)} className="cursor-pointer">
+                                                                    <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                                </button>
+                                                            </div>
+                                                        }
+                                                    />
+                                                )}
+                                            />
+                                        </Row>
+
+                                        {watch("enableDiscount") && (
+                                            <Row label="Harga Diskon" error={errors.discountPrice?.message}>
                                                 <Controller
                                                     control={control}
-                                                    name="price"
+                                                    name="discountPrice"
                                                     render={({ field: { onChange, value, ref } }) => (
                                                         <FormInput
                                                             ref={ref}
@@ -490,10 +561,10 @@ export default function WebinarDetailPage() {
                                                             }}
                                                             suffix={
                                                                 <div className="flex flex-col">
-                                                                    <button type="button" onClick={() => handlePriceAdjust(1000)} className="cursor-pointer">
+                                                                    <button type="button" onClick={() => handleDiscountPriceAdjust(1000)} className="cursor-pointer">
                                                                         <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
                                                                     </button>
-                                                                    <button type="button" onClick={() => handlePriceAdjust(-1000)} className="cursor-pointer">
+                                                                    <button type="button" onClick={() => handleDiscountPriceAdjust(-1000)} className="cursor-pointer">
                                                                         <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
                                                                     </button>
                                                                 </div>
@@ -502,104 +573,127 @@ export default function WebinarDetailPage() {
                                                     )}
                                                 />
                                             </Row>
+                                        )}
 
-                                            {watch("enableDiscount") && (
-                                                <Row label="Harga Diskon" error={errors.discountPrice?.message}>
-                                                    <Controller
-                                                        control={control}
-                                                        name="discountPrice"
-                                                        render={({ field: { onChange, value, ref } }) => (
-                                                            <FormInput
-                                                                ref={ref}
-                                                                prefix="Rp"
-                                                                value={formatNumberInput((value ?? 0).toString())}
-                                                                onChange={(e) => {
-                                                                    const rawValue = e.target.value.replace(/\D/g, "");
-                                                                    onChange(rawValue ? Number(rawValue) : 0);
-                                                                }}
-                                                                suffix={
-                                                                    <div className="flex flex-col">
-                                                                        <button type="button" onClick={() => handleDiscountPriceAdjust(1000)} className="cursor-pointer">
-                                                                            <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
-                                                                        </button>
-                                                                        <button type="button" onClick={() => handleDiscountPriceAdjust(-1000)} className="cursor-pointer">
-                                                                            <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
-                                                                        </button>
-                                                                    </div>
+                                        {/* Detail Webinar Section */}
+                                        <div className="pt-8">
+                                            <SectionHeader title="Detail Webinar" />
+                                            <div className="space-y-0 pt-6">
+                                                <Row label="Platform" error={errors.contentType?.message ?? errors.platformCustom?.message}>
+                                                    <div className="space-y-2 w-full">
+                                                        <FormSelect
+                                                            {...register("contentType", {
+                                                                onChange: (e: React.ChangeEvent<HTMLSelectElement>) => {
+                                                                    if (e.target.value !== "other") {
+                                                                        setValue("platformCustom", "");
+                                                                    }
                                                                 }
+                                                            })}
+                                                        >
+                                                            <option value="zoom">Zoom</option>
+                                                            <option value="google-meet">Google Meet</option>
+                                                            <option value="other">Lainnya</option>
+                                                        </FormSelect>
+                                                        {watch("contentType") === "other" && (
+                                                            <FormInput
+                                                                placeholder="Nama platform"
+                                                                className="animate-in fade-in slide-in-from-top-1 duration-200"
+                                                                {...register("platformCustom")}
                                                             />
                                                         )}
+                                                    </div>
+                                                </Row>
+
+                                                <Row label="Link Akses" error={errors.link?.message}>
+                                                    <FormInput placeholder="https://zoom.us/j/..." {...register("link")} />
+                                                </Row>
+
+                                                <Row label="Jadwal Webinar" error={errors.dateStart?.message || errors.dateEnd?.message}>
+                                                    <DateRangePicker
+                                                        startDate={dateStart}
+                                                        endDate={dateEnd}
+                                                        onChange={({ startDate, endDate }) => {
+                                                            if (startDate) setValue("dateStart", startDate, { shouldValidate: true });
+                                                            if (endDate) setValue("dateEnd", endDate, { shouldValidate: true });
+                                                        }}
+                                                        placeholder="Pilih Waktu Mulai & Selesai"
+                                                        disabled={(date) => {
+                                                            const now = new Date();
+                                                            return isBefore(date, startOfDay(now));
+                                                        }}
                                                     />
                                                 </Row>
-                                            )}
-                                        </>
 
-                                        <Row label="Status" error={errors.status?.message}>
-                                            <FormSelect {...register("status")}>
-                                                <option value="published">Published</option>
-                                                <option value="unpublished">Unpublished</option>
-                                                <option value="archived">Selesai</option>
-                                            </FormSelect>
-                                        </Row>
+                                                <Row label="Batas Pendaftaran" error={errors.dateDeadline?.message}>
+                                                    <DateRangePicker
+                                                        startDate={dateDeadline}
+                                                        onChange={({ startDate }) => { if (startDate) setValue("dateDeadline", startDate, { shouldValidate: true }); }}
+                                                        placeholder="Pilih Batas Waktu Pendaftaran"
+                                                        showEndTime={false}
+                                                        disabled={(date) => {
+                                                            const now = new Date();
+                                                            if (date.getHours() === 0 && date.getMinutes() === 0) {
+                                                                if (isBefore(date, startOfDay(now))) return true;
+                                                            } else {
+                                                                if (isBefore(date, now)) return true;
+                                                            }
+                                                            if (dateStart) {
+                                                                if (date.getHours() === 0 && date.getMinutes() === 0) {
+                                                                    return date > startOfDay(dateStart);
+                                                                }
+                                                                return date > dateStart;
+                                                            }
+                                                            return false;
+                                                        }}
+                                                    />
+                                                </Row>
 
-                                        <div className="pt-8">
-                                            <SectionHeader title="Pengaturan Tambahan" />
-                                            <div className="space-y-6 pt-6">
-                                                {/* Voucher Toggle */}
-                                                <div className="space-y-2">
-                                                    <div className="flex items-center justify-between">
-                                                        <label className="text-sm font-medium text-slate-700">Aktifkan Voucher</label>
+                                                <Row
+                                                    label="Batasi Kuota"
+                                                    error={errors.capacity?.message}
+                                                    extra={
                                                         <label className="relative inline-flex items-center cursor-pointer">
                                                             <input
                                                                 type="checkbox"
                                                                 className="sr-only peer"
-                                                                {...register("enableVoucher")}
+                                                                {...register("enableQuota")}
                                                             />
-                                                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                                            <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-4 rtl:peer-checked:after:-translate-x-4 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-cyan-600"></div>
                                                         </label>
-                                                    </div>
-
-                                                    {watch("enableVoucher") && (
+                                                    }
+                                                >
+                                                    {watch("enableQuota") && (
                                                         <div className="animate-in fade-in slide-in-from-top-2 duration-200">
-                                                            <VoucherSelector
-                                                                selectedIds={watch("vouchers") || []}
-                                                                onChange={(ids) => setValue("vouchers", ids)}
+                                                            <Controller
+                                                                control={control}
+                                                                name="capacity"
+                                                                render={({ field: { onChange, value, ref } }) => (
+                                                                    <FormInput
+                                                                        ref={ref}
+                                                                        placeholder="Masukkan batas kuota peserta"
+                                                                        value={value ?? ""}
+                                                                        onChange={(e) => {
+                                                                            const val = e.target.value.replace(/[^0-9]/g, "");
+                                                                            onChange(val === "" ? undefined : Number(val));
+                                                                        }}
+                                                                        suffix={
+                                                                            <div className="flex flex-col">
+                                                                                <button type="button" onClick={() => handleQuotaAdjust(1)} className="cursor-pointer">
+                                                                                    <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                                                </button>
+                                                                                <button type="button" onClick={() => handleQuotaAdjust(-1)} className="cursor-pointer">
+                                                                                    <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                                                </button>
+                                                                            </div>
+                                                                        }
+                                                                    />
+                                                                )}
                                                             />
                                                         </div>
                                                     )}
-                                                </div>
-
-                                                {/* Notes Toggle */}
-                                                <div className="space-y-2">
-                                                    <div className="flex items-center justify-between">
-                                                        <label className="text-sm font-medium text-slate-700">Catatan Khusus di Email</label>
-                                                        <label className="relative inline-flex items-center cursor-pointer">
-                                                            <input
-                                                                type="checkbox"
-                                                                className="sr-only peer"
-                                                                {...register("enableNotes")}
-                                                            />
-                                                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
-                                                        </label>
-                                                    </div>
-
-                                                    {watch("enableNotes") && (
-                                                        <div className="animate-in fade-in slide-in-from-top-2 duration-200">
-                                                            <Row label="" error={errors.notes?.message}>
-                                                                <FormTextarea
-                                                                    placeholder="Masukkan catatan khusus yang akan dikirim ke email pembeli (misal: link grup WA, dll)"
-                                                                    className="min-h-[60px]"
-                                                                    {...register("notes")}
-                                                                />
-                                                            </Row>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                </Row>
                                             </div>
                                         </div>
-
-
-
                                     </div>
 
                                     {/* Kanan: Sidebar Metadata */}
@@ -657,128 +751,74 @@ export default function WebinarDetailPage() {
                                             <p className="text-[12px] text-slate-400 mt-3 leading-tight italic">Maksimal 4 gambar. JPG/PNG, 1:1 direkomendasikan</p>
                                         </div>
 
-                                        {/* Akses Webinar */}
-                                        <div className="bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
-                                            <SectionHeader title="Akses Webinar" className="mb-4 text-base" />
+                                        {/* Status */}
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                            <p className="text-slate-700 text-sm font-semibold mb-3">Status</p>
+                                            <FormSelect {...register("status")}>
+                                                <option value="published">Published</option>
+                                                <option value="unpublished">Unpublished</option>
+                                                <option value="archived">Selesai</option>
+                                            </FormSelect>
+                                            {errors.status?.message && (
+                                                <span className="text-red-500 text-xs mt-1 block">{errors.status.message}</span>
+                                            )}
+                                        </div>
 
-                                            <Row label="Platform" error={errors.contentType?.message ?? errors.platformCustom?.message}>
-                                                <div className="space-y-2 w-full">
-                                                    <FormSelect
-                                                        {...register("contentType", {
-                                                            onChange: (e: React.ChangeEvent<HTMLSelectElement>) => {
-                                                                if (e.target.value !== "other") {
-                                                                    setValue("platformCustom", "");
-                                                                }
-                                                            }
-                                                        })}
-                                                    >
-                                                        <option value="zoom">Zoom</option>
-                                                        <option value="google-meet">Google Meet</option>
-                                                        <option value="other">Lainnya</option>
-                                                    </FormSelect>
-                                                    {watch("contentType") === "other" && (
-                                                        <FormInput
-                                                            placeholder="Nama platform"
-                                                            className="animate-in fade-in slide-in-from-top-1 duration-200"
-                                                            {...register("platformCustom")}
-                                                        />
+                                        {/* Pengaturan Tambahan */}
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                            <p className="text-slate-700 text-sm font-semibold mb-3">Pengaturan Tambahan</p>
+                                            <div className="space-y-4 pt-2">
+                                                {/* Voucher Toggle */}
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center justify-between">
+                                                        <label className="text-sm font-medium text-slate-700">Aktifkan Voucher</label>
+                                                        <label className="relative inline-flex items-center cursor-pointer">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="sr-only peer"
+                                                                {...register("enableVoucher")}
+                                                            />
+                                                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                                        </label>
+                                                    </div>
+
+                                                    {watch("enableVoucher") && (
+                                                        <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+                                                            <VoucherSelector
+                                                                selectedIds={watch("vouchers") || []}
+                                                                onChange={(ids) => setValue("vouchers", ids)}
+                                                            />
+                                                        </div>
                                                     )}
                                                 </div>
-                                            </Row>
 
-                                            <Row label="Link" error={errors.link?.message}>
-                                                <FormInput placeholder="https://zoom.us/j/..." {...register("link")} />
-                                            </Row>
-                                        </div>
-
-                                        {/* Jadwal */}
-                                        <div className="bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
-                                            <SectionHeader title="Jadwal" className="mb-4 text-base" />
-
-                                            <Row label="Jadwal Webinar" error={errors.dateStart?.message || errors.dateEnd?.message}>
-                                                <DateRangePicker
-                                                    startDate={dateStart}
-                                                    endDate={dateEnd}
-                                                    onChange={({ startDate, endDate }) => {
-                                                        if (startDate) setValue("dateStart", startDate, { shouldValidate: true });
-                                                        if (endDate) setValue("dateEnd", endDate, { shouldValidate: true });
-                                                    }}
-                                                    placeholder="Pilih Tanggal Mulai & Selesai"
-                                                    disabled={(date) => {
-                                                        const now = new Date();
-                                                        return isBefore(date, startOfDay(now));
-                                                    }}
-                                                />
-                                            </Row>
-                                        </div>
-
-                                        {/* Pendaftaran */}
-                                        <div className="bg-slate-50 px-4 pt-2 pb-4 rounded-xl border border-slate-200">
-                                            <SectionHeader title="Pendaftaran" className="mb-4 text-base" />
-                                            <Row label="Batas Pendaftaran" error={errors.dateDeadline?.message}>
-                                                <DateRangePicker
-                                                    startDate={dateDeadline}
-                                                    onChange={({ startDate }) => { if (startDate) setValue("dateDeadline", startDate, { shouldValidate: true }); }}
-                                                    placeholder="Pilih Batas Waktu Pendaftaran"
-                                                    showEndTime={false}
-                                                    disabled={(date) => {
-                                                        const now = new Date();
-                                                        if (date.getHours() === 0 && date.getMinutes() === 0) {
-                                                            if (isBefore(date, startOfDay(now))) return true;
-                                                        } else {
-                                                            if (isBefore(date, now)) return true;
-                                                        }
-                                                        if (dateStart) {
-                                                            if (date.getHours() === 0 && date.getMinutes() === 0) {
-                                                                return date > startOfDay(dateStart);
-                                                            }
-                                                            return date > dateStart;
-                                                        }
-                                                        return false;
-                                                    }}
-                                                />
-                                            </Row>
-                                            <div className="space-y-2">
-                                                <div className="flex items-center justify-between py-1">
-                                                    <label className="text-sm font-medium text-slate-700">Batasi Kuota</label>
-                                                    <label className="relative inline-flex items-center cursor-pointer">
-                                                        <input
-                                                            type="checkbox"
-                                                            className="sr-only peer"
-                                                            {...register("enableQuota")}
-                                                        />
-                                                        <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
-                                                    </label>
-                                                </div>
-
-                                                {watch("enableQuota") && (
-                                                    <div className="animate-in fade-in slide-in-from-top-2 duration-200">
-                                                        <Controller
-                                                            control={control}
-                                                            name="capacity"
-                                                            render={({ field: { onChange, value, ref } }) => (
-                                                                <FormInput
-                                                                    ref={ref}
-                                                                    value={value ?? ""}
-                                                                    onChange={(e) => {
-                                                                        const val = e.target.value.replace(/[^0-9]/g, "");
-                                                                        onChange(val === "" ? undefined : Number(val));
-                                                                    }}
-                                                                    suffix={
-                                                                        <div className="flex flex-col">
-                                                                            <button type="button" onClick={() => handleQuotaAdjust(1)} className="cursor-pointer">
-                                                                                <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
-                                                                            </button>
-                                                                            <button type="button" onClick={() => handleQuotaAdjust(-1)} className="cursor-pointer">
-                                                                                <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
-                                                                            </button>
-                                                                        </div>
-                                                                    }
-                                                                />
-                                                            )}
-                                                        />
+                                                {/* Notes Toggle */}
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center justify-between">
+                                                        <label className="text-sm font-medium text-slate-700">Catatan Khusus di Email</label>
+                                                        <label className="relative inline-flex items-center cursor-pointer">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="sr-only peer"
+                                                                {...register("enableNotes")}
+                                                            />
+                                                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                                        </label>
                                                     </div>
-                                                )}
+
+                                                    {watch("enableNotes") && (
+                                                        <div className="animate-in fade-in slide-in-from-top-2 duration-200 space-y-1">
+                                                            <FormTextarea
+                                                                placeholder="Masukkan catatan khusus yang akan dikirim ke email pembeli (misal: link grup WA, dll)"
+                                                                className="min-h-[60px]"
+                                                                {...register("notes")}
+                                                            />
+                                                            {errors.notes?.message && (
+                                                                <span className="text-red-500 text-xs mt-1 block">{errors.notes.message}</span>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

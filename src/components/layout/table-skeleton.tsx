@@ -16,7 +16,7 @@ export function TableSkeleton({
     hasToolbar?: boolean;
 }) {
     return (
-        <div className="space-y-6">
+        <div className="w-full max-w-7xl mx-auto space-y-6">
             {/* Header */}
             <div className="bg-slate-50">
                 <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
@@ -37,8 +37,8 @@ export function TableSkeleton({
                 </div>
             )}
 
-            {/* Table */}
-            <div>
+            {/* Desktop Table (Only visible on desktop/tablet) */}
+            <div className="hidden sm:block">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -61,6 +61,26 @@ export function TableSkeleton({
                         ))}
                     </TableBody>
                 </Table>
+            </div>
+
+            {/* Mobile Cards (Only visible on mobile) */}
+            <div className="space-y-4 sm:hidden">
+                {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3">
+                        <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                            <Skeleton className="h-4 w-8" />
+                            <Skeleton className="h-6 w-20 rounded-full" />
+                        </div>
+                        <div className="flex gap-3">
+                            <Skeleton className="h-16 w-16 rounded-lg shrink-0" />
+                            <div className="space-y-2 flex-1">
+                                <Skeleton className="h-4 w-3/4" />
+                                <Skeleton className="h-3 w-1/2" />
+                                <Skeleton className="h-3 w-1/3" />
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );

@@ -84,7 +84,8 @@ export default function AdminProductsPage() {
 		switch (s) {
 			case "published": return "bg-green-100 text-green-700";
 			case "unpublished": return "bg-slate-200 text-slate-500";
-			case "selesai": return "bg-blue-100 text-blue-700";
+			case "selesai":
+			case "archived": return "bg-blue-100 text-blue-700";
 			default: return "bg-slate-100 text-slate-600";
 		}
 	};
@@ -92,7 +93,8 @@ export default function AdminProductsPage() {
 	const getStatusLabel = (status: string) => {
 		const s = status.toLowerCase();
 		switch (s) {
-			case "selesai": return "Selesai";
+			case "selesai":
+			case "archived": return "Selesai";
 			case "published": return "Published";
 			case "unpublished": return "Unpublished";
 			default: return status;
@@ -144,7 +146,7 @@ export default function AdminProductsPage() {
 
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
-								<ButtonFilter label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "published" ? "Published" : "Unpublished"}`} />
+								<ButtonFilter label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "published" ? "Published" : statusFilter === "unpublished" ? "Unpublished" : statusFilter === "selesai" ? "Selesai" : "Draft"}`} />
 							</DropdownMenuTrigger>
 							<DropdownMenuContent align="end" className="w-[160px]">
 								<DropdownMenuRadioGroup value={statusFilter} onValueChange={setStatusFilter}>
@@ -234,7 +236,7 @@ export default function AdminProductsPage() {
 									const priceNum = Number(item.price);
 									const rowNumber = (page - 1) * limit + index + 1;
 
-									const isFinished = item.endDate && new Date() > new Date(item.endDate);
+									const isFinished = item.status === "archived" || (item.endDate && new Date() > new Date(item.endDate));
 									const currentStatus = isFinished ? "selesai" : (item.status || "unpublished");
 									return (
 										<TableRow key={item.id} data-type="body">

@@ -445,28 +445,52 @@ export const purchasesRouter = createTRPCRouter({
           : {}),
       };
 
-      const participantsAggregate = await ctx.db.purchase.groupBy({
-        by: ["buyerEmail", "buyerName", "buyerPhone"],
+      // 1. Group by email untuk mendapatkan total transaksi dan jumlah produk
+      const grouped = await ctx.db.purchase.groupBy({
+        by: ["buyerEmail"],
         where: whereClause,
         _count: { id: true },
         _sum: { amount: true },
-        orderBy: { buyerName: "asc" },
       });
 
-      const total = participantsAggregate.length;
-      const paginatedItems = participantsAggregate.slice(
+      // 2. Ambil data transaksi terbaru dari tiap email untuk mendapatkan Nama & No HP terbaru
+      const latestPurchases = await ctx.db.purchase.findMany({
+        where: whereClause,
+        distinct: ["buyerEmail"],
+        orderBy: { createdAt: "desc" },
+        select: {
+          buyerEmail: true,
+          buyerName: true,
+          buyerPhone: true,
+        },
+      });
+
+      // 3. Buat dictionary untuk mapping profil
+      const profileMap = new Map<string, { name: string; phone: string | null }>();
+      for (const p of latestPurchases) {
+        profileMap.set(p.buyerEmail, { name: p.buyerName, phone: p.buyerPhone });
+      }
+
+      // 4. Gabungkan data
+      const combined = grouped.map((g) => ({
+        email: g.buyerEmail,
+        name: profileMap.get(g.buyerEmail)?.name || "Unknown",
+        phone: profileMap.get(g.buyerEmail)?.phone || null,
+        productsBought: g._count.id,
+        totalTransaction: Number(g._sum.amount ?? 0),
+      }));
+
+      // 5. Urutkan berdasarkan nama secara alfabetis
+      combined.sort((a, b) => a.name.localeCompare(b.name));
+
+      const total = combined.length;
+      const paginatedItems = combined.slice(
         skip,
         skip + input.limit,
       );
 
       return {
-        items: paginatedItems.map((p) => ({
-          email: p.buyerEmail,
-          name: p.buyerName,
-          phone: p.buyerPhone,
-          productsBought: p._count.id,
-          totalTransaction: Number(p._sum.amount ?? 0),
-        })),
+        items: paginatedItems,
         total,
         page: input.page,
         limit: input.limit,

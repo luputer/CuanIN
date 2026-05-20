@@ -41,6 +41,7 @@ import ButtonSave from "~/components/ui/button-save";
 import ButtonCancel from "~/components/ui/button-cancel";
 import { FormCustomizer, type FormField } from "~/components/form-customizer";
 import { ProductDetailTabs, ProductDetailTabContent } from "~/components/layout/product-detail-tabs";
+import { ProductSuccessDialog } from "~/components/ui/product-success-dialog";
 
 // Dynamic import — MDEditor tidak support SSR
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
@@ -155,6 +156,9 @@ export default function CreateWebinarPage() {
     const router = useRouter();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const utils = api.useUtils();
+    
+    const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+    const [createdProduct, setCreatedProduct] = useState<{name: string, slug: string} | null>(null);
 
     // Editor Height drag-resize state
     const [editorHeight, setEditorHeight] = useState(150);
@@ -335,8 +339,11 @@ export default function CreateWebinarPage() {
             }
 
             void utils.products.getAll.invalidate();
-            toast.success("Webinar berhasil dibuat");
-            router.push("/webinar");
+            setCreatedProduct({
+                name: product.name,
+                slug: product.slug ?? product.id
+            });
+            setSuccessDialogOpen(true);
         },
         onError: (error) => {
             toast.error(`Gagal membuat webinar: ${error.message}`);
@@ -493,7 +500,10 @@ export default function CreateWebinarPage() {
                                                     ref={ref}
                                                     id="price-input-create"
                                                     prefix="Rp"
-                                                    value={formatNumberInput((value ?? 0).toString())}
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    placeholder="0"
+                                                    value={value === 0 ? "" : formatNumberInput((value ?? 0).toString())}
                                                     onChange={(e) => {
                                                         const rawValue = e.target.value.replace(/\D/g, "");
                                                         onChange(rawValue ? Number(rawValue) : 0);
@@ -523,7 +533,10 @@ export default function CreateWebinarPage() {
                                                         ref={ref}
                                                         id="discount-price-input-create"
                                                         prefix="Rp"
-                                                        value={formatNumberInput((value ?? 0).toString())}
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        placeholder="0"
+                                                        value={value === 0 ? "" : formatNumberInput((value ?? 0).toString())}
                                                         onChange={(e) => {
                                                             const rawValue = e.target.value.replace(/\D/g, "");
                                                             onChange(rawValue ? Number(rawValue) : 0);
@@ -617,20 +630,24 @@ export default function CreateWebinarPage() {
                                                 />
                                             </Row>
 
-                                            <Row
-                                                label="Batasi Kuota"
-                                                error={errors.capacity?.message}
-                                                extra={
+                                            <div className="space-y-2">
+                                                <div className="flex items-center justify-between">
+                                                    <label className="text-sm font-medium text-slate-700">Batasi Kuota</label>
                                                     <label className="relative inline-flex items-center cursor-pointer">
                                                         <input
                                                             type="checkbox"
                                                             className="sr-only peer"
-                                                            {...register("enableQuota")}
+                                                            {...register("enableQuota", {
+                                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                                                                    if (!e.target.checked) setValue("capacity", undefined);
+                                                                    else setValue("capacity", 10);
+                                                                }
+                                                            })}
                                                         />
-                                                        <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-4 rtl:peer-checked:after:-translate-x-4 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-cyan-600"></div>
+                                                        <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
                                                     </label>
-                                                }
-                                            >
+                                                </div>
+
                                                 {watch("enableQuota") && (
                                                     <div className="animate-in fade-in slide-in-from-top-2 duration-200">
                                                         <Controller
@@ -640,6 +657,8 @@ export default function CreateWebinarPage() {
                                                                 <FormInput
                                                                     ref={ref}
                                                                     placeholder="Masukkan batas kuota peserta"
+                                                                    type="text"
+                                                                    inputMode="numeric"
                                                                     value={value ?? ""}
                                                                     onChange={(e) => {
                                                                         const val = e.target.value.replace(/[^0-9]/g, "");
@@ -658,9 +677,12 @@ export default function CreateWebinarPage() {
                                                                 />
                                                             )}
                                                         />
+                                                        {errors.capacity?.message && (
+                                                            <span className="text-red-500 text-xs mt-1 block">{errors.capacity.message}</span>
+                                                        )}
                                                     </div>
                                                 )}
-                                            </Row>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -818,6 +840,16 @@ export default function CreateWebinarPage() {
                     </ProductDetailTabContent>
                 </ProductDetailTabs>
             </div>
+            {/* Success Dialog */}
+            {createdProduct && (
+                <ProductSuccessDialog
+                    open={successDialogOpen}
+                    onOpenChange={setSuccessDialogOpen}
+                    productName={createdProduct.name}
+                    productSlug={createdProduct.slug}
+                    redirectUrl="/webinar"
+                />
+            )}
         </div>
     );
 }

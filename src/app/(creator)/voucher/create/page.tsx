@@ -5,18 +5,22 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
     ArrowLeftIcon,
-    CaretDownIcon
+    CaretDownIcon,
+    CaretUpIcon,
+    PlusIcon
 } from "@phosphor-icons/react";
-import { format } from "date-fns";
+import { format, isBefore, startOfDay } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 import { FormInput, FormSelect, SectionHeader } from "~/components/ui/form-layout";
+import { DateRangePicker } from "~/components/ui/date-range-picker";
 import { Calendar } from "~/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
-import { cn } from "~/lib/utils";
+import { cn, formatNumberInput } from "~/lib/utils";
 import ButtonSave from "~/components/ui/button-save";
+import ButtonCancel from "~/components/ui/button-cancel";
 import type { DateRange as DayPickerDateRange } from "react-day-picker";
 
 type DateRange = DayPickerDateRange;
@@ -38,65 +42,7 @@ const Row = ({ label, error, children, extra }: { label: string; error?: string;
     </div>
 );
 
-function DateTimeRangePicker({
-    startDate,
-    endDate,
-    onChange,
-}: {
-    startDate?: Date;
-    endDate?: Date;
-    onChange: (range: { startDate?: Date; endDate?: Date }) => void;
-}) {
-    const [range, setRange] = useState<DateRange | undefined>(
-        startDate || endDate ? { from: startDate, to: endDate } : undefined
-    );
 
-    useEffect(() => {
-        setRange(startDate || endDate ? { from: startDate, to: endDate } : undefined);
-    }, [startDate, endDate]);
-
-    const updateRange = (nextRange: DateRange | undefined) => {
-        setRange(nextRange);
-
-        const from = nextRange?.from;
-        const to = nextRange?.to;
-
-        onChange({ startDate: from, endDate: to });
-    };
-
-    const label = startDate && endDate
-        ? `${format(startDate, "d MMM yyyy", { locale: idLocale })} - ${format(endDate, "d MMM yyyy", { locale: idLocale })}`
-        : startDate
-            ? `${format(startDate, "d MMM yyyy", { locale: idLocale })} - Pilih akhir`
-            : "Pilih rentang tanggal mulai dan akhir";
-
-    return (
-        <Popover>
-            <PopoverTrigger asChild>
-                <Button
-                    variant="outline"
-                    className="w-full justify-between text-left bg-white border-slate-400 hover:bg-slate-50 h-[52px] px-4 rounded-lg focus:ring-2 focus:ring-cyan-600/50 transition-all shadow-none"
-                >
-                    <span className="text-sm text-left text-slate-700">{label}</span>
-                    <CaretDownIcon className="h-4 w-4 text-slate-400" />
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[520px] p-0" align="start">
-                <div className="p-4">
-                    <Calendar
-                        mode="range"
-                        selected={range}
-                        onSelect={(next) => updateRange(next)}
-                        initialFocus
-                    />
-                    <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-500">
-                        Klik tanggal awal terlebih dahulu, lalu pilih tanggal akhir.
-                    </div>
-                </div>
-            </PopoverContent>
-        </Popover>
-    );
-}
 
 export default function VoucherCreatePage() {
     const router = useRouter();
@@ -118,7 +64,7 @@ export default function VoucherCreatePage() {
     const [usageType, setUsageType] = useState<"ALL_PRODUCTS" | "SELECTED_PRODUCTS" | "SINGLE_CHECKOUT">("ALL_PRODUCTS");
     const [usageLimit, setUsageLimit] = useState<number | undefined>();
     const [isLimitEnabled, setIsLimitEnabled] = useState(false);
-    
+
     // Multi-selected products list state
     const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
 
@@ -228,12 +174,25 @@ export default function VoucherCreatePage() {
 
                                     <Row label="Diskon">
                                         <FormInput
-                                            type="number"
-                                            min={0}
-                                            step={type === "PERSEN" ? 1 : 1000}
-                                            value={discount}
-                                            onChange={(event) => setDiscount(Number(event.target.value))}
+                                            type="text"
+                                            inputMode="numeric"
+                                            value={discount === 0 ? "" : formatNumberInput(discount.toString())}
+                                            onChange={(event) => {
+                                                const val = event.target.value.replace(/[^0-9]/g, "");
+                                                setDiscount(val ? Number(val) : 0);
+                                            }}
+                                            placeholder="0"
                                             prefix={type === "PERSEN" ? "%" : "Rp"}
+                                            suffix={
+                                                <div className="flex flex-col">
+                                                    <button type="button" onClick={() => setDiscount((prev) => prev + (type === "PERSEN" ? 1 : 1000))} className="cursor-pointer">
+                                                        <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                    </button>
+                                                    <button type="button" onClick={() => setDiscount((prev) => Math.max(0, prev - (type === "PERSEN" ? 1 : 1000)))} className="cursor-pointer">
+                                                        <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                    </button>
+                                                </div>
+                                            }
                                         />
                                     </Row>
                                 </div>
@@ -246,6 +205,94 @@ export default function VoucherCreatePage() {
                                         <option value="expired">Expired</option>
                                     </FormSelect>
                                 </Row>
+
+                                {/* Penggunaan */}
+                                <Row label="Jenis Penggunaan">
+                                    <div className="flex flex-col gap-3 w-full border border-slate-300 rounded-lg bg-white p-3">
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                name="usageType"
+                                                value="ALL_PRODUCTS"
+                                                checked={usageType === "ALL_PRODUCTS"}
+                                                onChange={() => setUsageType("ALL_PRODUCTS")}
+                                                className="w-4 h-4 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 border-slate-300"
+                                            />
+                                            <span className={cn("text-base transition-colors", usageType === "ALL_PRODUCTS" ? "font-medium text-cyan-600" : "font-normal text-slate-700")}>Terapkan ke Semua Produk</span>
+                                        </label>
+
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                name="usageType"
+                                                value="SELECTED_PRODUCTS"
+                                                checked={usageType === "SELECTED_PRODUCTS"}
+                                                onChange={() => setUsageType("SELECTED_PRODUCTS")}
+                                                className="w-4 h-4 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 border-slate-300"
+                                            />
+                                            <span className={cn("text-base transition-colors", usageType === "SELECTED_PRODUCTS" ? "font-medium text-cyan-600" : "font-normal text-slate-700")}>Terapkan ke Produk Pilihan</span>
+                                        </label>
+
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                name="usageType"
+                                                value="SINGLE_CHECKOUT"
+                                                checked={usageType === "SINGLE_CHECKOUT"}
+                                                onChange={() => setUsageType("SINGLE_CHECKOUT")}
+                                                className="w-4 h-4 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 border-slate-300"
+                                            />
+                                            <span className={cn("text-base transition-colors", usageType === "SINGLE_CHECKOUT" ? "font-medium text-cyan-600" : "font-normal text-slate-700")}>Terapkan hanya untuk 1x Checkout</span>
+                                        </label>
+                                    </div>
+
+                                    {usageType === "SELECTED_PRODUCTS" && (
+                                        <div className="animate-in fade-in slide-in-from-top-2 duration-200 border border-slate-200 rounded-lg p-4 bg-white mt-2 space-y-2">
+                                            <span className="text-md font-regular text-slate-600 block">Pilih Produk:</span>
+                                            <div className="max-h-[140px] overflow-y-auto space-y-1.5 pr-1">
+                                                {productsList.length === 0 ? (
+                                                    <p className="text-xs text-slate-400 italic">Belum ada produk.</p>
+                                                ) : (
+                                                    productsList.map((prod) => {
+                                                        const isChecked = selectedProductIds.includes(prod.id);
+                                                        return (
+                                                            <label
+                                                                key={prod.id}
+                                                                className={cn(
+                                                                    "flex items-center justify-between p-2 rounded border cursor-pointer transition-colors text-sm",
+                                                                    isChecked
+                                                                        ? "border-cyan-600 bg-cyan-50/50"
+                                                                        : "border-slate-200 hover:bg-slate-50"
+                                                                )}
+                                                            >
+                                                                <div className="flex items-center gap-2">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={isChecked}
+                                                                        onChange={() => {
+                                                                            if (isChecked) {
+                                                                                setSelectedProductIds(selectedProductIds.filter(id => id !== prod.id));
+                                                                            } else {
+                                                                                setSelectedProductIds([...selectedProductIds, prod.id]);
+                                                                            }
+                                                                        }}
+                                                                        className="w-3.5 h-3.5 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 rounded border-slate-300"
+                                                                    />
+                                                                    <span className={cn("font-medium transition-colors", isChecked ? "text-cyan-600" : "text-slate-700")}>{prod.name}</span>
+                                                                </div>
+                                                                <span className="text-xs font-regular text-slate-400 bg-slate-100 border px-1 rounded shrink-0">
+                                                                    {prod.type === "DIGITAL_PRODUCT" ? "Produk Digital" : prod.type === "WEBINAR" ? "Webinar" : "Kelas"}
+                                                                </span>
+                                                            </label>
+                                                        );
+                                                    })
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                </Row>
+
+
                             </div>
 
                             {/* Kanan: Sidebar Metadata */}
@@ -253,167 +300,91 @@ export default function VoucherCreatePage() {
                                 {/* Periode Berlaku */}
                                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                                     <p className="text-slate-700 text-sm font-semibold mb-3">Periode Berlaku</p>
-                                    <div className="space-y-4">
-                                        <Row label="Pilih rentang tanggal mulai dan akhir">
-                                            <DateTimeRangePicker
-                                                startDate={startDate}
-                                                endDate={endDate}
-                                                onChange={({ startDate, endDate }) => {
-                                                    setStartDate(startDate);
-                                                    setEndDate(endDate);
-                                                }}
-                                            />
-                                        </Row>
-                                    </div>
+                                    <DateRangePicker
+                                        startDate={startDate}
+                                        endDate={endDate}
+                                        onChange={({ startDate, endDate }) => {
+                                            setStartDate(startDate);
+                                            setEndDate(endDate);
+                                        }}
+                                        placeholder="Pilih Masa Berlaku"
+                                        disabled={(date) => {
+                                            const now = new Date();
+                                            return isBefore(date, startOfDay(now));
+                                        }}
+                                    />
                                 </div>
 
-                                {/* Penggunaan */}
+                                {/* Batasan */}
                                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                    <p className="text-slate-700 text-sm font-semibold mb-3">Penggunaan</p>
-                                    <div className="space-y-4">
-                                        <Row label="Jenis Penggunaan">
-                                            <div className="flex flex-col gap-2 mt-1">
-                                                <label className="flex items-center gap-2 cursor-pointer">
-                                                    <input
-                                                        type="radio"
-                                                        name="usageType"
-                                                        value="ALL_PRODUCTS"
-                                                        checked={usageType === "ALL_PRODUCTS"}
-                                                        onChange={() => setUsageType("ALL_PRODUCTS")}
-                                                        className="w-4 h-4 text-cyan-600 focus:ring-cyan-600 border-slate-300"
-                                                    />
-                                                    <span className="text-sm font-medium text-slate-700">Terapkan ke Semua Produk</span>
-                                                </label>
-
-                                                <label className="flex items-center gap-2 cursor-pointer">
-                                                    <input
-                                                        type="radio"
-                                                        name="usageType"
-                                                        value="SELECTED_PRODUCTS"
-                                                        checked={usageType === "SELECTED_PRODUCTS"}
-                                                        onChange={() => setUsageType("SELECTED_PRODUCTS")}
-                                                        className="w-4 h-4 text-cyan-600 focus:ring-cyan-600 border-slate-300"
-                                                    />
-                                                    <span className="text-sm font-medium text-slate-700">Terapkan ke Produk Pilihan</span>
-                                                </label>
-
-                                                <label className="flex items-center gap-2 cursor-pointer">
-                                                    <input
-                                                        type="radio"
-                                                        name="usageType"
-                                                        value="SINGLE_CHECKOUT"
-                                                        checked={usageType === "SINGLE_CHECKOUT"}
-                                                        onChange={() => setUsageType("SINGLE_CHECKOUT")}
-                                                        className="w-4 h-4 text-cyan-600 focus:ring-cyan-600 border-slate-300"
-                                                    />
-                                                    <span className="text-sm font-medium text-slate-700">Terapkan hanya untuk 1x Checkout</span>
-                                                </label>
-                                            </div>
-
-                                            {usageType === "SELECTED_PRODUCTS" && (
-                                                <div className="animate-in fade-in slide-in-from-top-2 duration-200 border border-slate-200 rounded-lg p-2.5 bg-white mt-2 space-y-2">
-                                                    <span className="text-xs font-semibold text-slate-600 block">Pilih Produk:</span>
-                                                    <div className="max-h-[140px] overflow-y-auto space-y-1.5 pr-1">
-                                                        {productsList.length === 0 ? (
-                                                            <p className="text-xs text-slate-400 italic">Belum ada produk digital/webinar.</p>
-                                                        ) : (
-                                                            productsList.map((prod) => {
-                                                                const isChecked = selectedProductIds.includes(prod.id);
-                                                                return (
-                                                                    <label
-                                                                        key={prod.id}
-                                                                        className={cn(
-                                                                            "flex items-center justify-between p-2 rounded border cursor-pointer transition-colors text-xs",
-                                                                            isChecked
-                                                                                ? "border-cyan-600 bg-cyan-50/50"
-                                                                                : "border-slate-200 hover:bg-slate-50"
-                                                                        )}
-                                                                    >
-                                                                        <div className="flex items-center gap-2">
-                                                                            <input
-                                                                                type="checkbox"
-                                                                                checked={isChecked}
-                                                                                onChange={() => {
-                                                                                    if (isChecked) {
-                                                                                        setSelectedProductIds(selectedProductIds.filter(id => id !== prod.id));
-                                                                                    } else {
-                                                                                        setSelectedProductIds([...selectedProductIds, prod.id]);
-                                                                                    }
-                                                                                }}
-                                                                                className="w-3.5 h-3.5 text-cyan-600 focus:ring-cyan-600 rounded border-slate-300"
-                                                                            />
-                                                                            <span className="font-medium text-slate-700">{prod.name}</span>
-                                                                        </div>
-                                                                        <span className="text-[9px] font-semibold text-slate-400 bg-slate-100 border px-1 rounded uppercase shrink-0">
-                                                                            {prod.type === "DIGITAL_PRODUCT" ? "Digital" : prod.type === "WEBINAR" ? "Webinar" : "Kelas"}
-                                                                        </span>
-                                                                    </label>
-                                                                );
-                                                            })
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </Row>
-
-                                        {/* Toggle Batasi Jumlah Voucher */}
-                                        <div className="space-y-2 pt-2">
-                                            <div className="flex items-center justify-between py-1">
-                                                <label className="text-sm font-medium text-slate-700">Batasi Jumlah Voucher</label>
-                                                <label className="relative inline-flex items-center cursor-pointer">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="sr-only peer"
-                                                        checked={isLimitEnabled}
-                                                        onChange={() => {
-                                                            if (isLimitEnabled) {
-                                                                setUsageLimit(undefined);
-                                                            } else {
-                                                                setUsageLimit(10);
-                                                            }
-                                                            setIsLimitEnabled(!isLimitEnabled);
-                                                        }}
-                                                    />
-                                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
-                                                </label>
-                                            </div>
-
-                                            {isLimitEnabled && (
-                                                <div className="animate-in fade-in slide-in-from-top-2 duration-200 pt-2">
-                                                    <Row label="Maksimal Penggunaan Voucher">
-                                                        <FormInput
-                                                            type="number"
-                                                            min={1}
-                                                            value={usageLimit ?? ""}
-                                                            onChange={(event) => setUsageLimit(event.target.value ? Number(event.target.value) : undefined)}
-                                                            placeholder="Masukkan kuota penggunaan"
-                                                        />
-                                                    </Row>
-                                                </div>
-                                            )}
+                                    <p className="text-slate-700 text-sm font-semibold mb-3">Batasan</p>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <label className="text-sm font-medium text-slate-700">Batasi Jumlah Voucher</label>
+                                            <label className="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    className="sr-only peer"
+                                                    checked={isLimitEnabled}
+                                                    onChange={() => {
+                                                        if (isLimitEnabled) {
+                                                            setUsageLimit(undefined);
+                                                        } else {
+                                                            setUsageLimit(10);
+                                                        }
+                                                        setIsLimitEnabled(!isLimitEnabled);
+                                                    }}
+                                                />
+                                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                            </label>
                                         </div>
+
+                                        {isLimitEnabled && (
+                                            <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+                                                <FormInput
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    value={usageLimit ?? ""}
+                                                    onChange={(event) => {
+                                                        const val = event.target.value.replace(/[^0-9]/g, "");
+                                                        setUsageLimit(val ? Number(val) : undefined);
+                                                    }}
+                                                    placeholder="Masukkan batas kuota voucher"
+                                                    suffix={
+                                                        <div className="flex flex-col">
+                                                            <button type="button" onClick={() => setUsageLimit((prev) => (prev ?? 0) + 1)} className="cursor-pointer">
+                                                                <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                            </button>
+                                                            <button type="button" onClick={() => setUsageLimit((prev) => Math.max(1, (prev ?? 0) - 1))} className="cursor-pointer">
+                                                                <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                            </button>
+                                                        </div>
+                                                    }
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Footer Action Buttons */}
-                        <div className="flex justify-end gap-4 mt-6 pt-6 border-t border-slate-200 w-full">
-                            <Button
-                                variant="secondary"
-                                onClick={() => router.push("/voucher")}
-                                className="w-full sm:w-auto"
-                            >
-                                Batal
-                            </Button>
-                            <ButtonSave
-                                onClick={handleSubmit}
-                                isLoading={createMutation.isPending}
-                                disabled={isSaveDisabled}
-                                label="Tambah Voucher"
-                                loadingLabel="Menambah..."
-                                weight="bold"
-                            />
+                        <div className="flex flex-col sm:flex-row justify-end sm:items-center mt-4 pt-4 border-t border-slate-200 gap-4 w-full">
+                            <div className="w-full sm:w-auto flex justify-end gap-4">
+                                <ButtonCancel
+                                    type="button"
+                                    onClick={() => router.push("/voucher")}
+                                />
+                                <ButtonSave
+                                    onClick={handleSubmit}
+                                    isLoading={createMutation.isPending}
+                                    disabled={isSaveDisabled}
+                                    label="Tambah Voucher"
+                                    loadingLabel="Menambah..."
+                                    icon={PlusIcon}
+                                    weight="bold"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

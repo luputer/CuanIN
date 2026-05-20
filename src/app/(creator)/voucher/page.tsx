@@ -333,7 +333,7 @@ export default function VoucherPage() {
                                             </TableCell>
 
                                             <TableCell className="whitespace-nowrap">
-                                                <div className="flex items-center min-h-[48px] font-medium text-cyan-700">
+                                                <div className="flex items-center min-h-[48px] font-medium text-cyan-600">
                                                     {item.type === "PERSEN" ? `${item.discount}%` : `Rp ${Number(item.discount).toLocaleString("id-ID")}`}
                                                 </div>
                                             </TableCell>
@@ -360,7 +360,7 @@ export default function VoucherPage() {
                                                                 <PencilSimpleIcon className="w-[24px] h-[24px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
                                                             </Link>
                                                         </TooltipTrigger>
-                                                        <TooltipContent>Edit Voucher</TooltipContent>
+                                                        <TooltipContent>Detail & Edit</TooltipContent>
                                                     </Tooltip>
 
                                                     <Tooltip>

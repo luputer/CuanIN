@@ -35,6 +35,7 @@ import { useImageUpload } from "~/hooks/use-upload";
 
 // Components
 import { ProductDetailTabs, ProductDetailTabContent } from "~/components/layout/product-detail-tabs";
+import { ProductSuccessDialog } from "~/components/ui/product-success-dialog";
 import { SectionHeader, FormInput, FormTextarea, FormSelect } from "~/components/ui/form-layout";
 import ButtonSave from "~/components/ui/button-save";
 import ButtonCancel from "~/components/ui/button-cancel";
@@ -174,6 +175,9 @@ export default function CreateProdukDigitalPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const utils = api.useUtils();
 
+    const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+    const [createdProduct, setCreatedProduct] = useState<{name: string, slug: string} | null>(null);
+
     // Editor Height drag-resize state
     const [editorHeight, setEditorHeight] = useState(150);
     const isDragging = useRef(false);
@@ -304,8 +308,8 @@ export default function CreateProdukDigitalPage() {
     };
 
     const handleQuotaAdjust = (amount: number) => {
-        const currentQuota = Number(getValues("capacity") ?? 0);
-        const newQuota = Math.max(0, currentQuota + amount);
+        const currentQuota = Number(getValues("capacity")?.toString() ?? "0");
+        const newQuota = Math.max(1, currentQuota + amount);
         setValue("capacity", newQuota, { shouldValidate: true });
     };
 
@@ -363,8 +367,11 @@ export default function CreateProdukDigitalPage() {
             }
 
             void utils.products.getAll.invalidate();
-            toast.success("Produk Digital berhasil dibuat");
-            router.push("/produk-digital");
+            setCreatedProduct({
+                name: product.name,
+                slug: product.slug ?? product.id
+            });
+            setSuccessDialogOpen(true);
         },
         onError: (error) => {
             toast.error(`Gagal membuat produk digital: ${error.message}`);
@@ -511,7 +518,10 @@ export default function CreateProdukDigitalPage() {
                                                     ref={ref}
                                                     id="price-input-create"
                                                     prefix="Rp"
-                                                    value={formatNumberInput((value ?? 0).toString())}
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    placeholder="0"
+                                                    value={value === 0 ? "" : formatNumberInput((value ?? 0).toString())}
                                                     onChange={(e) => {
                                                         const rawValue = e.target.value.replace(/\D/g, "");
                                                         onChange(rawValue ? Number(rawValue) : 0);
@@ -541,7 +551,10 @@ export default function CreateProdukDigitalPage() {
                                                         ref={ref}
                                                         id="discount-price-input-create"
                                                         prefix="Rp"
-                                                        value={formatNumberInput((value ?? 0).toString())}
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        placeholder="0"
+                                                        value={value === 0 ? "" : formatNumberInput((value ?? 0).toString())}
                                                         onChange={(e) => {
                                                             const rawValue = e.target.value.replace(/\D/g, "");
                                                             onChange(rawValue ? Number(rawValue) : 0);
@@ -598,20 +611,24 @@ export default function CreateProdukDigitalPage() {
                                                 <FormInput placeholder="https://..." {...register("link")} />
                                             </Row>
 
-                                            <Row
-                                                label="Batasi Stok"
-                                                error={errors.capacity?.message}
-                                                extra={
+                                            <div className="space-y-2">
+                                                <div className="flex items-center justify-between">
+                                                    <label className="text-sm font-medium text-slate-700">Batasi Stok</label>
                                                     <label className="relative inline-flex items-center cursor-pointer">
                                                         <input
                                                             type="checkbox"
                                                             className="sr-only peer"
-                                                            {...register("enableQuota")}
+                                                            {...register("enableQuota", {
+                                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                                                                    if (!e.target.checked) setValue("capacity", undefined);
+                                                                    else setValue("capacity", 10);
+                                                                }
+                                                            })}
                                                         />
-                                                        <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-4 rtl:peer-checked:after:-translate-x-4 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-cyan-600"></div>
+                                                        <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
                                                     </label>
-                                                }
-                                            >
+                                                </div>
+
                                                 {watch("enableQuota") && (
                                                     <div className="animate-in fade-in slide-in-from-top-2 duration-200">
                                                         <Controller
@@ -620,6 +637,9 @@ export default function CreateProdukDigitalPage() {
                                                             render={({ field: { onChange, value, ref } }) => (
                                                                 <FormInput
                                                                     ref={ref}
+                                                                    placeholder="Masukkan batas stok"
+                                                                    type="text"
+                                                                    inputMode="numeric"
                                                                     value={value ?? ""}
                                                                     onChange={(e) => {
                                                                         const val = e.target.value.replace(/[^0-9]/g, "");
@@ -638,9 +658,12 @@ export default function CreateProdukDigitalPage() {
                                                                 />
                                                             )}
                                                         />
+                                                        {errors.capacity?.message && (
+                                                            <span className="text-red-500 text-xs mt-1 block">{errors.capacity.message}</span>
+                                                        )}
                                                     </div>
                                                 )}
-                                            </Row>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -797,6 +820,16 @@ export default function CreateProdukDigitalPage() {
                     </ProductDetailTabContent>
                 </ProductDetailTabs>
             </div>
+            {/* Success Dialog */}
+            {createdProduct && (
+                <ProductSuccessDialog
+                    open={successDialogOpen}
+                    onOpenChange={setSuccessDialogOpen}
+                    productName={createdProduct.name}
+                    productSlug={createdProduct.slug}
+                    redirectUrl="/produk-digital"
+                />
+            )}
         </div>
     );
 }

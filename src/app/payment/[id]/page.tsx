@@ -3,6 +3,8 @@
 import { useParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import { calculatePaymentFee } from "~/lib/utils";
+import { env } from "~/env";
+import Script from "next/script";
 import Image from "next/image";
 import {
   SpinnerIcon,
@@ -13,6 +15,12 @@ import {
 } from "@phosphor-icons/react";
 import React from "react";
 import { toast } from "sonner";
+
+declare global {
+  interface Window {
+    snap: any;
+  }
+}
 
 type PaymentMethodId =
   | "qris"
@@ -26,7 +34,8 @@ type PaymentMethodId =
   | "bsi"
   | "permata"
   | "alfamart"
-  | "cc";
+  | "cc"
+  | "midtrans";
 
 type PaymentMethod = {
   id: PaymentMethodId;
@@ -39,91 +48,91 @@ const PAYMENT_METHODS: Array<{
   group: string;
   methods: PaymentMethod[];
 }> = [
-  {
-    group: "QRIS & E-Wallet",
-    methods: [
-      {
-        id: "qris",
-        label: "QRIS",
-        icons: ["/icons/qris.svg"],
-        logoClassName: "max-h-8",
-      },
-      {
-        id: "shopeepay",
-        label: "ShopeePay",
-        icons: ["/icons/shopeepay.svg"],
-        logoClassName: "max-h-9",
-      },
-      {
-        id: "dana",
-        label: "DANA",
-        icons: ["/icons/dana.svg"],
-        logoClassName: "max-h-7",
-      },
-      {
-        id: "ovo",
-        label: "OVO",
-        icons: ["/icons/ovo.svg"],
-        logoClassName: "max-h-7",
-      },
-    ],
-  },
-  {
-    group: "Virtual Account & Bank Transfer",
-    methods: [
-      {
-        id: "bca",
-        label: "BCA",
-        icons: ["/icons/bca.svg"],
-      },
-      {
-        id: "bni",
-        label: "BNI",
-        icons: ["/icons/bni.svg"],
-      },
-      {
-        id: "bri",
-        label: "BRI",
-        icons: ["/icons/bri.svg"],
-      },
-      {
-        id: "mandiri",
-        label: "Mandiri",
-        icons: ["/icons/mandiri.svg"],
-      },
-      {
-        id: "bsi",
-        label: "BSI",
-        icons: ["/icons/bsi.svg"],
-      },
-      {
-        id: "permata",
-        label: "Permata Bank",
-        icons: ["/icons/permata.svg"],
-      },
-    ],
-  },
-  {
-    group: "Retail",
-    methods: [
-      {
-        id: "alfamart",
-        label: "Alfamart",
-        icons: ["/icons/alfamart.svg"],
-      },
-    ],
-  },
-  {
-    group: "Kartu Kredit",
-    methods: [
-      {
-        id: "cc",
-        label: "Credit Card",
-        icons: ["/icons/visa.svg", "/icons/mastercard.svg"],
-      },
-    ],
-  },
-];
+    {
+      group: "QRIS & E-Wallet",
+      methods: [
+        {
+          id: "qris",
+          label: "QRIS",
+          icons: ["/icons/qris.svg"],
+          logoClassName: "max-h-8",
+        },
+        {
+          id: "shopeepay",
+          label: "ShopeePay",
+          icons: ["/icons/shopeepay.svg"],
+          logoClassName: "max-h-9",
+        },
+        {
+          id: "dana",
+          label: "DANA",
+          icons: ["/icons/dana.svg"],
+          logoClassName: "max-h-7",
+        },
+        {
+          id: "ovo",
+          label: "OVO",
+          icons: ["/icons/ovo.svg"],
+          logoClassName: "max-h-7",
+        },
+      ],
+    },
+    {
+      group: "Virtual Account & Bank Transfer",
+      methods: [
+        {
+          id: "bca",
+          label: "BCA",
+          icons: ["/icons/bca.svg"],
+        },
+        {
+          id: "bni",
+          label: "BNI",
+          icons: ["/icons/bni.svg"],
+        },
+        {
+          id: "bri",
+          label: "BRI",
+          icons: ["/icons/bri.svg"],
+        },
+        {
+          id: "mandiri",
+          label: "Mandiri",
+          icons: ["/icons/mandiri.svg"],
+        },
+        {
+          id: "bsi",
+          label: "BSI",
+          icons: ["/icons/bsi.svg"],
+        },
+        {
+          id: "permata",
+          label: "Permata Bank",
+          icons: ["/icons/permata.svg"],
+        },
+      ],
+    },
+    {
+      group: "Retail",
+      methods: [
+        {
+          id: "alfamart",
+          label: "Alfamart",
+          icons: ["/icons/alfamart.svg"],
+        },
+      ],
+    },
+    {
+      group: "Kartu Kredit",
+      methods: [
+        {
+          id: "cc",
+          label: "Credit Card",
+          icons: ["/icons/visa.svg", "/icons/mastercard.svg"],
+        },
+      ],
+    },
+  ];
 
 export default function PaymentPage() {
   const params = useParams();
@@ -134,6 +143,32 @@ export default function PaymentPage() {
   const createPaymentInvoice = api.purchases.createPaymentInvoice.useMutation({
     onSuccess: (data) => {
       window.location.href = data.invoiceUrl;
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const createMidtransTransaction = api.purchases.createMidtransTransaction.useMutation({
+    onSuccess: (data) => {
+      if (window.snap) {
+        window.snap.pay(data.token, {
+          onSuccess: function () {
+            window.location.href = `/payment/success?id=${purchase!.id}`;
+          },
+          onPending: function () {
+            window.location.href = `/payment/success?id=${purchase!.id}`;
+          },
+          onError: function (result: any) {
+            toast.error("Pembayaran gagal atau dibatalkan.");
+          },
+          onClose: function () {
+            toast.info("Tunggu sebentar, menyelesaikan pembayaran tertunda jika ada.");
+          },
+        });
+      } else {
+        toast.error("Gagal memuat sistem pembayaran Midtrans.");
+      }
     },
     onError: (error) => {
       toast.error(error.message);
@@ -161,14 +196,31 @@ export default function PaymentPage() {
 
   const handlePay = () => {
     if (!selected) return;
-    createPaymentInvoice.mutate({
-      purchaseId: purchase.id,
-      paymentMethod: selected,
-    });
+    if (selected === "midtrans") {
+      createMidtransTransaction.mutate({
+        purchaseId: purchase.id,
+      });
+    } else {
+      createPaymentInvoice.mutate({
+        purchaseId: purchase.id,
+        paymentMethod: selected as "qris" | "shopeepay" | "dana" | "ovo" | "bca" | "bni" | "bri" | "mandiri" | "bsi" | "permata" | "alfamart" | "cc",
+      });
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#f7f7f5]">
+      {/* Script Midtrans Snap */}
+      <Script
+        src={
+          env.NEXT_PUBLIC_APP_URL?.includes("localhost") || env.NEXT_PUBLIC_APP_URL?.includes("sandbox")
+            ? "https://app.sandbox.midtrans.com/snap/snap.js"
+            : "https://app.midtrans.com/snap/snap.js"
+        }
+        data-client-key={env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+        strategy="lazyOnload"
+      />
+
       {/* HEADER */}
       <div className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center px-4">
@@ -197,11 +249,10 @@ export default function PaymentPage() {
                       <button
                         key={method.id}
                         onClick={() => setSelected(method.id)}
-                        className={`group relative flex h-24 flex-col items-center justify-center gap-2 rounded-lg border p-3 text-left shadow-sm transition ${
-                          selected === method.id
-                            ? "border-cyan-500 bg-cyan-50 shadow-[0_0_0_3px_rgba(6,182,212,0.14)]"
-                            : "border-slate-200 bg-slate-50/60 hover:border-cyan-300 hover:bg-white hover:shadow-md"
-                        } `}
+                        className={`group relative flex h-24 flex-col items-center justify-center gap-2 rounded-lg border p-3 text-left shadow-sm transition ${selected === method.id
+                          ? "border-cyan-500 bg-cyan-50 shadow-[0_0_0_3px_rgba(6,182,212,0.14)]"
+                          : "border-slate-200 bg-slate-50/60 hover:border-cyan-300 hover:bg-white hover:shadow-md"
+                          } `}
                         aria-pressed={selected === method.id}
                       >
                         {/* Checkmark */}
@@ -244,6 +295,17 @@ export default function PaymentPage() {
                   </div>
                 </div>
               ))}
+            </div>
+            <div className="mt-5 border-t border-slate-200 pt-5">
+              <button
+                onClick={() => setSelected("midtrans")}
+                className={`w-full group relative flex h-14 items-center justify-center gap-2 rounded-lg border p-3 text-center shadow-sm transition ${selected === "midtrans"
+                  ? "border-cyan-500 bg-cyan-50 shadow-[0_0_0_3px_rgba(6,182,212,0.14)]"
+                  : "border-slate-200 bg-slate-50/60 hover:border-cyan-300 hover:bg-white hover:shadow-md"
+                  } `}
+              >
+                <span className="font-semibold text-slate-700">Pay with Midtrans</span>
+              </button>
             </div>
           </div>
 
@@ -295,7 +357,7 @@ export default function PaymentPage() {
                 <p className="text-[15px] text-slate-800 mb-2">Biaya Layanan</p>
                 <div className="flex items-center justify-between text-[13px] text-slate-600">
                   <span className="flex items-center gap-1">
-                    {selected ? `1x ${PAYMENT_METHODS.flatMap(g => g.methods).find(m => m.id === selected)?.label ?? ""}` : "-"}
+                    {selected === "midtrans" ? "1x Midtrans" : selected ? `1x ${PAYMENT_METHODS.flatMap(g => g.methods).find(m => m.id === selected)?.label || ""}` : "-"}
                   </span>
                   <span>{selected ? `Rp${fee.toLocaleString("id-ID")}` : "Rp0"}</span>
                 </div>
@@ -313,10 +375,10 @@ export default function PaymentPage() {
                 {/* CTA Button */}
                 <button
                   onClick={handlePay}
-                  disabled={!selected || createPaymentInvoice.isPending}
+                  disabled={!selected || createPaymentInvoice.isPending || createMidtransTransaction.isPending}
                   className="flex w-full items-center justify-center gap-2 rounded-md bg-[#FFDF20] py-3 text-[15px] font-semibold text-slate-900 transition hover:bg-[#F2D219] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
                 >
-                  {createPaymentInvoice.isPending
+                  {createPaymentInvoice.isPending || createMidtransTransaction.isPending
                     ? "Memproses..."
                     : "Bayar"}
                 </button>

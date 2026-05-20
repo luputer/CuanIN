@@ -4,6 +4,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { sendProductEmail } from "../../../lib/nodemailer";
 import { env } from "~/env";
 import { createInvoice as createXenditInvoice } from "~/lib/xendit";
+import { createSnapTransaction } from "~/lib/midtrans";
 import { calculatePaymentFee } from "~/lib/utils";
 import { getCreatorBalance } from "~/lib/balance";
 
@@ -259,6 +260,66 @@ export const purchasesRouter = createTRPCRouter({
       });
 
       return { invoiceUrl: invoice.invoice_url, xenditInvoiceId: invoice.id };
+    }),
+
+  // ─── CREATE MIDTRANS TRANSACTION ────────────────────────────────────────────
+  createMidtransTransaction: publicProcedure
+    .input(z.object({ purchaseId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const purchase = await ctx.db.purchase.findUnique({
+        where: { id: input.purchaseId },
+        include: {
+          product: {
+            select: { name: true },
+          },
+        },
+      });
+
+      if (!purchase) throw new Error("Transaksi tidak ditemukan");
+      if (purchase.status === "completed")
+        throw new Error("Transaksi sudah dibayar");
+      if (Number(purchase.amount) <= 0)
+        throw new Error("Transaksi gratis tidak membutuhkan pembayaran");
+
+      const baseAmount = Number(purchase.amount);
+      const fee = calculatePaymentFee("midtrans", baseAmount);
+      const totalAmount = baseAmount + fee;
+
+      // Midtrans order_id max length is 50 chars. purchase.id is 36 chars.
+      const orderId = `${purchase.id}_${Date.now().toString(36)}`;
+
+      const transaction = await createSnapTransaction({
+        orderId,
+        amount: totalAmount,
+        itemDetails: [
+          {
+            id: purchase.productId,
+            name: purchase.product.name.slice(0, 50),
+            price: baseAmount,
+            quantity: 1,
+          },
+          ...(fee > 0
+            ? [
+                {
+                  id: "fee",
+                  name: "Biaya Layanan",
+                  price: fee,
+                  quantity: 1,
+                },
+              ]
+            : []),
+        ],
+        customerDetails: {
+          firstName: purchase.buyerName,
+          email: purchase.buyerEmail,
+          phone: purchase.buyerPhone,
+        },
+      });
+
+      return {
+        token: transaction.token,
+        redirectUrl: transaction.redirect_url,
+      };
     }),
 
   // ─── GET BY PRODUCT ID ──────────────────────────────────────────────────────

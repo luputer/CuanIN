@@ -30,7 +30,7 @@ export const creatorsRouter = createTRPCRouter({
         },
       });
 
-      if (!creator || creator.role !== "CREATOR") {
+      if (creator?.role !== "CREATOR") {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Kreator tidak ditemukan",
@@ -133,7 +133,7 @@ export const creatorsRouter = createTRPCRouter({
         where: { id: input.id },
       });
 
-      if (!creator || creator.role !== "CREATOR") {
+      if (creator?.role !== "CREATOR") {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Kreator tidak ditemukan",
@@ -188,7 +188,7 @@ export const creatorsRouter = createTRPCRouter({
         where: { id: input.id },
       });
 
-      if (!creator || creator.role !== "CREATOR") {
+      if (creator?.role !== "CREATOR") {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Kreator tidak ditemukan",

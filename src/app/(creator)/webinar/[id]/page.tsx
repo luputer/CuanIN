@@ -3,15 +3,12 @@
 import {
     ArrowLeftIcon,
     CopyIcon,
-    ImageIcon,
     TrashIcon,
-    PencilSimpleIcon,
     CaretDownIcon,
     CaretUpIcon,
     CircleNotchIcon,
     PlusIcon,
     X,
-    Ticket
 } from "@phosphor-icons/react";
 
 import Link from "next/link";
@@ -191,7 +188,6 @@ export default function WebinarDetailPage() {
         append,
         remove,
         uploading,
-        previewUrl,
         onFilesChange,
         removeImage,
         images,
@@ -204,7 +200,7 @@ export default function WebinarDetailPage() {
         product,
     } = useWebinar({ id, isEdit: true });
 
-    const { register, watch, setValue, getValues, control, formState: { errors, isDirty } } = form;
+    const { register, watch, setValue, control, formState: { errors, isDirty } } = form;
 
 
     const dateStart = watch("dateStart");

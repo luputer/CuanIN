@@ -42,7 +42,7 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 
 /** Admin only — must be signed in as ADMIN */
 export const adminProcedure = t.procedure.use(({ ctx, next }) => {
-    if (!ctx.session?.user || ctx.session.user.role !== "ADMIN") {
+    if (ctx.session?.user?.role !== "ADMIN") {
         throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return next({
@@ -52,7 +52,7 @@ export const adminProcedure = t.procedure.use(({ ctx, next }) => {
 
 /** Creator only — must be signed in as CREATOR */
 export const creatorProcedure = t.procedure.use(({ ctx, next }) => {
-    if (!ctx.session?.user || ctx.session.user.role !== "CREATOR") {
+    if (ctx.session?.user?.role !== "CREATOR") {
         throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return next({

@@ -24,10 +24,8 @@ import {
     CaretUpIcon,
     CircleNotchIcon,
     CopyIcon,
-    ImageIcon,
     PlusIcon,
     TrashIcon,
-    PencilSimpleIcon,
     X,
 } from "@phosphor-icons/react";
 

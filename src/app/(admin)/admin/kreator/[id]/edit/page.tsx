@@ -82,7 +82,6 @@ export default function EditCreatorPage() {
             if (creator.image) avatarUpload.setPreviewUrl(creator.image);
             if (creator.banner) bannerUpload.setPreviewUrl(creator.banner);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [creator, reset]);
 
     const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

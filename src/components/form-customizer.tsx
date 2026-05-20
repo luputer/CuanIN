@@ -322,7 +322,6 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
         isSavingRef.current = false; // ← reset setelah selesai (sukses/error)
       },
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedFields, productId, hasLoaded, isControlled]);
 
   const handleFieldsChange = (updater: FormField[] | ((prev: FormField[]) => FormField[])) => {

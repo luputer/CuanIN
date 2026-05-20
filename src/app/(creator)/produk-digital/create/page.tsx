@@ -28,7 +28,6 @@ import {
 } from "@phosphor-icons/react";
 
 // Internal & Utils
-import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
 import { cn, formatNumberInput } from "~/lib/utils";
 import { productDigitalSchema } from "~/lib/validation";
@@ -36,7 +35,7 @@ import { useImageUpload } from "~/hooks/use-upload";
 
 // Components
 import { ProductDetailTabs, ProductDetailTabContent } from "~/components/layout/product-detail-tabs";
-import { SectionHeader, FormInput, FormTextarea, FormSelect, FormCombobox } from "~/components/ui/form-layout";
+import { SectionHeader, FormInput, FormTextarea, FormSelect } from "~/components/ui/form-layout";
 import ButtonSave from "~/components/ui/button-save";
 import ButtonCancel from "~/components/ui/button-cancel";
 import { FormCustomizer, type FormField } from "~/components/form-customizer";

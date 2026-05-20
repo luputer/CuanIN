@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
-import { SquaresFourIcon, VideoCameraIcon, BookOpenIcon, CloudArrowUpIcon, UsersIcon, CreditCardIcon, StorefrontIcon, ListIcon, TagIcon, XIcon } from "@phosphor-icons/react";
+import React from "react";
+import { SquaresFourIcon, VideoCameraIcon, BookOpenIcon, CloudArrowUpIcon, UsersIcon, CreditCardIcon, StorefrontIcon, TagIcon, XIcon } from "@phosphor-icons/react";
 import { usePathname } from "next/navigation";
 import { api } from "~/trpc/react";
-import { useEffect } from "react";
+
 
 // Component kecil (item menu)
 function SidebarItem({

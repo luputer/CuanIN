@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { Prisma } from "../../../../prisma/generated/prisma";
+import { type Prisma } from "../../../../prisma/generated/prisma";
 
 export const vouchersRouter = createTRPCRouter({
     getAll: protectedProcedure
@@ -31,7 +31,7 @@ export const vouchersRouter = createTRPCRouter({
             }
 
             if (type !== "ALL") {
-                where.type = type as "PERSEN" | "NOMINAL";
+                where.type = type;
             }
 
             if (status !== "ALL") {
@@ -107,7 +107,7 @@ export const vouchersRouter = createTRPCRouter({
                 },
             });
 
-            if (!voucher || voucher.userId !== ctx.session.user.id) {
+            if (voucher?.userId !== ctx.session.user.id) {
                 throw new Error("Voucher tidak ditemukan atau Anda tidak memiliki akses");
             }
 
@@ -135,7 +135,7 @@ export const vouchersRouter = createTRPCRouter({
                 where: { id: input.id },
             });
 
-            if (!voucher || voucher.userId !== ctx.session.user.id) {
+            if (voucher?.userId !== ctx.session.user.id) {
                 throw new Error("Voucher tidak ditemukan atau Anda tidak memiliki akses");
             }
 
@@ -167,7 +167,7 @@ export const vouchersRouter = createTRPCRouter({
                 where: { id: input.id },
             });
 
-            if (!voucher || voucher.userId !== ctx.session.user.id) {
+            if (voucher?.userId !== ctx.session.user.id) {
                 throw new Error("Voucher tidak ditemukan atau Anda tidak memiliki akses");
             }
 

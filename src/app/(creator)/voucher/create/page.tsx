@@ -86,7 +86,7 @@ function DateTimeRangePicker({
                     <Calendar
                         mode="range"
                         selected={range}
-                        onSelect={(next) => updateRange(next as DateRange)}
+                        onSelect={(next) => updateRange(next)}
                         initialFocus
                     />
                     <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-500">

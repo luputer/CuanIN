@@ -19,7 +19,6 @@ import {
 	Area,
 	Cell,
 } from "recharts";
-import { api } from "~/trpc/react";
 
 type CardProps = {
 	title: string;
@@ -80,6 +79,7 @@ function Card({
 	);
 }
 
+/*
 function CardSkeleton() {
 	return (
 		<div className="bg-white gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col animate-pulse">
@@ -103,6 +103,7 @@ function ChartSkeleton({ height = 300 }: { height?: number }) {
 		<div className="w-full bg-slate-100 rounded-lg animate-pulse" style={{ height }} />
 	);
 }
+*/
 
 const weeklyRevenue = [
 	{ day: "Senin", value: 400 },
@@ -140,8 +141,6 @@ const buyerData = [
 const CHART_COLORS = ["#FFF085", "#FFB86A"];
 
 export default function DashboardPage() {
-	const isLoading = false; // For now, no loading state
-
 	return (
 		<div className="space-y-6">
 			{/* Header */}

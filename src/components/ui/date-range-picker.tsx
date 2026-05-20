@@ -13,7 +13,7 @@ import {
     PopoverTrigger,
 } from "~/components/ui/popover";
 import { ScrollArea } from "./scroll-area";
-import type { DateRange } from "react-day-picker";
+
 
 interface DateRangePickerProps {
     startDate?: Date;

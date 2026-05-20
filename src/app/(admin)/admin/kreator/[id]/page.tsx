@@ -8,7 +8,6 @@ import {
     ArrowLeftIcon,
     PencilSimpleIcon,
     UsersIcon,
-    ImageIcon,
     BasketIcon,
     WalletIcon,
 } from "@phosphor-icons/react";

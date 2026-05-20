@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import {
     CaretUpIcon,
     CaretDownIcon,
@@ -43,7 +43,6 @@ import {
 export default function CreatorProductsPage() {
     const params = useParams();
     const id = params.id as string;
-    const router = useRouter();
 
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);

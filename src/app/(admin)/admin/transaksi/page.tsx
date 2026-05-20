@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { WalletIcon } from "@phosphor-icons/react";
-import { Skeleton } from "~/components/ui/skeleton";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import {

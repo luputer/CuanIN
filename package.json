@@ -45,6 +45,7 @@
     "date-fns": "^4.1.0",
     "i": "^0.3.7",
     "lucide-react": "^1.7.0",
+    "midtrans-client": "^1.4.3",
     "next": "^15.2.3",
     "next-auth": "^5.0.0-beta.31",
     "nodemailer": "^7.0.13",
@@ -72,6 +73,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.0.15",
+    "@types/midtrans-client": "^1.4.0",
     "@types/node": "^20.14.10",
     "@types/nodemailer": "^8.0.0",
     "@types/pg": "^8.20.0",

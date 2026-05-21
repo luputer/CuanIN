@@ -228,6 +228,7 @@ model Withdrawal {
   id                String           @id @default(uuid())
   userId            String
   amount            Decimal
+  feeAmount         Decimal?
   bankCode          String
   bankName          String
   accountNumber     String
@@ -318,6 +319,7 @@ enum WithdrawalStatus {
 enum BalanceEntryType {
   PURCHASE_COMPLETED
   WITHDRAWAL_REQUESTED
+  WITHDRAWAL_FEE
   WITHDRAWAL_FAILED
   WITHDRAWAL_REVERSED
   WITHDRAWAL_FEE

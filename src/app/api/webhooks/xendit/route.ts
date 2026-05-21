@@ -59,14 +59,39 @@ export async function POST(req: NextRequest) {
       payout.status === "SUCCEEDED" &&
       previousStatus !== WithdrawalStatus.SUCCEEDED
     ) {
-      await db.withdrawal.update({
-        where: { id: withdrawal.id },
-        data: {
-          status: WithdrawalStatus.SUCCEEDED,
-          xenditPayoutId: payout.id,
-          failureCode: null,
-        },
-      });
+      const adminFee = Math.round(Number(withdrawal.amount) * 0.02);
+      const adminUser = adminFee > 0 ? await db.user.findFirst({ where: { role: "ADMIN" } }) : null;
+
+      if (adminFee > 0 && adminUser) {
+        await db.$transaction([
+          db.withdrawal.update({
+            where: { id: withdrawal.id },
+            data: {
+              status: WithdrawalStatus.SUCCEEDED,
+              xenditPayoutId: payout.id,
+              failureCode: null,
+            },
+          }),
+          db.balanceEntry.create({
+            data: {
+              userId: adminUser.id,
+              amount: adminFee,
+              type: "WITHDRAWAL_FEE" as any,
+              refId: withdrawal.id,
+              note: `Platform fee 2% untuk penarikan ${withdrawal.id}`,
+            },
+          }),
+        ]);
+      } else {
+        await db.withdrawal.update({
+          where: { id: withdrawal.id },
+          data: {
+            status: WithdrawalStatus.SUCCEEDED,
+            xenditPayoutId: payout.id,
+            failureCode: null,
+          },
+        });
+      }
 
       try {
         await sendWithdrawalEmail({

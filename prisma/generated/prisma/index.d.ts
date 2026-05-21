@@ -2552,10 +2552,12 @@ export namespace Prisma {
 
   export type VoucherCountOutputType = {
     products: number
+    purchases: number
   }
 
   export type VoucherCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     products?: boolean | VoucherCountOutputTypeCountProductsArgs
+    purchases?: boolean | VoucherCountOutputTypeCountPurchasesArgs
   }
 
   // Custom InputTypes
@@ -2574,6 +2576,13 @@ export namespace Prisma {
    */
   export type VoucherCountOutputTypeCountProductsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProductWhereInput
+  }
+
+  /**
+   * VoucherCountOutputType without action
+   */
+  export type VoucherCountOutputTypeCountPurchasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PurchaseWhereInput
   }
 
 
@@ -8456,6 +8465,7 @@ export namespace Prisma {
     xenditInvoiceUrl: string | null
     paidAt: Date | null
     xenditPaymentMethod: string | null
+    voucherId: string | null
   }
 
   export type PurchaseMaxAggregateOutputType = {
@@ -8472,6 +8482,7 @@ export namespace Prisma {
     xenditInvoiceUrl: string | null
     paidAt: Date | null
     xenditPaymentMethod: string | null
+    voucherId: string | null
   }
 
   export type PurchaseCountAggregateOutputType = {
@@ -8488,6 +8499,7 @@ export namespace Prisma {
     xenditInvoiceUrl: number
     paidAt: number
     xenditPaymentMethod: number
+    voucherId: number
     _all: number
   }
 
@@ -8514,6 +8526,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: true
     paidAt?: true
     xenditPaymentMethod?: true
+    voucherId?: true
   }
 
   export type PurchaseMaxAggregateInputType = {
@@ -8530,6 +8543,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: true
     paidAt?: true
     xenditPaymentMethod?: true
+    voucherId?: true
   }
 
   export type PurchaseCountAggregateInputType = {
@@ -8546,6 +8560,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: true
     paidAt?: true
     xenditPaymentMethod?: true
+    voucherId?: true
     _all?: true
   }
 
@@ -8649,6 +8664,7 @@ export namespace Prisma {
     xenditInvoiceUrl: string | null
     paidAt: Date | null
     xenditPaymentMethod: string | null
+    voucherId: string | null
     _count: PurchaseCountAggregateOutputType | null
     _avg: PurchaseAvgAggregateOutputType | null
     _sum: PurchaseSumAggregateOutputType | null
@@ -8684,8 +8700,10 @@ export namespace Prisma {
     xenditInvoiceUrl?: boolean
     paidAt?: boolean
     xenditPaymentMethod?: boolean
+    voucherId?: boolean
     answers?: boolean | Purchase$answersArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    voucher?: boolean | Purchase$voucherArgs<ExtArgs>
     _count?: boolean | PurchaseCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["purchase"]>
 
@@ -8703,7 +8721,9 @@ export namespace Prisma {
     xenditInvoiceUrl?: boolean
     paidAt?: boolean
     xenditPaymentMethod?: boolean
+    voucherId?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    voucher?: boolean | Purchase$voucherArgs<ExtArgs>
   }, ExtArgs["result"]["purchase"]>
 
   export type PurchaseSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8720,7 +8740,9 @@ export namespace Prisma {
     xenditInvoiceUrl?: boolean
     paidAt?: boolean
     xenditPaymentMethod?: boolean
+    voucherId?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    voucher?: boolean | Purchase$voucherArgs<ExtArgs>
   }, ExtArgs["result"]["purchase"]>
 
   export type PurchaseSelectScalar = {
@@ -8737,19 +8759,23 @@ export namespace Prisma {
     xenditInvoiceUrl?: boolean
     paidAt?: boolean
     xenditPaymentMethod?: boolean
+    voucherId?: boolean
   }
 
-  export type PurchaseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "buyerName" | "buyerEmail" | "buyerPhone" | "amount" | "status" | "createdAt" | "updatedAt" | "xenditInvoiceId" | "xenditInvoiceUrl" | "paidAt" | "xenditPaymentMethod", ExtArgs["result"]["purchase"]>
+  export type PurchaseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "buyerName" | "buyerEmail" | "buyerPhone" | "amount" | "status" | "createdAt" | "updatedAt" | "xenditInvoiceId" | "xenditInvoiceUrl" | "paidAt" | "xenditPaymentMethod" | "voucherId", ExtArgs["result"]["purchase"]>
   export type PurchaseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     answers?: boolean | Purchase$answersArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    voucher?: boolean | Purchase$voucherArgs<ExtArgs>
     _count?: boolean | PurchaseCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PurchaseIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    voucher?: boolean | Purchase$voucherArgs<ExtArgs>
   }
   export type PurchaseIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    voucher?: boolean | Purchase$voucherArgs<ExtArgs>
   }
 
   export type $PurchasePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8757,6 +8783,7 @@ export namespace Prisma {
     objects: {
       answers: Prisma.$FormAnswerPayload<ExtArgs>[]
       product: Prisma.$ProductPayload<ExtArgs>
+      voucher: Prisma.$VoucherPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8772,6 +8799,7 @@ export namespace Prisma {
       xenditInvoiceUrl: string | null
       paidAt: Date | null
       xenditPaymentMethod: string | null
+      voucherId: string | null
     }, ExtArgs["result"]["purchase"]>
     composites: {}
   }
@@ -9168,6 +9196,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     answers<T extends Purchase$answersArgs<ExtArgs> = {}>(args?: Subset<T, Purchase$answersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FormAnswerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    voucher<T extends Purchase$voucherArgs<ExtArgs> = {}>(args?: Subset<T, Purchase$voucherArgs<ExtArgs>>): Prisma__VoucherClient<$Result.GetResult<Prisma.$VoucherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9210,6 +9239,7 @@ export namespace Prisma {
     readonly xenditInvoiceUrl: FieldRef<"Purchase", 'String'>
     readonly paidAt: FieldRef<"Purchase", 'DateTime'>
     readonly xenditPaymentMethod: FieldRef<"Purchase", 'String'>
+    readonly voucherId: FieldRef<"Purchase", 'String'>
   }
     
 
@@ -9627,6 +9657,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: FormAnswerScalarFieldEnum | FormAnswerScalarFieldEnum[]
+  }
+
+  /**
+   * Purchase.voucher
+   */
+  export type Purchase$voucherArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Voucher
+     */
+    select?: VoucherSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Voucher
+     */
+    omit?: VoucherOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VoucherInclude<ExtArgs> | null
+    where?: VoucherWhereInput
   }
 
   /**
@@ -19891,6 +19940,7 @@ export namespace Prisma {
     status: string | null
     usageType: string | null
     usageLimit: number | null
+    isLimitPerUser: boolean | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -19907,6 +19957,7 @@ export namespace Prisma {
     status: string | null
     usageType: string | null
     usageLimit: number | null
+    isLimitPerUser: boolean | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -19923,6 +19974,7 @@ export namespace Prisma {
     status: number
     usageType: number
     usageLimit: number
+    isLimitPerUser: number
     userId: number
     createdAt: number
     updatedAt: number
@@ -19951,6 +20003,7 @@ export namespace Prisma {
     status?: true
     usageType?: true
     usageLimit?: true
+    isLimitPerUser?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -19967,6 +20020,7 @@ export namespace Prisma {
     status?: true
     usageType?: true
     usageLimit?: true
+    isLimitPerUser?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -19983,6 +20037,7 @@ export namespace Prisma {
     status?: true
     usageType?: true
     usageLimit?: true
+    isLimitPerUser?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -20086,6 +20141,7 @@ export namespace Prisma {
     status: string
     usageType: string
     usageLimit: number | null
+    isLimitPerUser: boolean
     userId: string
     createdAt: Date
     updatedAt: Date
@@ -20121,11 +20177,13 @@ export namespace Prisma {
     status?: boolean
     usageType?: boolean
     usageLimit?: boolean
+    isLimitPerUser?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     products?: boolean | Voucher$productsArgs<ExtArgs>
+    purchases?: boolean | Voucher$purchasesArgs<ExtArgs>
     _count?: boolean | VoucherCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["voucher"]>
 
@@ -20140,6 +20198,7 @@ export namespace Prisma {
     status?: boolean
     usageType?: boolean
     usageLimit?: boolean
+    isLimitPerUser?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -20157,6 +20216,7 @@ export namespace Prisma {
     status?: boolean
     usageType?: boolean
     usageLimit?: boolean
+    isLimitPerUser?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -20174,15 +20234,17 @@ export namespace Prisma {
     status?: boolean
     usageType?: boolean
     usageLimit?: boolean
+    isLimitPerUser?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type VoucherOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "type" | "discount" | "startDate" | "endDate" | "status" | "usageType" | "usageLimit" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["voucher"]>
+  export type VoucherOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "type" | "discount" | "startDate" | "endDate" | "status" | "usageType" | "usageLimit" | "isLimitPerUser" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["voucher"]>
   export type VoucherInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     products?: boolean | Voucher$productsArgs<ExtArgs>
+    purchases?: boolean | Voucher$purchasesArgs<ExtArgs>
     _count?: boolean | VoucherCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type VoucherIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -20197,6 +20259,7 @@ export namespace Prisma {
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
       products: Prisma.$ProductPayload<ExtArgs>[]
+      purchases: Prisma.$PurchasePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -20209,6 +20272,7 @@ export namespace Prisma {
       status: string
       usageType: string
       usageLimit: number | null
+      isLimitPerUser: boolean
       userId: string
       createdAt: Date
       updatedAt: Date
@@ -20608,6 +20672,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     products<T extends Voucher$productsArgs<ExtArgs> = {}>(args?: Subset<T, Voucher$productsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    purchases<T extends Voucher$purchasesArgs<ExtArgs> = {}>(args?: Subset<T, Voucher$purchasesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -20647,6 +20712,7 @@ export namespace Prisma {
     readonly status: FieldRef<"Voucher", 'String'>
     readonly usageType: FieldRef<"Voucher", 'String'>
     readonly usageLimit: FieldRef<"Voucher", 'Int'>
+    readonly isLimitPerUser: FieldRef<"Voucher", 'Boolean'>
     readonly userId: FieldRef<"Voucher", 'String'>
     readonly createdAt: FieldRef<"Voucher", 'DateTime'>
     readonly updatedAt: FieldRef<"Voucher", 'DateTime'>
@@ -21070,6 +21136,30 @@ export namespace Prisma {
   }
 
   /**
+   * Voucher.purchases
+   */
+  export type Voucher$purchasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Purchase
+     */
+    select?: PurchaseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Purchase
+     */
+    omit?: PurchaseOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PurchaseInclude<ExtArgs> | null
+    where?: PurchaseWhereInput
+    orderBy?: PurchaseOrderByWithRelationInput | PurchaseOrderByWithRelationInput[]
+    cursor?: PurchaseWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PurchaseScalarFieldEnum | PurchaseScalarFieldEnum[]
+  }
+
+  /**
    * Voucher without action
    */
   export type VoucherDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -21196,7 +21286,8 @@ export namespace Prisma {
     xenditInvoiceId: 'xenditInvoiceId',
     xenditInvoiceUrl: 'xenditInvoiceUrl',
     paidAt: 'paidAt',
-    xenditPaymentMethod: 'xenditPaymentMethod'
+    xenditPaymentMethod: 'xenditPaymentMethod',
+    voucherId: 'voucherId'
   };
 
   export type PurchaseScalarFieldEnum = (typeof PurchaseScalarFieldEnum)[keyof typeof PurchaseScalarFieldEnum]
@@ -21341,6 +21432,7 @@ export namespace Prisma {
     status: 'status',
     usageType: 'usageType',
     usageLimit: 'usageLimit',
+    isLimitPerUser: 'isLimitPerUser',
     userId: 'userId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -22015,8 +22107,10 @@ export namespace Prisma {
     xenditInvoiceUrl?: StringNullableFilter<"Purchase"> | string | null
     paidAt?: DateTimeNullableFilter<"Purchase"> | Date | string | null
     xenditPaymentMethod?: StringNullableFilter<"Purchase"> | string | null
+    voucherId?: StringNullableFilter<"Purchase"> | string | null
     answers?: FormAnswerListRelationFilter
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    voucher?: XOR<VoucherNullableScalarRelationFilter, VoucherWhereInput> | null
   }
 
   export type PurchaseOrderByWithRelationInput = {
@@ -22033,8 +22127,10 @@ export namespace Prisma {
     xenditInvoiceUrl?: SortOrderInput | SortOrder
     paidAt?: SortOrderInput | SortOrder
     xenditPaymentMethod?: SortOrderInput | SortOrder
+    voucherId?: SortOrderInput | SortOrder
     answers?: FormAnswerOrderByRelationAggregateInput
     product?: ProductOrderByWithRelationInput
+    voucher?: VoucherOrderByWithRelationInput
   }
 
   export type PurchaseWhereUniqueInput = Prisma.AtLeast<{
@@ -22054,8 +22150,10 @@ export namespace Prisma {
     xenditInvoiceUrl?: StringNullableFilter<"Purchase"> | string | null
     paidAt?: DateTimeNullableFilter<"Purchase"> | Date | string | null
     xenditPaymentMethod?: StringNullableFilter<"Purchase"> | string | null
+    voucherId?: StringNullableFilter<"Purchase"> | string | null
     answers?: FormAnswerListRelationFilter
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    voucher?: XOR<VoucherNullableScalarRelationFilter, VoucherWhereInput> | null
   }, "id">
 
   export type PurchaseOrderByWithAggregationInput = {
@@ -22072,6 +22170,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: SortOrderInput | SortOrder
     paidAt?: SortOrderInput | SortOrder
     xenditPaymentMethod?: SortOrderInput | SortOrder
+    voucherId?: SortOrderInput | SortOrder
     _count?: PurchaseCountOrderByAggregateInput
     _avg?: PurchaseAvgOrderByAggregateInput
     _max?: PurchaseMaxOrderByAggregateInput
@@ -22096,6 +22195,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: StringNullableWithAggregatesFilter<"Purchase"> | string | null
     paidAt?: DateTimeNullableWithAggregatesFilter<"Purchase"> | Date | string | null
     xenditPaymentMethod?: StringNullableWithAggregatesFilter<"Purchase"> | string | null
+    voucherId?: StringNullableWithAggregatesFilter<"Purchase"> | string | null
   }
 
   export type FormAnswerWhereInput = {
@@ -22790,11 +22890,13 @@ export namespace Prisma {
     status?: StringFilter<"Voucher"> | string
     usageType?: StringFilter<"Voucher"> | string
     usageLimit?: IntNullableFilter<"Voucher"> | number | null
+    isLimitPerUser?: BoolFilter<"Voucher"> | boolean
     userId?: StringFilter<"Voucher"> | string
     createdAt?: DateTimeFilter<"Voucher"> | Date | string
     updatedAt?: DateTimeFilter<"Voucher"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     products?: ProductListRelationFilter
+    purchases?: PurchaseListRelationFilter
   }
 
   export type VoucherOrderByWithRelationInput = {
@@ -22808,11 +22910,13 @@ export namespace Prisma {
     status?: SortOrder
     usageType?: SortOrder
     usageLimit?: SortOrderInput | SortOrder
+    isLimitPerUser?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
     products?: ProductOrderByRelationAggregateInput
+    purchases?: PurchaseOrderByRelationAggregateInput
   }
 
   export type VoucherWhereUniqueInput = Prisma.AtLeast<{
@@ -22829,11 +22933,13 @@ export namespace Prisma {
     status?: StringFilter<"Voucher"> | string
     usageType?: StringFilter<"Voucher"> | string
     usageLimit?: IntNullableFilter<"Voucher"> | number | null
+    isLimitPerUser?: BoolFilter<"Voucher"> | boolean
     userId?: StringFilter<"Voucher"> | string
     createdAt?: DateTimeFilter<"Voucher"> | Date | string
     updatedAt?: DateTimeFilter<"Voucher"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     products?: ProductListRelationFilter
+    purchases?: PurchaseListRelationFilter
   }, "id" | "code">
 
   export type VoucherOrderByWithAggregationInput = {
@@ -22847,6 +22953,7 @@ export namespace Prisma {
     status?: SortOrder
     usageType?: SortOrder
     usageLimit?: SortOrderInput | SortOrder
+    isLimitPerUser?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -22871,6 +22978,7 @@ export namespace Prisma {
     status?: StringWithAggregatesFilter<"Voucher"> | string
     usageType?: StringWithAggregatesFilter<"Voucher"> | string
     usageLimit?: IntNullableWithAggregatesFilter<"Voucher"> | number | null
+    isLimitPerUser?: BoolWithAggregatesFilter<"Voucher"> | boolean
     userId?: StringWithAggregatesFilter<"Voucher"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Voucher"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Voucher"> | Date | string
@@ -23363,6 +23471,7 @@ export namespace Prisma {
     xenditPaymentMethod?: string | null
     answers?: FormAnswerCreateNestedManyWithoutPurchaseInput
     product: ProductCreateNestedOneWithoutPurchasesInput
+    voucher?: VoucherCreateNestedOneWithoutPurchasesInput
   }
 
   export type PurchaseUncheckedCreateInput = {
@@ -23379,6 +23488,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: string | null
     paidAt?: Date | string | null
     xenditPaymentMethod?: string | null
+    voucherId?: string | null
     answers?: FormAnswerUncheckedCreateNestedManyWithoutPurchaseInput
   }
 
@@ -23397,6 +23507,7 @@ export namespace Prisma {
     xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
     answers?: FormAnswerUpdateManyWithoutPurchaseNestedInput
     product?: ProductUpdateOneRequiredWithoutPurchasesNestedInput
+    voucher?: VoucherUpdateOneWithoutPurchasesNestedInput
   }
 
   export type PurchaseUncheckedUpdateInput = {
@@ -23413,6 +23524,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    voucherId?: NullableStringFieldUpdateOperationsInput | string | null
     answers?: FormAnswerUncheckedUpdateManyWithoutPurchaseNestedInput
   }
 
@@ -23430,6 +23542,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: string | null
     paidAt?: Date | string | null
     xenditPaymentMethod?: string | null
+    voucherId?: string | null
   }
 
   export type PurchaseUpdateManyMutationInput = {
@@ -23461,6 +23574,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    voucherId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FormAnswerCreateInput = {
@@ -24212,10 +24326,12 @@ export namespace Prisma {
     status?: string
     usageType?: string
     usageLimit?: number | null
+    isLimitPerUser?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutVouchersInput
     products?: ProductCreateNestedManyWithoutVouchersInput
+    purchases?: PurchaseCreateNestedManyWithoutVoucherInput
   }
 
   export type VoucherUncheckedCreateInput = {
@@ -24229,10 +24345,12 @@ export namespace Prisma {
     status?: string
     usageType?: string
     usageLimit?: number | null
+    isLimitPerUser?: boolean
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
     products?: ProductUncheckedCreateNestedManyWithoutVouchersInput
+    purchases?: PurchaseUncheckedCreateNestedManyWithoutVoucherInput
   }
 
   export type VoucherUpdateInput = {
@@ -24246,10 +24364,12 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     usageType?: StringFieldUpdateOperationsInput | string
     usageLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    isLimitPerUser?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutVouchersNestedInput
     products?: ProductUpdateManyWithoutVouchersNestedInput
+    purchases?: PurchaseUpdateManyWithoutVoucherNestedInput
   }
 
   export type VoucherUncheckedUpdateInput = {
@@ -24263,10 +24383,12 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     usageType?: StringFieldUpdateOperationsInput | string
     usageLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    isLimitPerUser?: BoolFieldUpdateOperationsInput | boolean
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     products?: ProductUncheckedUpdateManyWithoutVouchersNestedInput
+    purchases?: PurchaseUncheckedUpdateManyWithoutVoucherNestedInput
   }
 
   export type VoucherCreateManyInput = {
@@ -24280,6 +24402,7 @@ export namespace Prisma {
     status?: string
     usageType?: string
     usageLimit?: number | null
+    isLimitPerUser?: boolean
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24296,6 +24419,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     usageType?: StringFieldUpdateOperationsInput | string
     usageLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    isLimitPerUser?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -24311,6 +24435,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     usageType?: StringFieldUpdateOperationsInput | string
     usageLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    isLimitPerUser?: BoolFieldUpdateOperationsInput | boolean
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24929,6 +25054,11 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type VoucherNullableScalarRelationFilter = {
+    is?: VoucherWhereInput | null
+    isNot?: VoucherWhereInput | null
+  }
+
   export type PurchaseCountOrderByAggregateInput = {
     id?: SortOrder
     productId?: SortOrder
@@ -24943,6 +25073,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: SortOrder
     paidAt?: SortOrder
     xenditPaymentMethod?: SortOrder
+    voucherId?: SortOrder
   }
 
   export type PurchaseAvgOrderByAggregateInput = {
@@ -24963,6 +25094,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: SortOrder
     paidAt?: SortOrder
     xenditPaymentMethod?: SortOrder
+    voucherId?: SortOrder
   }
 
   export type PurchaseMinOrderByAggregateInput = {
@@ -24979,6 +25111,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: SortOrder
     paidAt?: SortOrder
     xenditPaymentMethod?: SortOrder
+    voucherId?: SortOrder
   }
 
   export type PurchaseSumOrderByAggregateInput = {
@@ -25476,6 +25609,7 @@ export namespace Prisma {
     status?: SortOrder
     usageType?: SortOrder
     usageLimit?: SortOrder
+    isLimitPerUser?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -25497,6 +25631,7 @@ export namespace Prisma {
     status?: SortOrder
     usageType?: SortOrder
     usageLimit?: SortOrder
+    isLimitPerUser?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -25513,6 +25648,7 @@ export namespace Prisma {
     status?: SortOrder
     usageType?: SortOrder
     usageLimit?: SortOrder
+    isLimitPerUser?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -25868,6 +26004,12 @@ export namespace Prisma {
     connect?: ProductWhereUniqueInput
   }
 
+  export type VoucherCreateNestedOneWithoutPurchasesInput = {
+    create?: XOR<VoucherCreateWithoutPurchasesInput, VoucherUncheckedCreateWithoutPurchasesInput>
+    connectOrCreate?: VoucherCreateOrConnectWithoutPurchasesInput
+    connect?: VoucherWhereUniqueInput
+  }
+
   export type FormAnswerUncheckedCreateNestedManyWithoutPurchaseInput = {
     create?: XOR<FormAnswerCreateWithoutPurchaseInput, FormAnswerUncheckedCreateWithoutPurchaseInput> | FormAnswerCreateWithoutPurchaseInput[] | FormAnswerUncheckedCreateWithoutPurchaseInput[]
     connectOrCreate?: FormAnswerCreateOrConnectWithoutPurchaseInput | FormAnswerCreateOrConnectWithoutPurchaseInput[]
@@ -25895,6 +26037,16 @@ export namespace Prisma {
     upsert?: ProductUpsertWithoutPurchasesInput
     connect?: ProductWhereUniqueInput
     update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutPurchasesInput, ProductUpdateWithoutPurchasesInput>, ProductUncheckedUpdateWithoutPurchasesInput>
+  }
+
+  export type VoucherUpdateOneWithoutPurchasesNestedInput = {
+    create?: XOR<VoucherCreateWithoutPurchasesInput, VoucherUncheckedCreateWithoutPurchasesInput>
+    connectOrCreate?: VoucherCreateOrConnectWithoutPurchasesInput
+    upsert?: VoucherUpsertWithoutPurchasesInput
+    disconnect?: VoucherWhereInput | boolean
+    delete?: VoucherWhereInput | boolean
+    connect?: VoucherWhereUniqueInput
+    update?: XOR<XOR<VoucherUpdateToOneWithWhereWithoutPurchasesInput, VoucherUpdateWithoutPurchasesInput>, VoucherUncheckedUpdateWithoutPurchasesInput>
   }
 
   export type FormAnswerUncheckedUpdateManyWithoutPurchaseNestedInput = {
@@ -26461,10 +26613,24 @@ export namespace Prisma {
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
   }
 
+  export type PurchaseCreateNestedManyWithoutVoucherInput = {
+    create?: XOR<PurchaseCreateWithoutVoucherInput, PurchaseUncheckedCreateWithoutVoucherInput> | PurchaseCreateWithoutVoucherInput[] | PurchaseUncheckedCreateWithoutVoucherInput[]
+    connectOrCreate?: PurchaseCreateOrConnectWithoutVoucherInput | PurchaseCreateOrConnectWithoutVoucherInput[]
+    createMany?: PurchaseCreateManyVoucherInputEnvelope
+    connect?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+  }
+
   export type ProductUncheckedCreateNestedManyWithoutVouchersInput = {
     create?: XOR<ProductCreateWithoutVouchersInput, ProductUncheckedCreateWithoutVouchersInput> | ProductCreateWithoutVouchersInput[] | ProductUncheckedCreateWithoutVouchersInput[]
     connectOrCreate?: ProductCreateOrConnectWithoutVouchersInput | ProductCreateOrConnectWithoutVouchersInput[]
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type PurchaseUncheckedCreateNestedManyWithoutVoucherInput = {
+    create?: XOR<PurchaseCreateWithoutVoucherInput, PurchaseUncheckedCreateWithoutVoucherInput> | PurchaseCreateWithoutVoucherInput[] | PurchaseUncheckedCreateWithoutVoucherInput[]
+    connectOrCreate?: PurchaseCreateOrConnectWithoutVoucherInput | PurchaseCreateOrConnectWithoutVoucherInput[]
+    createMany?: PurchaseCreateManyVoucherInputEnvelope
+    connect?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
   }
 
   export type EnumVoucherTypeFieldUpdateOperationsInput = {
@@ -26492,6 +26658,20 @@ export namespace Prisma {
     deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
   }
 
+  export type PurchaseUpdateManyWithoutVoucherNestedInput = {
+    create?: XOR<PurchaseCreateWithoutVoucherInput, PurchaseUncheckedCreateWithoutVoucherInput> | PurchaseCreateWithoutVoucherInput[] | PurchaseUncheckedCreateWithoutVoucherInput[]
+    connectOrCreate?: PurchaseCreateOrConnectWithoutVoucherInput | PurchaseCreateOrConnectWithoutVoucherInput[]
+    upsert?: PurchaseUpsertWithWhereUniqueWithoutVoucherInput | PurchaseUpsertWithWhereUniqueWithoutVoucherInput[]
+    createMany?: PurchaseCreateManyVoucherInputEnvelope
+    set?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    disconnect?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    delete?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    connect?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    update?: PurchaseUpdateWithWhereUniqueWithoutVoucherInput | PurchaseUpdateWithWhereUniqueWithoutVoucherInput[]
+    updateMany?: PurchaseUpdateManyWithWhereWithoutVoucherInput | PurchaseUpdateManyWithWhereWithoutVoucherInput[]
+    deleteMany?: PurchaseScalarWhereInput | PurchaseScalarWhereInput[]
+  }
+
   export type ProductUncheckedUpdateManyWithoutVouchersNestedInput = {
     create?: XOR<ProductCreateWithoutVouchersInput, ProductUncheckedCreateWithoutVouchersInput> | ProductCreateWithoutVouchersInput[] | ProductUncheckedCreateWithoutVouchersInput[]
     connectOrCreate?: ProductCreateOrConnectWithoutVouchersInput | ProductCreateOrConnectWithoutVouchersInput[]
@@ -26503,6 +26683,20 @@ export namespace Prisma {
     update?: ProductUpdateWithWhereUniqueWithoutVouchersInput | ProductUpdateWithWhereUniqueWithoutVouchersInput[]
     updateMany?: ProductUpdateManyWithWhereWithoutVouchersInput | ProductUpdateManyWithWhereWithoutVouchersInput[]
     deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type PurchaseUncheckedUpdateManyWithoutVoucherNestedInput = {
+    create?: XOR<PurchaseCreateWithoutVoucherInput, PurchaseUncheckedCreateWithoutVoucherInput> | PurchaseCreateWithoutVoucherInput[] | PurchaseUncheckedCreateWithoutVoucherInput[]
+    connectOrCreate?: PurchaseCreateOrConnectWithoutVoucherInput | PurchaseCreateOrConnectWithoutVoucherInput[]
+    upsert?: PurchaseUpsertWithWhereUniqueWithoutVoucherInput | PurchaseUpsertWithWhereUniqueWithoutVoucherInput[]
+    createMany?: PurchaseCreateManyVoucherInputEnvelope
+    set?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    disconnect?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    delete?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    connect?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+    update?: PurchaseUpdateWithWhereUniqueWithoutVoucherInput | PurchaseUpdateWithWhereUniqueWithoutVoucherInput[]
+    updateMany?: PurchaseUpdateManyWithWhereWithoutVoucherInput | PurchaseUpdateManyWithWhereWithoutVoucherInput[]
+    deleteMany?: PurchaseScalarWhereInput | PurchaseScalarWhereInput[]
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -27008,9 +27202,11 @@ export namespace Prisma {
     status?: string
     usageType?: string
     usageLimit?: number | null
+    isLimitPerUser?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutVouchersInput
+    purchases?: PurchaseCreateNestedManyWithoutVoucherInput
   }
 
   export type VoucherUncheckedCreateWithoutProductsInput = {
@@ -27024,9 +27220,11 @@ export namespace Prisma {
     status?: string
     usageType?: string
     usageLimit?: number | null
+    isLimitPerUser?: boolean
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    purchases?: PurchaseUncheckedCreateNestedManyWithoutVoucherInput
   }
 
   export type VoucherCreateOrConnectWithoutProductsInput = {
@@ -27167,6 +27365,7 @@ export namespace Prisma {
     paidAt?: Date | string | null
     xenditPaymentMethod?: string | null
     answers?: FormAnswerCreateNestedManyWithoutPurchaseInput
+    voucher?: VoucherCreateNestedOneWithoutPurchasesInput
   }
 
   export type PurchaseUncheckedCreateWithoutProductInput = {
@@ -27182,6 +27381,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: string | null
     paidAt?: Date | string | null
     xenditPaymentMethod?: string | null
+    voucherId?: string | null
     answers?: FormAnswerUncheckedCreateNestedManyWithoutPurchaseInput
   }
 
@@ -27225,6 +27425,7 @@ export namespace Prisma {
     status?: StringFilter<"Voucher"> | string
     usageType?: StringFilter<"Voucher"> | string
     usageLimit?: IntNullableFilter<"Voucher"> | number | null
+    isLimitPerUser?: BoolFilter<"Voucher"> | boolean
     userId?: StringFilter<"Voucher"> | string
     createdAt?: DateTimeFilter<"Voucher"> | Date | string
     updatedAt?: DateTimeFilter<"Voucher"> | Date | string
@@ -27384,6 +27585,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: StringNullableFilter<"Purchase"> | string | null
     paidAt?: DateTimeNullableFilter<"Purchase"> | Date | string | null
     xenditPaymentMethod?: StringNullableFilter<"Purchase"> | string | null
+    voucherId?: StringNullableFilter<"Purchase"> | string | null
   }
 
   export type ProductCreateWithoutViewsInput = {
@@ -27788,6 +27990,47 @@ export namespace Prisma {
     create: XOR<ProductCreateWithoutPurchasesInput, ProductUncheckedCreateWithoutPurchasesInput>
   }
 
+  export type VoucherCreateWithoutPurchasesInput = {
+    id?: string
+    code: string
+    name?: string | null
+    type?: $Enums.VoucherType
+    discount: Decimal | DecimalJsLike | number | string
+    startDate: Date | string
+    endDate: Date | string
+    status?: string
+    usageType?: string
+    usageLimit?: number | null
+    isLimitPerUser?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutVouchersInput
+    products?: ProductCreateNestedManyWithoutVouchersInput
+  }
+
+  export type VoucherUncheckedCreateWithoutPurchasesInput = {
+    id?: string
+    code: string
+    name?: string | null
+    type?: $Enums.VoucherType
+    discount: Decimal | DecimalJsLike | number | string
+    startDate: Date | string
+    endDate: Date | string
+    status?: string
+    usageType?: string
+    usageLimit?: number | null
+    isLimitPerUser?: boolean
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    products?: ProductUncheckedCreateNestedManyWithoutVouchersInput
+  }
+
+  export type VoucherCreateOrConnectWithoutPurchasesInput = {
+    where: VoucherWhereUniqueInput
+    create: XOR<VoucherCreateWithoutPurchasesInput, VoucherUncheckedCreateWithoutPurchasesInput>
+  }
+
   export type FormAnswerUpsertWithWhereUniqueWithoutPurchaseInput = {
     where: FormAnswerWhereUniqueInput
     update: XOR<FormAnswerUpdateWithoutPurchaseInput, FormAnswerUncheckedUpdateWithoutPurchaseInput>
@@ -27873,6 +28116,53 @@ export namespace Prisma {
     views?: ProductViewUncheckedUpdateManyWithoutProductNestedInput
   }
 
+  export type VoucherUpsertWithoutPurchasesInput = {
+    update: XOR<VoucherUpdateWithoutPurchasesInput, VoucherUncheckedUpdateWithoutPurchasesInput>
+    create: XOR<VoucherCreateWithoutPurchasesInput, VoucherUncheckedCreateWithoutPurchasesInput>
+    where?: VoucherWhereInput
+  }
+
+  export type VoucherUpdateToOneWithWhereWithoutPurchasesInput = {
+    where?: VoucherWhereInput
+    data: XOR<VoucherUpdateWithoutPurchasesInput, VoucherUncheckedUpdateWithoutPurchasesInput>
+  }
+
+  export type VoucherUpdateWithoutPurchasesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumVoucherTypeFieldUpdateOperationsInput | $Enums.VoucherType
+    discount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    usageType?: StringFieldUpdateOperationsInput | string
+    usageLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    isLimitPerUser?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutVouchersNestedInput
+    products?: ProductUpdateManyWithoutVouchersNestedInput
+  }
+
+  export type VoucherUncheckedUpdateWithoutPurchasesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumVoucherTypeFieldUpdateOperationsInput | $Enums.VoucherType
+    discount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    usageType?: StringFieldUpdateOperationsInput | string
+    usageLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    isLimitPerUser?: BoolFieldUpdateOperationsInput | boolean
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    products?: ProductUncheckedUpdateManyWithoutVouchersNestedInput
+  }
+
   export type FormFieldCreateWithoutAnswersInput = {
     id?: string
     label: string
@@ -27916,6 +28206,7 @@ export namespace Prisma {
     paidAt?: Date | string | null
     xenditPaymentMethod?: string | null
     product: ProductCreateNestedOneWithoutPurchasesInput
+    voucher?: VoucherCreateNestedOneWithoutPurchasesInput
   }
 
   export type PurchaseUncheckedCreateWithoutAnswersInput = {
@@ -27932,6 +28223,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: string | null
     paidAt?: Date | string | null
     xenditPaymentMethod?: string | null
+    voucherId?: string | null
   }
 
   export type PurchaseCreateOrConnectWithoutAnswersInput = {
@@ -27999,6 +28291,7 @@ export namespace Prisma {
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
     product?: ProductUpdateOneRequiredWithoutPurchasesNestedInput
+    voucher?: VoucherUpdateOneWithoutPurchasesNestedInput
   }
 
   export type PurchaseUncheckedUpdateWithoutAnswersInput = {
@@ -28015,6 +28308,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    voucherId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -28527,9 +28821,11 @@ export namespace Prisma {
     status?: string
     usageType?: string
     usageLimit?: number | null
+    isLimitPerUser?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     products?: ProductCreateNestedManyWithoutVouchersInput
+    purchases?: PurchaseCreateNestedManyWithoutVoucherInput
   }
 
   export type VoucherUncheckedCreateWithoutUserInput = {
@@ -28543,9 +28839,11 @@ export namespace Prisma {
     status?: string
     usageType?: string
     usageLimit?: number | null
+    isLimitPerUser?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     products?: ProductUncheckedCreateNestedManyWithoutVouchersInput
+    purchases?: PurchaseUncheckedCreateNestedManyWithoutVoucherInput
   }
 
   export type VoucherCreateOrConnectWithoutUserInput = {
@@ -29492,6 +29790,50 @@ export namespace Prisma {
     create: XOR<ProductCreateWithoutVouchersInput, ProductUncheckedCreateWithoutVouchersInput>
   }
 
+  export type PurchaseCreateWithoutVoucherInput = {
+    id?: string
+    buyerName: string
+    buyerEmail: string
+    buyerPhone: string
+    amount?: Decimal | DecimalJsLike | number | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    xenditInvoiceId?: string | null
+    xenditInvoiceUrl?: string | null
+    paidAt?: Date | string | null
+    xenditPaymentMethod?: string | null
+    answers?: FormAnswerCreateNestedManyWithoutPurchaseInput
+    product: ProductCreateNestedOneWithoutPurchasesInput
+  }
+
+  export type PurchaseUncheckedCreateWithoutVoucherInput = {
+    id?: string
+    productId: string
+    buyerName: string
+    buyerEmail: string
+    buyerPhone: string
+    amount?: Decimal | DecimalJsLike | number | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    xenditInvoiceId?: string | null
+    xenditInvoiceUrl?: string | null
+    paidAt?: Date | string | null
+    xenditPaymentMethod?: string | null
+    answers?: FormAnswerUncheckedCreateNestedManyWithoutPurchaseInput
+  }
+
+  export type PurchaseCreateOrConnectWithoutVoucherInput = {
+    where: PurchaseWhereUniqueInput
+    create: XOR<PurchaseCreateWithoutVoucherInput, PurchaseUncheckedCreateWithoutVoucherInput>
+  }
+
+  export type PurchaseCreateManyVoucherInputEnvelope = {
+    data: PurchaseCreateManyVoucherInput | PurchaseCreateManyVoucherInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutVouchersInput = {
     update: XOR<UserUpdateWithoutVouchersInput, UserUncheckedUpdateWithoutVouchersInput>
     create: XOR<UserCreateWithoutVouchersInput, UserUncheckedCreateWithoutVouchersInput>
@@ -29567,6 +29909,22 @@ export namespace Prisma {
     data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyWithoutVouchersInput>
   }
 
+  export type PurchaseUpsertWithWhereUniqueWithoutVoucherInput = {
+    where: PurchaseWhereUniqueInput
+    update: XOR<PurchaseUpdateWithoutVoucherInput, PurchaseUncheckedUpdateWithoutVoucherInput>
+    create: XOR<PurchaseCreateWithoutVoucherInput, PurchaseUncheckedCreateWithoutVoucherInput>
+  }
+
+  export type PurchaseUpdateWithWhereUniqueWithoutVoucherInput = {
+    where: PurchaseWhereUniqueInput
+    data: XOR<PurchaseUpdateWithoutVoucherInput, PurchaseUncheckedUpdateWithoutVoucherInput>
+  }
+
+  export type PurchaseUpdateManyWithWhereWithoutVoucherInput = {
+    where: PurchaseScalarWhereInput
+    data: XOR<PurchaseUpdateManyMutationInput, PurchaseUncheckedUpdateManyWithoutVoucherInput>
+  }
+
   export type FormFieldCreateManyProductInput = {
     id?: string
     label: string
@@ -29602,6 +29960,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: string | null
     paidAt?: Date | string | null
     xenditPaymentMethod?: string | null
+    voucherId?: string | null
   }
 
   export type VoucherUpdateWithoutProductsInput = {
@@ -29615,9 +29974,11 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     usageType?: StringFieldUpdateOperationsInput | string
     usageLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    isLimitPerUser?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutVouchersNestedInput
+    purchases?: PurchaseUpdateManyWithoutVoucherNestedInput
   }
 
   export type VoucherUncheckedUpdateWithoutProductsInput = {
@@ -29631,9 +29992,11 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     usageType?: StringFieldUpdateOperationsInput | string
     usageLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    isLimitPerUser?: BoolFieldUpdateOperationsInput | boolean
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    purchases?: PurchaseUncheckedUpdateManyWithoutVoucherNestedInput
   }
 
   export type VoucherUncheckedUpdateManyWithoutProductsInput = {
@@ -29647,6 +30010,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     usageType?: StringFieldUpdateOperationsInput | string
     usageLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    isLimitPerUser?: BoolFieldUpdateOperationsInput | boolean
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29734,6 +30098,7 @@ export namespace Prisma {
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
     answers?: FormAnswerUpdateManyWithoutPurchaseNestedInput
+    voucher?: VoucherUpdateOneWithoutPurchasesNestedInput
   }
 
   export type PurchaseUncheckedUpdateWithoutProductInput = {
@@ -29749,6 +30114,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    voucherId?: NullableStringFieldUpdateOperationsInput | string | null
     answers?: FormAnswerUncheckedUpdateManyWithoutPurchaseNestedInput
   }
 
@@ -29765,6 +30131,7 @@ export namespace Prisma {
     xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    voucherId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FormAnswerCreateManyFormFieldInput = {
@@ -29917,6 +30284,7 @@ export namespace Prisma {
     status?: string
     usageType?: string
     usageLimit?: number | null
+    isLimitPerUser?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -30189,9 +30557,11 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     usageType?: StringFieldUpdateOperationsInput | string
     usageLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    isLimitPerUser?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     products?: ProductUpdateManyWithoutVouchersNestedInput
+    purchases?: PurchaseUpdateManyWithoutVoucherNestedInput
   }
 
   export type VoucherUncheckedUpdateWithoutUserInput = {
@@ -30205,9 +30575,11 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     usageType?: StringFieldUpdateOperationsInput | string
     usageLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    isLimitPerUser?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     products?: ProductUncheckedUpdateManyWithoutVouchersNestedInput
+    purchases?: PurchaseUncheckedUpdateManyWithoutVoucherNestedInput
   }
 
   export type VoucherUncheckedUpdateManyWithoutUserInput = {
@@ -30221,6 +30593,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     usageType?: StringFieldUpdateOperationsInput | string
     usageLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    isLimitPerUser?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -30271,6 +30644,22 @@ export namespace Prisma {
     os?: NullableStringFieldUpdateOperationsInput | string | null
     device?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PurchaseCreateManyVoucherInput = {
+    id?: string
+    productId: string
+    buyerName: string
+    buyerEmail: string
+    buyerPhone: string
+    amount?: Decimal | DecimalJsLike | number | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    xenditInvoiceId?: string | null
+    xenditInvoiceUrl?: string | null
+    paidAt?: Date | string | null
+    xenditPaymentMethod?: string | null
   }
 
   export type ProductUpdateWithoutVouchersInput = {
@@ -30355,6 +30744,56 @@ export namespace Prisma {
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PurchaseUpdateWithoutVoucherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    buyerName?: StringFieldUpdateOperationsInput | string
+    buyerEmail?: StringFieldUpdateOperationsInput | string
+    buyerPhone?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    answers?: FormAnswerUpdateManyWithoutPurchaseNestedInput
+    product?: ProductUpdateOneRequiredWithoutPurchasesNestedInput
+  }
+
+  export type PurchaseUncheckedUpdateWithoutVoucherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    buyerName?: StringFieldUpdateOperationsInput | string
+    buyerEmail?: StringFieldUpdateOperationsInput | string
+    buyerPhone?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    answers?: FormAnswerUncheckedUpdateManyWithoutPurchaseNestedInput
+  }
+
+  export type PurchaseUncheckedUpdateManyWithoutVoucherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    buyerName?: StringFieldUpdateOperationsInput | string
+    buyerEmail?: StringFieldUpdateOperationsInput | string
+    buyerPhone?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    xenditInvoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    xenditInvoiceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    xenditPaymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

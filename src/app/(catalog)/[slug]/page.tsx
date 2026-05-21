@@ -9,13 +9,14 @@ import Link from "next/link";
 import SearchInput from "~/components/ui/search";
 import {
   ImagesIcon,
-  SpinnerIcon,
-  CalendarDotsIcon,
-  ArrowRightIcon,
+  CalendarBlankIcon,
   FileIcon,
   ClockIcon,
   ArrowLeftIcon,
+  Funnel,
 } from "@phosphor-icons/react";
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import { cn } from "~/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -72,6 +73,8 @@ function ProductCard({
   startDate,
   contentType,
   duration,
+  endDate,
+  status,
 }: {
   productSlug: string;
   name: string;
@@ -83,9 +86,16 @@ function ProductCard({
   startDate?: Date | null;
   contentType?: string | null;
   duration?: string | null;
+  endDate?: Date | null;
+  status?: string;
 }) {
   const isGratis = price === 0;
   const categoryLabel = TYPE_MAP[type] ?? type;
+
+  const isWebinarCompleted =
+    type === "WEBINAR" &&
+    ((endDate && new Date() > new Date(endDate)) ||
+      status === "archived");
 
   const extraInfo = (() => {
     if (type === "WEBINAR" && startDate) {
@@ -103,8 +113,8 @@ function ProductCard({
       });
 
       return (
-        <span className="flex items-center gap-1 text-xs font-medium text-slate-800">
-          <CalendarDotsIcon weight="fill" />
+        <span className="flex items-center gap-1 text-xs font-medium text-slate-600">
+          <CalendarBlankIcon weight="fill" />
           {tanggal}, {jam}
         </span>
       );
@@ -112,7 +122,7 @@ function ProductCard({
 
     if (type === "DIGITAL_PRODUCT" && contentType) {
       return (
-        <span className="flex items-center gap-1 text-xs font-medium text-slate-800">
+        <span className="flex items-center gap-1 text-xs font-medium text-slate-600">
           <FileIcon weight="fill" />
           {contentType}
         </span>
@@ -121,7 +131,7 @@ function ProductCard({
 
     if (type === "KELAS_ONLINE" && duration) {
       return (
-        <span className="flex items-center gap-1 text-xs font-medium text-slate-800">
+        <span className="flex items-center gap-1 text-xs font-medium text-slate-600">
           <ClockIcon weight="fill" />
           {duration}
         </span>
@@ -132,8 +142,8 @@ function ProductCard({
   })();
 
   return (
-    <Link href={`/${slug}/${productSlug}`} className="block">
-      <div className="group relative h-full transform-gpu cursor-pointer overflow-hidden rounded-xl border border-slate-300 bg-white px-4 py-4 transition-transform duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02]">
+    <Link href={`/${slug}/${productSlug}`} className="block h-full">
+      <div className="group relative h-full flex flex-col cursor-pointer overflow-hidden rounded-xl border border-slate-300 bg-white px-4 py-4 transition-all duration-300 hover:scale-[1.01] hover:-translate-y-0.5 hover:border-slate-400">
         {/* Thumbnail */}
         <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-slate-100">
           {/* Category overlay */}
@@ -161,7 +171,7 @@ function ProductCard({
         </div>
 
         {/* Info */}
-        <div className="flex flex-col justify-between space-y-1.5 pt-4">
+        <div className="flex-1 flex flex-col justify-between space-y-1.5 pt-4">
           <div>
             <p className="mb-2 line-clamp-2 text-sm leading-snug font-semibold text-slate-800">
               {name}
@@ -173,19 +183,26 @@ function ProductCard({
             {extraInfo && <p>{extraInfo}</p>}
           </div>
 
-          <div className="mt-2 flex items-center justify-between">
-            {isGratis ? (
-              <span className="text-sm font-medium text-green-600">Gratis</span>
-            ) : (
-              <span className="text-sm font-medium text-cyan-600">
-                Rp {Number(price).toLocaleString("id-ID")}
-              </span>
-            )}
-
-            {/* ICON BUTTON (kanan) */}
-            <div className="rounded-full bg-slate-200 p-1 text-slate-800">
-              <ArrowRightIcon className="h-4 w-4" />
+          <div className="mt-2 flex flex-col gap-2.5">
+            <div>
+              {isGratis ? (
+                <span className="text-md font-semibold text-green-600">Gratis</span>
+              ) : (
+                <span className="text-md font-semibold text-cyan-600">
+                  Rp {Number(price).toLocaleString("id-ID")}
+                </span>
+              )}
             </div>
+
+            {isWebinarCompleted ? (
+              <div className="w-full flex items-center justify-center gap-1.5 rounded-md bg-slate-200 py-2 px-4 text-sm font-semibold text-slate-500 transition-all duration-300">
+                <span>Sudah Selesai</span>
+              </div>
+            ) : (
+              <div className="w-full flex items-center justify-center gap-1.5 rounded-md bg-cyan-600 py-2 px-4 text-sm font-semibold text-white transition-all duration-300 shadow-sm hover:bg-cyan-700 hover:shadow-md">
+                <span>Beli Sekarang</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -201,6 +218,7 @@ export default function CatalogSlugPage() {
 
   const [activeTab, setActiveTab] = useState<TabFilter>("Semua");
   const [searchQuery, setSearchQuery] = useState(""); // State pencarian
+  const [sortBy, setSortBy] = useState<"terbaru" | "terlaris">("terbaru");
   const recordedCatalogIdRef = useRef<string | null>(null);
 
   const { data: session } = useSession();
@@ -225,11 +243,59 @@ export default function CatalogSlugPage() {
     });
   }, [data?.id, data?.creator.id, recordCatalogView, session?.user.id]);
 
-  // ── Loading ──
+  // ── Loading Skeleton ──
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <SpinnerIcon className="h-8 w-8 animate-spin text-blue-400" />
+      <div className="min-h-screen bg-slate-50 pb-16 animate-pulse">
+        {/* Banner skeleton */}
+        <div className="relative h-32 w-full overflow-hidden bg-slate-200 md:h-48" />
+
+        <div className="mx-auto max-w-6xl px-4">
+          {/* Profile skeleton */}
+          <div className="relative z-10 -mt-12 flex flex-col items-center text-center md:-mt-16">
+            <div className="h-24 w-24 rounded-full border-4 border-white bg-slate-200 shadow-md md:h-32 md:w-32" />
+            <div className="mt-3 h-5 w-40 rounded-full bg-slate-200" />
+            <div className="mt-2 h-3.5 w-64 rounded-full bg-slate-200" />
+            <div className="mt-4 flex items-center gap-6 rounded-full border border-slate-200 bg-white px-10 py-4 shadow-xs">
+              <div className="h-4 w-20 rounded-full bg-slate-200" />
+              <div className="h-4 w-px bg-slate-200" />
+              <div className="h-4 w-20 rounded-full bg-slate-200" />
+            </div>
+          </div>
+
+          <div className="mt-8 rounded-xl border border-slate-200 bg-white px-6 pt-8 pb-10 shadow-sm md:px-10">
+            {/* Search + filter skeleton */}
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="flex w-full items-center gap-3 md:w-auto">
+                <div className="h-10 w-full rounded-full bg-slate-200 md:w-80" />
+                <div className="h-10 w-10 shrink-0 rounded-full bg-slate-200" />
+              </div>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="h-10 w-20 rounded-full bg-slate-200" />
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-8 mb-4 h-5 w-32 rounded-full bg-slate-200" />
+
+            {/* Product grid skeleton */}
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div key={i} className="rounded-xl border border-slate-200 bg-white p-4">
+                  <div className="aspect-square w-full rounded-xl bg-slate-200" />
+                  <div className="mt-4 space-y-2">
+                    <div className="h-4 w-3/4 rounded-full bg-slate-200" />
+                    <div className="h-3 w-full rounded-full bg-slate-200" />
+                    <div className="h-3 w-2/3 rounded-full bg-slate-200" />
+                    <div className="mt-3 h-4 w-1/3 rounded-full bg-slate-200" />
+                    <div className="h-9 w-full rounded-md bg-slate-200" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -241,15 +307,6 @@ export default function CatalogSlugPage() {
 
   const { creator, products, bio } = data;
 
-  // ── Filter Logika (Tab + Search) ──
-  const filtered = products.filter((p) => {
-    const matchesTab = activeTab === "Semua" || TYPE_MAP[p.type] === activeTab;
-    const matchesSearch = p.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    return matchesTab && matchesSearch;
-  });
-
   const initials = creator.name
     ? creator.name
       .split(" ")
@@ -258,6 +315,43 @@ export default function CatalogSlugPage() {
       .toUpperCase()
       .slice(0, 2)
     : "??";
+
+  // ── Filter Logika (Tab + Search + Sort) ──
+  const filtered = products
+    .filter((p) => {
+      const matchesTab = activeTab === "Semua" || TYPE_MAP[p.type] === activeTab;
+      const matchesSearch = p.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      return matchesTab && matchesSearch;
+    })
+    .sort((a, b) => {
+      const isCompletedA =
+        a.type === "WEBINAR" &&
+        ((a.endDate && new Date() > new Date(a.endDate)) ||
+          a.status === "archived");
+      const isCompletedB =
+        b.type === "WEBINAR" &&
+        ((b.endDate && new Date() > new Date(b.endDate)) ||
+          b.status === "archived");
+
+      if (isCompletedA !== isCompletedB) {
+        return isCompletedA ? 1 : -1;
+      }
+
+      if (sortBy === "terbaru") {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+      if (sortBy === "terlaris") {
+        const salesA = (a as any)._count?.purchases ?? 0;
+        const salesB = (b as any)._count?.purchases ?? 0;
+        if (salesA !== salesB) {
+          return salesB - salesA;
+        }
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+      return 0;
+    });
 
   return (
     <div className="min-h-screen bg-slate-50 pb-16">
@@ -277,7 +371,7 @@ export default function CatalogSlugPage() {
 
       <div className="mx-auto max-w-6xl px-4">
         {/* ── Profile Section ── */}
-        <div className="relative z-10 -mt-12 flex flex-col items-center pb-6 text-center md:-mt-16">
+        <div className="relative z-10 -mt-12 flex flex-col items-center text-center md:-mt-16">
           <Avatar className="h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-white p-1 shadow-md md:h-32 md:w-32">
             <AvatarImage src={creator.image ?? ""} alt={creator.name ?? ""} />
             <AvatarFallback className="bg-yellow-200 text-2xl font-bold text-slate-800">
@@ -312,12 +406,50 @@ export default function CatalogSlugPage() {
 
         <div className="mt-8 rounded-xl border border-slate-200 bg-white px-10 pt-10 pb-12 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <SearchInput
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari produk..."
-              className="w-full rounded-full border border-slate-400 shadow-none md:w-104"
-            />
+            <div className="flex w-full items-center gap-3 md:w-auto">
+              <div className="w-full flex-1 md:w-104 md:flex-initial">
+                <SearchInput
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Cari produk..."
+                  className="w-full rounded-full border border-slate-400 !shadow-none"
+                />
+              </div>
+
+              {/* Popover Filter */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full border border-slate-400 bg-white text-slate-600 transition-all duration-200 ease-out hover:bg-slate-50 hover:text-slate-800 hover:translate-x-[1px] hover:translate-y-[1px] !shadow-none m-0 p-0 box-border">
+                    <Funnel className="h-5 w-5" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 p-2" align="end">
+                  <div className="flex flex-col gap-1">
+                    <p className="px-2.5 py-1.5 text-xs font-semibold text-slate-400">
+                      Urutkan Berdasarkan
+                    </p>
+                    <button
+                      onClick={() => setSortBy("terbaru")}
+                      className={cn(
+                        "w-full cursor-pointer rounded-lg px-2.5 py-2 text-left text-sm font-medium transition-all hover:bg-slate-100",
+                        sortBy === "terbaru" ? "bg-cyan-50 text-cyan-600" : "text-slate-700"
+                      )}
+                    >
+                      Terbaru
+                    </button>
+                    <button
+                      onClick={() => setSortBy("terlaris")}
+                      className={cn(
+                        "w-full cursor-pointer rounded-lg px-2.5 py-2 text-left text-sm font-medium transition-all hover:bg-slate-100",
+                        sortBy === "terlaris" ? "bg-cyan-50 text-cyan-600" : "text-slate-700"
+                      )}
+                    >
+                      Terlaris
+                    </button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
 
             <div className="flex flex-wrap gap-2">
               {TABS.map((tab) => {
@@ -328,8 +460,8 @@ export default function CatalogSlugPage() {
                     key={tab}
                     onClick={() => setActiveTab(tab)}
                     className={`h-10 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${isActive
-                        ? "border border-cyan-600 bg-cyan-600 text-white"
-                        : "border border-slate-400 bg-white text-slate-600 hover:bg-cyan-50"
+                      ? "border border-cyan-600 bg-cyan-600 text-white"
+                      : "border border-slate-400 bg-white text-slate-600 hover:bg-cyan-50"
                       } `}
                   >
                     {tab}
@@ -370,6 +502,8 @@ export default function CatalogSlugPage() {
                   startDate={product.startDate}
                   contentType={product.contentType}
                   duration={product.duration}
+                  endDate={product.endDate}
+                  status={product.status}
                 />
               ))}
             </div>

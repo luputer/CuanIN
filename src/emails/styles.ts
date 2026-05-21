@@ -99,3 +99,28 @@ export const footer = {
   margin: "0",
   textAlign: "center" as const,
 };
+
+export const notesBox = {
+  backgroundColor: "#ecfeff",
+  border: "1px solid #c5f2f7",
+  borderRadius: "8px",
+  margin: "20px 0",
+  padding: "16px",
+};
+
+export const notesTitle = {
+  color: "#0891b2",
+  fontSize: "14px",
+  fontWeight: "700",
+  lineHeight: "20px",
+  margin: "0 0 8px",
+};
+
+export const notesText = {
+  color: "#1e293b",
+  fontSize: "14px",
+  lineHeight: "22px",
+  margin: "0",
+  whiteSpace: "pre-wrap" as const,
+};
+

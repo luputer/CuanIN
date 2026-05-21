@@ -32,6 +32,7 @@ export const purchasesRouter = createTRPCRouter({
         buyerName: z.string().min(1, "Nama wajib diisi"),
         buyerEmail: z.string().email("Email tidak valid"),
         buyerPhone: z.string().min(1, "Nomor telepon wajib diisi"),
+        promoCode: z.string().optional(),
         answers: z
           .array(
             z.object({
@@ -83,10 +84,92 @@ export const purchasesRouter = createTRPCRouter({
         });
       }
 
-      const price = Number(product.price);
+      let finalPrice = Number(product.price);
+      let voucherId: string | undefined = undefined;
 
-      // Produk gratis → langsung completed + kredit ledger creator
-      if (price === 0) {
+      if (input.promoCode) {
+        const now = new Date();
+        const voucher = await ctx.db.voucher.findUnique({
+          where: { code: input.promoCode },
+          include: {
+            products: {
+              select: { id: true }
+            }
+          }
+        });
+
+        if (!voucher) {
+          throw new Error("Kode voucher tidak valid atau tidak ditemukan");
+        }
+
+        if (voucher.status !== "aktif") {
+          throw new Error("Voucher tidak aktif");
+        }
+
+        const adjustedStartDate = new Date(voucher.startDate);
+        adjustedStartDate.setUTCHours(0, 0, 0, 0);
+
+        const adjustedEndDate = new Date(voucher.endDate);
+        adjustedEndDate.setUTCHours(23, 59, 59, 999);
+
+        if (now < adjustedStartDate || now > adjustedEndDate) {
+          throw new Error("Voucher sudah kedaluwarsa atau belum berlaku");
+        }
+
+        if (voucher.usageType === "SELECTED_PRODUCTS") {
+          const isLinked = voucher.products.some(p => p.id === product.id);
+          if (!isLinked) {
+            throw new Error("Voucher tidak berlaku untuk produk ini");
+          }
+        }
+
+        if (voucher.usageLimit !== null && voucher.usageLimit !== undefined) {
+          const usageCount = await ctx.db.purchase.count({
+            where: {
+              voucherId: voucher.id,
+              status: { in: ["completed", "pending"] },
+            },
+          });
+          if (usageCount >= voucher.usageLimit) {
+            throw new Error("Kuota penggunaan voucher ini sudah habis");
+          }
+        }
+
+        if (voucher.isLimitPerUser) {
+          if (!input.buyerEmail) {
+            throw new Error("Silakan isi form Email terlebih dahulu untuk memvalidasi voucher ini");
+          }
+
+          const userUsageCount = await ctx.db.purchase.count({
+            where: {
+              voucherId: voucher.id,
+              buyerEmail: {
+                equals: input.buyerEmail,
+                mode: "insensitive",
+              },
+              status: { in: ["completed", "pending"] },
+            },
+          });
+
+          if (userUsageCount > 0) {
+            throw new Error("Email ini sudah pernah menggunakan kode voucher ini");
+          }
+        }
+
+        const discountVal = Number(voucher.discount);
+        let discountAmount = 0;
+        if (voucher.type === "PERSEN") {
+          discountAmount = (finalPrice * discountVal) / 100;
+        } else {
+          discountAmount = discountVal;
+        }
+
+        finalPrice = Math.max(0, finalPrice - discountAmount);
+        voucherId = voucher.id;
+      }
+
+      // Produk gratis (atau menjadi gratis setelah diskon) → langsung completed + kredit ledger creator
+      if (finalPrice === 0) {
         const purchase = await ctx.db.$transaction(async (tx) => {
           const newPurchase = await tx.purchase.create({
             data: {
@@ -96,6 +179,7 @@ export const purchasesRouter = createTRPCRouter({
               buyerPhone: input.buyerPhone,
               amount: 0,
               status: "completed",
+              voucherId: voucherId,
             },
           });
 
@@ -149,8 +233,9 @@ export const purchasesRouter = createTRPCRouter({
             buyerName: input.buyerName,
             buyerEmail: input.buyerEmail,
             buyerPhone: input.buyerPhone,
-            amount: price,
+            amount: finalPrice,
             status: "pending",
+            voucherId: voucherId,
           },
         });
 

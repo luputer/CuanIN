@@ -200,7 +200,8 @@ exports.Prisma.PurchaseScalarFieldEnum = {
   xenditInvoiceId: 'xenditInvoiceId',
   xenditInvoiceUrl: 'xenditInvoiceUrl',
   paidAt: 'paidAt',
-  xenditPaymentMethod: 'xenditPaymentMethod'
+  xenditPaymentMethod: 'xenditPaymentMethod',
+  voucherId: 'voucherId'
 };
 
 exports.Prisma.FormAnswerScalarFieldEnum = {
@@ -315,6 +316,7 @@ exports.Prisma.VoucherScalarFieldEnum = {
   status: 'status',
   usageType: 'usageType',
   usageLimit: 'usageLimit',
+  isLimitPerUser: 'isLimitPerUser',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

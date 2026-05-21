@@ -112,6 +112,8 @@ model Purchase {
   xenditPaymentMethod String?
   answers             FormAnswer[]
   product             Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  voucherId           String?
+  voucher             Voucher?     @relation(fields: [voucherId], references: [id], onDelete: SetNull)
 
   @@index([xenditInvoiceId])
 }
@@ -313,9 +315,11 @@ model Voucher {
   status    String      @default("aktif") // aktif, nonaktif, expired
   usageType String      @default("ALL_PRODUCTS") // ALL_PRODUCTS, SELECTED_PRODUCTS, SINGLE_CHECKOUT
   usageLimit Int?
+  isLimitPerUser Boolean @default(false)
   userId    String
   user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   products  Product[]
+  purchases Purchase[]
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 

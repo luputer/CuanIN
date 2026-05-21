@@ -13,10 +13,11 @@ import { isBefore, startOfDay } from "date-fns";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
 import { FormInput, FormSelect, SectionHeader } from "~/components/ui/form-layout";
-import { DateRangePicker } from "~/components/ui/date-range-picker";
+import { DateRangeOnlyPicker } from "~/components/ui/date-range-only-picker";
 import { cn, formatNumberInput } from "~/lib/utils";
 import ButtonSave from "~/components/ui/button-save";
 import ButtonCancel from "~/components/ui/button-cancel";
+import type { DateRange } from "react-day-picker";
 
 const Label = ({ children }: { children: React.ReactNode }) => (
     <div className="w-full text-slate-500 text-sm font-medium leading-6 mb-1">{children}</div>
@@ -54,9 +55,10 @@ export default function VoucherCreatePage() {
     const [startDate, setStartDate] = useState<Date | undefined>();
     const [endDate, setEndDate] = useState<Date | undefined>();
     const [status, setStatus] = useState<"aktif" | "nonaktif" | "expired">("aktif");
-    const [usageType, setUsageType] = useState<"ALL_PRODUCTS" | "SELECTED_PRODUCTS" | "SINGLE_CHECKOUT">("ALL_PRODUCTS");
+    const [usageType, setUsageType] = useState<"ALL_PRODUCTS" | "SELECTED_PRODUCTS">("ALL_PRODUCTS");
     const [usageLimit, setUsageLimit] = useState<number | undefined>();
     const [isLimitEnabled, setIsLimitEnabled] = useState(false);
+    const [isLimitPerUser, setIsLimitPerUser] = useState(false);
 
     // Multi-selected products list state
     const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
@@ -105,6 +107,7 @@ export default function VoucherCreatePage() {
             status,
             usageType,
             usageLimit: isLimitEnabled ? usageLimit : null,
+            isLimitPerUser,
             productIds: usageType === "SELECTED_PRODUCTS" ? selectedProductIds : [],
         });
     };
@@ -225,18 +228,6 @@ export default function VoucherCreatePage() {
                                             />
                                             <span className={cn("text-base transition-colors", usageType === "SELECTED_PRODUCTS" ? "font-medium text-cyan-600" : "font-normal text-slate-700")}>Terapkan ke Produk Pilihan</span>
                                         </label>
-
-                                        <label className="flex items-center gap-2 cursor-pointer">
-                                            <input
-                                                type="radio"
-                                                name="usageType"
-                                                value="SINGLE_CHECKOUT"
-                                                checked={usageType === "SINGLE_CHECKOUT"}
-                                                onChange={() => setUsageType("SINGLE_CHECKOUT")}
-                                                className="w-4 h-4 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 border-slate-300"
-                                            />
-                                            <span className={cn("text-base transition-colors", usageType === "SINGLE_CHECKOUT" ? "font-medium text-cyan-600" : "font-normal text-slate-700")}>Terapkan hanya untuk 1x Checkout</span>
-                                        </label>
                                     </div>
 
                                     {usageType === "SELECTED_PRODUCTS" && (
@@ -293,7 +284,7 @@ export default function VoucherCreatePage() {
                                 {/* Periode Berlaku */}
                                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                                     <p className="text-slate-700 text-sm font-semibold mb-3">Periode Berlaku</p>
-                                    <DateRangePicker
+                                    <DateRangeOnlyPicker
                                         startDate={startDate}
                                         endDate={endDate}
                                         onChange={({ startDate, endDate }) => {
@@ -310,53 +301,68 @@ export default function VoucherCreatePage() {
 
                                 {/* Batasan */}
                                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                    <p className="text-slate-700 text-sm font-semibold mb-3">Batasan</p>
-                                    <div className="space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <label className="text-sm font-medium text-slate-700">Batasi Jumlah Voucher</label>
-                                            <label className="relative inline-flex items-center cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    className="sr-only peer"
-                                                    checked={isLimitEnabled}
-                                                    onChange={() => {
-                                                        if (isLimitEnabled) {
-                                                            setUsageLimit(undefined);
-                                                        } else {
-                                                            setUsageLimit(10);
-                                                        }
-                                                        setIsLimitEnabled(!isLimitEnabled);
-                                                    }}
-                                                />
-                                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
-                                            </label>
-                                        </div>
+                                     <p className="text-slate-700 text-sm font-semibold mb-3">Batasan</p>
+                                     <div className="space-y-4">
+                                         <div className="space-y-2">
+                                             <div className="flex items-center justify-between">
+                                                 <label className="text-sm font-medium text-slate-700">Batasi Jumlah Voucher</label>
+                                                 <label className="relative inline-flex items-center cursor-pointer">
+                                                     <input
+                                                         type="checkbox"
+                                                         className="sr-only peer"
+                                                         checked={isLimitEnabled}
+                                                         onChange={() => {
+                                                             if (isLimitEnabled) {
+                                                                 setUsageLimit(undefined);
+                                                             } else {
+                                                                 setUsageLimit(10);
+                                                             }
+                                                             setIsLimitEnabled(!isLimitEnabled);
+                                                         }}
+                                                     />
+                                                     <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                                 </label>
+                                             </div>
 
-                                        {isLimitEnabled && (
-                                            <div className="animate-in fade-in slide-in-from-top-2 duration-200">
-                                                <FormInput
-                                                    type="text"
-                                                    inputMode="numeric"
-                                                    value={usageLimit ?? ""}
-                                                    onChange={(event) => {
-                                                        const val = event.target.value.replace(/[^0-9]/g, "");
-                                                        setUsageLimit(val ? Number(val) : undefined);
-                                                    }}
-                                                    placeholder="Masukkan batas kuota voucher"
-                                                    suffix={
-                                                        <div className="flex flex-col">
-                                                            <button type="button" onClick={() => setUsageLimit((prev) => (prev ?? 0) + 1)} className="cursor-pointer">
-                                                                <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
-                                                            </button>
-                                                            <button type="button" onClick={() => setUsageLimit((prev) => Math.max(1, (prev ?? 0) - 1))} className="cursor-pointer">
-                                                                <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
-                                                            </button>
-                                                        </div>
-                                                    }
-                                                />
-                                            </div>
-                                        )}
-                                    </div>
+                                             {isLimitEnabled && (
+                                                 <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+                                                     <FormInput
+                                                         type="text"
+                                                         inputMode="numeric"
+                                                         value={usageLimit ?? ""}
+                                                         onChange={(event) => {
+                                                             const val = event.target.value.replace(/[^0-9]/g, "");
+                                                             setUsageLimit(val ? Number(val) : undefined);
+                                                         }}
+                                                         placeholder="Masukkan batas kuota voucher"
+                                                         suffix={
+                                                             <div className="flex flex-col">
+                                                                 <button type="button" onClick={() => setUsageLimit((prev) => (prev ?? 0) + 1)} className="cursor-pointer">
+                                                                     <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                                 </button>
+                                                                 <button type="button" onClick={() => setUsageLimit((prev) => Math.max(1, (prev ?? 0) - 1))} className="cursor-pointer">
+                                                                     <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                                 </button>
+                                                             </div>
+                                                         }
+                                                     />
+                                                 </div>
+                                             )}
+                                         </div>
+
+                                         <div className="flex items-center justify-between border-t border-slate-200 pt-3">
+                                             <label className="text-sm font-medium text-slate-700">Batasi 1x per Pembeli (Email)</label>
+                                             <label className="relative inline-flex items-center cursor-pointer">
+                                                 <input
+                                                     type="checkbox"
+                                                     className="sr-only peer"
+                                                     checked={isLimitPerUser}
+                                                     onChange={() => setIsLimitPerUser(!isLimitPerUser)}
+                                                 />
+                                                 <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                             </label>
+                                         </div>
+                                     </div>
                                 </div>
                             </div>
                         </div>

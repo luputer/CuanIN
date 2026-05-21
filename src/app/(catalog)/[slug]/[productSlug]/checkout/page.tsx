@@ -1,6 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
 
 import {
   ArrowLeftIcon,
@@ -9,6 +8,7 @@ import {
   CheckCircleIcon,
   SealPercentIcon,
   WarningCircleIcon,
+  ImagesIcon,
 } from "@phosphor-icons/react";
 
 import Link from "next/link";
@@ -39,11 +39,22 @@ type CheckoutFormValues = {
   custom?: Record<string, string>;
 };
 
+type AppliedVoucher = {
+  id: string;
+  code: string;
+  name: string;
+  type: "PERSEN" | "NOMINAL";
+  discount: number;
+};
+
 export default function CheckoutPage() {
   const params = useParams();
   const router = useRouter();
   const { data: session, status } = useSession();
   const [isGoogleLoading, setIsGoogleLoading] = React.useState(false);
+  const [appliedVoucher, setAppliedVoucher] = React.useState<AppliedVoucher | null>(null);
+  const [isValidatingVoucher, setIsValidatingVoucher] = React.useState(false);
+  const [voucherError, setVoucherError] = React.useState<string | null>(null);
 
   const slug = params.slug as string;
   const productSlug = params.productSlug as string;
@@ -53,14 +64,28 @@ export default function CheckoutPage() {
     productSlug,
   });
 
+  const apiUtils = api.useUtils();
+
   const formFields = React.useMemo(() => {
     return (product as { formFields?: FormFieldData[] })?.formFields ?? [];
   }, [product]);
 
   const price = Number(product?.price ?? 0);
-  const isGratis = price === 0;
+
+  // Hitung diskon dan harga akhir
+  const discountAmount = React.useMemo(() => {
+    if (!appliedVoucher) return 0;
+    if (appliedVoucher.type === "PERSEN") {
+      return Math.round((price * appliedVoucher.discount) / 100);
+    }
+    return appliedVoucher.discount;
+  }, [appliedVoucher, price]);
+
+  const finalPrice = Math.max(0, price - discountAmount);
+  const isGratis = finalPrice === 0;
   const isBuyingOwnProduct =
     status === "authenticated" && session.user.id === product?.userId;
+
 
   const CATEGORY_STYLE: Record<string, string> = {
     WEBINAR: "bg-cyan-100 text-cyan-700 border-cyan-200",
@@ -106,6 +131,12 @@ export default function CheckoutPage() {
     setValue,
     formState: { errors },
   } = form;
+
+  const promoWatchValue = form.watch("promo");
+  React.useEffect(() => {
+    if (voucherError) setVoucherError(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [promoWatchValue]);
 
   React.useEffect(() => {
     if (status !== "authenticated") return;
@@ -163,6 +194,40 @@ export default function CheckoutPage() {
     onError: (e) => toast.error(e.message),
   });
 
+  const handleApplyVoucher = async () => {
+    const promoValue = form.getValues("promo");
+    if (!promoValue?.trim()) {
+      setVoucherError("Silakan masukkan kode voucher terlebih dahulu");
+      return;
+    }
+    if (!product) return;
+
+    setVoucherError(null);
+    setIsValidatingVoucher(true);
+    try {
+      const data = await apiUtils.vouchers.validatePromoCode.fetch({
+        code: promoValue.trim(),
+        productId: product.id,
+        buyerEmail: form.getValues("email"),
+      });
+      setAppliedVoucher(data as AppliedVoucher);
+      setVoucherError(null);
+      toast.success(`Voucher "${data.name}" berhasil diterapkan!`);
+    } catch (err: unknown) {
+      setAppliedVoucher(null);
+      const message = err instanceof Error ? err.message : "Kode voucher tidak valid";
+      setVoucherError(message);
+    } finally {
+      setIsValidatingVoucher(false);
+    }
+  };
+
+  const handleRemoveVoucher = () => {
+    setAppliedVoucher(null);
+    setVoucherError(null);
+    form.setValue("promo", "");
+  };
+
   const onSubmit = (data: CheckoutFormValues) => {
     if (isBuyingOwnProduct) {
       toast.error("Kamu tidak bisa membeli produk milik sendiri.");
@@ -179,22 +244,104 @@ export default function CheckoutPage() {
       buyerName: data.name,
       buyerEmail: data.email,
       buyerPhone: data.phone,
+      promoCode: appliedVoucher ? data.promo : undefined,
       answers,
     });
   };
 
   const inputClass = (err?: boolean) =>
     `w-full px-4 py-2.5 rounded-xl border transition bg-white
-        ${
-          err
-            ? "border-red-400 focus:border-red-500 bg-red-50"
-            : "border-slate-300 focus:border-cyan-600 focus:ring-1 focus:ring-cyan-100"
-        }`;
+        ${err
+      ? "border-red-400 focus:border-red-500 bg-red-50"
+      : "border-slate-300 focus:border-cyan-600 focus:ring-1 focus:ring-cyan-100"
+    }`;
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <SpinnerIcon className="h-8 w-8 animate-spin text-cyan-600" />
+      <div className="min-h-screen bg-slate-50 animate-pulse">
+        {/* Header skeleton */}
+        <div className="sticky top-0 z-10 border-b border-slate-200 bg-white">
+          <div className="mx-auto flex h-16 max-w-6xl items-center px-4">
+            <div className="h-10 w-10 rounded-full bg-slate-200" />
+          </div>
+        </div>
+
+        <div className="mx-auto max-w-6xl px-4 py-10">
+          <div className="mb-8 h-9 w-36 rounded-xl bg-slate-200" />
+
+          <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-5">
+            {/* LEFT: form area */}
+            <div className="space-y-6 lg:col-span-3">
+              {/* Product card skeleton */}
+              <div className="flex flex-col gap-5 rounded-xl border border-slate-200 bg-white p-5 sm:flex-row sm:items-start">
+                <div className="aspect-square w-full shrink-0 rounded-xl bg-slate-200 sm:w-40 md:w-44 lg:w-48" />
+                <div className="flex-1 space-y-3 pt-1">
+                  <div className="h-5 w-24 rounded-full bg-slate-200" />
+                  <div className="h-6 w-3/4 rounded-lg bg-slate-200" />
+                  <div className="h-4 w-full rounded-full bg-slate-200" />
+                  <div className="h-4 w-5/6 rounded-full bg-slate-200" />
+                  <div className="h-6 w-28 rounded-full bg-slate-200" />
+                </div>
+              </div>
+
+              {/* Form skeleton */}
+              <div className="rounded-xl border border-slate-200 bg-white p-6 space-y-5 shadow-sm">
+                <div className="h-6 w-36 rounded-full bg-slate-200" />
+                <div className="h-4 w-64 rounded-full bg-slate-200" />
+
+                {/* Google SSO button skeleton */}
+                <div className="h-11 w-full rounded-lg bg-slate-200" />
+
+                {/* Name field */}
+                <div className="flex flex-col gap-2">
+                  <div className="h-4 w-20 rounded-full bg-slate-200" />
+                  <div className="h-10 w-full rounded-xl bg-slate-200" />
+                </div>
+                {/* Email field */}
+                <div className="flex flex-col gap-2">
+                  <div className="h-4 w-20 rounded-full bg-slate-200" />
+                  <div className="h-10 w-full rounded-xl bg-slate-200" />
+                </div>
+                {/* Phone field */}
+                <div className="flex flex-col gap-2">
+                  <div className="h-4 w-20 rounded-full bg-slate-200" />
+                  <div className="h-10 w-full rounded-xl bg-slate-200" />
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT: summary sidebar */}
+            <div className="space-y-6 lg:col-span-2">
+              {/* Voucher input skeleton */}
+              <div className="rounded-xl border border-slate-200 bg-white p-5">
+                <div className="mb-3 h-4 w-28 rounded-full bg-slate-200" />
+                <div className="flex gap-3">
+                  <div className="h-11 flex-1 rounded-xl bg-slate-200" />
+                  <div className="h-11 w-20 rounded-xl bg-slate-200" />
+                </div>
+              </div>
+
+              {/* Payment summary skeleton */}
+              <div className="rounded-xl border border-slate-200 bg-white p-6">
+                <div className="mb-4 border-b border-slate-200 pb-3 h-5 w-36 rounded-full bg-slate-200" />
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <div className="h-4 w-16 rounded-full bg-slate-200" />
+                    <div className="h-4 w-24 rounded-full bg-slate-200" />
+                  </div>
+                  <div className="flex justify-between border-t border-slate-200 pt-2">
+                    <div className="h-5 w-12 rounded-full bg-slate-200" />
+                    <div className="h-5 w-28 rounded-full bg-slate-200" />
+                  </div>
+                </div>
+                <div className="mt-6 h-12 w-full rounded-xl bg-slate-200" />
+                <div className="mt-3 flex justify-center">
+                  <div className="h-4 w-32 rounded-full bg-slate-200" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -306,7 +453,7 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* HEADER */}
-      <div className="sticky top-0 z-10 border-b border-slate-300 bg-white">
+      <div className="sticky top-0 z-10 border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-16 max-w-6xl items-center px-4">
           <Link
             href={`/${slug}/${productSlug}`}
@@ -324,8 +471,8 @@ export default function CheckoutPage() {
           {/* LEFT */}
           <div className="space-y-6 pb-50 lg:col-span-3">
             {/* PRODUCT CARD */}
-            <div className="flex flex-col gap-5 rounded-xl border border-slate-300 bg-white p-5 sm:flex-row">
-              <div className="relative aspect-square w-full shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:w-40 md:w-44 lg:w-48">
+            <div className="flex flex-col gap-5 rounded-xl border border-slate-300 bg-white p-5 sm:flex-row sm:items-start">
+              <div className="relative aspect-square w-full shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:w-40 md:w-44 lg:w-48 self-start">
                 {product.image ? (
                   <Image
                     src={product.image}
@@ -336,11 +483,11 @@ export default function CheckoutPage() {
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-slate-400">
-                    No Images
+                    <ImagesIcon className="h-12 w-12 text-slate-300" />
                   </div>
                 )}
               </div>
-              <div className="mt-1 flex h-full min-w-0 flex-col space-y-2">
+              <div className="mt-1 flex h-full min-w-0 flex-1 flex-col space-y-2">
                 <span
                   className={`w-fit rounded-full border px-3 py-1 text-xs ${CATEGORY_STYLE[product.type]}`}
                 >
@@ -349,22 +496,37 @@ export default function CheckoutPage() {
                 <h2 className="mb-4 text-lg font-bold break-words text-slate-800">
                   {product.name}
                 </h2>
-                <div className="mb-2 space-y-1">
-                  {(product.benefit as string[])?.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="flex gap-3 text-sm text-slate-800"
-                    >
-                      <CheckCircleIcon
-                        className="h-5 w-5 shrink-0 text-green-600"
-                        weight="fill"
-                      />
-                      <span className="min-w-0 break-words">{item}</span>
+
+                {((product.benefit as string[])?.length ?? 0) > 0 && (
+                  <div className="mb-2 rounded-xl border border-cyan-100 bg-cyan-50 p-4">
+                    <div className="mb-3 text-sm font-semibold text-cyan-600">
+                      Yang akan Kamu dapatkan:
                     </div>
-                  ))}
-                </div>
-                <div className="mt-2 text-lg font-bold text-cyan-600">
-                  {isGratis ? "Gratis" : `Rp ${price.toLocaleString("id-ID")}`}
+                    <div className="space-y-3">
+                      {(product.benefit as string[]).map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-start gap-2.5 text-sm text-slate-700"
+                        >
+                          <CheckCircleIcon
+                            className="h-5 w-5 shrink-0 text-cyan-600 mt-0.5"
+                            weight="fill"
+                          />
+                          <span className="min-w-0 wrap-break-word leading-relaxed">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-4">
+                  {isGratis ? (
+                    <div className="text-xl font-semibold text-green-600">Gratis</div>
+                  ) : (
+                    <div className="text-xl font-bold text-cyan-600">
+                      Rp {price.toLocaleString("id-ID")}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -515,23 +677,63 @@ export default function CheckoutPage() {
           <div className="space-y-6 lg:sticky lg:top-24 lg:col-span-2 lg:h-fit lg:self-start">
             {/* VOUCHER */}
             <div className="rounded-xl border border-slate-300 bg-white p-5">
-              <label className="text-sm text-slate-700">Voucher</label>
-              <div className="mt-2 flex gap-3">
-                <div className="relative flex-1">
-                  <SealPercentIcon
-                    className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-yellow-400"
-                    weight="fill"
-                  />
-                  <input
-                    {...register("promo")}
-                    className="w-full rounded-xl border border-slate-300 py-2.5 pr-4 pl-10 focus:border-cyan-600 focus:ring-1 focus:ring-cyan-100"
-                    placeholder="Masukkan kode voucher"
-                  />
+              <label className="text-sm font-medium text-slate-700">Kode Voucher</label>
+              {appliedVoucher ? (
+                <div className="mt-2 flex items-center justify-between rounded-xl border border-green-200 bg-green-50 px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <SealPercentIcon className="h-4 w-4 text-green-500" weight="fill" />
+                    <div>
+                      <div className="text-sm font-semibold text-green-700">{appliedVoucher.code}</div>
+                      <div className="text-xs text-green-600">{appliedVoucher.name}</div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveVoucher}
+                    className="cursor-pointer text-xs font-medium text-red-500 hover:text-red-600 hover:underline"
+                  >
+                    Hapus
+                  </button>
                 </div>
-                <button className="cursor-pointer rounded-xl bg-yellow-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-yellow-600">
-                  Pakai
-                </button>
-              </div>
+              ) : (
+                <div className="mt-2 space-y-1.5">
+                  <div className="flex gap-3">
+                    <div className="relative flex-1">
+                      <SealPercentIcon
+                        className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-yellow-400"
+                        weight="fill"
+                      />
+                      <input
+                        {...register("promo")}
+                        className={`w-full rounded-xl border py-2.5 pr-4 pl-10 focus:ring-1 ${
+                          voucherError
+                            ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+                            : "border-slate-300 focus:border-cyan-600 focus:ring-cyan-100"
+                        }`}
+                        placeholder="Masukkan kode voucher"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleApplyVoucher}
+                      disabled={isValidatingVoucher}
+                      className="cursor-pointer rounded-xl bg-yellow-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {isValidatingVoucher ? (
+                        <SpinnerIcon className="h-4 w-4 animate-spin" />
+                      ) : (
+                        "Pakai"
+                      )}
+                    </button>
+                  </div>
+                  {voucherError && (
+                    <p className="flex items-center gap-1 text-xs text-red-500">
+                      <WarningCircleIcon className="h-3.5 w-3.5 shrink-0" weight="fill" />
+                      {voucherError}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* SUMMARY */}
@@ -559,23 +761,52 @@ export default function CheckoutPage() {
                   </div>
                 </div>
               )}
-              <div className="flex justify-between text-sm">
-                <span>Total</span>
-                <span className="font-bold text-cyan-600">
-                  {isGratis ? "Rp0" : `Rp ${price.toLocaleString("id-ID")}`}
-                </span>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-600">Harga</span>
+                  {price === 0 ? (
+                    <span className="font-semibold text-green-600">Gratis</span>
+                  ) : (
+                    <span className="font-medium text-slate-700">
+                      Rp {price.toLocaleString("id-ID")}
+                    </span>
+                  )}
+                </div>
+
+                {appliedVoucher && discountAmount > 0 && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-600">Diskon Voucher</span>
+                    <span className="font-semibold text-green-600">
+                      - Rp {discountAmount.toLocaleString("id-ID")}
+                      {appliedVoucher.type === "PERSEN" && ` (${appliedVoucher.discount}%)`}
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center border-t border-slate-200 pt-2">
+                  <span className="font-semibold text-slate-800">Total</span>
+                  {isGratis ? (
+                    <span className="font-bold text-green-600">Gratis</span>
+                  ) : (
+                    <span className="font-bold text-cyan-600">
+                      Rp {finalPrice.toLocaleString("id-ID")}
+                    </span>
+                  )}
+                </div>
               </div>
               <button
                 type="submit"
                 form="checkout-form"
                 disabled={purchaseMutation.isPending || isBuyingOwnProduct}
-                className="mt-6 w-full rounded-xl bg-cyan-600 py-3 font-medium text-white hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-6 w-full cursor-pointer rounded-xl bg-cyan-600 py-3 text-lg font-semibold text-white shadow-sm hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {purchaseMutation.isPending
                   ? "Memproses..."
                   : isBuyingOwnProduct
                     ? "Tidak Bisa Beli Produk Sendiri"
-                    : "Bayar Sekarang"}
+                    : isGratis
+                      ? "Daftar Sekarang"
+                      : "Bayar Sekarang"}
               </button>
               <div className="mt-3 flex items-center justify-center gap-2 text-xs text-slate-500">
                 <ShieldCheckIcon className="h-4 w-4" />

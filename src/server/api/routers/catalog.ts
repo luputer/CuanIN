@@ -23,6 +23,15 @@ export const catalogRouter = createTRPCRouter({
                             products: {
                                 where: { status: "published" },
                                 orderBy: { createdAt: "desc" },
+                                include: {
+                                    _count: {
+                                        select: {
+                                            purchases: {
+                                                where: { status: "completed" },
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },

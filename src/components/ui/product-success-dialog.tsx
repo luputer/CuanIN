@@ -73,7 +73,7 @@ export function ProductSuccessDialog({
 
                 {/* DESCRIPTION */}
                 <AlertDialogDescription className="text-sm text-slate-500 leading-relaxed">
-                    <span className="text-slate-800 font-bold">"{productName}"</span> telah berhasil ditambahkan ke katalog Anda.
+                    <span className="text-slate-800 font-bold">&quot;{productName}&quot;</span> telah berhasil ditambahkan ke katalog Anda.
                 </AlertDialogDescription>
 
                 {/* BUTTONS */}

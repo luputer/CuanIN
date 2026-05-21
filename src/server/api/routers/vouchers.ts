@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { type Prisma } from "../../../../prisma/generated/prisma";
 
 export const vouchersRouter = createTRPCRouter({
@@ -72,8 +72,9 @@ export const vouchersRouter = createTRPCRouter({
                 startDate: z.string().min(1),
                 endDate: z.string().min(1),
                 status: z.enum(["aktif", "nonaktif", "expired"]),
-                usageType: z.enum(["ALL_PRODUCTS", "SELECTED_PRODUCTS", "SINGLE_CHECKOUT"]).optional(),
+                usageType: z.enum(["ALL_PRODUCTS", "SELECTED_PRODUCTS"]).optional(),
                 usageLimit: z.number().min(1).nullable().optional(),
+                isLimitPerUser: z.boolean().optional(),
                 productIds: z.array(z.string()).optional(),
             })
         )
@@ -89,6 +90,7 @@ export const vouchersRouter = createTRPCRouter({
                     status: input.status,
                     usageType: input.usageType || "ALL_PRODUCTS",
                     usageLimit: input.usageLimit,
+                    isLimitPerUser: input.isLimitPerUser || false,
                     userId: ctx.session.user.id,
                     products: input.productIds ? {
                         connect: input.productIds.map(id => ({ id }))
@@ -125,8 +127,9 @@ export const vouchersRouter = createTRPCRouter({
                 startDate: z.string().min(1),
                 endDate: z.string().min(1),
                 status: z.enum(["aktif", "nonaktif", "expired"]),
-                usageType: z.enum(["ALL_PRODUCTS", "SELECTED_PRODUCTS", "SINGLE_CHECKOUT"]).optional(),
+                usageType: z.enum(["ALL_PRODUCTS", "SELECTED_PRODUCTS"]).optional(),
                 usageLimit: z.number().min(1).nullable().optional(),
+                isLimitPerUser: z.boolean().optional(),
                 productIds: z.array(z.string()).optional(),
             })
         )
@@ -151,6 +154,7 @@ export const vouchersRouter = createTRPCRouter({
                     status: input.status,
                     ...(input.usageType && { usageType: input.usageType }),
                     ...(input.usageLimit !== undefined && { usageLimit: input.usageLimit }),
+                    isLimitPerUser: input.isLimitPerUser ?? voucher.isLimitPerUser,
                     products: input.productIds ? {
                         set: input.productIds.map(id => ({ id }))
                     } : undefined,
@@ -176,5 +180,94 @@ export const vouchersRouter = createTRPCRouter({
             });
 
             return { success: true };
+        }),
+
+    validatePromoCode: publicProcedure
+        .input(
+            z.object({
+                code: z.string().min(1, "Kode promo wajib diisi"),
+                productId: z.string().min(1, "Product ID wajib diisi"),
+                buyerEmail: z.string().optional(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const { code, productId, buyerEmail } = input;
+            const now = new Date();
+
+            const voucher = await ctx.db.voucher.findUnique({
+                where: { code },
+                include: {
+                    products: {
+                        select: { id: true }
+                    }
+                }
+            });
+
+            if (!voucher) {
+                throw new Error("Kode voucher tidak valid atau tidak ditemukan");
+            }
+
+            if (voucher.status !== "aktif") {
+                throw new Error("Voucher tidak aktif");
+            }
+
+            const adjustedStartDate = new Date(voucher.startDate);
+            adjustedStartDate.setUTCHours(0, 0, 0, 0);
+
+            const adjustedEndDate = new Date(voucher.endDate);
+            adjustedEndDate.setUTCHours(23, 59, 59, 999);
+
+            if (now < adjustedStartDate || now > adjustedEndDate) {
+                throw new Error("Voucher sudah kedaluwarsa atau belum berlaku");
+            }
+
+            if (voucher.usageType === "SELECTED_PRODUCTS") {
+                const isLinked = voucher.products.some(p => p.id === productId);
+                if (!isLinked) {
+                    throw new Error("Voucher tidak berlaku untuk produk ini");
+                }
+            }
+
+            if (voucher.usageLimit !== null && voucher.usageLimit !== undefined) {
+                const usageCount = await ctx.db.purchase.count({
+                    where: {
+                        voucherId: voucher.id,
+                        status: { in: ["completed", "pending"] },
+                    },
+                });
+                if (usageCount >= voucher.usageLimit) {
+                    throw new Error("Kuota penggunaan voucher ini sudah habis");
+                }
+            }
+
+            if (voucher.isLimitPerUser) {
+                if (!buyerEmail) {
+                    throw new Error("Silakan isi form Email terlebih dahulu untuk memvalidasi voucher ini");
+                }
+
+                const userUsageCount = await ctx.db.purchase.count({
+                    where: {
+                        voucherId: voucher.id,
+                        buyerEmail: {
+                            equals: buyerEmail,
+                            mode: "insensitive",
+                        },
+                        status: { in: ["completed", "pending"] },
+                    },
+                });
+
+                if (userUsageCount > 0) {
+                    throw new Error("Email ini sudah pernah menggunakan kode voucher ini");
+                }
+            }
+
+            return {
+                id: voucher.id,
+                code: voucher.code,
+                name: voucher.name,
+                type: voucher.type,
+                discount: Number(voucher.discount),
+                isLimitPerUser: voucher.isLimitPerUser,
+            };
         }),
 });

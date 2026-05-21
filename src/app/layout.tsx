@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={poppins.variable}>
       <body className="font-sans">
-        <Toaster position="top-right" richColors />
+        <Toaster position="top-right" />
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>

@@ -89,6 +89,11 @@ html {
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Sonner Success Colors */
+  --success-bg: #ecfdf5;
+  --success-text: #047857;
+  --success-border: #10b981;
 }
 
 .dark {
@@ -123,6 +128,11 @@ html {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Sonner Success Colors (Dark) */
+  --success-bg: #022c22;
+  --success-text: #34d399;
+  --success-border: #059669;
 }
 
 @layer base {
@@ -134,10 +144,107 @@ html {
     @apply bg-background text-foreground;
   }
 }
+
+/* Neo-brutalist Sonner Toaster Overrides */
+[data-sonner-toast] {
+  border: 2px solid #0f172a !important;
+  box-shadow: 4px 4px 0px #0f172a !important;
+  border-radius: 12px !important;
+  font-family: var(--font-sans) !important;
+  font-weight: 600 !important;
+  padding: 16px !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+[data-sonner-toast]:hover {
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 5px 5px 0px #0f172a !important;
+}
+
+/* Success Toast (Neo-brutalist Neon Lime) */
+[data-sonner-toast][data-type="success"] {
+  background-color: #adfa1d !important;
+  color: #000000 !important;
+}
+
+[data-sonner-toast][data-type="success"] [data-icon] {
+  color: #000000 !important;
+}
+
+/* Error Toast (Neo-brutalist Coral Red) */
+[data-sonner-toast][data-type="error"] {
+  background-color: #ff6b6b !important;
+  color: #000000 !important;
+}
+
+[data-sonner-toast][data-type="error"] [data-icon] {
+  color: #000000 !important;
+}
+
+/* Warning Toast (Neo-brutalist Bright Yellow) */
+[data-sonner-toast][data-type="warning"] {
+  background-color: #ffb800 !important;
+  color: #000000 !important;
+}
+
+[data-sonner-toast][data-type="warning"] [data-icon] {
+  color: #000000 !important;
+}
+
+/* Info Toast (Neo-brutalist Sky Blue) */
+[data-sonner-toast][data-type="info"] {
+  background-color: #38bdf8 !important;
+  color: #000000 !important;
+}
+
+[data-sonner-toast][data-type="info"] [data-icon] {
+  color: #000000 !important;
+}
+
+/* Dark Mode Overrides for Neo-brutalism */
+.dark [data-sonner-toast] {
+  border: 2px solid #ffffff !important;
+  box-shadow: 4px 4px 0px #ffffff !important;
+  color: #ffffff !important;
+  background-color: #0f172a !important;
+}
+
+.dark [data-sonner-toast]:hover {
+  box-shadow: 5px 5px 0px #ffffff !important;
+}
+
+.dark [data-sonner-toast][data-type="success"] {
+  background-color: #adfa1d !important;
+  color: #000000 !important;
+}
+
+.dark [data-sonner-toast][data-type="success"] [data-icon] {
+  color: #000000 !important;
+}
+
+.dark [data-sonner-toast][data-type="error"] {
+  background-color: #ff6b6b !important;
+  color: #000000 !important;
+}
+
+.dark [data-sonner-toast][data-type="warning"] {
+  background-color: #ffb800 !important;
+  color: #000000 !important;
+}
+
+.dark [data-sonner-toast][data-type="info"] {
+  background-color: #38bdf8 !important;
+  color: #000000 !important;
+}
+
+
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;

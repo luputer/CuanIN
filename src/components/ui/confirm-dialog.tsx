@@ -39,40 +39,44 @@ export default function ConfirmDialog({
     description,
 
     cancelText = "Batal",
-    cancelClassName = "border-slate-300 text-slate-600 hover:bg-slate-100",
+    cancelClassName = "bg-white hover:bg-slate-50 text-slate-900",
     confirmText = "Lanjutkan",
-    confirmClassName = "bg-slate-900 hover:bg-slate-800 text-white",
+    confirmClassName = "bg-red-500 hover:bg-red-600 text-white",
 
     loading = false,
     onConfirm,
 }: Props) {
-    const baseBtnStyle = "inline-flex items-center justify-center px-4 h-9 text-sm font-medium transition-all active:translate-y-[1px] disabled:opacity-50 disabled:pointer-events-none border"
+    const baseBtnStyle = "inline-flex items-center justify-center px-4 h-10 text-sm font-bold transition-all hover:-translate-x-[2px] hover:-translate-y-[2px] active:translate-x-[0px] active:translate-y-[0px] disabled:opacity-50 disabled:pointer-events-none border-2 border-slate-900 dark:border-white shadow-[3px_3px_0px_#0f172a] hover:shadow-[5px_5px_0px_#0f172a] active:shadow-[0px_0px_0px_#0f172a] dark:shadow-white dark:hover:shadow-[5px_5px_0px_#ffffff] dark:active:shadow-none"
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
-            <AlertDialogContent className="text-center sm:max-w-md rounded-xl">
+            <AlertDialogContent className="sm:max-w-md rounded-xl border-2 border-slate-900 shadow-[6px_6px_0px_#0f172a] p-6 bg-white dark:bg-slate-950 dark:border-white dark:shadow-[6px_6px_0px_#ffffff] text-left gap-0">
 
-                {/* ICON (optional) */}
-                {icon && (
-                    <div className="flex justify-center mb-2">
-                        {icon}
+                <div className="flex gap-4 items-start">
+                    {/* ICON (optional) */}
+                    {icon && (
+                        <div className="flex-shrink-0 border-2 border-slate-900 dark:border-white rounded-xl overflow-hidden shadow-[2px_2px_0px_#0f172a] dark:shadow-white">
+                            {icon}
+                        </div>
+                    )}
+
+                    <div className="space-y-1.5 flex-1 min-w-0">
+                        {/* TITLE */}
+                        <AlertDialogTitle className="text-xl font-black text-slate-900 dark:text-white leading-tight">
+                            {title}
+                        </AlertDialogTitle>
+
+                        {/* DESCRIPTION */}
+                        {description && (
+                            <AlertDialogDescription className="text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
+                                {description}
+                            </AlertDialogDescription>
+                        )}
                     </div>
-                )}
-
-                {/* TITLE */}
-                <AlertDialogTitle className="text-lg font-semibold text-slate-900">
-                    {title}
-                </AlertDialogTitle>
-
-                {/* DESCRIPTION */}
-                {description && (
-                    <AlertDialogDescription className="text-sm text-slate-500 leading-relaxed">
-                        {description}
-                    </AlertDialogDescription>
-                )}
+                </div>
 
                 {/* BUTTONS */}
-                <AlertDialogFooter className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-center">
+                <AlertDialogFooter className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
 
                     <AlertDialogPrimitive.Cancel
                         className={cn(baseBtnStyle, "w-full sm:w-28 rounded-lg outline-none cursor-pointer", cancelClassName)}

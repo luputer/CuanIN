@@ -17,7 +17,6 @@ import { DateRangeOnlyPicker } from "~/components/ui/date-range-only-picker";
 import { cn, formatNumberInput } from "~/lib/utils";
 import ButtonSave from "~/components/ui/button-save";
 import ButtonCancel from "~/components/ui/button-cancel";
-import type { DateRange } from "react-day-picker";
 
 const Label = ({ children }: { children: React.ReactNode }) => (
     <div className="w-full text-slate-500 text-sm font-medium leading-6 mb-1">{children}</div>

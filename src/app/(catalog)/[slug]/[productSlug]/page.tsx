@@ -444,7 +444,7 @@ export default function ProductDetailPage() {
     try {
       await navigator.clipboard.writeText(shareUrl);
       toast.success("Link produk berhasil disalin!");
-    } catch (err) {
+    } catch {
       toast.error("Gagal menyalin link");
     }
   };

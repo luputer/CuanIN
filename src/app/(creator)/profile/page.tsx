@@ -4,10 +4,8 @@ import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-    SpinnerIcon,
     ArrowLeftIcon,
     PencilSimpleIcon,
-    ImageIcon,
     TrashIcon,
     PlusIcon,
     CircleNotchIcon
@@ -66,7 +64,6 @@ export default function ProfilePage() {
             }
             isInitializedRef.current = true;
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

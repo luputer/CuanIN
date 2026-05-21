@@ -135,7 +135,6 @@ export default function CheckoutPage() {
   const promoWatchValue = form.watch("promo");
   React.useEffect(() => {
     if (voucherError) setVoucherError(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [promoWatchValue]);
 
   React.useEffect(() => {

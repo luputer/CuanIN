@@ -135,13 +135,13 @@ export default function CatalogSetupPage() {
                         </div>
 
                         {showIndicator && (
-                            <p className={`text-sm ${slugAvailable === false ? "text-red-500" : "text-slate-400"}`}>
+                            <div className={`text-sm ${slugAvailable === false ? "text-red-500" : "text-slate-400"}`}>
                                 {isCheckingSlug
                                     ? "Mengecek ketersediaan..."
                                     : slugAvailable === false
                                         ? <div className="flex items-center gap-2 text-red-600"><XIcon className="w-3 h-3" weight="bold" /> Slug sudah dipakai orang lain, pilih nama lain.</div>
                                         : <div className="flex items-center gap-2 text-green-600"><CheckIcon className="w-3 h-3" weight="bold" /> Link tersedia</div>}
-                            </p>
+                            </div>
                         )}
                         {!showIndicator && (
                             <p className="text-xs text-slate-400">

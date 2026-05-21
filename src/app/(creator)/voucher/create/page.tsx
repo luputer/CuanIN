@@ -2,28 +2,21 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     ArrowLeftIcon,
     CaretDownIcon,
     CaretUpIcon,
     PlusIcon
 } from "@phosphor-icons/react";
-import { format, isBefore, startOfDay } from "date-fns";
-import { id as idLocale } from "date-fns/locale";
+import { isBefore, startOfDay } from "date-fns";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
-import { Button } from "~/components/ui/button";
 import { FormInput, FormSelect, SectionHeader } from "~/components/ui/form-layout";
 import { DateRangePicker } from "~/components/ui/date-range-picker";
-import { Calendar } from "~/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { cn, formatNumberInput } from "~/lib/utils";
 import ButtonSave from "~/components/ui/button-save";
 import ButtonCancel from "~/components/ui/button-cancel";
-import type { DateRange as DayPickerDateRange } from "react-day-picker";
-
-type DateRange = DayPickerDateRange;
 
 const Label = ({ children }: { children: React.ReactNode }) => (
     <div className="w-full text-slate-500 text-sm font-medium leading-6 mb-1">{children}</div>

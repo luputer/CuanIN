@@ -2,7 +2,6 @@
 
 import React from "react"
 import { useRouter } from "next/navigation"
-import { CheckCircle, Copy } from "lucide-react" // Alternatively use phosphor if preferred. Let's check phosphor-icons first
 import { CheckCircleIcon, CopyIcon } from "@phosphor-icons/react"
 import { toast } from "sonner"
 import { api } from "~/trpc/react"
@@ -73,7 +72,7 @@ export function ProductSuccessDialog({
 
                 {/* DESCRIPTION */}
                 <AlertDialogDescription className="text-sm text-slate-500 leading-relaxed">
-                    <span className="text-slate-800 font-bold">"{productName}"</span> telah berhasil ditambahkan ke katalog Anda.
+                    <span className="text-slate-800 font-bold">&quot;{productName}&quot;</span> telah berhasil ditambahkan ke katalog Anda.
                 </AlertDialogDescription>
 
                 {/* BUTTONS */}

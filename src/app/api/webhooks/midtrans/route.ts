@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
   // ─── VERIFY SIGNATURE ─────────────────────────────────────────────────────
   // Midtrans signature key format: order_id + status_code + gross_amount + server_key
-  const verifyString = order_id + status_code + gross_amount + env.MIDTRANS_SERVER_KEY;
+  const verifyString = order_id + status_code + gross_amount + (env.MIDTRANS_SERVER_KEY ?? "");
   const expectedSignature = crypto
     .createHash("sha512")
     .update(verifyString)

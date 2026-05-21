@@ -18,15 +18,10 @@ import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 import { FormInput, FormSelect, SectionHeader } from "~/components/ui/form-layout";
 import { DateRangePicker } from "~/components/ui/date-range-picker";
-import { Calendar } from "~/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import ConfirmDialog from "~/components/ui/confirm-dialog";
 import { Skeleton } from "~/components/ui/skeleton";
 import { cn, formatNumberInput } from "~/lib/utils";
 import ButtonSave from "~/components/ui/button-save";
-import type { DateRange as DayPickerDateRange } from "react-day-picker";
-
-type DateRange = DayPickerDateRange;
 
 const Label = ({ children }: { children: React.ReactNode }) => (
     <div className="w-full text-slate-500 text-sm font-medium leading-6 mb-1">{children}</div>

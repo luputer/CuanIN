@@ -21,18 +21,18 @@ model Post {
 model Profile {
   id        Int      @id @default(autoincrement())
   bio       String?
-  banner    String?
   userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  banner    String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Product {
   id               String        @id @default(uuid())
   name             String
-  shortDescription String?       @db.Text
-  description      String?       @db.Text
+  shortDescription String?
+  description      String?
   price            Decimal
   type             ProductType   @default(WEBINAR)
   startDate        DateTime?
@@ -43,20 +43,20 @@ model Product {
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
   image            String?
-  images           Json?
-  vouchers         Voucher[]
-  discountPrice    Decimal?
   slug             String?       @unique @default(cuid())
   benefit          Json?
   dateDeadline     DateTime?
-  contentType      String?
-  capacity         Int?
   duration         String?
-  notes            String?       @db.Text
+  notes            String?
+  images           Json?
+  discountPrice    Decimal?
+  capacity         Int?
+  contentType      String?
   formFields       FormField[]
   user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   views            ProductView[]
   purchases        Purchase[]
+  vouchers         Voucher[]     @relation("ProductToVoucher")
 }
 
 model ProductView {
@@ -110,10 +110,10 @@ model Purchase {
   xenditInvoiceUrl    String?
   paidAt              DateTime?
   xenditPaymentMethod String?
+  voucherId           String?
   answers             FormAnswer[]
   product             Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
-  voucherId           String?
-  voucher             Voucher?     @relation(fields: [voucherId], references: [id], onDelete: SetNull)
+  voucher             Voucher?     @relation(fields: [voucherId], references: [id])
 
   @@index([xenditInvoiceId])
 }
@@ -172,14 +172,14 @@ model User {
   updatedAt      DateTime       @updatedAt
   role           RoleType       @default(USER)
   accounts       Account[]
+  balanceEntries BalanceEntry[]
   catalog        Catalog?
   catalogViews   CatalogView[]
   products       Product[]
   profile        Profile?
   sessions       Session[]
-  withdrawals    Withdrawal[]
-  balanceEntries BalanceEntry[]
   vouchers       Voucher[]
+  withdrawals    Withdrawal[]
 }
 
 model VerificationToken {
@@ -240,6 +240,7 @@ model Withdrawal {
   failureMessage    String?
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
+  feeAmount         Decimal?
   user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -260,6 +261,28 @@ model BalanceEntry {
   @@index([userId])
   @@index([refId])
   @@index([userId, createdAt])
+}
+
+model Voucher {
+  id             String      @id @default(uuid())
+  code           String      @unique
+  type           VoucherType @default(PERSEN)
+  discount       Decimal
+  startDate      DateTime
+  endDate        DateTime
+  status         String      @default("aktif")
+  userId         String
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  name           String?
+  usageLimit     Int?
+  usageType      String      @default("ALL_PRODUCTS")
+  isLimitPerUser Boolean     @default(false)
+  purchases      Purchase[]
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products       Product[]   @relation("ProductToVoucher")
+
+  @@index([userId])
 }
 
 enum ProductType {
@@ -297,31 +320,10 @@ enum BalanceEntryType {
   WITHDRAWAL_REQUESTED
   WITHDRAWAL_FAILED
   WITHDRAWAL_REVERSED
+  WITHDRAWAL_FEE
 }
 
 enum VoucherType {
   PERSEN
   NOMINAL
-}
-
-model Voucher {
-  id        String      @id @default(uuid())
-  code      String      @unique
-  name      String?
-  type      VoucherType @default(PERSEN)
-  discount  Decimal
-  startDate DateTime
-  endDate   DateTime
-  status    String      @default("aktif") // aktif, nonaktif, expired
-  usageType String      @default("ALL_PRODUCTS") // ALL_PRODUCTS, SELECTED_PRODUCTS, SINGLE_CHECKOUT
-  usageLimit Int?
-  isLimitPerUser Boolean @default(false)
-  userId    String
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  products  Product[]
-  purchases Purchase[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-
-  @@index([userId])
 }

@@ -1,11 +1,10 @@
-"use client"
+"use client";
 
 import {
 	WalletIcon,
 	BasketIcon,
 	UsersIcon,
 	ChartLineUpIcon,
-	ArrowUpRightIcon,
 } from "@phosphor-icons/react";
 import {
 	XAxis,
@@ -19,128 +18,26 @@ import {
 	Area,
 	Cell,
 } from "recharts";
-
-type CardProps = {
-	title: string;
-	value: string;
-	icon: React.ReactNode;
-	iconColor?: string;
-	bgColor?: string;
-	showArrow?: boolean;
-	change?: number;
-};
-
-function Card({
-	title,
-	value,
-	icon,
-	iconColor,
-	bgColor,
-	showArrow,
-	change,
-}: CardProps) {
-	const isPositive = (change ?? 0) >= 0;
-
-	return (
-		<div className={`${bgColor ?? "bg-white"} gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col transition-transform hover:scale-101`}>
-
-			{/* TOP ROW: ICON & ARROW */}
-			<div className="flex justify-between items-start mb-3">
-				<div className={`rounded-full text-2xl ${iconColor}`}>
-					{icon}
-				</div>
-				{showArrow && (
-					<div className="flex items-center justify-center p-1.5 rounded-full bg-cyan-600 text-white cursor-pointer">
-						<ArrowUpRightIcon size={14} weight="bold" />
-					</div>
-				)}
-			</div>
-
-			{/* TITLE & VALUE */}
-			<div className="flex flex-col gap-1">
-				<p className="text-xs font-semibold text-slate-800">
-					{title}
-				</p>
-				<h2 className="text-lg font-semibold text-cyan-600">
-					{value}
-				</h2>
-			</div>
-
-			{/* INFO */}
-			<div className="mt-1 flex items-center justify-between font-regular text-xs text-slate-600">
-				<span>30 hari terakhir</span>
-				{change !== undefined && (
-					<span className={`px-2 py-1 rounded-full text-xs font-regular ${isPositive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-						{isPositive ? "+" : ""}{change.toFixed(1)}%
-					</span>
-				)}
-			</div>
-		</div>
-	);
-}
-
-/*
-function CardSkeleton() {
-	return (
-		<div className="bg-white gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col animate-pulse">
-			<div className="flex justify-between items-start mb-3">
-				<div className="w-8 h-8 rounded-full bg-slate-200" />
-			</div>
-			<div className="flex flex-col gap-2">
-				<div className="h-3 w-24 bg-slate-200 rounded" />
-				<div className="h-5 w-32 bg-slate-200 rounded" />
-			</div>
-			<div className="mt-1 flex items-center justify-between">
-				<div className="h-3 w-20 bg-slate-200 rounded" />
-				<div className="h-5 w-12 bg-slate-200 rounded-full" />
-			</div>
-		</div>
-	);
-}
-
-function ChartSkeleton({ height = 300 }: { height?: number }) {
-	return (
-		<div className="w-full bg-slate-100 rounded-lg animate-pulse" style={{ height }} />
-	);
-}
-*/
-
-const weeklyRevenue = [
-	{ day: "Senin", value: 400 },
-	{ day: "Selasa", value: 700 },
-	{ day: "Rabu", value: 500 },
-	{ day: "Kamis", value: 900 },
-	{ day: "Jumat", value: 1200 },
-	{ day: "Sabtu", value: 800 },
-	{ day: "Minggu", value: 1000 },
-];
-
-const categoryData = [
-	{ name: "Webinar", total: 40 },
-	{ name: "Kelas", total: 65 },
-	{ name: "Produk Digital", total: 30 },
-];
-
-const trafficData = [
-	{ day: "Senin", value: 200 },
-	{ day: "Selasa", value: 400 },
-	{ day: "Rabu", value: 350 },
-	{ day: "Kamis", value: 600 },
-	{ day: "Jumat", value: 750 },
-	{ day: "Sabtu", value: 500 },
-	{ day: "Minggu", value: 650 },
-];
-
-const buyerData = [
-	{ week: "Minggu 1", total: 50 },
-	{ week: "Minggu 2", total: 80 },
-	{ week: "Minggu 3", total: 65 },
-	{ week: "Minggu 4", total: 100 },
-];
+import { StatCard } from "~/components/admin/dashboard/stat-card";
+import { api } from "~/trpc/react";
+import { formatPrice } from "~/lib/utils";
+import Loading from "./loading";
 
 const CHART_COLORS = ["#FFF085", "#FFB86A"];
 
 export default function DashboardPage() {
+	const { data, isLoading, isError } = api.analytics.adminGetStats.useQuery();
+
+	if (isLoading) return <Loading />;
+
+	if (isError) {
+		return (
+			<div className="flex items-center justify-center h-64 text-red-500 text-sm">
+				Gagal memuat data dashboard. Silakan coba lagi.
+			</div>
+		);
+	}
+
 	return (
 		<div className="space-y-6">
 			{/* Header */}
@@ -155,38 +52,38 @@ export default function DashboardPage() {
 
 			{/* TOP CARDS */}
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-				<Card
+				<StatCard
 					title="Total Penghasilan"
-					value="Rp 125.400.000"
+					value={formatPrice(data?.totalIncome ?? 0)}
 					icon={<WalletIcon weight="fill" className="w-8 h-8" />}
 					iconColor="text-cyan-600"
 					bgColor="bg-cyan-50"
 					showArrow={true}
-					change={12.5}
+					change={data?.incomeChange}
 				/>
 
-				<Card
+				<StatCard
 					title="Total Produk"
-					value="1.240"
+					value={(data?.totalProducts ?? 0).toLocaleString("id-ID")}
 					icon={<BasketIcon weight="fill" className="w-8 h-8" />}
 					iconColor="text-yellow-500"
-					change={8.2}
+					change={data?.productsChange}
 				/>
 
-				<Card
+				<StatCard
 					title="Total Kreator"
-					value="450"
+					value={(data?.totalCreators ?? 0).toLocaleString("id-ID")}
 					icon={<UsersIcon weight="fill" className="w-8 h-8" />}
 					iconColor="text-orange-500"
-					change={5.3}
+					change={data?.creatorsChange}
 				/>
 
-				<Card
+				<StatCard
 					title="Total Pengunjung"
-					value="24.580"
-					icon={<ChartLineUpIcon weight="fill" className="w-8 h-8" color="currentColor" />}
+					value={(data?.totalVisitors ?? 0).toLocaleString("id-ID")}
+					icon={<ChartLineUpIcon weight="fill" className="w-8 h-8" />}
 					iconColor="text-green-500"
-					change={15.7}
+					change={data?.visitorsChange}
 				/>
 			</div>
 
@@ -195,7 +92,7 @@ export default function DashboardPage() {
 				<div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
 					<h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Pendapatan Mingguan</h2>
 					<ResponsiveContainer width="100%" height={300}>
-						<AreaChart data={weeklyRevenue}>
+						<AreaChart data={data?.weeklyRevenue ?? []}>
 							<defs>
 								<linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
 									<stop offset="0%" stopColor="#FDC700" stopOpacity={0.4} />
@@ -216,8 +113,11 @@ export default function DashboardPage() {
 								tickMargin={10}
 								width={60}
 								stroke="#A2F4FD"
+								tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
 							/>
-							<Tooltip />
+							<Tooltip
+								formatter={(value) => [formatPrice(Number(value) || 0), "Pendapatan"]}
+							/>
 
 							<Area
 								type="monotone"
@@ -235,7 +135,7 @@ export default function DashboardPage() {
 				<div className="lg:col-span-1 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
 					<h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Total per Kategori</h2>
 					<ResponsiveContainer width="100%" height={300}>
-						<BarChart data={categoryData} barCategoryGap="20%">
+						<BarChart data={data?.categoryData ?? []} barCategoryGap="20%">
 							<CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
 							<XAxis
 								dataKey="name"
@@ -252,7 +152,7 @@ export default function DashboardPage() {
 							<Tooltip />
 
 							<Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
-								{categoryData.map((_, index) => (
+								{(data?.categoryData ?? []).map((_, index) => (
 									<Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length] ?? "#FFF085"} />
 								))}
 							</Bar>
@@ -266,7 +166,7 @@ export default function DashboardPage() {
 				<div className="lg:col-span-1 xl:col-span-3 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
 					<h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Traffic Website</h2>
 					<ResponsiveContainer width="100%" height={300}>
-						<AreaChart data={trafficData}>
+						<AreaChart data={data?.trafficData ?? []}>
 							<defs>
 								<linearGradient id="trafficGradient" x1="0" y1="0" x2="0" y2="1">
 									<stop offset="0%" stopColor="#FDC700" stopOpacity={0.4} />
@@ -306,7 +206,7 @@ export default function DashboardPage() {
 				<div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
 					<h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Jumlah Kreator (Per Minggu)</h2>
 					<ResponsiveContainer width="100%" height={300}>
-						<BarChart data={buyerData} barCategoryGap="20%">
+						<BarChart data={data?.buyerData ?? []} barCategoryGap="20%">
 							<CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
 							<XAxis
 								dataKey="week"
@@ -323,7 +223,7 @@ export default function DashboardPage() {
 							<Tooltip />
 
 							<Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
-								{buyerData.map((_, index) => (
+								{(data?.buyerData ?? []).map((_, index) => (
 									<Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length] ?? "#FFF085"} />
 								))}
 							</Bar>
@@ -334,3 +234,4 @@ export default function DashboardPage() {
 		</div>
 	);
 }
+

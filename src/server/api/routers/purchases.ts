@@ -385,13 +385,13 @@ export const purchasesRouter = createTRPCRouter({
           },
           ...(fee > 0
             ? [
-                {
-                  id: "fee",
-                  name: "Biaya Layanan",
-                  price: fee,
-                  quantity: 1,
-                },
-              ]
+              {
+                id: "fee",
+                name: "Biaya Layanan",
+                price: fee,
+                quantity: 1,
+              },
+            ]
             : []),
         ],
         customerDetails: {

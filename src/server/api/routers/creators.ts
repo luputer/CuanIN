@@ -3,19 +3,50 @@ import bcrypt from "bcryptjs";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, adminProcedure } from "~/server/api/trpc";
 
+// ─── Schemas ────────────────────────────────────────────────────────────────
+
+const createCreatorSchema = z.object({
+  name: z.string().min(1),
+  email: z.string().email(),
+  phoneNumber: z.string().min(1),
+  password: z.string().min(6),
+  image: z.string().optional().nullable(),
+  banner: z.string().optional().nullable(),
+  bio: z.string().optional().nullable(),
+});
+
+const updateCreatorSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1),
+  email: z.string().email(),
+  phoneNumber: z.string().min(1),
+  password: z.string().min(6).optional(),
+  image: z.string().optional().nullable(),
+  banner: z.string().optional().nullable(),
+  bio: z.string().optional().nullable(),
+});
+
+const getProductsSchema = z.object({
+  creatorId: z.string(),
+  type: z.enum(["WEBINAR", "DIGITAL_PRODUCT", "KELAS_ONLINE"]).optional(),
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  search: z.string().optional(),
+  sortBy: z.enum(["name", "createdAt"]).optional().default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
+  priceType: z.enum(["ALL", "FREE", "PAID"]).optional().default("ALL"),
+  status: z.string().optional().default("ALL"),
+});
+
+// ─── Router ─────────────────────────────────────────────────────────────────
+
 export const creatorsRouter = createTRPCRouter({
   getAll: adminProcedure.query(async ({ ctx }) => {
     return ctx.db.user.findMany({
-      where: {
-        role: "CREATOR",
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+      where: { role: "CREATOR" },
+      orderBy: { createdAt: "desc" },
       include: {
-        _count: {
-          select: { products: true },
-        },
+        _count: { select: { products: true } },
       },
     });
   }),
@@ -25,38 +56,32 @@ export const creatorsRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const creator = await ctx.db.user.findUnique({
         where: { id: input.id },
-        include: {
-          profile: true,
-        },
+        include: { profile: true },
       });
 
-      if (creator?.role !== "CREATOR") {
+      if (!creator || creator.role !== "CREATOR") {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Kreator tidak ditemukan",
         });
       }
 
-      const totalProducts = await ctx.db.product.count({
-        where: { userId: input.id },
-      });
-
-      const totalUsers = await ctx.db.purchase.count({
-        where: {
-          product: { userId: input.id },
-          status: "completed",
-        },
-      });
-
-      const totalEarningsResult = await ctx.db.purchase.aggregate({
-        where: {
-          product: { userId: input.id },
-          status: "completed",
-        },
-        _sum: {
-          amount: true,
-        },
-      });
+      const [totalProducts, totalUsers, earningsResult] = await Promise.all([
+        ctx.db.product.count({ where: { userId: input.id } }),
+        ctx.db.purchase.count({
+          where: {
+            product: { userId: input.id },
+            status: "completed",
+          },
+        }),
+        ctx.db.purchase.aggregate({
+          where: {
+            product: { userId: input.id },
+            status: "completed",
+          },
+          _sum: { amount: true },
+        }),
+      ]);
 
       return {
         ...creator,
@@ -65,23 +90,13 @@ export const creatorsRouter = createTRPCRouter({
         metrics: {
           totalProducts,
           totalUsers,
-          totalEarnings: Number(totalEarningsResult._sum.amount ?? 0),
+          totalEarnings: Number(earningsResult._sum.amount ?? 0),
         },
       };
     }),
 
   create: adminProcedure
-    .input(
-      z.object({
-        name: z.string().min(1),
-        email: z.string().email(),
-        phoneNumber: z.string().min(1),
-        password: z.string().min(6),
-        image: z.string().optional().nullable(),
-        banner: z.string().optional().nullable(),
-        bio: z.string().optional().nullable(),
-      })
-    )
+    .input(createCreatorSchema)
     .mutation(async ({ ctx, input }) => {
       const existingUser = await ctx.db.user.findUnique({
         where: { email: input.email },
@@ -116,31 +131,19 @@ export const creatorsRouter = createTRPCRouter({
     }),
 
   update: adminProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        name: z.string().min(1),
-        email: z.string().email(),
-        phoneNumber: z.string().min(1),
-        password: z.string().min(6).optional(),
-        image: z.string().optional().nullable(),
-        banner: z.string().optional().nullable(),
-        bio: z.string().optional().nullable(),
-      })
-    )
+    .input(updateCreatorSchema)
     .mutation(async ({ ctx, input }) => {
       const creator = await ctx.db.user.findUnique({
         where: { id: input.id },
       });
 
-      if (creator?.role !== "CREATOR") {
+      if (!creator || creator.role !== "CREATOR") {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Kreator tidak ditemukan",
         });
       }
 
-      // Check if email is already taken by another user
       const existingUser = await ctx.db.user.findUnique({
         where: { email: input.email },
       });
@@ -188,7 +191,7 @@ export const creatorsRouter = createTRPCRouter({
         where: { id: input.id },
       });
 
-      if (creator?.role !== "CREATOR") {
+      if (!creator || creator.role !== "CREATOR") {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Kreator tidak ditemukan",
@@ -201,37 +204,17 @@ export const creatorsRouter = createTRPCRouter({
     }),
 
   getProducts: adminProcedure
-    .input(
-      z.object({
-        creatorId: z.string(),
-        type: z.enum(["WEBINAR", "DIGITAL_PRODUCT", "KELAS_ONLINE"]).optional(),
-        page: z.number().min(1).default(1),
-        limit: z.number().min(1).max(100).default(10),
-        search: z.string().optional(),
-        sortBy: z.enum(["name", "createdAt"]).optional().default("createdAt"),
-        sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
-        priceType: z.enum(["ALL", "FREE", "PAID"]).optional().default("ALL"),
-        status: z.string().optional().default("ALL"),
-      })
-    )
+    .input(getProductsSchema)
     .query(async ({ ctx, input }) => {
       const skip = (input.page - 1) * input.limit;
-
       const now = new Date();
-      const andClauses: any[] = [];
+      const andClauses: any[] = [{ userId: input.creatorId }];
 
-      andClauses.push({ userId: input.creatorId });
-
-      if (input.type) {
-        andClauses.push({ type: input.type });
-      }
-
+      if (input.type) andClauses.push({ type: input.type });
+      
       if (input.search) {
         andClauses.push({
-          name: {
-            contains: input.search,
-            mode: "insensitive" as const,
-          },
+          name: { contains: input.search, mode: "insensitive" as const },
         });
       }
 
@@ -274,9 +257,7 @@ export const creatorsRouter = createTRPCRouter({
       const [items, total] = await Promise.all([
         ctx.db.product.findMany({
           where,
-          orderBy: {
-            [input.sortBy]: input.sortOrder,
-          },
+          orderBy: { [input.sortBy]: input.sortOrder },
           skip,
           take: input.limit,
         }),
@@ -292,3 +273,4 @@ export const creatorsRouter = createTRPCRouter({
       };
     }),
 });
+

@@ -29,7 +29,7 @@ type CardProps = {
     iconColor?: string;
     bgColor?: string;
     showArrow?: boolean;
-    change?: number;
+    change?: number | null;
 };
 
 function Card({
@@ -41,7 +41,7 @@ function Card({
     showArrow,
     change,
 }: CardProps) {
-    const isPositive = (change ?? 0) >= 0;
+    const isPositive = change === null || (change ?? 0) >= 0;
 
     return (
         <div className={`${bgColor ?? "bg-white"} gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col transition-transform hover:scale-101`}>
@@ -73,7 +73,7 @@ function Card({
                 <span>30 hari terakhir</span>
                 {change !== undefined && (
                     <span className={`px-2 py-1 rounded-full text-xs font-regular ${isPositive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                        {isPositive ? "+" : ""}{change.toFixed(1)}%
+                        {change === null ? "Baru" : `${isPositive ? "+" : ""}${change.toFixed(1)}%`}
                     </span>
                 )}
             </div>

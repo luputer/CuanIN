@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createHash } from "node:crypto";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure, adminProcedure } from "../trpc";
 import { startOfDay, subDays, format, eachDayOfInterval } from "date-fns";
 
 const calculateChange = (current: number, previous: number) => {
@@ -475,6 +475,179 @@ export const analyticsRouter = createTRPCRouter({
       trafficData,
       buyerData,
       userName: ctx.session.user.name,
+    };
+  }),
+
+  adminGetStats: adminProcedure.query(async ({ ctx }) => {
+    const now = new Date();
+    const thirtyDaysAgo = subDays(now, 30);
+    const sixtyDaysAgo = subDays(now, 60);
+    const sevenDaysAgo = startOfDay(subDays(now, 6));
+
+    const [
+      totalIncomeStats,
+      current30DaysIncome,
+      prev30DaysIncome,
+      totalProducts,
+      current30DaysProducts,
+      prev30DaysProducts,
+      totalCreators,
+      current30DaysCreators,
+      prev30DaysCreators,
+      totalProductViews,
+      totalCatalogViews,
+      current30DaysProductViews,
+      current30DaysCatalogViews,
+      prev30DaysProductViews,
+      prev30DaysCatalogViews,
+      weeklyPurchases,
+      categoryStats,
+      weeklyProductViews,
+      weeklyCatalogViews,
+      newCreatorsWeekly,
+    ] = await Promise.all([
+      // 1. Income Stats
+      ctx.db.purchase.aggregate({
+        where: { status: "completed" },
+        _sum: { amount: true },
+      }),
+      ctx.db.purchase.aggregate({
+        where: { status: "completed", createdAt: { gte: thirtyDaysAgo } },
+        _sum: { amount: true },
+      }),
+      ctx.db.purchase.aggregate({
+        where: {
+          status: "completed",
+          createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo },
+        },
+        _sum: { amount: true },
+      }),
+
+      // 2. Product Stats
+      ctx.db.product.count(),
+      ctx.db.product.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+      ctx.db.product.count({
+        where: { createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } },
+      }),
+
+      // 3. Creator Stats
+      ctx.db.user.count({ where: { role: "CREATOR" } }),
+      ctx.db.user.count({
+        where: { role: "CREATOR", createdAt: { gte: thirtyDaysAgo } },
+      }),
+      ctx.db.user.count({
+        where: {
+          role: "CREATOR",
+          createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo },
+        },
+      }),
+
+      // 4. View Stats (Approximate Visitors)
+      ctx.db.productView.count(),
+      ctx.db.catalogView.count().catch(() => 0),
+      ctx.db.productView.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+      ctx.db.catalogView.count({ where: { createdAt: { gte: thirtyDaysAgo } } }).catch(() => 0),
+      ctx.db.productView.count({
+        where: { createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } },
+      }),
+      ctx.db.catalogView.count({
+        where: { createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } },
+      }).catch(() => 0),
+
+      // 5. Weekly Data for Charts
+      ctx.db.purchase.findMany({
+        where: { status: "completed", createdAt: { gte: sevenDaysAgo } },
+        select: { createdAt: true, amount: true },
+      }),
+
+      // 6. Category Stats
+      ctx.db.product.groupBy({
+        by: ["type"],
+        _count: { id: true },
+      }),
+
+      // 7. Weekly Traffic
+      ctx.db.productView.findMany({
+        where: { createdAt: { gte: sevenDaysAgo } },
+        select: { createdAt: true },
+      }),
+      ctx.db.catalogView.findMany({
+        where: { createdAt: { gte: sevenDaysAgo } },
+        select: { createdAt: true },
+      }).catch(() => []),
+
+      // 8. New Creators Weekly
+      ctx.db.user.findMany({
+        where: { role: "CREATOR", createdAt: { gte: subDays(now, 27) } },
+        select: { createdAt: true },
+      }),
+    ]);
+
+    // Format Data for Charts
+    const last7Days = eachDayOfInterval({ start: sevenDaysAgo, end: now });
+    const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+
+    const weeklyRevenue = last7Days.map((date) => {
+      const dayTotal = weeklyPurchases
+        .filter((p) => format(p.createdAt, "yyyy-MM-dd") === format(date, "yyyy-MM-dd"))
+        .reduce((sum, p) => sum + Number(p.amount), 0);
+      return { day: dayNames[date.getDay()], value: dayTotal };
+    });
+
+    const trafficData = last7Days.map((date) => {
+      const dayProductViews = weeklyProductViews.filter(
+        (v) => format(v.createdAt, "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
+      ).length;
+      const dayCatalogViews = weeklyCatalogViews.filter(
+        (v) => format(v.createdAt, "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
+      ).length;
+      return { day: dayNames[date.getDay()], value: dayProductViews + dayCatalogViews };
+    });
+
+    const categoryMap: Record<string, string> = {
+      WEBINAR: "Webinar",
+      KELAS_ONLINE: "Kelas",
+      DIGITAL_PRODUCT: "Produk Digital",
+    };
+    const formattedCategoryData = categoryStats.map((stat) => ({
+      name: categoryMap[stat.type] ?? stat.type,
+      total: stat._count.id,
+    }));
+
+    const creatorWeeks = [
+      { week: "Minggu 1", start: subDays(now, 27), end: subDays(now, 21) },
+      { week: "Minggu 2", start: subDays(now, 20), end: subDays(now, 14) },
+      { week: "Minggu 3", start: subDays(now, 13), end: subDays(now, 7) },
+      { week: "Minggu 4", start: subDays(now, 6), end: now },
+    ];
+    const buyerData = creatorWeeks.map(({ week, start, end }) => {
+      const count = newCreatorsWeekly.filter((u) => {
+        const time = u.createdAt.getTime();
+        return time >= start.getTime() && time <= end.getTime();
+      }).length;
+      return { week, total: count };
+    });
+
+    const totalVisitors = totalProductViews + totalCatalogViews;
+    const current30DaysVisitors = current30DaysProductViews + current30DaysCatalogViews;
+    const prev30DaysVisitors = prev30DaysProductViews + prev30DaysCatalogViews;
+
+    return {
+      totalIncome: Number(totalIncomeStats._sum.amount ?? 0),
+      totalProducts,
+      totalCreators,
+      totalVisitors,
+      incomeChange: calculateChange(
+        Number(current30DaysIncome._sum.amount ?? 0),
+        Number(prev30DaysIncome._sum.amount ?? 0)
+      ),
+      productsChange: calculateChange(current30DaysProducts, prev30DaysProducts),
+      creatorsChange: calculateChange(current30DaysCreators, prev30DaysCreators),
+      visitorsChange: calculateChange(current30DaysVisitors, prev30DaysVisitors),
+      weeklyRevenue,
+      categoryData: formattedCategoryData,
+      trafficData,
+      buyerData,
     };
   }),
 });

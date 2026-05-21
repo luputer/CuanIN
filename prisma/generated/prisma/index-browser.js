@@ -281,6 +281,7 @@ exports.Prisma.WithdrawalScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   amount: 'amount',
+  feeAmount: 'feeAmount',
   bankCode: 'bankCode',
   bankName: 'bankName',
   accountNumber: 'accountNumber',
@@ -380,6 +381,7 @@ exports.WithdrawalStatus = exports.$Enums.WithdrawalStatus = {
 exports.BalanceEntryType = exports.$Enums.BalanceEntryType = {
   PURCHASE_COMPLETED: 'PURCHASE_COMPLETED',
   WITHDRAWAL_REQUESTED: 'WITHDRAWAL_REQUESTED',
+  WITHDRAWAL_FEE: 'WITHDRAWAL_FEE',
   WITHDRAWAL_FAILED: 'WITHDRAWAL_FAILED',
   WITHDRAWAL_REVERSED: 'WITHDRAWAL_REVERSED'
 };

@@ -143,6 +143,7 @@ export type WithdrawalStatus = (typeof WithdrawalStatus)[keyof typeof Withdrawal
 export const BalanceEntryType: {
   PURCHASE_COMPLETED: 'PURCHASE_COMPLETED',
   WITHDRAWAL_REQUESTED: 'WITHDRAWAL_REQUESTED',
+  WITHDRAWAL_FEE: 'WITHDRAWAL_FEE',
   WITHDRAWAL_FAILED: 'WITHDRAWAL_FAILED',
   WITHDRAWAL_REVERSED: 'WITHDRAWAL_REVERSED'
 };
@@ -17581,16 +17582,19 @@ export namespace Prisma {
 
   export type WithdrawalAvgAggregateOutputType = {
     amount: Decimal | null
+    feeAmount: Decimal | null
   }
 
   export type WithdrawalSumAggregateOutputType = {
     amount: Decimal | null
+    feeAmount: Decimal | null
   }
 
   export type WithdrawalMinAggregateOutputType = {
     id: string | null
     userId: string | null
     amount: Decimal | null
+    feeAmount: Decimal | null
     bankCode: string | null
     bankName: string | null
     accountNumber: string | null
@@ -17609,6 +17613,7 @@ export namespace Prisma {
     id: string | null
     userId: string | null
     amount: Decimal | null
+    feeAmount: Decimal | null
     bankCode: string | null
     bankName: string | null
     accountNumber: string | null
@@ -17627,6 +17632,7 @@ export namespace Prisma {
     id: number
     userId: number
     amount: number
+    feeAmount: number
     bankCode: number
     bankName: number
     accountNumber: number
@@ -17645,16 +17651,19 @@ export namespace Prisma {
 
   export type WithdrawalAvgAggregateInputType = {
     amount?: true
+    feeAmount?: true
   }
 
   export type WithdrawalSumAggregateInputType = {
     amount?: true
+    feeAmount?: true
   }
 
   export type WithdrawalMinAggregateInputType = {
     id?: true
     userId?: true
     amount?: true
+    feeAmount?: true
     bankCode?: true
     bankName?: true
     accountNumber?: true
@@ -17673,6 +17682,7 @@ export namespace Prisma {
     id?: true
     userId?: true
     amount?: true
+    feeAmount?: true
     bankCode?: true
     bankName?: true
     accountNumber?: true
@@ -17691,6 +17701,7 @@ export namespace Prisma {
     id?: true
     userId?: true
     amount?: true
+    feeAmount?: true
     bankCode?: true
     bankName?: true
     accountNumber?: true
@@ -17796,6 +17807,7 @@ export namespace Prisma {
     id: string
     userId: string
     amount: Decimal
+    feeAmount: Decimal | null
     bankCode: string
     bankName: string
     accountNumber: string
@@ -17833,6 +17845,7 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     amount?: boolean
+    feeAmount?: boolean
     bankCode?: boolean
     bankName?: boolean
     accountNumber?: boolean
@@ -17852,6 +17865,7 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     amount?: boolean
+    feeAmount?: boolean
     bankCode?: boolean
     bankName?: boolean
     accountNumber?: boolean
@@ -17871,6 +17885,7 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     amount?: boolean
+    feeAmount?: boolean
     bankCode?: boolean
     bankName?: boolean
     accountNumber?: boolean
@@ -17890,6 +17905,7 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     amount?: boolean
+    feeAmount?: boolean
     bankCode?: boolean
     bankName?: boolean
     accountNumber?: boolean
@@ -17904,7 +17920,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type WithdrawalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "amount" | "bankCode" | "bankName" | "accountNumber" | "accountHolderName" | "email" | "status" | "referenceId" | "xenditPayoutId" | "failureCode" | "failureMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["withdrawal"]>
+  export type WithdrawalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "amount" | "feeAmount" | "bankCode" | "bankName" | "accountNumber" | "accountHolderName" | "email" | "status" | "referenceId" | "xenditPayoutId" | "failureCode" | "failureMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["withdrawal"]>
   export type WithdrawalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -17924,6 +17940,7 @@ export namespace Prisma {
       id: string
       userId: string
       amount: Prisma.Decimal
+      feeAmount: Prisma.Decimal | null
       bankCode: string
       bankName: string
       accountNumber: string
@@ -18363,6 +18380,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Withdrawal", 'String'>
     readonly userId: FieldRef<"Withdrawal", 'String'>
     readonly amount: FieldRef<"Withdrawal", 'Decimal'>
+    readonly feeAmount: FieldRef<"Withdrawal", 'Decimal'>
     readonly bankCode: FieldRef<"Withdrawal", 'String'>
     readonly bankName: FieldRef<"Withdrawal", 'String'>
     readonly accountNumber: FieldRef<"Withdrawal", 'String'>
@@ -21391,6 +21409,7 @@ export namespace Prisma {
     id: 'id',
     userId: 'userId',
     amount: 'amount',
+    feeAmount: 'feeAmount',
     bankCode: 'bankCode',
     bankName: 'bankName',
     accountNumber: 'accountNumber',
@@ -22709,6 +22728,7 @@ export namespace Prisma {
     id?: StringFilter<"Withdrawal"> | string
     userId?: StringFilter<"Withdrawal"> | string
     amount?: DecimalFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string
+    feeAmount?: DecimalNullableFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string | null
     bankCode?: StringFilter<"Withdrawal"> | string
     bankName?: StringFilter<"Withdrawal"> | string
     accountNumber?: StringFilter<"Withdrawal"> | string
@@ -22728,6 +22748,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     amount?: SortOrder
+    feeAmount?: SortOrderInput | SortOrder
     bankCode?: SortOrder
     bankName?: SortOrder
     accountNumber?: SortOrder
@@ -22751,6 +22772,7 @@ export namespace Prisma {
     NOT?: WithdrawalWhereInput | WithdrawalWhereInput[]
     userId?: StringFilter<"Withdrawal"> | string
     amount?: DecimalFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string
+    feeAmount?: DecimalNullableFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string | null
     bankCode?: StringFilter<"Withdrawal"> | string
     bankName?: StringFilter<"Withdrawal"> | string
     accountNumber?: StringFilter<"Withdrawal"> | string
@@ -22769,6 +22791,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     amount?: SortOrder
+    feeAmount?: SortOrderInput | SortOrder
     bankCode?: SortOrder
     bankName?: SortOrder
     accountNumber?: SortOrder
@@ -22795,6 +22818,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Withdrawal"> | string
     userId?: StringWithAggregatesFilter<"Withdrawal"> | string
     amount?: DecimalWithAggregatesFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string
+    feeAmount?: DecimalNullableWithAggregatesFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string | null
     bankCode?: StringWithAggregatesFilter<"Withdrawal"> | string
     bankName?: StringWithAggregatesFilter<"Withdrawal"> | string
     accountNumber?: StringWithAggregatesFilter<"Withdrawal"> | string
@@ -24124,6 +24148,7 @@ export namespace Prisma {
   export type WithdrawalCreateInput = {
     id?: string
     amount: Decimal | DecimalJsLike | number | string
+    feeAmount?: Decimal | DecimalJsLike | number | string | null
     bankCode: string
     bankName: string
     accountNumber: string
@@ -24143,6 +24168,7 @@ export namespace Prisma {
     id?: string
     userId: string
     amount: Decimal | DecimalJsLike | number | string
+    feeAmount?: Decimal | DecimalJsLike | number | string | null
     bankCode: string
     bankName: string
     accountNumber: string
@@ -24160,6 +24186,7 @@ export namespace Prisma {
   export type WithdrawalUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    feeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     bankCode?: StringFieldUpdateOperationsInput | string
     bankName?: StringFieldUpdateOperationsInput | string
     accountNumber?: StringFieldUpdateOperationsInput | string
@@ -24179,6 +24206,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    feeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     bankCode?: StringFieldUpdateOperationsInput | string
     bankName?: StringFieldUpdateOperationsInput | string
     accountNumber?: StringFieldUpdateOperationsInput | string
@@ -24197,6 +24225,7 @@ export namespace Prisma {
     id?: string
     userId: string
     amount: Decimal | DecimalJsLike | number | string
+    feeAmount?: Decimal | DecimalJsLike | number | string | null
     bankCode: string
     bankName: string
     accountNumber: string
@@ -24214,6 +24243,7 @@ export namespace Prisma {
   export type WithdrawalUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    feeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     bankCode?: StringFieldUpdateOperationsInput | string
     bankName?: StringFieldUpdateOperationsInput | string
     accountNumber?: StringFieldUpdateOperationsInput | string
@@ -24232,6 +24262,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    feeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     bankCode?: StringFieldUpdateOperationsInput | string
     bankName?: StringFieldUpdateOperationsInput | string
     accountNumber?: StringFieldUpdateOperationsInput | string
@@ -25468,6 +25499,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     amount?: SortOrder
+    feeAmount?: SortOrder
     bankCode?: SortOrder
     bankName?: SortOrder
     accountNumber?: SortOrder
@@ -25484,12 +25516,14 @@ export namespace Prisma {
 
   export type WithdrawalAvgOrderByAggregateInput = {
     amount?: SortOrder
+    feeAmount?: SortOrder
   }
 
   export type WithdrawalMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
     amount?: SortOrder
+    feeAmount?: SortOrder
     bankCode?: SortOrder
     bankName?: SortOrder
     accountNumber?: SortOrder
@@ -25508,6 +25542,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     amount?: SortOrder
+    feeAmount?: SortOrder
     bankCode?: SortOrder
     bankName?: SortOrder
     accountNumber?: SortOrder
@@ -25524,6 +25559,7 @@ export namespace Prisma {
 
   export type WithdrawalSumOrderByAggregateInput = {
     amount?: SortOrder
+    feeAmount?: SortOrder
   }
 
   export type EnumWithdrawalStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -28741,6 +28777,7 @@ export namespace Prisma {
   export type WithdrawalCreateWithoutUserInput = {
     id?: string
     amount: Decimal | DecimalJsLike | number | string
+    feeAmount?: Decimal | DecimalJsLike | number | string | null
     bankCode: string
     bankName: string
     accountNumber: string
@@ -28758,6 +28795,7 @@ export namespace Prisma {
   export type WithdrawalUncheckedCreateWithoutUserInput = {
     id?: string
     amount: Decimal | DecimalJsLike | number | string
+    feeAmount?: Decimal | DecimalJsLike | number | string | null
     bankCode: string
     bankName: string
     accountNumber: string
@@ -29069,6 +29107,7 @@ export namespace Prisma {
     id?: StringFilter<"Withdrawal"> | string
     userId?: StringFilter<"Withdrawal"> | string
     amount?: DecimalFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string
+    feeAmount?: DecimalNullableFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string | null
     bankCode?: StringFilter<"Withdrawal"> | string
     bankName?: StringFilter<"Withdrawal"> | string
     accountNumber?: StringFilter<"Withdrawal"> | string
@@ -30250,6 +30289,7 @@ export namespace Prisma {
   export type WithdrawalCreateManyUserInput = {
     id?: string
     amount: Decimal | DecimalJsLike | number | string
+    feeAmount?: Decimal | DecimalJsLike | number | string | null
     bankCode: string
     bankName: string
     accountNumber: string
@@ -30471,6 +30511,7 @@ export namespace Prisma {
   export type WithdrawalUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    feeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     bankCode?: StringFieldUpdateOperationsInput | string
     bankName?: StringFieldUpdateOperationsInput | string
     accountNumber?: StringFieldUpdateOperationsInput | string
@@ -30488,6 +30529,7 @@ export namespace Prisma {
   export type WithdrawalUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    feeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     bankCode?: StringFieldUpdateOperationsInput | string
     bankName?: StringFieldUpdateOperationsInput | string
     accountNumber?: StringFieldUpdateOperationsInput | string
@@ -30505,6 +30547,7 @@ export namespace Prisma {
   export type WithdrawalUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    feeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     bankCode?: StringFieldUpdateOperationsInput | string
     bankName?: StringFieldUpdateOperationsInput | string
     accountNumber?: StringFieldUpdateOperationsInput | string

@@ -241,7 +241,6 @@ model Withdrawal {
   failureMessage    String?
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
-  feeAmount         Decimal?
   user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -322,7 +321,6 @@ enum BalanceEntryType {
   WITHDRAWAL_FEE
   WITHDRAWAL_FAILED
   WITHDRAWAL_REVERSED
-  WITHDRAWAL_FEE
 }
 
 enum VoucherType {

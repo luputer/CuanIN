@@ -20,8 +20,9 @@ export const withdrawalsRouter = createTRPCRouter({
   create: protectedProcedure
     .input(withdrawalSchema)
     .mutation(async ({ ctx, input }) => {
+      const isAdmin = ctx.session.user.role === "ADMIN";
       // Hitung fee platform 2% + biaya transfer Xendit
-      const platformFee = Math.round(input.amount * 0.02); // Fee aplikasi 2%
+      const platformFee = isAdmin ? 0 : Math.round(input.amount * 0.02); // Admin tidak kena fee aplikasi 2%
       const xenditFee = 4000; // Biaya transfer Xendit flat ke bank
       const totalFee = platformFee + xenditFee;
       const payoutAmount = input.amount - totalFee;
@@ -29,14 +30,34 @@ export const withdrawalsRouter = createTRPCRouter({
       if (payoutAmount < 10000) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Nominal penarikan terlalu kecil. Saldo yang diterima (setelah fee 2% + Rp4.000) minimal Rp10.000.",
+          message: "Nominal penarikan terlalu kecil. Saldo yang diterima (setelah fee) minimal Rp10.000.",
         });
       }
 
       const withdrawal = await ctx.db.$transaction(async (tx) => {
-        const balance = await getCreatorBalance(tx, ctx.session.user.id);
+        let balanceAvailable = 0;
+        
+        if (isAdmin) {
+          const totalIncomeResult = await tx.withdrawal.aggregate({
+            where: { status: "SUCCEEDED" },
+            _sum: { feeAmount: true },
+          });
+          const adminWithdrawnResult = await tx.withdrawal.aggregate({
+            where: { 
+                userId: ctx.session.user.id,
+                status: { in: ["PENDING", "ACCEPTED", "REQUESTED", "SUCCEEDED"] }
+            },
+            _sum: { amount: true },
+          });
+          const totalIncome = Number(totalIncomeResult._sum.feeAmount ?? 0);
+          const adminWithdrawn = Number(adminWithdrawnResult._sum.amount ?? 0);
+          balanceAvailable = Math.max(0, totalIncome - adminWithdrawn);
+        } else {
+          const balance = await getCreatorBalance(tx, ctx.session.user.id);
+          balanceAvailable = balance.balance;
+        }
 
-        if (input.amount > balance.balance) {
+        if (input.amount > balanceAvailable) {
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Jumlah penarikan melebihi saldo tersedia.",
@@ -63,16 +84,18 @@ export const withdrawalsRouter = createTRPCRouter({
           },
         });
 
-        // Catat di ledger (debit)
-        await tx.balanceEntry.create({
-          data: {
-            userId: ctx.session.user.id,
-            amount: -input.amount,
-            type: "WITHDRAWAL_REQUESTED",
-            refId: newWithdrawal.id,
-            note: `Penarikan saldo ke ${bank.name} (${input.accountNumber})`,
-          },
-        });
+        if (!isAdmin) {
+          // Catat di ledger (debit)
+          await tx.balanceEntry.create({
+            data: {
+              userId: ctx.session.user.id,
+              amount: -input.amount,
+              type: "WITHDRAWAL_REQUESTED",
+              refId: newWithdrawal.id,
+              note: `Penarikan saldo ke ${bank.name} (${input.accountNumber})`,
+            },
+          });
+        }
 
         return newWithdrawal;
       });
@@ -110,7 +133,7 @@ export const withdrawalsRouter = createTRPCRouter({
         return updated;
       } catch (error) {
         // Jika gagal buat payout di Xendit, kembalikan saldo di ledger
-        await ctx.db.$transaction([
+        const updates: any[] = [
           ctx.db.withdrawal.update({
             where: { id: withdrawal.id },
             data: {
@@ -119,16 +142,23 @@ export const withdrawalsRouter = createTRPCRouter({
                 error instanceof Error ? error.message : "Gagal membuat payout",
             },
           }),
-          ctx.db.balanceEntry.create({
-            data: {
-              userId: ctx.session.user.id,
-              amount: withdrawal.amount,
-              type: "WITHDRAWAL_FAILED",
-              refId: withdrawal.id,
-              note: `Gagal payout: ${error instanceof Error ? error.message : "Gagal membuat payout"} — saldo dikembalikan`,
-            },
-          }),
-        ]);
+        ];
+
+        if (!isAdmin) {
+          updates.push(
+            ctx.db.balanceEntry.create({
+              data: {
+                userId: ctx.session.user.id,
+                amount: withdrawal.amount,
+                type: "WITHDRAWAL_FAILED",
+                refId: withdrawal.id,
+                note: `Gagal payout: ${error instanceof Error ? error.message : "Gagal membuat payout"} — saldo dikembalikan`,
+              },
+            })
+          );
+        }
+
+        await ctx.db.$transaction(updates);
 
         throw new TRPCError({
           code: "BAD_REQUEST",

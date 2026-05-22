@@ -11,7 +11,10 @@ import { analyticsRouter } from "./routers/analytics";
 import { creatorsRouter } from "./routers/creators";
 import { vouchersRouter } from "./routers/vouchers";
 
+import { adminRouter } from "./routers/admin";
+
 export const appRouter = createTRPCRouter({
+  admin: adminRouter,
   auth: authRouter,
   catalog: catalogRouter,
   products: productsRouter,

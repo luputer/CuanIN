@@ -560,29 +560,45 @@ export default function TransactionPage() {
               {isLoading && !data ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <TableRow key={i} data-type="body">
-                    <TableCell>
-                      <Skeleton className="mx-auto h-4 w-4" />
+                    <TableCell className="text-center font-medium whitespace-nowrap">
+                      <div className="flex items-center justify-center min-h-[48px]">
+                        <Skeleton className="h-4 w-4" />
+                      </div>
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-4 w-16" />
+                      <div className="flex items-center min-h-[48px]">
+                        <Skeleton className="h-4 w-16" />
+                      </div>
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-4 w-24" />
+                      <div className="flex items-center min-h-[48px]">
+                        <Skeleton className="h-4 w-24" />
+                      </div>
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-4 w-20" />
+                      <div className="flex items-center min-h-[48px]">
+                        <Skeleton className="h-4 w-20" />
+                      </div>
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-4 w-32" />
+                      <div className="flex items-center min-h-[48px]">
+                        <Skeleton className="h-4 w-32" />
+                      </div>
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-4 w-40" />
+                      <div className="flex items-center min-h-[48px]">
+                        <Skeleton className="h-4 w-40" />
+                      </div>
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-4 w-32" />
+                      <div className="flex items-center min-h-[48px]">
+                        <Skeleton className="h-4 w-32" />
+                      </div>
                     </TableCell>
                     <TableCell className="whitespace-nowrap">
-                      <Skeleton className="h-6 w-20 rounded-full" />
+                      <div className="flex items-center justify-center min-h-[48px]">
+                        <Skeleton className="h-6 w-20 rounded-full" />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
@@ -630,25 +646,19 @@ export default function TransactionPage() {
                         </TooltipContent>
                       </Tooltip>
                     </TableCell>
-                    <TableCell>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className="flex min-h-[48px] max-w-[140px] items-center truncate text-slate-600">
-                            {item.buyerName}
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>{item.buyerName}</TooltipContent>
-                      </Tooltip>
+                    <TableCell className="max-w-[140px] leading-normal">
+                      <div className="flex items-center min-h-[48px] py-1">
+                        <span className="text-slate-600 line-clamp-2 break-words">
+                          {item.buyerName}
+                        </span>
+                      </div>
                     </TableCell>
-                    <TableCell>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className="flex min-h-[48px] max-w-[180px] items-center truncate text-slate-600">
-                            {item.product.name}
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>{item.product.name}</TooltipContent>
-                      </Tooltip>
+                    <TableCell className="max-w-[200px] leading-normal">
+                      <div className="flex items-center min-h-[48px] py-1">
+                        <span className="text-slate-600 line-clamp-2 break-words">
+                          {item.product.name}
+                        </span>
+                      </div>
                     </TableCell>
                     <TableCell className="whitespace-nowrap">
                       <div className="flex min-h-[48px] items-center text-slate-600">

@@ -485,42 +485,60 @@ export const analyticsRouter = createTRPCRouter({
     const sevenDaysAgo = startOfDay(subDays(now, 6));
 
     const [
-      totalIncomeStats,
-      current30DaysIncome,
-      prev30DaysIncome,
+      // 1. Admin Fee Income (2% dari penarikan kreator yang berhasil)
+      totalAdminFeeStats,
+      current30DaysAdminFee,
+      prev30DaysAdminFee,
+      weeklyWithdrawals,
+
+      // 2. Product Stats
       totalProducts,
       current30DaysProducts,
       prev30DaysProducts,
+
+      // 3. Creator Stats
       totalCreators,
       current30DaysCreators,
       prev30DaysCreators,
+
+      // 4. View Stats (Approximate Visitors)
       totalProductViews,
       totalCatalogViews,
       current30DaysProductViews,
       current30DaysCatalogViews,
       prev30DaysProductViews,
       prev30DaysCatalogViews,
-      weeklyPurchases,
+
+      // 5. Category Stats
       categoryStats,
+
+      // 6. Weekly Traffic
       weeklyProductViews,
       weeklyCatalogViews,
+
+      // 7. New Creators Weekly
       newCreatorsWeekly,
     ] = await Promise.all([
-      // 1. Income Stats
-      ctx.db.purchase.aggregate({
-        where: { status: "completed" },
-        _sum: { amount: true },
+      // 1. Admin Fee Income
+      ctx.db.withdrawal.aggregate({
+        where: { status: "SUCCEEDED" },
+        _sum: { feeAmount: true },
       }),
-      ctx.db.purchase.aggregate({
-        where: { status: "completed", createdAt: { gte: thirtyDaysAgo } },
-        _sum: { amount: true },
+      ctx.db.withdrawal.aggregate({
+        where: { status: "SUCCEEDED", updatedAt: { gte: thirtyDaysAgo } },
+        _sum: { feeAmount: true },
       }),
-      ctx.db.purchase.aggregate({
+      ctx.db.withdrawal.aggregate({
         where: {
-          status: "completed",
-          createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo },
+          status: "SUCCEEDED",
+          updatedAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo },
         },
-        _sum: { amount: true },
+        _sum: { feeAmount: true },
+      }),
+      // Weekly withdrawals for fee chart
+      ctx.db.withdrawal.findMany({
+        where: { status: "SUCCEEDED", updatedAt: { gte: sevenDaysAgo } },
+        select: { updatedAt: true, feeAmount: true },
       }),
 
       // 2. Product Stats
@@ -554,19 +572,13 @@ export const analyticsRouter = createTRPCRouter({
         where: { createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } },
       }).catch(() => 0),
 
-      // 5. Weekly Data for Charts
-      ctx.db.purchase.findMany({
-        where: { status: "completed", createdAt: { gte: sevenDaysAgo } },
-        select: { createdAt: true, amount: true },
-      }),
-
-      // 6. Category Stats
+      // 5. Category Stats
       ctx.db.product.groupBy({
         by: ["type"],
         _count: { id: true },
       }),
 
-      // 7. Weekly Traffic
+      // 6. Weekly Traffic
       ctx.db.productView.findMany({
         where: { createdAt: { gte: sevenDaysAgo } },
         select: { createdAt: true },
@@ -576,7 +588,7 @@ export const analyticsRouter = createTRPCRouter({
         select: { createdAt: true },
       }).catch(() => []),
 
-      // 8. New Creators Weekly
+      // 7. New Creators Weekly
       ctx.db.user.findMany({
         where: { role: "CREATOR", createdAt: { gte: subDays(now, 27) } },
         select: { createdAt: true },
@@ -588,9 +600,10 @@ export const analyticsRouter = createTRPCRouter({
     const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
     const weeklyRevenue = last7Days.map((date) => {
-      const dayTotal = weeklyPurchases
-        .filter((p) => format(p.createdAt, "yyyy-MM-dd") === format(date, "yyyy-MM-dd"))
-        .reduce((sum, p) => sum + Number(p.amount), 0);
+      // Tampilkan fee admin (2%) per hari, bukan omzet kreator
+      const dayTotal = weeklyWithdrawals
+        .filter((w) => format(w.updatedAt, "yyyy-MM-dd") === format(date, "yyyy-MM-dd"))
+        .reduce((sum, w) => sum + Number(w.feeAmount ?? 0), 0);
       return { day: dayNames[date.getDay()], value: dayTotal };
     });
 
@@ -633,13 +646,13 @@ export const analyticsRouter = createTRPCRouter({
     const prev30DaysVisitors = prev30DaysProductViews + prev30DaysCatalogViews;
 
     return {
-      totalIncome: Number(totalIncomeStats._sum.amount ?? 0),
+      totalIncome: Number(totalAdminFeeStats._sum.feeAmount ?? 0),
       totalProducts,
       totalCreators,
       totalVisitors,
       incomeChange: calculateChange(
-        Number(current30DaysIncome._sum.amount ?? 0),
-        Number(prev30DaysIncome._sum.amount ?? 0)
+        Number(current30DaysAdminFee._sum.feeAmount ?? 0),
+        Number(prev30DaysAdminFee._sum.feeAmount ?? 0)
       ),
       productsChange: calculateChange(current30DaysProducts, prev30DaysProducts),
       creatorsChange: calculateChange(current30DaysCreators, prev30DaysCreators),

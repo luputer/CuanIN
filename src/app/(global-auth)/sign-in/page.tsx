@@ -7,8 +7,9 @@ import {
   EyeIcon,
   EyeSlashIcon,
 } from "@phosphor-icons/react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { signIn, getSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { LoginFormData } from "~/lib/validation";
@@ -16,7 +17,9 @@ import { loginSchema } from "~/lib/validation";
 import HeaderLandingPage from "~/components/layout/headerlandingpage";
 import Footer from "~/components/layout/footer";
 
-export default function LoginPage() {
+function LoginPageInner() {
+  const searchParams = useSearchParams();
+  const verified = searchParams.get("verified") === "1";
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -38,7 +41,11 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      setServerError("Email atau password salah. Silakan coba lagi.");
+      if (result.error.toLowerCase().includes("email belum diverifikasi")) {
+        setServerError("Email belum diverifikasi. Silakan cek inbox Anda.");
+      } else {
+        setServerError("Email atau password salah. Silakan coba lagi.");
+      }
     } else {
       // Get session to check role
       const session = await getSession();
@@ -85,6 +92,13 @@ export default function LoginPage() {
           {serverError && (
             <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
               {serverError}
+            </div>
+          )}
+
+          {/* Verification Success */}
+          {verified && !serverError && (
+            <div className="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-600">
+              Email berhasil diverifikasi! Silakan login.
             </div>
           )}
 
@@ -162,9 +176,12 @@ export default function LoginPage() {
               )}
 
               <div className="flex justify-end">
-                <a className="mt-1 text-xs font-medium text-cyan-600 hover:text-cyan-800 hover:underline">
+                <Link
+                  href="/forgot-password"
+                  className="mt-1 text-xs font-medium text-cyan-600 hover:text-cyan-800 hover:underline"
+                >
                   Lupa Password?
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -241,5 +258,13 @@ export default function LoginPage() {
       {/* Footer */}
       <Footer />
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-white text-cyan-600">Memuat...</div>}>
+      <LoginPageInner />
+    </Suspense>
   );
 }

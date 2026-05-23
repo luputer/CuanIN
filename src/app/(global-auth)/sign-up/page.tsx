@@ -27,9 +27,8 @@ function SignupPageInner() {
 
   const { data: session, status } = useSession();
 
-  const [isSuccess, setIsSuccess] = useState(false);
   const fromGoogle =
-    searchParams.get("fromGoogle") === "1" || (!!session?.user && !isSuccess);
+    searchParams.get("fromGoogle") === "1" || !!session?.user;
   const googleName = searchParams.get("name") ?? session?.user?.name ?? "";
   const googleEmail = searchParams.get("email") ?? session?.user?.email ?? "";
 
@@ -63,22 +62,9 @@ function SignupPageInner() {
   // ✅ tRPC mutation
   const registerMutation = api.auth.register.useMutation({
     onSuccess: async (_result, variables) => {
-      setIsSuccess(true);
-
-      // For both regular and Google users, sign in automatically using credentials.
-      // Since NextAuth `signIn` callback aborts the session if phone number is missing,
-      // Google SSO users arriving here actually don't have an active session yet.
-      const loginResult = await signIn("credentials", {
-        redirect: false,
-        email: variables.email,
-        password: variables.password,
-      });
-
-      if (loginResult?.error) {
-        router.push("/sign-in?registered=1");
-      } else {
-        window.location.href = "/dashboard";
-      }
+      // Set temporary cookie for OTP access (expires in 15 mins)
+      document.cookie = `otp_authorized_email=${variables.email}; Max-Age=900; path=/; SameSite=Lax`;
+      router.push(`/verify-otp?email=${variables.email}`);
     },
   });
 

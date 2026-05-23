@@ -67,7 +67,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const parsed = credentialsSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
-        const { email, password } = parsed.data;
+        const { password } = parsed.data;
+        const email = parsed.data.email.toLowerCase();
 
         const user = await db.user.findUnique({
           where: { email },
@@ -81,6 +82,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             status: true,
             statusPayment: true,
             phoneNumber: true,
+            emailVerified: true,
           },
         });
 
@@ -88,6 +90,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const isValid = await bcrypt.compare(password, user.password);
         if (!isValid) return null;
+
+        if (!user.emailVerified) {
+          throw new Error("Email belum diverifikasi. Silakan cek email Anda.");
+        }
 
         return {
           id: user.id,

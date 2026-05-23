@@ -11,10 +11,17 @@ CuanIN is an all-in-one platform for creators to easily sell digital products, h
 - **API:** [tRPC](https://trpc.io)
 - **Styling:** [Tailwind CSS 4](https://tailwindcss.com)
 - **Validation:** [Zod](https://zod.dev)
+- **Email:** [Nodemailer](https://nodemailer.com) + [React Email](https://react.email)
+- **OTP Input:** [input-otp](https://input-otp.vercel.app/)
 - **Storage:** S3 Compatible Storage (AWS SDK)
 
 ## ✨ Key Features
 
+- **Secure Authentication:**
+  - **OTP Verification:** 6-digit secure email verification for new accounts.
+  - **Magic Link Reset:** Secure password reset via unique email links.
+  - **Google SSO:** Easy login with Google accounts.
+  - **Security Hardened:** Brute-force protection for OTP, automatic email normalization, and global session invalidation on password change.
 - **Creator Dashboard:** Concise analytics and content management in one place.
 - **Product Management:**
   - **Webinars:** Sell webinar tickets with integrated meeting links.
@@ -59,6 +66,14 @@ CuanIN is an all-in-one platform for creators to easily sell digital products, h
    AUTH_SECRET="your-secret-key"
    GOOGLE_CLIENT_ID="your-google-client-id"
    GOOGLE_CLIENT_SECRET="your-google-client-secret"
+   NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
+   # Email (SMTP)
+   SMTP_HOST="smtp.example.com"
+   SMTP_PORT=465
+   SMTP_USER="your-email@example.com"
+   SMTP_PASS="your-app-password"
+   SMTP_FROM="noreply@example.com"
 
    # Storage (S3 Compatible)
    BUCKET_ENDPOINT="https://your-endpoint.com"

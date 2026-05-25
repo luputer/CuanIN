@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import SearchInput from "~/components/ui/search";

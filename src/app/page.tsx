@@ -1,4 +1,5 @@
 "use client";
+
 import Image from "next/image";
 import Button from "~/components/ui/buttonlogin";
 import HeaderLandingPage from "~/components/layout/headerlandingpage";

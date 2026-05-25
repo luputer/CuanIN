@@ -1,7 +1,9 @@
-import React from "react";
-import Link from "next/link";
+
+"use client"
+import React from 'react';
 import { PlusIcon, CircleNotchIcon } from "@phosphor-icons/react";
 import { cn } from "~/lib/utils";
+import Link from 'next/link';
 
 type IconWeight = "regular" | "bold" | "fill" | "light" | "thin";
 type ButtonIcon = React.ComponentType<{

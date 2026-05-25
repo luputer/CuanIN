@@ -145,10 +145,10 @@ function SignupPageInner() {
                   placeholder="Masukkan Nama Lengkap Anda"
                   readOnly={fromGoogle && !!googleName}
                   className={`w-full rounded-lg border py-2.5 pr-6 pl-12 text-sm transition-all outline-none placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${fromGoogle && googleName
-                      ? "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-500"
-                      : errors.name
-                        ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                        : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
+                    ? "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-500"
+                    : errors.name
+                      ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                      : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
                     }`}
                   {...register("name")}
                 />
@@ -174,8 +174,8 @@ function SignupPageInner() {
                   required
                   placeholder="Masukkan Email Anda"
                   className={`w-full rounded-lg border py-2.5 pr-6 pl-12 text-sm transition-all outline-none placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${errors.email
-                      ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                      : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
+                    ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                    : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
                     }`}
                   {...register("email")}
                 />
@@ -199,8 +199,8 @@ function SignupPageInner() {
                   type="tel"
                   placeholder="Masukkan Nomor HP (contoh: 08123456789)"
                   className={`w-full rounded-lg border py-2.5 pr-6 pl-12 text-sm transition-all outline-none placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${errors.phone
-                      ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                      : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
+                    ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                    : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
                     }`}
                   {...register("phone")}
                 />
@@ -223,8 +223,8 @@ function SignupPageInner() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Buat Password (min. 8 karakter)"
                   className={`w-full rounded-lg border py-2.5 pr-10 pl-12 text-sm transition-all outline-none placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${errors.password
-                      ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                      : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
+                    ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                    : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
                     }`}
                   {...register("password")}
                 />
@@ -260,8 +260,8 @@ function SignupPageInner() {
                   type={showConfirm ? "text" : "password"}
                   placeholder="Ulangi Password"
                   className={`w-full rounded-lg border py-2.5 pr-10 pl-12 text-sm transition-all outline-none placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${errors.confirmPassword
-                      ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                      : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
+                    ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                    : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
                     }`}
                   {...register("confirmPassword")}
                 />

@@ -1,3 +1,5 @@
+"use client";
+
 import { PhoneIcon, EnvelopeIcon } from "@phosphor-icons/react";
 
 export default function Footer() {

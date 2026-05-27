@@ -3,7 +3,6 @@ FROM node:20-alpine AS base
 
 # 1. Install dependencies only when needed
 FROM base AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
@@ -19,6 +18,8 @@ COPY . .
 
 # Generate Prisma Client
 ENV SKIP_ENV_VALIDATION 1
+ENV DATABASE_URL="postgresql://postgres:password@localhost:5432/cuanin"
+ENV DIRECT_URL="postgresql://postgres:password@localhost:5432/cuanin"
 RUN npx prisma generate
 
 # Build the app
@@ -30,18 +31,26 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
+# Install openssl for Prisma
+RUN apk add --no-cache openssl
+
+# Install prisma globally to run migrations
+RUN npm install -g prisma
+
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
 
 # Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy prisma directory for migrations if needed, or if standalone didn't catch the generated client
+# Copy prisma directory for migrations
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/docker-entrypoint.sh ./docker-entrypoint.sh
+
+RUN chmod +x ./docker-entrypoint.sh
 
 USER nextjs
 
@@ -50,5 +59,4 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-# server.js is created by next build from the standalone output
-CMD ["node", "server.js"]
+ENTRYPOINT ["./docker-entrypoint.sh"]

@@ -85,14 +85,21 @@ export default function TransactionPage() {
 
 
 
-  const transactions = data?.items ?? [];
+  const transactions = (data?.items ?? []).map((item: any) => ({
+    ...item,
+    amount: Number(item.amount),
+    feeAmount: item.type === "WITHDRAWAL" ? Number(item.feeAmount ?? 0) : null
+  })) as unknown as Array<
+    ({ type: "INCOME" } & { id: string; amount: number; buyerName: string; createdAt: Date; status: string; product: { name: string }; xenditPaymentMethod?: string | null }) |
+    ({ type: "WITHDRAWAL" } & { id: string; amount: number; bankName: string; accountNumber: string; createdAt: Date; status: string; feeAmount?: number | null })
+  >;
+
   const stats = {
-    totalIncome: 0,
-    totalTransactions: 0,
-    balance: 0,
-    incomeChange: 0,
-    transactionsChange: 0,
-    ...data?.stats,
+    totalIncome: data?.stats.totalIncome ?? 0,
+    totalTransactions: data?.stats.totalTransactions ?? 0,
+    balance: data?.stats.balance ?? 0,
+    incomeChange: data?.stats.incomeChange ?? 0,
+    transactionsChange: data?.stats.transactionsChange ?? 0,
   };
   const totalPages = data?.totalPages ?? 0;
   const totalItems = data?.total ?? 0;
@@ -181,9 +188,12 @@ export default function TransactionPage() {
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
+      case "succeeded":
       case "completed":
         return "bg-green-100 text-green-700";
       case "pending":
+      case "requested":
+      case "accepted":
         return "bg-yellow-100 text-yellow-700";
       case "failed":
         return "bg-red-100 text-red-700";
@@ -195,16 +205,19 @@ export default function TransactionPage() {
   };
 
   const getStatusLabel = (status: string) => {
-    switch (status) {
+    switch (status.toUpperCase()) {
       case "ALL":
         return "Semua Status";
-      case "completed":
-        return "Sudah Bayar";
-      case "pending":
+      case "SUCCEEDED":
+      case "COMPLETED":
+        return "Berhasil";
+      case "PENDING":
+      case "REQUESTED":
+      case "ACCEPTED":
         return "Menunggu";
-      case "failed":
+      case "FAILED":
         return "Gagal";
-      case "expired":
+      case "EXPIRED":
         return "Kedaluwarsa";
       default:
         return status;
@@ -376,26 +389,30 @@ export default function TransactionPage() {
                     {Number(withdrawForm.amount) > 0 && (
                       <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2.5">
                         <div className="flex justify-between text-[13px] text-slate-600">
-                          <span>Nominal Penarikan</span>
-                          <span>Rp{formatNumberInput(withdrawForm.amount)}</span>
+                          <span>Nominal Diterima di Bank</span>
+                          <span className="font-medium text-slate-900">Rp{formatNumberInput(withdrawForm.amount)}</span>
                         </div>
                         <div className="flex justify-between text-[13px] text-slate-600">
                           <span>Biaya Aplikasi (2%)</span>
-                          <span>- Rp{formatNumberInput(Math.round(Number(withdrawForm.amount) * 0.02).toString())}</span>
+                          <span className="font-medium text-slate-700">+ Rp{formatNumberInput(Math.round(Number(withdrawForm.amount) * 0.02).toString())}</span>
                         </div>
                         <div className="flex justify-between text-[13px] text-slate-600">
                           <span>Biaya Transfer Bank</span>
-                          <span>- Rp4.000</span>
+                          <span className="font-medium text-slate-700">+ Rp4.000</span>
                         </div>
-                        <div className="border-t border-slate-200 pt-2.5 mt-2.5 flex justify-between font-semibold text-[15px] text-slate-900">
-                          <span>Total Diterima</span>
-                          <span>
-                            Rp{formatNumberInput(Math.max(0, Number(withdrawForm.amount) - Math.round(Number(withdrawForm.amount) * 0.02) - 4000).toString())}
+                        <div className="border-t border-slate-200 pt-2.5 mt-2.5 flex justify-between font-bold text-[15px] text-slate-900">
+                          <span>Total Potong Saldo</span>
+                          <span className="text-red-600">
+                            Rp{formatNumberInput((Number(withdrawForm.amount) + Math.round(Number(withdrawForm.amount) * 0.02) + 4000).toString())}
                           </span>
                         </div>
-                        {Number(withdrawForm.amount) - Math.round(Number(withdrawForm.amount) * 0.02) - 4000 < 10000 && (
-                           <p className="text-red-500 text-xs mt-3 pt-2 border-t border-red-100 text-center font-medium">
-                            Minimal saldo diterima harus Rp10.000 setelah dipotong fee.
+                        <p className="text-[11px] text-slate-400 italic mt-2 leading-relaxed">
+                          * Kamu akan menerima bersih <strong>Rp{formatNumberInput(withdrawForm.amount)}</strong> di rekening bank.
+                          Total saldo CuanIN yang akan terpotong adalah <strong>Rp{formatNumberInput((Number(withdrawForm.amount) + Math.round(Number(withdrawForm.amount) * 0.02) + 4000).toString())}</strong>.
+                        </p>
+                        {Number(withdrawForm.amount) < 10000 && (
+                          <p className="text-red-500 text-xs mt-1 pt-2 border-t border-red-100 text-center font-medium">
+                            Minimal penarikan adalah Rp10.000.
                           </p>
                         )}
                       </div>
@@ -538,22 +555,13 @@ export default function TransactionPage() {
               <TableRow>
                 <TableHead className="w-[5%] text-center whitespace-nowrap">No</TableHead>
                 <TableHead className="w-[10%] whitespace-nowrap">ID</TableHead>
-                <TableHead className="w-[12%] whitespace-nowrap">Total</TableHead>
-                <TableHead className="w-[10%] whitespace-nowrap">
-                  Metode
-                </TableHead>
-                <TableHead className="w-[18%] whitespace-nowrap">
-                  Pembeli
-                </TableHead>
-                <TableHead className="w-[20%] whitespace-nowrap">
-                  Produk
-                </TableHead>
-                <TableHead className="w-[15%] whitespace-nowrap">
-                  Tanggal
-                </TableHead>
-                <TableHead className="w-[10%] text-center whitespace-nowrap">
-                  Status
-                </TableHead>
+                <TableHead className="w-[12%] whitespace-nowrap">Nominal</TableHead>
+                <TableHead className="w-[10%] whitespace-nowrap">Fee/Biaya</TableHead>
+                <TableHead className="w-[8%] whitespace-nowrap">Jenis</TableHead>
+                <TableHead className="w-[18%] whitespace-nowrap">Keterangan</TableHead>
+                <TableHead className="w-[12%] whitespace-nowrap">Metode</TableHead>
+                <TableHead className="w-[15%] whitespace-nowrap">Tanggal</TableHead>
+                <TableHead className="w-[10%] text-center whitespace-nowrap">Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -577,7 +585,12 @@ export default function TransactionPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center min-h-[48px]">
-                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-4 w-12" />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center min-h-[48px]">
+                        <Skeleton className="h-4 w-16" />
                       </div>
                     </TableCell>
                     <TableCell>
@@ -587,7 +600,7 @@ export default function TransactionPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center min-h-[48px]">
-                        <Skeleton className="h-4 w-40" />
+                        <Skeleton className="h-4 w-20" />
                       </div>
                     </TableCell>
                     <TableCell>
@@ -605,14 +618,14 @@ export default function TransactionPage() {
               ) : transactions.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={8}
+                    colSpan={9}
                     className="py-20 text-center text-slate-500"
                   >
                     Tidak ada transaksi ditemukan
                   </TableCell>
                 </TableRow>
               ) : (
-                transactions.map((item, index) => (
+                transactions.map((item: any, index: number) => (
                   <TableRow key={item.id} data-type="body">
                     <TableCell className="text-center font-medium">
                       <div className="flex min-h-[48px] items-center justify-center">
@@ -630,38 +643,48 @@ export default function TransactionPage() {
                       </Tooltip>
                     </TableCell>
                     <TableCell className="whitespace-nowrap">
-                      <div className="flex min-h-[48px] items-center font-medium text-slate-800">
-                        {formatCurrency(Number(item.amount))}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className="flex min-h-[48px] max-w-[80px] items-center truncate text-slate-600">
-                            {item.xenditPaymentMethod ?? "-"}
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          {item.xenditPaymentMethod ?? "-"}
-                        </TooltipContent>
-                      </Tooltip>
-                    </TableCell>
-                    <TableCell className="max-w-[140px] leading-normal">
-                      <div className="flex items-center min-h-[48px] py-1">
-                        <span className="text-slate-600 line-clamp-2 break-words">
-                          {item.buyerName}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="max-w-[200px] leading-normal">
-                      <div className="flex items-center min-h-[48px] py-1">
-                        <span className="text-slate-600 line-clamp-2 break-words">
-                          {item.product.name}
+                      <div className="flex min-h-[48px] items-center">
+                        <span className={`font-semibold ${item.type === "INCOME" ? "text-emerald-600" : "text-slate-900"}`}>
+                          {item.type === "INCOME" ? "+" : ""} {formatCurrency(item.type === "INCOME" ? Number(item.amount) : (Number(item.amount) - Number(item.feeAmount ?? 0) - 4000))}
                         </span>
                       </div>
                     </TableCell>
                     <TableCell className="whitespace-nowrap">
-                      <div className="flex min-h-[48px] items-center text-slate-600">
+                      <div className="flex flex-col min-h-[48px] justify-center text-[10px]">
+                        {item.type === "WITHDRAWAL" ? (
+                          <>
+                            <span className="text-red-500">App: {formatCurrency(Number(item.feeAmount ?? 0))}</span>
+                            <span className="text-slate-400">Bank: Rp4.000</span>
+                          </>
+                        ) : (
+                          <span className="text-slate-300">-</span>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center min-h-[48px]">
+                        <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${item.type === "INCOME" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-blue-50 text-blue-700 border border-blue-200"}`}>
+                          {item.type === "INCOME" ? "Masuk" : "Tarik"}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="max-w-[140px] leading-normal">
+                      <div className="flex flex-col min-h-[48px] py-1 justify-center">
+                        <span className="text-slate-700 font-medium line-clamp-1 text-xs">
+                          {item.type === "INCOME" ? item.product?.name : `Penarikan ke ${item.bankName}`}
+                        </span>
+                        <span className="text-[10px] text-slate-400 line-clamp-1">
+                          {item.type === "INCOME" ? `Dari: ${item.buyerName}` : item.accountNumber}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center min-h-[48px] text-slate-500 text-xs">
+                        {item.type === "INCOME" ? (item.xenditPaymentMethod ?? "-") : item.bankName}
+                      </div>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <div className="flex min-h-[48px] items-center text-slate-500 text-xs">
                         {format(new Date(item.createdAt), "dd MMM yyyy HH:mm", {
                           locale: id,
                         })}
@@ -670,7 +693,7 @@ export default function TransactionPage() {
                     <TableCell className="whitespace-nowrap">
                       <div className="flex min-h-[48px] items-center justify-center">
                         <span
-                          className={`rounded-full px-4 py-1 text-[13px] leading-tight font-medium ${getStatusColor(item.status)}`}
+                          className={`rounded-full px-3 py-0.5 text-[12px] leading-tight font-medium ${getStatusColor(item.status)}`}
                         >
                           {getStatusLabel(item.status)}
                         </span>
@@ -704,12 +727,17 @@ export default function TransactionPage() {
               Tidak ada transaksi ditemukan
             </div>
           ) : (
-            transactions.map((item, index) => {
+            transactions.map((item: any, index: number) => {
               const rowNumber = (page - 1) * limit + index + 1;
               return (
                 <div key={item.id} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3">
                   <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-                    <span className="text-xs font-semibold text-slate-400"># {rowNumber}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-slate-400"># {rowNumber}</span>
+                      <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${item.type === "INCOME" ? "bg-emerald-50 text-emerald-700" : "bg-blue-50 text-blue-700"}`}>
+                        {item.type === "INCOME" ? "Masuk" : "Tarik"}
+                      </span>
+                    </div>
                     <span
                       className={`rounded-full px-3 py-0.5 text-xs font-medium ${getStatusColor(item.status)}`}
                     >
@@ -719,7 +747,7 @@ export default function TransactionPage() {
 
                   <div className="space-y-2 flex-1 min-w-0">
                     <div className="font-semibold text-slate-800 break-words leading-normal">
-                      {item.product.name}
+                      {item.type === "INCOME" ? item.product?.name : `Tarik ke ${item.bankName}`}
                     </div>
 
                     <div className="text-xs text-slate-500">
@@ -728,13 +756,13 @@ export default function TransactionPage() {
                     </div>
 
                     <div className="text-xs text-slate-500">
-                      <span className="font-medium text-slate-400">Pembeli: </span>
-                      <span className="font-medium text-slate-700">{item.buyerName}</span>
+                      <span className="font-medium text-slate-400">{item.type === "INCOME" ? "Pembeli: " : "Rekening: "}</span>
+                      <span className="font-medium text-slate-700">{item.type === "INCOME" ? item.buyerName : item.accountNumber}</span>
                     </div>
 
                     <div className="text-xs text-slate-500">
                       <span className="font-medium text-slate-400">Metode: </span>
-                      <span className="font-medium text-slate-700">{item.xenditPaymentMethod ?? "-"}</span>
+                      <span className="font-medium text-slate-700">{item.type === "INCOME" ? (item.xenditPaymentMethod ?? "-") : item.bankName}</span>
                     </div>
 
                     <div className="text-xs text-slate-500">
@@ -746,11 +774,16 @@ export default function TransactionPage() {
                       </span>
                     </div>
 
-                    <div className="text-xs pt-1">
-                      <span className="font-medium text-slate-400">Total: </span>
-                      <span className="font-bold text-cyan-600 text-sm">
-                        {formatCurrency(Number(item.amount))}
+                    <div className="text-xs pt-1 border-t border-slate-50 mt-2">
+                      <span className="font-medium text-slate-400">Nominal: </span>
+                      <span className={`font-bold text-sm ${item.type === "INCOME" ? "text-emerald-600" : "text-slate-900"}`}>
+                        {item.type === "INCOME" ? "+" : ""} {formatCurrency(item.type === "INCOME" ? Number(item.amount) : (Number(item.amount) - Number(item.feeAmount ?? 0) - 4000))}
                       </span>
+                      {item.type === "WITHDRAWAL" && (
+                        <div className="text-[10px] text-slate-400 mt-0.5 italic">
+                          Biaya Total: {formatCurrency(Number(item.feeAmount ?? 0) + 4000)}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

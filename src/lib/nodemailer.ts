@@ -62,6 +62,7 @@ export const sendProductEmail = async ({
 type SendWithdrawalEmailParams = {
   email: string;
   amount: number;
+  feeAmount: number;
   bankName: string;
   accountNumber: string;
   accountHolderName: string;
@@ -70,49 +71,66 @@ type SendWithdrawalEmailParams = {
 export const sendWithdrawalEmail = async ({
   email,
   amount,
+  feeAmount,
   bankName,
   accountNumber,
   accountHolderName,
 }: SendWithdrawalEmailParams) => {
-  const formattedAmount = new Intl.NumberFormat("id-ID", {
+  const xenditFee = 4000;
+  const netAmount = amount - feeAmount - xenditFee;
+
+  const formatIDR = (val: number) => new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
     minimumFractionDigits: 0,
-  }).format(amount);
+  }).format(val);
+
+  const formattedNet = formatIDR(netAmount);
 
   try {
     const info = await transporter.sendMail({
       from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
       to: email,
-      subject: `Penarikan Saldo Berhasil – ${formattedAmount}`,
-      text: `Penarikan saldo sebesar ${formattedAmount} ke rekening ${bankName} ${accountNumber} atas nama ${accountHolderName} telah berhasil diproses.`,
+      subject: `Penarikan Saldo Berhasil – ${formattedNet}`,
+      text: `Penarikan saldo sebesar ${formatIDR(amount)} (Diterima bersih: ${formattedNet} setelah biaya) ke rekening ${bankName} ${accountNumber} atas nama ${accountHolderName} telah berhasil diproses.`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; color: #333; line-height: 1.6;">
           <h2 style="color: #0f172a;">Penarikan Saldo Berhasil ✅</h2>
           <p>Halo <strong>${accountHolderName}</strong>,</p>
-          <p>Penarikan saldo kamu telah berhasil diproses. Berikut detailnya:</p>
+          <p>Permintaan penarikan saldo kamu telah berhasil diproses oleh sistem.</p>
+          
           <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 20px 0;">
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
-                <td style="padding: 8px 0; color: #64748b; width: 140px;">Jumlah</td>
-                <td style="padding: 8px 0; font-weight: bold; color: #16a34a;">${formattedAmount}</td>
+                <td style="padding: 8px 0; color: #64748b; width: 140px;">Nominal Ditarik</td>
+                <td style="padding: 8px 0; font-weight: bold; text-align: right;">${formatIDR(amount)}</td>
               </tr>
               <tr>
-                <td style="padding: 8px 0; color: #64748b;">Bank</td>
-                <td style="padding: 8px 0;">${bankName}</td>
+                <td style="padding: 8px 0; color: #64748b;">Biaya Aplikasi</td>
+                <td style="padding: 8px 0; color: #ef4444; text-align: right;">- ${formatIDR(feeAmount)}</td>
               </tr>
               <tr>
-                <td style="padding: 8px 0; color: #64748b;">No. Rekening</td>
-                <td style="padding: 8px 0;">${accountNumber}</td>
+                <td style="padding: 8px 0; color: #64748b;">Biaya Transfer</td>
+                <td style="padding: 8px 0; color: #ef4444; text-align: right;">- ${formatIDR(xenditFee)}</td>
               </tr>
               <tr>
-                <td style="padding: 8px 0; color: #64748b;">Atas Nama</td>
-                <td style="padding: 8px 0;">${accountHolderName}</td>
+                <td colspan="2" style="border-top: 1px solid #e2e8f0; padding-top: 12px; margin-top: 12px;"></td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #0f172a; font-weight: bold;">Total Diterima</td>
+                <td style="padding: 8px 0; font-size: 18px; font-weight: bold; color: #16a34a; text-align: right;">${formattedNet}</td>
               </tr>
             </table>
           </div>
-          <p>Dana akan masuk ke rekening kamu sesuai jam operasional bank.</p>
-          <p>Jika ada pertanyaan, balas email ini ya.</p>
+
+          <div style="background-color: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+             <p style="margin: 0; font-size: 13px; color: #92400e;">
+               <strong>Info:</strong> Dana dikirimkan ke <strong>${bankName} - ${accountNumber}</strong> a.n <strong>${accountHolderName}</strong>. 
+               Waktu masuk dana tergantung pada jam operasional dan kebijakan bank tujuan.
+             </p>
+          </div>
+
+          <p>Jika kamu merasa tidak melakukan transaksi ini atau ada kendala, segera hubungi tim support kami dengan membalas email ini.</p>
           <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
           <p style="font-size: 12px; color: #64748b; text-align: center;">© ${new Date().getFullYear()} CuanIN. All rights reserved.</p>
         </div>

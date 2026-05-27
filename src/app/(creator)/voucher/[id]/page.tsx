@@ -112,6 +112,7 @@ export default function VoucherDetailPage() {
         usageType !== (voucher.usageType || "ALL_PRODUCTS") ||
         usageLimit !== (voucher.usageLimit ?? undefined) ||
         isLimitPerUser !== (voucher.isLimitPerUser ?? false) ||
+
         JSON.stringify(selectedProductIds.slice().sort()) !== JSON.stringify((voucher.products || []).map((p: any) => p.id).slice().sort())
     ) : false;
 

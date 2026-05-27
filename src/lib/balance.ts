@@ -27,3 +27,34 @@ export async function getCreatorBalance(
 
   return { totalIncome, totalWithdrawn, balance };
 }
+
+// Hitung Admin Balence (Global untuk semua Admin)
+export async function getAdminBalance(
+  db: PrismaClient | TxClient,
+): Promise<{ totalFeeEarned: number; totalWithdrawn: number; balance: number }> {
+  const [earned, withdrawn] = await Promise.all([
+    // Fee yang masuk dari setiap withdrawal creator (masuk ke siapapun adminnya)
+    db.balanceEntry.aggregate({
+      where: {
+        user: { role: "ADMIN" },
+        type: "PLATFORM_FEE_EARNED",
+        amount: { gt: 0 },
+      },
+      _sum: { amount: true },
+    }),
+    // Total yang sudah ditarik oleh semua admin
+    db.balanceEntry.aggregate({
+      where: {
+        user: { role: "ADMIN" },
+        amount: { lt: 0 },
+      },
+      _sum: { amount: true },
+    }),
+  ]);
+
+  const totalFeeEarned = Math.max(Number(earned._sum.amount ?? 0), 0);
+  const totalWithdrawn = Math.abs(Number(withdrawn._sum.amount ?? 0));
+  const balance = Math.max(totalFeeEarned - totalWithdrawn, 0);
+
+  return { totalFeeEarned, totalWithdrawn, balance };
+}

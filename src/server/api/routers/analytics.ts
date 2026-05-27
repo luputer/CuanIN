@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createHash } from "node:crypto";
 import { createTRPCRouter, protectedProcedure, publicProcedure, adminProcedure } from "../trpc";
 import { startOfDay, subDays, format, eachDayOfInterval } from "date-fns";
+import { getAdminBalance } from "~/lib/balance";
 
 const calculateChange = (current: number, previous: number) => {
   if (previous === 0) return current > 0 ? 100 : 0;
@@ -485,10 +486,12 @@ export const analyticsRouter = createTRPCRouter({
     const sevenDaysAgo = startOfDay(subDays(now, 6));
 
     const [
-      // 1. Admin Fee Income (2% dari penarikan kreator yang berhasil)
-      totalAdminFeeStats,
-      current30DaysAdminFee,
-      prev30DaysAdminFee,
+      // 1. Global Admin Stats (Ledger based)
+      adminStats,
+
+      // 1.1 Income 30d & prev30d from ledger
+      current30DaysAdminFeeSum,
+      prev30DaysAdminFeeSum,
       weeklyWithdrawals,
 
       // 2. Product Stats
@@ -519,23 +522,29 @@ export const analyticsRouter = createTRPCRouter({
       // 7. New Creators Weekly
       newCreatorsWeekly,
     ] = await Promise.all([
-      // 1. Admin Fee Income
-      ctx.db.withdrawal.aggregate({
-        where: { status: "SUCCEEDED" },
-        _sum: { feeAmount: true },
-      }),
-      ctx.db.withdrawal.aggregate({
-        where: { status: "SUCCEEDED", updatedAt: { gte: thirtyDaysAgo } },
-        _sum: { feeAmount: true },
-      }),
-      ctx.db.withdrawal.aggregate({
+      // 1. Global Admin Stats
+      getAdminBalance(ctx.db),
+      
+      // 1.1 Income 30d & prev30d from ledger
+      ctx.db.balanceEntry.aggregate({
         where: {
-          status: "SUCCEEDED",
-          updatedAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo },
+          user: { role: "ADMIN" },
+          type: "PLATFORM_FEE_EARNED",
+          amount: { gt: 0 },
+          createdAt: { gte: thirtyDaysAgo },
         },
-        _sum: { feeAmount: true },
+        _sum: { amount: true },
       }),
-      // Weekly withdrawals for fee chart
+      ctx.db.balanceEntry.aggregate({
+        where: {
+          user: { role: "ADMIN" },
+          type: "PLATFORM_FEE_EARNED",
+          amount: { gt: 0 },
+          createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo },
+        },
+        _sum: { amount: true },
+      }),
+      // Weekly withdrawals for fee chart (tetap dari withdrawal table tapi ambil feeAmount)
       ctx.db.withdrawal.findMany({
         where: { status: "SUCCEEDED", updatedAt: { gte: sevenDaysAgo } },
         select: { updatedAt: true, feeAmount: true },
@@ -646,13 +655,13 @@ export const analyticsRouter = createTRPCRouter({
     const prev30DaysVisitors = prev30DaysProductViews + prev30DaysCatalogViews;
 
     return {
-      totalIncome: Number(totalAdminFeeStats._sum.feeAmount ?? 0),
+      totalIncome: adminStats.totalFeeEarned,
       totalProducts,
       totalCreators,
       totalVisitors,
       incomeChange: calculateChange(
-        Number(current30DaysAdminFee._sum.feeAmount ?? 0),
-        Number(prev30DaysAdminFee._sum.feeAmount ?? 0)
+        Number(current30DaysAdminFeeSum._sum.amount ?? 0),
+        Number(prev30DaysAdminFeeSum._sum.amount ?? 0)
       ),
       productsChange: calculateChange(current30DaysProducts, prev30DaysProducts),
       creatorsChange: calculateChange(current30DaysCreators, prev30DaysCreators),

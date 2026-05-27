@@ -5,7 +5,7 @@ import {
   simulatePayoutSuccess,
 } from "~/lib/xendit";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { getCreatorBalance } from "~/lib/balance";
+import { getCreatorBalance, getAdminBalance } from "~/lib/balance";
 
 const BANK_OPTIONS = {
   bca: { name: "BCA", channelCode: "ID_BCA" },
@@ -21,16 +21,17 @@ export const withdrawalsRouter = createTRPCRouter({
     .input(withdrawalSchema)
     .mutation(async ({ ctx, input }) => {
       const isAdmin = ctx.session.user.role === "ADMIN";
-      // Hitung fee platform 2% + biaya transfer Xendit
-      const platformFee = isAdmin ? 0 : Math.round(input.amount * 0.02); // Admin tidak kena fee aplikasi 2%
-      const xenditFee = 4000; // Biaya transfer Xendit flat ke bank
-      const totalFee = platformFee + xenditFee;
-      const payoutAmount = input.amount - totalFee;
+      // Model baru: Nominal yang diinput adalah nominal BERSIH yang diterima di bank
+      const payoutAmount = input.amount; // Nominal yang dikirim via Xendit
+      const platformFee = isAdmin ? 0 : Math.round(payoutAmount * 0.02);
+      const xenditFee = 4000;
+      
+      const totalDeduction = payoutAmount + platformFee + xenditFee;
 
       if (payoutAmount < 10000) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Nominal penarikan terlalu kecil. Saldo yang diterima (setelah fee) minimal Rp10.000.",
+          message: "Nominal penarikan (nominal diterima) minimal Rp10.000.",
         });
       }
 
@@ -38,29 +39,17 @@ export const withdrawalsRouter = createTRPCRouter({
         let balanceAvailable = 0;
         
         if (isAdmin) {
-          const totalIncomeResult = await tx.withdrawal.aggregate({
-            where: { status: "SUCCEEDED" },
-            _sum: { feeAmount: true },
-          });
-          const adminWithdrawnResult = await tx.withdrawal.aggregate({
-            where: { 
-                userId: ctx.session.user.id,
-                status: { in: ["PENDING", "ACCEPTED", "REQUESTED", "SUCCEEDED"] }
-            },
-            _sum: { amount: true },
-          });
-          const totalIncome = Number(totalIncomeResult._sum.feeAmount ?? 0);
-          const adminWithdrawn = Number(adminWithdrawnResult._sum.amount ?? 0);
-          balanceAvailable = Math.max(0, totalIncome - adminWithdrawn);
+          const adminBalance = await getAdminBalance(tx);
+          balanceAvailable = adminBalance.balance;
         } else {
           const balance = await getCreatorBalance(tx, ctx.session.user.id);
           balanceAvailable = balance.balance;
         }
 
-        if (input.amount > balanceAvailable) {
+        if (totalDeduction > balanceAvailable) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Jumlah penarikan melebihi saldo tersedia.",
+            message: `Saldo tidak cukup untuk menutupi nominal tarik + biaya. Total yang dibutuhkan: Rp${totalDeduction.toLocaleString("id-ID")}`,
           });
         }
 
@@ -69,7 +58,7 @@ export const withdrawalsRouter = createTRPCRouter({
         const newWithdrawal = await tx.withdrawal.create({
           data: {
             userId: ctx.session.user.id,
-            amount: input.amount, // Saldo CuanIN tetap dipotong full (input.amount)
+            amount: totalDeduction, // Saldo CuanIN dipotong total (Bersih + Fee)
             feeAmount: platformFee,
             bankCode: bank.channelCode,
             bankName: bank.name,
@@ -84,17 +73,44 @@ export const withdrawalsRouter = createTRPCRouter({
           },
         });
 
-        if (!isAdmin) {
-          // Catat di ledger (debit)
+        if (isAdmin) {
+          // Catat di ledger admin (debit)
           await tx.balanceEntry.create({
             data: {
               userId: ctx.session.user.id,
-              amount: -input.amount,
-              type: "WITHDRAWAL_REQUESTED",
+              amount: -totalDeduction,
+              type: "ADMIN_WITHDRAWAL_REQUESTED",
               refId: newWithdrawal.id,
-              note: `Penarikan saldo ke ${bank.name} (${input.accountNumber})`,
+              note: `Admin withdrawal ke ${bank.name} (${input.accountNumber}). Bersih: ${payoutAmount}`,
             },
           });
+        } else {
+          // Catat di ledger creator (debit)
+          await tx.balanceEntry.create({
+            data: {
+              userId: ctx.session.user.id,
+              amount: -totalDeduction,
+              type: "WITHDRAWAL_REQUESTED",
+              refId: newWithdrawal.id,
+              note: `Penarikan saldo ke ${bank.name} (${input.accountNumber}). Bersih: ${payoutAmount}`,
+            },
+          });
+
+          // Kasih fee ke Admin pertama yang ketemu
+          if (platformFee > 0) {
+            const admin = await tx.user.findFirst({ where: { role: "ADMIN" } });
+            if (admin) {
+              await tx.balanceEntry.create({
+                data: {
+                  userId: admin.id,
+                  amount: platformFee,
+                  type: "PLATFORM_FEE_EARNED",
+                  refId: newWithdrawal.id,
+                  note: `Platform fee (2%) dari penarikan ${ctx.session.user.name || "creator"} (${newWithdrawal.id})`,
+                },
+              });
+            }
+          }
         }
 
         return newWithdrawal;
@@ -109,7 +125,7 @@ export const withdrawalsRouter = createTRPCRouter({
           accountNumber: input.accountNumber,
           accountHolderName: input.accountHolderName,
           description:
-            "Penarikan saldo CuanIN " + bank.name + " - " + withdrawal.id,
+            (isAdmin ? "Admin " : "") + "Penarikan saldo CuanIN " + bank.name + " - " + withdrawal.id,
         });
 
         const updated = await ctx.db.withdrawal.update({
@@ -117,12 +133,11 @@ export const withdrawalsRouter = createTRPCRouter({
           data: {
             xenditPayoutId: payout.id,
             referenceId: withdrawal.id,
-            status: payout.status === "REQUESTED" ? "REQUESTED" : "ACCEPTED",
+            status: payout.status === "SUCCEEDED" ? "SUCCEEDED" : payout.status === "REQUESTED" ? "REQUESTED" : "ACCEPTED",
             failureCode: payout.failure_code,
           },
         });
 
-        // withdrawalsRouter.ts — hapus bagian ini
         if (process.env.ENABLE_PAYOUT_SIMULATE === "true") {
           setTimeout(() => {
             void simulatePayoutSuccess(payout.id, withdrawal.id).catch((err) =>
@@ -144,7 +159,19 @@ export const withdrawalsRouter = createTRPCRouter({
           }),
         ];
 
-        if (!isAdmin) {
+        if (isAdmin) {
+          updates.push(
+            ctx.db.balanceEntry.create({
+              data: {
+                userId: ctx.session.user.id,
+                amount: withdrawal.amount,
+                type: "ADMIN_WITHDRAWAL_REQUESTED", // positif = kredit balik
+                refId: withdrawal.id,
+                note: `Rollback admin withdrawal: ${error instanceof Error ? error.message : "Gagal membuat payout"} — saldo dikembalikan`,
+              },
+            })
+          );
+        } else {
           updates.push(
             ctx.db.balanceEntry.create({
               data: {
@@ -156,6 +183,23 @@ export const withdrawalsRouter = createTRPCRouter({
               },
             })
           );
+
+          if (platformFee > 0) {
+            const admin = await ctx.db.user.findFirst({ where: { role: "ADMIN" } });
+            if (admin) {
+              updates.push(
+                ctx.db.balanceEntry.create({
+                  data: {
+                    userId: admin.id,
+                    amount: -platformFee,
+                    type: "PLATFORM_FEE_EARNED",
+                    refId: withdrawal.id,
+                    note: `Rollback platform fee (2%) karena payout gagal: ${withdrawal.id}`,
+                  },
+                })
+              );
+            }
+          }
         }
 
         await ctx.db.$transaction(updates);

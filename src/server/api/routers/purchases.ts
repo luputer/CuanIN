@@ -6,6 +6,7 @@ import { env } from "~/env";
 import { createInvoice as createXenditInvoice } from "~/lib/xendit";
 import { createSnapTransaction } from "~/lib/midtrans";
 import { calculatePaymentFee } from "~/lib/utils";
+import { Prisma, WithdrawalStatus } from "../../../../prisma/generated/prisma";
 import { getCreatorBalance } from "~/lib/balance";
 
 const XENDIT_PAYMENT_METHODS = {
@@ -170,7 +171,7 @@ export const purchasesRouter = createTRPCRouter({
 
       // Produk gratis (atau menjadi gratis setelah diskon) → langsung completed + kredit ledger creator
       if (finalPrice === 0) {
-        const purchase = await ctx.db.$transaction(async (tx) => {
+        const purchaseResult = await ctx.db.$transaction(async (tx) => {
           const newPurchase = await tx.purchase.create({
             data: {
               productId: input.productId,
@@ -222,11 +223,11 @@ export const purchasesRouter = createTRPCRouter({
           });
         }
 
-        return { status: "free", purchase };
+        return { status: "free", purchase: purchaseResult };
       }
 
       // Produk berbayar → buat purchase pending (kredit ledger di webhook)
-      const purchase = await ctx.db.$transaction(async (tx) => {
+      const purchaseResult = await ctx.db.$transaction(async (tx) => {
         const newPurchase = await tx.purchase.create({
           data: {
             productId: input.productId,
@@ -259,7 +260,7 @@ export const purchasesRouter = createTRPCRouter({
         return newPurchase;
       });
 
-      return { status: "pending", purchase };
+      return { status: "pending", purchase: purchaseResult };
     }),
 
   // ─── CREATE PAYMENT INVOICE ─────────────────────────────────────────────────
@@ -659,102 +660,109 @@ export const purchasesRouter = createTRPCRouter({
       const page = input.page;
       const limit = input.limit;
       const skip = (page - 1) * limit;
+      const userId = ctx.session.user.id;
 
+      // 1. Ambil ID produk milik kreator
       const products = await ctx.db.product.findMany({
-        where: { userId: ctx.session.user.id },
+        where: { userId },
         select: { id: true },
       });
       const productIds = products.map((p) => p.id);
 
-      if (productIds.length === 0) {
-        return {
-          items: [],
-          total: 0,
-          page,
-          limit,
-          totalPages: 0,
-          stats: {
-            totalIncome: 0,
-            totalTransactions: 0,
-            balance: 0,
-            incomeChange: 0,
-            transactionsChange: 0,
-          },
-        };
-      }
-
-      const where = {
+      // 2. Query Purchases
+      const purchaseWhere = {
         productId: { in: productIds },
         ...(input.search
           ? {
             OR: [
-              {
-                buyerName: {
-                  contains: input.search,
-                  mode: "insensitive" as const,
-                },
-              },
-              {
-                product: {
-                  name: {
-                    contains: input.search,
-                    mode: "insensitive" as const,
-                  },
-                },
-              },
-              {
-                id: { contains: input.search, mode: "insensitive" as const },
-              },
+              { buyerName: { contains: input.search, mode: "insensitive" as const } },
+              { product: { name: { contains: input.search, mode: "insensitive" as const } } },
+              { id: { contains: input.search, mode: "insensitive" as const } },
             ],
           }
           : {}),
-        ...(input.status && input.status !== "ALL"
-          ? { status: input.status }
+        ...(input.status && input.status !== "ALL" ? { status: input.status } : {}),
+      };
+
+      // 3. Query Withdrawals
+      const withdrawalWhere: Prisma.WithdrawalWhereInput = {
+        userId,
+        ...(input.search
+          ? {
+            OR: [
+              { id: { contains: input.search, mode: "insensitive" as const } },
+              { bankName: { contains: input.search, mode: "insensitive" as const } },
+              { accountNumber: { contains: input.search, mode: "insensitive" as const } },
+            ],
+          }
           : {}),
       };
+
+      if (input.status && input.status !== "ALL") {
+        if (input.status === "completed") {
+          withdrawalWhere.status = WithdrawalStatus.SUCCEEDED;
+        } else if (input.status === "pending") {
+          withdrawalWhere.status = { in: [WithdrawalStatus.PENDING, WithdrawalStatus.REQUESTED, WithdrawalStatus.ACCEPTED] };
+        } else if (input.status === "failed") {
+          withdrawalWhere.status = WithdrawalStatus.FAILED;
+        } else if (input.status === "expired") {
+          withdrawalWhere.status = WithdrawalStatus.CANCELLED;
+        }
+      }
 
       const now = new Date();
       const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
       const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
 
-      const [items, total, allTimeStats, currentStats, previousStats, { balance, totalIncome }] =
-        await Promise.all([
-          ctx.db.purchase.findMany({
-            where,
-            include: {
-              product: { select: { name: true } },
-            },
-            orderBy: { createdAt: "desc" },
-            skip,
-            take: limit,
-          }),
-          ctx.db.purchase.count({ where }),
-          ctx.db.purchase.aggregate({
-            where: { productId: { in: productIds }, status: "completed" },
-            _sum: { amount: true },
-            _count: { id: true },
-          }),
-          ctx.db.purchase.aggregate({
-            where: {
-              productId: { in: productIds },
-              status: "completed",
-              createdAt: { gte: thirtyDaysAgo },
-            },
-            _sum: { amount: true },
-            _count: { id: true },
-          }),
-          ctx.db.purchase.aggregate({
-            where: {
-              productId: { in: productIds },
-              status: "completed",
-              createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo },
-            },
-            _sum: { amount: true },
-            _count: { id: true },
-          }),
-          // ← Balance sekarang dari ledger, bukan kalkulasi manual
-          getCreatorBalance(ctx.db, ctx.session.user.id),
-        ]);
+      const [
+        purchases,
+        withdrawals,
+        purchaseCount,
+        withdrawalCount,
+        allTimePurchaseStats,
+        currentPurchaseStats,
+        previousPurchaseStats,
+        { balance, totalIncome }
+      ] = await Promise.all([
+        ctx.db.purchase.findMany({
+          where: purchaseWhere,
+          include: { product: { select: { name: true } } },
+          orderBy: { createdAt: "desc" },
+          take: skip + limit,
+        }),
+        ctx.db.withdrawal.findMany({
+          where: withdrawalWhere,
+          orderBy: { createdAt: "desc" },
+          take: skip + limit,
+        }),
+        ctx.db.purchase.count({ where: purchaseWhere }),
+        ctx.db.withdrawal.count({ where: withdrawalWhere }),
+        ctx.db.purchase.aggregate({
+          where: { productId: { in: productIds }, status: "completed" },
+          _sum: { amount: true },
+          _count: { id: true },
+        }),
+        ctx.db.purchase.aggregate({
+          where: { productId: { in: productIds }, status: "completed", createdAt: { gte: thirtyDaysAgo } },
+          _sum: { amount: true },
+          _count: { id: true },
+        }),
+        ctx.db.purchase.aggregate({
+          where: { productId: { in: productIds }, status: "completed", createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } },
+          _sum: { amount: true },
+          _count: { id: true },
+        }),
+        getCreatorBalance(ctx.db, userId),
+      ]);
+
+      // Gabungkan dan urutkan
+      const unifiedItems = [
+        ...purchases.map(p => ({ ...p, type: "INCOME" as const })),
+        ...withdrawals.map(w => ({ ...w, type: "WITHDRAWAL" as const }))
+      ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+      const paginatedItems = unifiedItems.slice(skip, skip + limit);
+      const total = purchaseCount + withdrawalCount;
 
       const calculateChange = (current: number, previous: number) => {
         if (previous === 0) return current > 0 ? 100 : 0;
@@ -762,22 +770,22 @@ export const purchasesRouter = createTRPCRouter({
       };
 
       return {
-        items,
+        items: paginatedItems,
         total,
         page,
         limit,
         totalPages: Math.ceil(total / limit),
         stats: {
-          totalIncome,                          // dari ledger
-          totalTransactions: allTimeStats._count.id,
-          balance,                              // dari ledger
+          totalIncome,
+          totalTransactions: allTimePurchaseStats._count.id,
+          balance,
           incomeChange: calculateChange(
-            Number(currentStats._sum.amount ?? 0),
-            Number(previousStats._sum.amount ?? 0),
+            Number(currentPurchaseStats._sum.amount ?? 0),
+            Number(previousPurchaseStats._sum.amount ?? 0),
           ),
           transactionsChange: calculateChange(
-            currentStats._count.id,
-            previousStats._count.id,
+            currentPurchaseStats._count.id,
+            previousPurchaseStats._count.id,
           ),
         },
       };

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
-import { SquaresFourIcon, BasketIcon, CreditCardIcon, ListIcon, AddressBookIcon } from "@phosphor-icons/react";
+import React from "react";
+import { SquaresFourIcon, BasketIcon, CreditCardIcon, AddressBookIcon, XIcon } from "@phosphor-icons/react";
 import { usePathname } from "next/navigation";
 
 // Component kecil (item menu)
@@ -43,12 +43,20 @@ function SidebarItem({
 
 
 // Sidebar utama
-export default function SidebarAdmin() {
+export default function SidebarAdmin({
+    isMobile = false,
+    onCloseMobile,
+    isCollapsed: controlledIsCollapsed = false,
+}: {
+    isMobile?: boolean;
+    onCloseMobile?: () => void;
+    isCollapsed?: boolean;
+} = {}) {
     const pathname = usePathname();
-    const [isCollapsed, setIsCollapsed] = useState(false);
+    const isCollapsed = isMobile ? false : controlledIsCollapsed;
 
     return (
-        <aside className={`sticky top-0 transition-all duration-300 z-50 ease-in-out ${isCollapsed ? "w-20" : "w-64"} h-screen bg-white p-4 text-white border-r-1 border-slate-800 flex flex-col`}>
+        <aside className={`transition-all duration-300 z-50 ease-in-out ${isCollapsed ? "w-20" : "w-64"} h-screen bg-white p-4 text-white border-r-1 border-slate-800 flex flex-col ${!isMobile ? "sticky top-0" : ""}`}>
             {/* Header sidebar + Toggle button */}
             <div className={`flex items-center mb-6 mt-2 ${isCollapsed ? "justify-center" : "justify-between px-2"}`}>
                 {!isCollapsed && (
@@ -56,13 +64,15 @@ export default function SidebarAdmin() {
                         <Link href="/">CuanIN</Link>
                     </div>
                 )}
-                <button
-                    onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="p-1 rounded-lg text-slate-500 border-1 border-transparent hover:border-slate-300 hover:bg-slate-100 transition-all duration-200"
-                    title={isCollapsed ? "Expand menu" : "Collapse menu"}
-                >
-                    <ListIcon size={24} weight="bold" />
-                </button>
+                {isMobile && (
+                    <button
+                        onClick={onCloseMobile}
+                        className="p-1 rounded-lg text-slate-500 border-1 border-transparent hover:border-slate-300 hover:bg-slate-100 transition-all duration-200 cursor-pointer"
+                        title="Tutup Menu"
+                    >
+                        <XIcon size={24} className="text-slate-800" weight="bold" />
+                    </button>
+                )}
             </div>
 
             <div className="flex flex-col flex-1 overflow-y-auto overflow-visible no-scrollbar px-1">

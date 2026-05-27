@@ -20,6 +20,7 @@ import {
 } from "recharts";
 import { api } from "~/trpc/react";
 import { formatPrice } from "~/lib/utils";
+import Link from "next/link";
 
 // ── Skeleton helpers (same pattern as creator dashboard) ────────────────────
 
@@ -130,6 +131,7 @@ export default function DashboardPage() {
 					</>
 				) : (
 					<>
+					  <Link href="transaksi" className="block rounded-xl transition-transform hover:scale-101">
 						<Card
 							title="Total Penghasilan"
 							value={formatPrice(data?.totalIncome ?? 0)}
@@ -139,6 +141,7 @@ export default function DashboardPage() {
 							showArrow={true}
 							change={data?.incomeChange}
 						/>
+					  </Link>
 						<Card
 							title="Total Produk"
 							value={(data?.totalProducts ?? 0).toLocaleString("id-ID")}

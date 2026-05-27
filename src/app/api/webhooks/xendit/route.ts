@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       payout.status === "SUCCEEDED" &&
       previousStatus !== WithdrawalStatus.SUCCEEDED
     ) {
-      const adminFee = Math.round(Number(withdrawal.amount) * 0.02);
+      const adminFee = Number(withdrawal.feeAmount ?? 0);
       const adminUser = adminFee > 0 ? await db.user.findFirst({ where: { role: "ADMIN" } }) : null;
 
       if (adminFee > 0 && adminUser) {
@@ -76,9 +76,9 @@ export async function POST(req: NextRequest) {
             data: {
               userId: adminUser.id,
               amount: adminFee,
-              type: "WITHDRAWAL_FEE" as any,
+              type: "PLATFORM_FEE_EARNED",
               refId: withdrawal.id,
-              note: `Platform fee 2% untuk penarikan ${withdrawal.id}`,
+              note: `Platform fee untuk penarikan ${withdrawal.id}`,
             },
           }),
         ]);
@@ -97,6 +97,7 @@ export async function POST(req: NextRequest) {
         await sendWithdrawalEmail({
           email: withdrawal.email,
           amount: Number(withdrawal.amount),
+          feeAmount: Number(withdrawal.feeAmount ?? 0),
           bankName: withdrawal.bankName,
           accountNumber: withdrawal.accountNumber,
           accountHolderName: withdrawal.accountHolderName,

@@ -17,13 +17,13 @@ import {
     DropdownMenuRadioItem,
 } from "~/components/ui/dropdown-menu";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "~/components/ui/dialog";
 import ButtonFilter from "~/components/ui/filter";
 import SearchInput from "~/components/ui/search";
@@ -55,14 +55,14 @@ export default function AdminTransactionPage() {
     const [status, setStatus] = useState("ALL");
     const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
     const [withdrawForm, setWithdrawForm] = useState({
-      amount: "",
-      bank: "",
-      accountNumber: "",
-      accountHolderName: "",
-      email: "",
+        amount: "",
+        bank: "",
+        accountNumber: "",
+        accountHolderName: "",
+        email: "",
     });
     const [withdrawErrors, setWithdrawErrors] = useState<Partial<Record<keyof WithdrawalFormData, string>>>({});
-    
+
     const debouncedSearch = useDebounce(search, 500);
     const utils = api.useUtils();
 
@@ -76,12 +76,11 @@ export default function AdminTransactionPage() {
     });
 
     const stats = {
-        totalIncome: 0,
-        totalTransactions: 0,
-        balance: 0,
+        totalIncome: data?.stats.totalIncome ?? 0,
+        totalTransactions: data?.stats.totalTransactions ?? 0,
+        balance: data?.stats.balance ?? 0,
         incomeChange: 0,
         transactionsChange: 0,
-        ...data?.stats,
     };
 
     const transactions = data?.items ?? [];
@@ -89,60 +88,60 @@ export default function AdminTransactionPage() {
     const totalItems = data?.total ?? 0;
 
     const bankOptions = [
-      { value: "bca", label: "BCA" },
-      { value: "bni", label: "BNI" },
-      { value: "bri", label: "BRI" },
-      { value: "mandiri", label: "Mandiri" },
-      { value: "cimb", label: "CIMB Niaga" },
-      { value: "bsi", label: "BSI" },
+        { value: "bca", label: "BCA" },
+        { value: "bni", label: "BNI" },
+        { value: "bri", label: "BRI" },
+        { value: "mandiri", label: "Mandiri" },
+        { value: "cimb", label: "CIMB Niaga" },
+        { value: "bsi", label: "BSI" },
     ];
     const errorFieldClassName = "border-red-500 focus:ring-red-500/30 focus:border-red-500";
-    
+
     const createWithdrawal = api.withdrawals.create.useMutation({
-      onSuccess: async () => {
-        toast.success("Penarikan saldo berhasil diproses");
-        setIsWithdrawOpen(false);
-        setWithdrawForm({ amount: "", bank: "", accountNumber: "", accountHolderName: "", email: "" });
-        setWithdrawErrors({});
-        await utils.admin.getWithdrawals.invalidate();
-      },
-      onError: (error) => {
-        toast.error(error.message);
-      },
+        onSuccess: async () => {
+            toast.success("Penarikan saldo berhasil diproses");
+            setIsWithdrawOpen(false);
+            setWithdrawForm({ amount: "", bank: "", accountNumber: "", accountHolderName: "", email: "" });
+            setWithdrawErrors({});
+            await utils.admin.getWithdrawals.invalidate();
+        },
+        onError: (error) => {
+            toast.error(error.message);
+        },
     });
 
     const updateWithdrawField = (field: keyof typeof withdrawForm, value: string) => {
-      const nextValue = (field === "amount" || field === "accountNumber") ? value.replace(/\D/g, "") : value;
-      setWithdrawForm((current) => ({ ...current, [field]: nextValue }));
-      setWithdrawErrors((current) => {
-        if (!current[field]) return current;
-        const next = { ...current };
-        delete next[field];
-        return next;
-      });
+        const nextValue = (field === "amount" || field === "accountNumber") ? value.replace(/\D/g, "") : value;
+        setWithdrawForm((current) => ({ ...current, [field]: nextValue }));
+        setWithdrawErrors((current) => {
+            if (!current[field]) return current;
+            const next = { ...current };
+            delete next[field];
+            return next;
+        });
     };
 
     const handleWithdrawalSubmit = (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      const result = withdrawalSchema.safeParse(withdrawForm);
-      if (!result.success) {
-        const fieldErrors = result.error.flatten().fieldErrors;
-        setWithdrawErrors({
-          amount: fieldErrors.amount?.[0],
-          bank: fieldErrors.bank?.[0],
-          accountNumber: fieldErrors.accountNumber?.[0],
-          accountHolderName: fieldErrors.accountHolderName?.[0],
-          email: fieldErrors.email?.[0],
-        });
-        return;
-      }
-      setWithdrawErrors({});
-      createWithdrawal.mutate(result.data);
+        event.preventDefault();
+        const result = withdrawalSchema.safeParse(withdrawForm);
+        if (!result.success) {
+            const fieldErrors = result.error.flatten().fieldErrors;
+            setWithdrawErrors({
+                amount: fieldErrors.amount?.[0],
+                bank: fieldErrors.bank?.[0],
+                accountNumber: fieldErrors.accountNumber?.[0],
+                accountHolderName: fieldErrors.accountHolderName?.[0],
+                email: fieldErrors.email?.[0],
+            });
+            return;
+        }
+        setWithdrawErrors({});
+        createWithdrawal.mutate(result.data);
     };
 
     const handleWithdrawDialogOpenChange = (open: boolean) => {
-      setIsWithdrawOpen(open);
-      if (!open) setWithdrawErrors({});
+        setIsWithdrawOpen(open);
+        if (!open) setWithdrawErrors({});
     };
 
     const getStatusColor = (status: string) => {
@@ -288,22 +287,26 @@ export default function AdminTransactionPage() {
                                         {Number(withdrawForm.amount) > 0 && (
                                             <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2.5">
                                                 <div className="flex justify-between text-[13px] text-slate-600">
-                                                    <span>Nominal Penarikan</span>
-                                                    <span>Rp{formatNumberInput(withdrawForm.amount)}</span>
+                                                    <span>Nominal Diterima di Bank</span>
+                                                    <span className="font-medium text-slate-900">Rp{formatNumberInput(withdrawForm.amount)}</span>
                                                 </div>
                                                 <div className="flex justify-between text-[13px] text-slate-600">
                                                     <span>Biaya Transfer Bank</span>
-                                                    <span>- Rp4.000</span>
+                                                    <span className="font-medium text-slate-700">+ Rp4.000</span>
                                                 </div>
-                                                <div className="border-t border-slate-200 pt-2.5 mt-2.5 flex justify-between font-semibold text-[15px] text-slate-900">
-                                                    <span>Total Diterima</span>
-                                                    <span>
-                                                        Rp{formatNumberInput(Math.max(0, Number(withdrawForm.amount) - 4000).toString())}
+                                                <div className="border-t border-slate-200 pt-2.5 mt-2.5 flex justify-between font-bold text-[15px] text-slate-900">
+                                                    <span>Total Potong Saldo Admin</span>
+                                                    <span className="text-red-600">
+                                                        Rp{formatNumberInput((Number(withdrawForm.amount) + 4000).toString())}
                                                     </span>
                                                 </div>
-                                                {Number(withdrawForm.amount) - 4000 < 10000 && (
-                                                    <p className="text-red-500 text-xs mt-3 pt-2 border-t border-red-100 text-center font-medium">
-                                                        Minimal saldo diterima harus Rp10.000 setelah dipotong fee.
+                                                <p className="text-[11px] text-slate-400 italic mt-2 leading-relaxed">
+                                                    * Kamu akan menerima bersih <strong>Rp{formatNumberInput(withdrawForm.amount)}</strong> di rekening bank.
+                                                    Total saldo yang akan terpotong dari dashboard adalah <strong>Rp{formatNumberInput((Number(withdrawForm.amount) + 4000).toString())}</strong>.
+                                                </p>
+                                                {Number(withdrawForm.amount) < 10000 && (
+                                                    <p className="text-red-500 text-xs mt-1 pt-2 border-t border-red-100 text-center font-medium">
+                                                        Minimal penarikan adalah Rp10.000.
                                                     </p>
                                                 )}
                                             </div>
@@ -408,7 +411,8 @@ export default function AdminTransactionPage() {
                             <TableRow>
                                 <TableHead className="w-[5%] text-center">No</TableHead>
                                 <TableHead className="w-[10%] whitespace-nowrap">ID</TableHead>
-                                <TableHead className="w-[12%] whitespace-nowrap">Nominal</TableHead>
+                                <TableHead className="w-[10%] whitespace-nowrap">Nominal</TableHead>
+                                <TableHead className="w-[8%] whitespace-nowrap">Fee</TableHead>
                                 <TableHead className="w-[10%] whitespace-nowrap">Bank</TableHead>
                                 <TableHead className="w-[18%] whitespace-nowrap">Kreator</TableHead>
                                 <TableHead className="w-[20%] whitespace-nowrap">Rek Tujuan</TableHead>
@@ -433,6 +437,11 @@ export default function AdminTransactionPage() {
                                         <TableCell>
                                             <div className="flex items-center min-h-[48px]">
                                                 <Skeleton className="h-4 w-24" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="h-4 w-12" />
                                             </div>
                                         </TableCell>
                                         <TableCell>
@@ -488,7 +497,14 @@ export default function AdminTransactionPage() {
                                         </TableCell>
                                         <TableCell className="whitespace-nowrap">
                                             <div className="flex min-h-[48px] items-center font-medium text-slate-800">
-                                                {formatCurrency(Number(item.amount))}
+                                                {/* Hitung balik nominal bersih: Total - Fee Platform - Fee Xendit 4000 */}
+                                                {formatCurrency(Number(item.amount) - Number(item.feeAmount ?? 0) - 4000)}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex flex-col min-h-[48px] justify-center text-[11px]">
+                                                <span className="text-cyan-600 font-medium">Fee: {formatCurrency(Number(item.feeAmount ?? 0))}</span>
+                                                <span className="text-slate-400">Bank: Rp4.000</span>
                                             </div>
                                         </TableCell>
                                         <TableCell>
@@ -607,10 +623,13 @@ export default function AdminTransactionPage() {
                                         </div>
 
                                         <div className="text-xs pt-1">
-                                            <span className="font-medium text-slate-400">Nominal: </span>
-                                            <span className="font-bold text-cyan-600 text-sm">
-                                                {formatCurrency(Number(item.amount))}
+                                            <span className="font-medium text-slate-400">Nominal Diterima: </span>
+                                            <span className="font-bold text-slate-700 text-sm">
+                                                {formatCurrency(Number(item.amount) - Number(item.feeAmount ?? 0) - 4000)}
                                             </span>
+                                            <div className="text-[10px] text-slate-400 mt-0.5">
+                                                Total Potong Saldo: {formatCurrency(Number(item.amount))}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

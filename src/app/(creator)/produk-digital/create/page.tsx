@@ -176,7 +176,7 @@ export default function CreateProdukDigitalPage() {
     const utils = api.useUtils();
 
     const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-    const [createdProduct, setCreatedProduct] = useState<{name: string, slug: string} | null>(null);
+    const [createdProduct, setCreatedProduct] = useState<{ name: string, slug: string } | null>(null);
 
     // Editor Height drag-resize state
     const [editorHeight, setEditorHeight] = useState(150);

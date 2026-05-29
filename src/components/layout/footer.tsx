@@ -1,6 +1,4 @@
-"use client";
-
-import { PhoneIcon, EnvelopeIcon } from "@phosphor-icons/react";
+import { PhoneIcon, EnvelopeIcon, MapPinIcon } from "@phosphor-icons/react";
 
 export default function Footer() {
     return (
@@ -12,19 +10,23 @@ export default function Footer() {
                         <p className="text-lg text-slate-200 leading-relaxed">
                             Ubah Keahlian Jadi Penghasilan
                         </p>
+                        <div className="flex items-start gap-2 mt-3 text-sm text-slate-300">
+                            <MapPinIcon size={16} className="mt-0.5 shrink-0" />
+                            <span>Jl. Maratapura Lama KM. 6, Sungai Lulut, Sungai Tabuk, Banjarmasin, Kalimantan Selatan 70238</span>
+                        </div>
                     </div>
                     <div className="w-full md:w-auto">
                         <div className="flex flex-col gap-4 md:gap-6">
                             <h4 className="text-lg font-semibold m-0">Kontak Kami</h4>
-
                             <ul className="flex flex-col sm:flex-row gap-4 sm:gap-8 text-sm text-slate-200">
                                 <li className="flex items-center gap-2">
                                     <PhoneIcon size={16} />
-                                    <span>+62 8123 4567 890</span>
+                                    <span>+62 878 6573 1570</span>
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <EnvelopeIcon size={16} />
-                                    <span>cuanin9@gmail.com</span>
+                                    {/* <span>[EMAIL_ADDRESS]</span> */}
+                                    <span>m.saidibjm1@gmail.com</span>
                                 </li>
                             </ul>
                         </div>

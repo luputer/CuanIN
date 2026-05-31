@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState, type FormEvent } from "react";
-import { WalletIcon, ArrowUpRightIcon, CreditCardIcon } from "@phosphor-icons/react";
+import { WalletIcon, ArrowUpRightIcon, CreditCardIcon, EyeIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { api } from "~/trpc/react";
@@ -54,12 +56,13 @@ export default function AdminTransactionPage() {
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("ALL");
     const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
+    const [selectedTx, setSelectedTx] = useState<any>(null);
+    const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [withdrawForm, setWithdrawForm] = useState({
         amount: "",
         bank: "",
         accountNumber: "",
         accountHolderName: "",
-        email: "",
     });
     const [withdrawErrors, setWithdrawErrors] = useState<Partial<Record<keyof WithdrawalFormData, string>>>({});
 
@@ -79,8 +82,8 @@ export default function AdminTransactionPage() {
         totalIncome: data?.stats.totalIncome ?? 0,
         totalTransactions: data?.stats.totalTransactions ?? 0,
         balance: data?.stats.balance ?? 0,
-        incomeChange: 0,
-        transactionsChange: 0,
+        incomeChange: data?.stats.incomeChange ?? 0,
+        transactionsChange: data?.stats.transactionsChange ?? 0,
     };
 
     const transactions = data?.items ?? [];
@@ -101,7 +104,7 @@ export default function AdminTransactionPage() {
         onSuccess: async () => {
             toast.success("Penarikan saldo berhasil diproses");
             setIsWithdrawOpen(false);
-            setWithdrawForm({ amount: "", bank: "", accountNumber: "", accountHolderName: "", email: "" });
+            setWithdrawForm({ amount: "", bank: "", accountNumber: "", accountHolderName: "" });
             setWithdrawErrors({});
             await utils.admin.getWithdrawals.invalidate();
         },
@@ -131,7 +134,6 @@ export default function AdminTransactionPage() {
                 bank: fieldErrors.bank?.[0],
                 accountNumber: fieldErrors.accountNumber?.[0],
                 accountHolderName: fieldErrors.accountHolderName?.[0],
-                email: fieldErrors.email?.[0],
             });
             return;
         }
@@ -219,7 +221,7 @@ export default function AdminTransactionPage() {
                                 <DialogTrigger asChild>
                                     <ActionButton label="Tarik Saldo" icon={ArrowUpRightIcon} variant="secondary" />
                                 </DialogTrigger>
-                                <DialogContent size="2xl" showCloseButton={false}>
+                                <DialogContent size="3xl" showCloseButton={false}>
                                     <DialogHeader>
                                         <DialogTitle className="flex items-center justify-center gap-4">
                                             <CreditCardIcon className="h-6 w-6" weight="fill" />
@@ -227,92 +229,90 @@ export default function AdminTransactionPage() {
                                         </DialogTitle>
                                     </DialogHeader>
 
-                                    <form className="space-y-0 px-10 py-8" onSubmit={handleWithdrawalSubmit}>
-                                        <div className="space-y-0">
-                                            <FormGroup label="Jumlah" labelWidth="md:w-[100px]" error={withdrawErrors.amount}>
-                                                <FormInput
-                                                    type="text"
-                                                    inputMode="numeric"
-                                                    prefix="Rp"
-                                                    value={formatNumberInput(withdrawForm.amount)}
-                                                    className={withdrawErrors.amount ? errorFieldClassName : ""}
-                                                    onChange={(event) => updateWithdrawField("amount", event.target.value)}
-                                                    placeholder="Contoh: 500000"
-                                                />
-                                            </FormGroup>
+                                    <form className="px-10 py-8" onSubmit={handleWithdrawalSubmit}>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start mb-8">
+                                            <div className="space-y-[-8px]">
+                                                <FormGroup label="Jumlah" layout="vertical" error={withdrawErrors.amount}>
+                                                    <FormInput
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        prefix="Rp"
+                                                        value={formatNumberInput(withdrawForm.amount)}
+                                                        className={withdrawErrors.amount ? errorFieldClassName : ""}
+                                                        onChange={(event) => updateWithdrawField("amount", event.target.value)}
+                                                        placeholder="Contoh: 500000"
+                                                    />
+                                                </FormGroup>
 
-                                            <FormGroup label="Pilih Bank" labelWidth="md:w-[100px]" error={withdrawErrors.bank}>
-                                                <FormSelect
-                                                    value={withdrawForm.bank}
-                                                    className={withdrawErrors.bank ? errorFieldClassName : ""}
-                                                    onChange={(e) => updateWithdrawField("bank", e.target.value)}
-                                                >
-                                                    <option value="" disabled>Pilih salah satu</option>
-                                                    {bankOptions.map((bank) => (
-                                                        <option key={bank.value} value={bank.value}>{bank.label}</option>
-                                                    ))}
-                                                </FormSelect>
-                                            </FormGroup>
+                                                <FormGroup label="Pilih Bank" layout="vertical" error={withdrawErrors.bank}>
+                                                    <FormSelect
+                                                        value={withdrawForm.bank}
+                                                        className={withdrawErrors.bank ? errorFieldClassName : ""}
+                                                        onChange={(e) => updateWithdrawField("bank", e.target.value)}
+                                                    >
+                                                        <option value="" disabled>Pilih salah satu</option>
+                                                        {bankOptions.map((bank) => (
+                                                            <option key={bank.value} value={bank.value}>{bank.label}</option>
+                                                        ))}
+                                                    </FormSelect>
+                                                </FormGroup>
 
-                                            <FormGroup label="Nama Pemilik" labelWidth="md:w-[100px]" error={withdrawErrors.accountHolderName}>
-                                                <FormInput
-                                                    value={withdrawForm.accountHolderName}
-                                                    className={withdrawErrors.accountHolderName ? errorFieldClassName : ""}
-                                                    onChange={(event) => updateWithdrawField("accountHolderName", event.target.value)}
-                                                    placeholder="Masukkan nama pemilik rekening"
-                                                />
-                                            </FormGroup>
+                                                <FormGroup label="Atas Nama" layout="vertical" error={withdrawErrors.accountHolderName}>
+                                                    <FormInput
+                                                        value={withdrawForm.accountHolderName}
+                                                        className={withdrawErrors.accountHolderName ? errorFieldClassName : ""}
+                                                        onChange={(event) => updateWithdrawField("accountHolderName", event.target.value)}
+                                                        placeholder="Masukkan nama pemilik rekening"
+                                                    />
+                                                </FormGroup>
 
-                                            <FormGroup label="No Rekening" labelWidth="md:w-[100px]" error={withdrawErrors.accountNumber}>
-                                                <FormInput
-                                                    inputMode="numeric"
-                                                    value={withdrawForm.accountNumber}
-                                                    className={withdrawErrors.accountNumber ? errorFieldClassName : ""}
-                                                    onChange={(event) => updateWithdrawField("accountNumber", event.target.value)}
-                                                    placeholder="Masukkan nomor rekening anda"
-                                                />
-                                            </FormGroup>
+                                                <FormGroup label="No Rekening" layout="vertical" error={withdrawErrors.accountNumber}>
+                                                    <FormInput
+                                                        inputMode="numeric"
+                                                        value={withdrawForm.accountNumber}
+                                                        className={withdrawErrors.accountNumber ? errorFieldClassName : ""}
+                                                        onChange={(event) => updateWithdrawField("accountNumber", event.target.value)}
+                                                        placeholder="Masukkan nomor rekening anda"
+                                                    />
+                                                </FormGroup>
+                                            </div>
 
-                                            <FormGroup label="Email" labelWidth="md:w-[100px]" error={withdrawErrors.email}>
-                                                <FormInput
-                                                    type="email"
-                                                    value={withdrawForm.email}
-                                                    className={withdrawErrors.email ? errorFieldClassName : ""}
-                                                    onChange={(event) => updateWithdrawField("email", event.target.value)}
-                                                    placeholder="Masukkan email anda"
-                                                />
-                                            </FormGroup>
-                                        </div>
-
-                                        {Number(withdrawForm.amount) > 0 && (
-                                            <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2.5">
-                                                <div className="flex justify-between text-[13px] text-slate-600">
-                                                    <span>Nominal Diterima di Bank</span>
-                                                    <span className="font-medium text-slate-900">Rp{formatNumberInput(withdrawForm.amount)}</span>
-                                                </div>
-                                                <div className="flex justify-between text-[13px] text-slate-600">
-                                                    <span>Biaya Transfer Bank</span>
-                                                    <span className="font-medium text-slate-700">+ Rp4.000</span>
-                                                </div>
-                                                <div className="border-t border-slate-200 pt-2.5 mt-2.5 flex justify-between font-bold text-[15px] text-slate-900">
-                                                    <span>Total Potong Saldo Admin</span>
-                                                    <span className="text-red-600">
-                                                        Rp{formatNumberInput((Number(withdrawForm.amount) + 4000).toString())}
-                                                    </span>
-                                                </div>
-                                                <p className="text-[11px] text-slate-400 italic mt-2 leading-relaxed">
-                                                    * Kamu akan menerima bersih <strong>Rp{formatNumberInput(withdrawForm.amount)}</strong> di rekening bank.
-                                                    Total saldo yang akan terpotong dari dashboard adalah <strong>Rp{formatNumberInput((Number(withdrawForm.amount) + 4000).toString())}</strong>.
-                                                </p>
-                                                {Number(withdrawForm.amount) < 10000 && (
-                                                    <p className="text-red-500 text-xs mt-1 pt-2 border-t border-red-100 text-center font-medium">
-                                                        Minimal penarikan adalah Rp10.000.
-                                                    </p>
+                                            <div className="space-y-4">
+                                                {Number(withdrawForm.amount) > 0 ? (
+                                                    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2.5">
+                                                        <div className="flex justify-between text-[13px] text-slate-600">
+                                                            <span>Nominal Diterima di Bank</span>
+                                                            <span className="font-medium text-slate-900">Rp{formatNumberInput(withdrawForm.amount)}</span>
+                                                        </div>
+                                                        <div className="flex justify-between text-[13px] text-slate-600">
+                                                            <span>Biaya Transfer Bank</span>
+                                                            <span className="font-medium text-slate-700">+ Rp4.000</span>
+                                                        </div>
+                                                        <div className="border-t border-slate-200 pt-2.5 mt-2.5 flex justify-between font-bold text-[15px] text-slate-900">
+                                                            <span>Total Potong Saldo Admin</span>
+                                                            <span className="text-red-600">
+                                                                Rp{formatNumberInput((Number(withdrawForm.amount) + 4000).toString())}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-[11px] text-slate-400 italic mt-2 leading-relaxed">
+                                                            * Kamu akan menerima bersih <strong>Rp{formatNumberInput(withdrawForm.amount)}</strong> di rekening bank.
+                                                            Total saldo yang akan terpotong dari dashboard adalah <strong>Rp{formatNumberInput((Number(withdrawForm.amount) + 4000).toString())}</strong>.
+                                                        </p>
+                                                        {Number(withdrawForm.amount) < 10000 && (
+                                                            <p className="text-red-500 text-xs mt-1 pt-2 border-t border-red-100 text-center font-medium">
+                                                                Minimal penarikan adalah Rp10.000.
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center text-slate-500 text-[13px]">
+                                                        Masukkan nominal penarikan pada form di samping untuk melihat rincian biaya.
+                                                    </div>
                                                 )}
                                             </div>
-                                        )}
+                                        </div>
 
-                                        <DialogFooter className="grid grid-cols-2 gap-4">
+                                        <DialogFooter className="grid grid-cols-2 gap-4 md:flex md:justify-end">
                                             <DialogClose asChild>
                                                 <ButtonCancel label="Batal" className="text-md w-full sm:w-auto" />
                                             </DialogClose>
@@ -343,7 +343,10 @@ export default function AdminTransactionPage() {
                             )}
                         </h3>
                         <div className="flex items-center justify-between text-xs">
-                            <span className="text-slate-400">Total Akumulasi</span>
+                            <span className="text-slate-400">30 hari terakhir</span>
+                            <span className={`rounded-full px-2 py-1 font-medium ${stats.incomeChange >= 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                                {stats.incomeChange >= 0 ? "+" : ""}{Math.min(100, Math.abs(stats.incomeChange)).toFixed(0)}%
+                            </span>
                         </div>
                     </div>
 
@@ -360,7 +363,10 @@ export default function AdminTransactionPage() {
                             )}
                         </h3>
                         <div className="flex items-center justify-between text-xs">
-                            <span className="text-slate-400">Total Seluruhnya</span>
+                            <span className="text-slate-400">30 hari terakhir</span>
+                            <span className={`rounded-full px-2 py-1 font-medium ${stats.transactionsChange >= 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                                {stats.transactionsChange >= 0 ? "+" : ""}{Math.min(100, Math.abs(stats.transactionsChange)).toFixed(0)}%
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -410,14 +416,15 @@ export default function AdminTransactionPage() {
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="w-[5%] text-center">No</TableHead>
-                                <TableHead className="w-[10%] whitespace-nowrap">ID</TableHead>
-                                <TableHead className="w-[10%] whitespace-nowrap">Nominal</TableHead>
-                                <TableHead className="w-[8%] whitespace-nowrap">Fee</TableHead>
-                                <TableHead className="w-[10%] whitespace-nowrap">Bank</TableHead>
-                                <TableHead className="w-[18%] whitespace-nowrap">Kreator</TableHead>
-                                <TableHead className="w-[20%] whitespace-nowrap">Rek Tujuan</TableHead>
-                                <TableHead className="w-[15%] whitespace-nowrap">Tanggal</TableHead>
-                                <TableHead className="w-[10%] text-center whitespace-nowrap">Status</TableHead>
+                                <TableHead className="w-[8%] whitespace-nowrap">ID</TableHead>
+                                <TableHead className="w-[12%] whitespace-nowrap">Kreator</TableHead>
+                                <TableHead className="w-[12%] whitespace-nowrap">Nominal</TableHead>
+                                <TableHead className="w-[7%] whitespace-nowrap">Tipe</TableHead>
+                                <TableHead className="w-[10%] whitespace-nowrap">Metode</TableHead>
+                                <TableHead className="w-[14%] whitespace-nowrap">No. Rek</TableHead>
+                                <TableHead className="w-[14%] whitespace-nowrap">Tanggal</TableHead>
+                                <TableHead className="w-[12%] text-center whitespace-nowrap">Status</TableHead>
+                                <TableHead className="w-[6%] text-right whitespace-nowrap">Aksi</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -436,6 +443,11 @@ export default function AdminTransactionPage() {
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="h-4 w-32" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center min-h-[48px]">
                                                 <Skeleton className="h-4 w-24" />
                                             </div>
                                         </TableCell>
@@ -447,11 +459,6 @@ export default function AdminTransactionPage() {
                                         <TableCell>
                                             <div className="flex items-center min-h-[48px]">
                                                 <Skeleton className="h-4 w-20" />
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center min-h-[48px]">
-                                                <Skeleton className="h-4 w-32" />
                                             </div>
                                         </TableCell>
                                         <TableCell>
@@ -473,87 +480,107 @@ export default function AdminTransactionPage() {
                                 ))
                             ) : transactions.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={8} className="py-20 text-center text-slate-500">
+                                    <TableCell colSpan={9} className="py-20 text-center text-slate-500">
                                         Tidak ada data penarikan ditemukan
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                transactions.map((item: any, index: number) => (
-                                    <TableRow key={item.id} data-type="body">
-                                        <TableCell className="text-center font-medium">
-                                            <div className="flex min-h-[48px] items-center justify-center">
-                                                {(page - 1) * limit + index + 1}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <div className="flex min-h-[48px] max-w-[80px] items-center truncate text-xs font-medium text-slate-400">
-                                                        {item.id}
-                                                    </div>
-                                                </TooltipTrigger>
-                                                <TooltipContent>ID: {item.id}</TooltipContent>
-                                            </Tooltip>
-                                        </TableCell>
-                                        <TableCell className="whitespace-nowrap">
-                                            <div className="flex min-h-[48px] items-center font-medium text-slate-800">
-                                                {/* Hitung balik nominal bersih: Total - Fee Platform - Fee Xendit 4000 */}
-                                                {formatCurrency(Number(item.amount) - Number(item.feeAmount ?? 0) - 4000)}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="whitespace-nowrap">
-                                            <div className="flex flex-col min-h-[48px] justify-center text-[11px]">
-                                                <span className="text-cyan-600 font-medium">Fee: {formatCurrency(Number(item.feeAmount ?? 0))}</span>
-                                                <span className="text-slate-400">Bank: Rp4.000</span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <div className="flex min-h-[48px] max-w-[80px] items-center truncate text-slate-600">
-                                                        {item.bankName ?? "-"}
-                                                    </div>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
+                                transactions.map((item: any, index: number) => {
+                                    const isAdmin = item.user?.role === "ADMIN";
+                                    const typeLabel = isAdmin ? "Tarik" : "Masuk";
+                                    const nominal = isAdmin ? Number(item.amount) : Number(item.feeAmount ?? 0);
+
+                                    return (
+                                        <TableRow key={item.id} data-type="body">
+                                            <TableCell className="text-center font-medium">
+                                                <div className="flex min-h-[48px] items-center justify-center">
+                                                    {(page - 1) * limit + index + 1}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <div className="flex min-h-[48px] max-w-[80px] items-center truncate text-slate-400">
+                                                            {item.id}
+                                                        </div>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>ID: {item.id}</TooltipContent>
+                                                </Tooltip>
+                                            </TableCell>
+                                            <TableCell className="max-w-[120px]">
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <div className="flex items-center min-h-[48px]">
+                                                            {item.user?.id ? (
+                                                                <Link href={`/admin/kreator/${item.user.id}`} className="hover:text-cyan-600 transition-colors font-medium truncate block w-full">
+                                                                    {item.user.name || item.user.email || "-"}
+                                                                </Link>
+                                                            ) : (
+                                                                <span className="font-medium truncate block w-full">{item.user?.name || item.user?.email || "-"}</span>
+                                                            )}
+                                                        </div>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        {item.user?.name || item.user?.email || "-"}
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TableCell>
+                                            <TableCell className="whitespace-nowrap">
+                                                <div className="flex min-h-[48px] items-center">
+                                                    <span className={`font-semibold ${isAdmin ? "text-slate-900" : "text-green-600"}`}>
+                                                        {!isAdmin && "+"} {formatCurrency(nominal)}
+                                                    </span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="whitespace-nowrap">
+                                                <div className="flex min-h-[48px] items-center">
+                                                    {typeLabel}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center min-h-[48px]">
                                                     {item.bankName ?? "-"}
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </TableCell>
-                                        <TableCell className="max-w-[140px] leading-normal">
-                                            <div className="flex items-center min-h-[48px] py-1">
-                                                <span className="text-slate-600 line-clamp-2 break-words">
-                                                    {item.user?.name || item.user?.email || "-"}
-                                                </span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <div className="flex min-h-[48px] max-w-[180px] items-center truncate text-slate-600">
-                                                        {item.accountNumber}
-                                                    </div>
-                                                </TooltipTrigger>
-                                                <TooltipContent>{item.accountNumber}</TooltipContent>
-                                            </Tooltip>
-                                        </TableCell>
-                                        <TableCell className="whitespace-nowrap">
-                                            <div className="flex min-h-[48px] items-center text-slate-600">
-                                                {format(new Date(item.createdAt), "dd MMM yyyy HH:mm", {
-                                                    locale: id,
-                                                })}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="whitespace-nowrap">
-                                            <div className="flex min-h-[48px] items-center justify-center">
-                                                <span
-                                                    className={`rounded-full px-4 py-1 text-[13px] leading-tight font-medium ${getStatusColor(item.status)}`}
-                                                >
-                                                    {getStatusLabel(item.status)}
-                                                </span>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex min-h-[48px] max-w-[180px] items-center truncate">
+                                                    {item.accountNumber}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="whitespace-nowrap">
+                                                <div className="flex min-h-[48px] items-center">
+                                                    {format(new Date(item.createdAt), "dd MMM yyyy HH:mm", {
+                                                        locale: id,
+                                                    })}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="whitespace-nowrap">
+                                                <div className="flex min-h-[48px] items-center justify-center">
+                                                    <span
+                                                        className={`px-4 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.status)}`}
+                                                    >
+                                                        {getStatusLabel(item.status)}
+                                                    </span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="px-6 py-4 text-right">
+                                                <div className="flex justify-end items-center gap-3">
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <button onClick={() => {
+                                                                setSelectedTx(item);
+                                                                setIsDetailOpen(true);
+                                                            }}>
+                                                                <EyeIcon className="w-[22px] h-[22px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
+                                                            </button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>Lihat Detail</TooltipContent>
+                                                    </Tooltip>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })
                             )}
                         </TableBody>
                     </Table>
@@ -582,6 +609,10 @@ export default function AdminTransactionPage() {
                     ) : (
                         transactions.map((item: any, index: number) => {
                             const rowNumber = (page - 1) * limit + index + 1;
+                            const isAdmin = item.user?.role === "ADMIN";
+                            const typeLabel = isAdmin ? "Tarik" : "Masuk";
+                            const nominal = isAdmin ? Number(item.amount) : Number(item.feeAmount ?? 0);
+
                             return (
                                 <div key={item.id} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3">
                                     <div className="flex justify-between items-center border-b border-slate-100 pb-2">
@@ -594,8 +625,11 @@ export default function AdminTransactionPage() {
                                     </div>
 
                                     <div className="space-y-2 flex-1 min-w-0">
-                                        <div className="font-semibold text-slate-800 break-words leading-normal">
-                                            {item.user?.name || item.user?.email || "-"}
+                                        <div className="font-semibold text-slate-800 break-words leading-normal flex items-center justify-between">
+                                            <span>{item.user?.name || item.user?.email || "-"}</span>
+                                            <span className={`text-[12px] font-medium ${isAdmin ? "text-orange-600" : "text-green-600"}`}>
+                                                {typeLabel}
+                                            </span>
                                         </div>
 
                                         <div className="text-xs text-slate-500">
@@ -604,12 +638,12 @@ export default function AdminTransactionPage() {
                                         </div>
 
                                         <div className="text-xs text-slate-500">
-                                            <span className="font-medium text-slate-400">Bank: </span>
+                                            <span className="font-medium text-slate-400">Metode: </span>
                                             <span className="font-medium text-slate-700">{item.bankName ?? "-"}</span>
                                         </div>
 
                                         <div className="text-xs text-slate-500">
-                                            <span className="font-medium text-slate-400">Rek Tujuan: </span>
+                                            <span className="font-medium text-slate-400">No. Rek: </span>
                                             <span className="font-medium text-slate-700">{item.accountNumber}</span>
                                         </div>
 
@@ -622,14 +656,22 @@ export default function AdminTransactionPage() {
                                             </span>
                                         </div>
 
-                                        <div className="text-xs pt-1">
-                                            <span className="font-medium text-slate-400">Nominal Diterima: </span>
-                                            <span className="font-bold text-slate-700 text-sm">
-                                                {formatCurrency(Number(item.amount) - Number(item.feeAmount ?? 0) - 4000)}
-                                            </span>
-                                            <div className="text-[10px] text-slate-400 mt-0.5">
-                                                Total Potong Saldo: {formatCurrency(Number(item.amount))}
+                                        <div className="flex items-center justify-between pt-1 border-t border-slate-50 mt-2">
+                                            <div>
+                                                <span className="font-medium text-slate-400">Nominal: </span>
+                                                <span className={`font-bold text-sm ${isAdmin ? "text-slate-900" : "text-green-600"}`}>
+                                                    {!isAdmin && "+"} {formatCurrency(nominal)}
+                                                </span>
                                             </div>
+                                            <button
+                                                onClick={() => {
+                                                    setSelectedTx(item);
+                                                    setIsDetailOpen(true);
+                                                }}
+                                                className="p-1.5 rounded-md text-cyan-600 border border-slate-200 hover:bg-slate-50 transition"
+                                            >
+                                                <EyeIcon className="w-4 h-4" />
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -652,6 +694,99 @@ export default function AdminTransactionPage() {
                     )}
                 </div>
             </div>
+
+            {/* Detail Dialog */}
+            <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+                <DialogContent size="default" showCloseButton={true}>
+                    <DialogHeader>
+                        <DialogTitle>Detail Transaksi</DialogTitle>
+                    </DialogHeader>
+                    {selectedTx && (
+                        <div className="space-y-4 px-6 py-4 max-w-2xl mx-auto">
+                            <div className="flex justify-between border-b pb-3">
+                                <span className="text-slate-500">ID Transaksi</span>
+                                <span className="font-medium text-slate-800">{selectedTx.id}</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-3">
+                                <span className="text-slate-500">Tipe</span>
+                                <span className="font-medium text-slate-800">
+                                    {selectedTx.user?.role === "ADMIN" ? "Tarik" : "Masuk"}
+                                </span>
+                            </div>
+                            <div className="flex justify-between border-b pb-3">
+                                <span className="text-slate-500">Kreator / User</span>
+                                <span className="font-medium text-slate-800">{selectedTx.user?.name || selectedTx.user?.email || "-"}</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-3">
+                                <span className="text-slate-500">Metode</span>
+                                <span className="font-medium text-slate-800">{selectedTx.bankName ?? "-"}</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-3">
+                                <span className="text-slate-500">No. Rekening</span>
+                                <span className="font-medium text-slate-800">{selectedTx.accountNumber}</span>
+                            </div>
+                            {selectedTx.accountHolderName && (
+                                <div className="flex justify-between border-b pb-3">
+                                    <span className="text-slate-500">Atas Nama</span>
+                                    <span className="font-medium text-slate-800">{selectedTx.accountHolderName}</span>
+                                </div>
+                            )}
+
+                            {selectedTx.user?.role === "ADMIN" ? (
+                                <>
+                                    <div className="flex justify-between border-b pb-3">
+                                        <span className="text-slate-500">Nominal Penarikan (Saldo)</span>
+                                        <span className="font-medium text-slate-800">{formatCurrency(Number(selectedTx.amount))}</span>
+                                    </div>
+                                    <div className="flex justify-between border-b pb-3">
+                                        <span className="text-slate-500">Biaya Transfer Bank</span>
+                                        <span className="font-medium text-red-500">-Rp4.000</span>
+                                    </div>
+                                    <div className="flex justify-between border-b pb-3">
+                                        <span className="text-slate-500">Bersih Diterima Admin</span>
+                                        <span className="font-medium text-slate-800">{formatCurrency(Number(selectedTx.amount) - 4000)}</span>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="flex justify-between border-b pb-3">
+                                        <span className="text-slate-500">Total Penarikan (Saldo Kreator)</span>
+                                        <span className="font-medium text-slate-800">{formatCurrency(Number(selectedTx.amount))}</span>
+                                    </div>
+                                    <div className="flex justify-between border-b pb-3">
+                                        <span className="text-slate-500">Fee Platform (Pendapatan Admin)</span>
+                                        <span className="font-medium text-green-600">+{formatCurrency(Number(selectedTx.feeAmount ?? 0))}</span>
+                                    </div>
+                                    <div className="flex justify-between border-b pb-3">
+                                        <span className="text-slate-500">Biaya Transfer Bank</span>
+                                        <span className="font-medium text-slate-500">Rp4.000</span>
+                                    </div>
+                                    <div className="flex justify-between border-b pb-3">
+                                        <span className="text-slate-500">Bersih Diterima Kreator</span>
+                                        <span className="font-medium text-slate-800">
+                                            {formatCurrency(Number(selectedTx.amount) - Number(selectedTx.feeAmount ?? 0) - 4000)}
+                                        </span>
+                                    </div>
+                                </>
+                            )}
+
+                            <div className="flex justify-between border-b pb-3">
+                                <span className="text-slate-500">Tanggal</span>
+                                <span className="font-medium text-slate-800">
+                                    {format(new Date(selectedTx.createdAt), "dd MMM yyyy HH:mm", { locale: id })}
+                                </span>
+                            </div>
+                            <div className="flex justify-between pb-2 items-center">
+                                <span className="text-slate-500">Status</span>
+                                <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedTx.status)}`}>
+                                    {getStatusLabel(selectedTx.status)}
+                                </span>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
+
         </TooltipProvider>
     );
 }

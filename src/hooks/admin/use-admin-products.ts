@@ -16,7 +16,6 @@ export function useAdminProducts() {
 
 	// Debounce search
 	useEffect(() => {
-
 		const timer = setTimeout(() => {
 			setDebouncedSearch(search);
 			setPage(1);

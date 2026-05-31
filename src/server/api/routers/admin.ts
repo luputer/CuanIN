@@ -43,34 +43,62 @@ export const adminRouter = createTRPCRouter({
         ];
       }
 
-      const [items, total] = await Promise.all([
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+
+      const [
+        items,
+        total,
+        { balance, totalFeeEarned },
+        totalTransactions,
+        currentIncomeStats,
+        previousIncomeStats,
+        currentTransactions,
+        previousTransactions,
+      ] = await Promise.all([
         ctx.db.withdrawal.findMany({
           where,
           include: {
-            user: { select: { name: true, email: true } },
+            user: { select: { name: true, email: true, role: true } },
           },
           orderBy: { createdAt: "desc" },
           skip,
           take: limit,
         }),
         ctx.db.withdrawal.count({ where }),
+        getAdminBalance(ctx.db),
+        ctx.db.withdrawal.count(),
+        ctx.db.balanceEntry.aggregate({
+          where: { user: { role: "ADMIN" }, type: "PLATFORM_FEE_EARNED", createdAt: { gte: thirtyDaysAgo } },
+          _sum: { amount: true },
+        }),
+        ctx.db.balanceEntry.aggregate({
+          where: { user: { role: "ADMIN" }, type: "PLATFORM_FEE_EARNED", createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } },
+          _sum: { amount: true },
+        }),
+        ctx.db.withdrawal.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+        ctx.db.withdrawal.count({ where: { createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } } }),
       ]);
 
-      // ← Pakai getAdminBalance, bukan aggregate manual
-      const { balance, totalFeeEarned } = await getAdminBalance(ctx.db);
-
-      const totalTransactions = await ctx.db.withdrawal.count();
+      const calculateChange = (current: number, previous: number) => {
+        if (previous === 0) return current > 0 ? 100 : 0;
+        return ((current - previous) / previous) * 100;
+      };
 
       return {
         items,
         total,
         totalPages: Math.ceil(total / limit),
         stats: {
-          totalIncome: totalFeeEarned, // total fee yang pernah masuk
-          balance,                     // saldo admin yang bisa ditarik
+          totalIncome: totalFeeEarned,
+          balance,
           totalTransactions,
-          incomeChange: 0,
-          transactionsChange: 0,
+          incomeChange: calculateChange(
+            Number(currentIncomeStats._sum.amount ?? 0),
+            Number(previousIncomeStats._sum.amount ?? 0)
+          ),
+          transactionsChange: calculateChange(currentTransactions, previousTransactions),
         },
       };
     }),
@@ -110,7 +138,7 @@ export const adminRouter = createTRPCRouter({
             bankName: bank.name,
             accountNumber: input.accountNumber,
             accountHolderName: input.accountHolderName,
-            email: input.email,
+            email: ctx.session.user.email ?? "",
             referenceId: `ADMIN-${adminId.slice(0, 5)}-${Date.now()}`,
           },
         });

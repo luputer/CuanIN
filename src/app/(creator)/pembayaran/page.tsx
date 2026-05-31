@@ -460,7 +460,7 @@ export default function TransactionPage() {
                   }`}
               >
                 {stats.incomeChange >= 0 ? "+" : ""}
-                {stats.incomeChange.toFixed(0)}%
+                {Math.min(100, Math.abs(stats.incomeChange)).toFixed(0)}%
               </span>
             </div>
           </div>
@@ -486,7 +486,7 @@ export default function TransactionPage() {
                   }`}
               >
                 {stats.transactionsChange >= 0 ? "+" : ""}
-                {stats.transactionsChange.toFixed(0)}%
+                {Math.min(100, Math.abs(stats.transactionsChange)).toFixed(0)}%
               </span>
             </div>
           </div>

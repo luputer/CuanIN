@@ -670,7 +670,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* ───── RIGHT SIDEBAR ───── */}
-          <div className="flex flex-col gap-6 lg:col-span-2">
+          <div className="flex flex-col gap-6 lg:col-span-2 lg:sticky lg:top-20 lg:self-start">
             {/* IMAGE & CAROUSEL PREVIEW (TOP SIDEBAR) */}
             <div className="flex flex-col gap-2.5">
               <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-slate-300 bg-slate-100 shadow-sm lg:aspect-square lg:max-h-95">

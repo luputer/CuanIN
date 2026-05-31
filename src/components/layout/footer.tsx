@@ -25,8 +25,8 @@ export default function Footer() {
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <EnvelopeIcon size={16} />
-                                    {/* <span>[EMAIL_ADDRESS]</span> */}
-                                    <span>m.saidibjm1@gmail.com</span>
+                                    <span>cuanin9@gmail.com</span>
+                                    {/* <span>m.saidibjm1@gmail.com</span> */}
                                 </li>
                             </ul>
                         </div>

@@ -12,6 +12,7 @@ import {
     AlertDialogContent,
     AlertDialogTitle,
     AlertDialogDescription,
+    AlertDialogFooter,
 } from "~/components/ui/alert-dialog"
 
 type Props = {
@@ -51,17 +52,25 @@ export function ProductSuccessDialog({
         router.push(redirectUrl)
     }
 
-    const baseBtnStyle = "inline-flex items-center justify-center px-4 h-9 text-sm font-medium transition-all active:translate-y-[1px] disabled:opacity-50 disabled:pointer-events-none border outline-none cursor-pointer"
+    const baseBtnStyle =
+        "inline-flex items-center justify-center px-4 h-10 text-sm font-semibold " +
+        "border-1 border-slate-800 " +
+        "shadow-[1px_1px_0px_rgba(29,41,61)] " +
+        "transition-all duration-200 ease-out " +
+        "hover:translate-x-px hover:translate-y-px hover:shadow-none " +
+        "active:translate-x-px active:translate-y-px active:shadow-none " +
+        "disabled:opacity-60 disabled:cursor-not-allowed " +
+        "disabled:hover:translate-x-0 disabled:hover:translate-y-0 cursor-pointer";
 
     return (
         <AlertDialog open={open} onOpenChange={(val) => {
             if (!val) handleClose()
         }}>
-            <AlertDialogContent className="text-center sm:max-w-md rounded-xl">
+            <AlertDialogContent className="text-center sm:max-w-md rounded-xl shadow-[1.5px_1.5px_0px_#0f172a] border-2 border-slate-800">
                 {/* ICON */}
-                <div className="flex justify-center mb-2">
-                    <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
-                        <CheckCircleIcon size={24} weight="fill" />
+                <div className="flex justify-center">
+                    <div className="h-16 w-16 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                        <CheckCircleIcon size={28} weight="fill" />
                     </div>
                 </div>
 
@@ -71,16 +80,16 @@ export function ProductSuccessDialog({
                 </AlertDialogTitle>
 
                 {/* DESCRIPTION */}
-                <AlertDialogDescription className="text-sm text-slate-500 leading-relaxed">
+                <AlertDialogDescription className="text-sm font-medium text-slate-600 leading-relaxed">
                     <span className="text-slate-800 font-bold">&quot;{productName}&quot;</span> telah berhasil ditambahkan ke katalog Anda.
                 </AlertDialogDescription>
 
                 {/* BUTTONS */}
-                <div className="mt-4 flex flex-col gap-2">
+                <div className="mt-6 flex flex-col gap-3">
                     <button
                         type="button"
                         onClick={handleCopyLink}
-                        className={cn(baseBtnStyle, "w-full rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white border-transparent")}
+                        className={cn(baseBtnStyle, "w-full rounded-lg outline-none cursor-pointer", "bg-cyan-600 text-white")}
                     >
                         <CopyIcon className="w-4 h-4 mr-2" weight="bold" />
                         Salin Link
@@ -89,7 +98,7 @@ export function ProductSuccessDialog({
                     <button
                         type="button"
                         onClick={handleClose}
-                        className={cn(baseBtnStyle, "w-full rounded-lg border-slate-300 text-slate-600 hover:bg-slate-100")}
+                        className={cn(baseBtnStyle, "w-full rounded-lg outline-none cursor-pointer", "bg-white hover:bg-slate-50 text-slate-900")}
                     >
                         Tutup
                     </button>

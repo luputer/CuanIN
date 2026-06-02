@@ -44,7 +44,7 @@ export default function CheckoutPage() {
         </div>
         <div className="mx-auto max-w-6xl px-4 py-10">
           <div className="mb-8 h-9 w-36 rounded-xl bg-slate-200" />
-          <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-5">
+          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-5">
             <div className="space-y-6 lg:col-span-3">
               <div className="h-40 w-full rounded-xl bg-slate-200" />
               <div className="h-96 w-full rounded-xl bg-slate-200" />
@@ -84,9 +84,9 @@ export default function CheckoutPage() {
       <div className="mx-auto max-w-6xl px-4 py-10">
         <h1 className="mb-8 text-3xl font-bold text-slate-800">Checkout</h1>
 
-        <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-5">
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-5">
           {/* LEFT */}
-          <div className="space-y-6 pb-50 lg:col-span-3">
+          <div className="space-y-6 lg:col-span-3 lg:pb-12">
             <CheckoutProductCard product={product} price={price} isGratis={isGratis} />
             <CheckoutForm
               form={form}

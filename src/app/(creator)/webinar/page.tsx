@@ -41,7 +41,7 @@ import { TableSkeleton } from "~/components/layout/table-skeleton";
 import SearchInput from "~/components/ui/search";
 import ButtonFilter from "~/components/ui/filter";
 import ActionButton from "~/components/ui/button-add";
-import ConfirmDialog from "~/components/ui/confirm-dialog";
+import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
 import {
     Tooltip,
     TooltipContent,
@@ -161,7 +161,7 @@ export default function WebinarPage() {
         const productSlug = itemSlug ?? itemId;
         const publicUrl = `${host}/${catalog.slug}/${productSlug}`;
         void navigator.clipboard.writeText(publicUrl);
-        toast.success("Link webinar disalin!");
+        toast.success("Link produk berhasil disalin!");
     };
 
     // ─── Render ──────────────────────────────────────────────────────────────
@@ -497,7 +497,7 @@ export default function WebinarPage() {
                                                                 <CopyIcon className="w-[22px] h-[22px] text-yellow-500 cursor-pointer hover:text-yellow-600" />
                                                             </button>
                                                         </TooltipTrigger>
-                                                        <TooltipContent>Salin Link Webinar</TooltipContent>
+                                                        <TooltipContent>Salin Link Produk</TooltipContent>
                                                     </Tooltip>
                                                 </div>
                                             </TableCell>
@@ -630,7 +630,7 @@ export default function WebinarPage() {
                                             className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-yellow-600 border border-yellow-600 rounded-lg hover:bg-yellow-50 transition cursor-pointer"
                                         >
                                             <CopyIcon className="w-4 h-4" />
-                                            <span>Salin Link</span>
+                                            <span>Salin Link Produk</span>
                                         </button>
                                     </div>
                                 </div>
@@ -653,21 +653,11 @@ export default function WebinarPage() {
                     )}
                 </div>
 
-                <ConfirmDialog
+                <DeleteConfirmDialog
                     open={!!deleteId}
                     onOpenChange={(open) => !open && setDeleteId(null)}
-                    icon={<TrashIcon size={52} className="bg-red-100 rounded-full p-3 text-red-500" weight="regular" />}
                     title="Hapus Webinar?"
-                    description={
-                        <>
-                            Kamu yakin ingin menghapus {" "}
-                            <span className="font-semibold text-slate-800">&quot;{productToDelete?.name}&quot;</span>?
-                            <br />
-                            Tindakan ini tidak bisa dibatalkan.
-                        </>
-                    }
-                    confirmText="Ya, Hapus"
-                    confirmClassName="bg-red-500 hover:bg-red-600 text-white"
+                    itemName={productToDelete?.name}
                     loading={deleteProduct.isPending}
                     onConfirm={() => {
                         if (deleteId) deleteProduct.mutate({ id: deleteId });

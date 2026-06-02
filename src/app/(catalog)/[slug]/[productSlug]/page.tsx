@@ -810,7 +810,7 @@ export default function ProductDetailPage() {
               ) : (
                 <Link href={`/${slug}/${productSlug}/checkout`}>
                   <button className="mt-5 w-full cursor-pointer rounded-xl bg-cyan-600 py-3 text-lg font-semibold text-white shadow-sm hover:bg-cyan-700">
-                    {isGratis ? "Daftar Sekarang" : "Beli Sekarang"}
+                    Beli Sekarang
                   </button>
                 </Link>
               )}

@@ -26,9 +26,9 @@ import {
 
 // ─── 5. STEPS ILLUSTRATION MOCKUP ────────────────────────────────────────────
 
-export function StepsIllustrationMockup() {
+export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: number }) {
   return (
-    <div className="w-full h-full rounded-2xl bg-cyan-50 flex items-center justify-center p-4 md:p-8 relative overflow-hidden">
+    <div className="w-full h-full rounded-2xl bg-cyan-50 flex items-center justify-center p-4 md:p-8 relative overflow-hidden transition-colors duration-500">
       {/* Background decoration: Polka Dot Pattern */}
       <div className="absolute inset-0 opacity-[0.15]"
         style={{ backgroundImage: 'radial-gradient(#0891b2 1px, transparent 1px)', backgroundSize: '20px 20px' }}
@@ -38,92 +38,112 @@ export function StepsIllustrationMockup() {
       <div className="absolute top-10 left-10 w-24 h-24 bg-yellow-300 rounded-full blur-[60px] opacity-30" />
       <div className="absolute bottom-10 right-10 w-32 h-32 bg-cyan-400 rounded-full blur-[80px] opacity-30" />
 
-      {/* Main Container */}
-      <div className="w-full max-w-[500px] aspect-[4/3] relative z-10 scale-90 sm:scale-100">
+      {/* Main Container - Carousel / Switcher */}
+      <div className="w-full max-w-[520px] aspect-[4/3] flex items-center justify-center relative z-10">
 
-        {/* Step 1: Buat Akun (Back Left) */}
-        <div className="absolute top-0 left-0 w-44 bg-white border-2 border-slate-800 p-4 rounded-xl shadow-[2px_2px_0px_rgba(29,41,61)] z-10 transform -rotate-3 transition-all hover:rotate-0 hover:scale-105 duration-500">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 rounded-full bg-cyan-600 border-2 border-slate-800 flex items-center justify-center text-white text-xs font-black shadow-[1.5px_1.5px_0px_rgba(29,41,61)]">1</div>
-            <span className="text-[10px] font-black text-slate-800 uppercase tracking-tighter">Buat Akun</span>
-          </div>
-          <div className="space-y-3">
-            <div className="space-y-1">
-              <div className="h-1.5 w-8 bg-slate-200 rounded" />
-              <div className="h-5 w-full bg-slate-50 border border-slate-200 rounded" />
+        {/* Step 1: Buat Akun */}
+        <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 transform ${activeStep === 0
+          ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
+          : "opacity-0 scale-90 -rotate-6 translate-x-[-100px] pointer-events-none z-10"
+          }`}>
+          <div className="w-88 bg-white border-2 border-slate-800 p-8 rounded-2xl shadow-[1px_1px_0px_rgba(29,41,61)]">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-12 h-12 rounded-full bg-cyan-600 border-2 border-slate-800 flex items-center justify-center text-white text-base font-black shrink-0">1</div>
+              <span className="text-sm font-black text-slate-800 uppercase tracking-tighter">Buat Akun</span>
             </div>
-            <div className="space-y-1">
-              <div className="h-1.5 w-12 bg-slate-200 rounded" />
-              <div className="h-5 w-full bg-slate-50 border border-slate-200 rounded" />
-            </div>
-            <div className="h-7 w-full bg-cyan-600 rounded-lg mt-2 border-2 border-slate-800 shadow-[1px_1px_0px_rgba(29,41,61)] flex items-center justify-center">
-              <div className="h-1.5 w-16 bg-white/40 rounded-full" />
-            </div>
-          </div>
-        </div>
-
-        {/* Step 2: Tambahkan Produk (Middle/Center) */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 bg-white border-2 border-slate-800 rounded-xl shadow-[2px_2px_0px_rgba(29,41,61)] z-20 overflow-hidden flex flex-col transition-all hover:scale-105 duration-500">
-          <div className="h-7 bg-slate-100 border-b-2 border-slate-800 flex items-center px-2 gap-1.5 shrink-0">
-            <div className="w-2 h-2 rounded-full bg-red-400 border border-slate-800 shadow-sm" />
-            <div className="w-2 h-2 rounded-full bg-yellow-400 border border-slate-800 shadow-sm" />
-            <div className="w-2 h-2 rounded-full bg-green-400 border border-slate-800 shadow-sm" />
-            <div className="ml-2 h-3 w-20 bg-white rounded-full border border-slate-200" />
-          </div>
-          <div className="p-4 flex flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-cyan-600 border-2 border-slate-800 flex items-center justify-center text-white text-xs font-black shadow-[1.5px_1.5px_0px_rgba(29,41,61)]">2</div>
-              <div className="flex flex-col">
-                <span className="text-[10px] font-black text-slate-800 uppercase tracking-tighter">Tambah Produk</span>
-                <span className="text-[8px] text-slate-400 font-bold uppercase leading-none">Webinar & Kelas</span>
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <div className="h-2.5 w-16 bg-slate-200 rounded" />
+                <div className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="aspect-[4/3] bg-cyan-50 border-2 border-slate-800 rounded-lg shadow-[2px_2px_0px_rgba(29,41,61)] flex flex-col p-1.5">
-                <div className="flex-1 bg-white rounded-md mb-1.5" />
-                <div className="h-1.5 w-full bg-slate-200 rounded" />
-                <div className="h-1.5 w-1/2 bg-cyan-200 rounded mt-1" />
+              <div className="space-y-2">
+                <div className="h-2.5 w-20 bg-slate-200 rounded" />
+                <div className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
               </div>
-              <div className="aspect-[4/3] bg-yellow-50 border-2 border-slate-800 rounded-lg shadow-[2px_2px_0px_rgba(29,41,61)] flex flex-col p-1.5">
-                <div className="flex-1 bg-white rounded-md mb-1.5" />
-                <div className="h-1.5 w-full bg-slate-200 rounded" />
-                <div className="h-1.5 w-1/2 bg-yellow-200 rounded mt-1" />
+              <div className="h-12 w-full bg-cyan-600 rounded-xl mt-2 border-2 border-slate-800 shadow-[1px_1px_0px_rgba(29,41,61)] flex items-center justify-center">
+                <div className="h-2.5 w-24 bg-white/40 rounded-full" />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Step 3: Bagikan Link (Top Right) */}
-        <div className="absolute top-4 right-0 w-48 bg-white border-2 border-slate-800 p-4 rounded-xl shadow-[2px_2px_0px_rgba(29,41,61)] z-30 transform rotate-3 transition-all hover:rotate-0 hover:scale-105 duration-500">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 rounded-full bg-cyan-600 border-2 border-slate-800 flex items-center justify-center text-white text-xs font-black shadow-[1.5px_1.5px_0px_rgba(29,41,61)]">3</div>
-            <span className="text-[10px] font-black text-slate-800 uppercase tracking-tighter">Bagikan Link</span>
-          </div>
-          <div className="space-y-3">
-            <div className="flex gap-2 items-center bg-cyan-50 border-2 border-slate-800 p-2 rounded-lg shadow-[2px_2px_0px_rgba(29,41,61)]">
-              <GlobeIcon size={12} className="text-cyan-600" />
-              <div className="flex-1 h-1.5 bg-cyan-200 rounded-full" />
-              <CopyIcon size={12} className="text-cyan-600" />
+        {/* Step 2: Tambahkan Produk */}
+        <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 transform ${activeStep === 1
+          ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
+          : "opacity-0 scale-90 rotate-6 translate-x-[100px] pointer-events-none z-10"
+          }`}>
+          <div className="w-96 bg-white border-2 border-slate-800 rounded-2xl shadow-[1px_1px_0px_rgba(29,41,61)] overflow-hidden flex flex-col">
+            <div className="h-10 bg-slate-100 border-b-2 border-slate-800 flex items-center px-4 gap-2 shrink-0">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-400 border border-slate-800 shadow-sm" />
+              <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 border border-slate-800 shadow-sm" />
+              <div className="w-2.5 h-2.5 rounded-full bg-green-400 border border-slate-800 shadow-sm" />
+              <div className="ml-3 h-4 w-28 bg-white rounded-full border border-slate-200" />
             </div>
-            <div className="flex justify-center gap-3 pt-1">
-              <div className="w-6 h-6 rounded-full bg-pink-50 flex items-center justify-center border border-pink-100"><InstagramLogo size={12} className="text-pink-500" /></div>
-              <div className="w-6 h-6 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100"><WhatsappLogo size={12} className="text-emerald-500" /></div>
-              <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100"><ShareNetworkIcon size={12} className="text-blue-500" /></div>
+            <div className="p-6 flex flex-col gap-5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-cyan-600 border-2 border-slate-800 flex items-center justify-center text-white text-base font-black shrink-0">2</div>
+                <div className="flex flex-col">
+                  <span className="text-sm font-black text-slate-800 uppercase tracking-tighter">Tambah Produk</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase leading-none mt-1">Webinar & Kelas</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="aspect-[4/3] bg-cyan-50 border-2 border-slate-800 rounded-xl shadow-[1px_1px_0px_rgba(29,41,61)] flex flex-col p-3">
+                  <div className="flex-1 bg-white rounded-md mb-2" />
+                  <div className="h-2.5 w-full bg-slate-200 rounded" />
+                  <div className="h-2.5 w-1/2 bg-cyan-200 rounded mt-2" />
+                </div>
+                <div className="aspect-[4/3] bg-yellow-50 border-2 border-slate-800 rounded-xl shadow-[1px_1px_0px_rgba(29,41,61)] flex flex-col p-3">
+                  <div className="flex-1 bg-white rounded-md mb-2" />
+                  <div className="h-2.5 w-full bg-slate-200 rounded" />
+                  <div className="h-2.5 w-1/2 bg-yellow-200 rounded mt-2" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Step 4: Terima Pembayaran (Bottom Right) */}
-        <div className="absolute bottom-0 right-4 w-56 bg-emerald-50 border-2 border-emerald-500 p-4 rounded-2xl shadow-[2px_2px_0px_rgba(16,185,129)] z-40 animate-bounce-subtle">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-cyan-600 border-2 border-slate-800 rounded-full flex items-center justify-center text-white text-lg font-black shadow-[2px_2px_0px_rgba(29,41,61)] shrink-0">4</div>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black text-emerald-700 uppercase tracking-tighter">Terima Pembayaran</span>
-              <div className="flex items-center gap-1.5 mt-1">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-xs font-black text-emerald-600">+ Rp 150.000</span>
+        {/* Step 3: Bagikan Link */}
+        <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 transform ${activeStep === 2
+          ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
+          : "opacity-0 scale-90 -rotate-6 translate-x-[-100px] pointer-events-none z-10"
+          }`}>
+          <div className="w-96 bg-white border-2 border-slate-800 p-7 rounded-2xl shadow-[1px_1px_0px_rgba(29,41,61)]">
+            <div className="flex items-center gap-4 mb-7">
+              <div className="w-12 h-12 rounded-full bg-cyan-600 border-2 border-slate-800 flex items-center justify-center text-white text-base font-black shrink-0">3</div>
+              <span className="text-sm font-black text-slate-800 uppercase tracking-tighter">Bagikan Link</span>
+            </div>
+            <div className="space-y-5">
+              <div className="flex gap-3 items-center bg-cyan-50 border-2 border-slate-800 p-4 rounded-xl shadow-[1px_1px_0px_rgba(29,41,61)]">
+                <GlobeIcon size={20} className="text-cyan-600 shrink-0" />
+                <div className="flex-1 h-2.5 bg-cyan-200 rounded-full" />
+                <CopyIcon size={20} className="text-cyan-600 shrink-0" />
               </div>
-              <span className="text-[8px] text-emerald-500 font-bold mt-0.5">VERIFIKASI OTOMATIS</span>
+              <div className="flex justify-center gap-5 pt-2">
+                <div className="w-12 h-12 rounded-full bg-pink-50 flex items-center justify-center border-2 border-pink-100 shadow-[1px_1px_0px_rgba(244,63,94)]"><InstagramLogo size={22} className="text-pink-500" /></div>
+                <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-100 shadow-[1px_1px_0px_rgba(16,185,129)]"><WhatsappLogo size={22} className="text-emerald-500" /></div>
+                <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center border-2 border-blue-100 shadow-[1px_1px_0px_rgba(59,130,246)]"><ShareNetworkIcon size={22} className="text-blue-500" /></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Step 4: Terima Pembayaran */}
+        <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 transform ${activeStep === 3
+          ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
+          : "opacity-0 scale-90 rotate-6 translate-x-[100px] pointer-events-none z-10"
+          }`}>
+          <div className="w-96 bg-emerald-50 border-2 border-emerald-500 p-8 rounded-2xl shadow-[1px_1px_0px_rgba(16,185,129)]">
+            <div className="flex items-center gap-5">
+              <div className="w-16 h-16 bg-cyan-600 border-2 border-slate-800 rounded-full flex items-center justify-center text-white text-xl font-black shadow-[1px_1px_0px_rgba(29,41,61)] shrink-0">4</div>
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-black text-emerald-700 uppercase tracking-tighter">Terima Pembayaran</span>
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="w-4 h-4 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-xl font-black text-emerald-600">+ Rp 150.000</span>
+                </div>
+                <span className="text-[10px] text-emerald-500 font-bold tracking-wider">VERIFIKASI OTOMATIS</span>
+              </div>
             </div>
           </div>
         </div>

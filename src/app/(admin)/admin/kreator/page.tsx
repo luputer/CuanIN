@@ -36,7 +36,7 @@ import {
 } from "~/components/ui/tooltip";
 import SearchInput from "~/components/ui/search";
 import ActionButton from "~/components/ui/button-add";
-import ConfirmDialog from "~/components/ui/confirm-dialog";
+import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
 
 export default function AdminCreatorsPage() {
     const router = useRouter();
@@ -376,21 +376,11 @@ export default function AdminCreatorsPage() {
                 </div>
 
                 {/* Delete Dialog */}
-                <ConfirmDialog
+                <DeleteConfirmDialog
                     open={!!deleteId}
                     onOpenChange={(open) => !open && setDeleteId(null)}
-                    icon={<TrashIcon size={52} className="bg-red-100 rounded-full p-3 text-red-500" weight="regular" />}
                     title="Hapus Kreator?"
-                    description={
-                        <>
-                            Kamu yakin ingin menghapus kreator {" "}
-                            <span className="font-semibold text-slate-800">&quot;{creatorToDelete?.name}&quot;</span>?
-                            <br />
-                            Tindakan ini tidak bisa dibatalkan.
-                        </>
-                    }
-                    confirmText="Ya, Hapus"
-                    confirmClassName="bg-red-500 hover:bg-red-600 text-white"
+                    itemName={`kreator ${creatorToDelete?.name || ""}`.trim()}
                     loading={deleteCreator.isPending}
                     onConfirm={() => {
                         if (deleteId) deleteCreator.mutate({ id: deleteId });

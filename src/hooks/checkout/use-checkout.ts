@@ -156,7 +156,7 @@ export function useCheckout() {
     onSuccess: (data) => {
       if (data.status === "free") {
         toast.success("Berhasil daftar!");
-        router.push(`/${slug}`);
+        router.push(`/payment/success?id=${data.purchase.id}`);
         return;
       }
       router.push(`/payment/${data.purchase.id}`);

@@ -478,6 +478,16 @@ export const purchasesRouter = createTRPCRouter({
               image: true,
               type: true,
               price: true,
+              slug: true,
+              user: {
+                select: {
+                  name: true,
+                  image: true,
+                  catalog: {
+                    select: { slug: true },
+                  },
+                },
+              },
             },
           },
         },

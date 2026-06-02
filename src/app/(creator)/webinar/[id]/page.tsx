@@ -23,7 +23,7 @@ import Image from "next/image";
 import { FormCustomizer } from "~/components/form-customizer";
 import Pembeli from "~/components/pembeli";
 import { Skeleton } from "~/components/ui/skeleton";
-import ConfirmDialog from "~/components/ui/confirm-dialog";
+import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
 import { useState, useRef, useEffect } from "react";
 import { SectionHeader, FormInput, FormTextarea, FormSelect } from "~/components/ui/form-layout";
 
@@ -281,7 +281,7 @@ export default function WebinarDetailPage() {
         const publicUrl = `${host}/${catalog.slug}/${productSlug}`;
 
         void navigator.clipboard.writeText(publicUrl);
-        toast.success("Link webinar disalin!");
+        toast.success("Link produk berhasil disalin!");
     };
 
     //  Skeleton loading
@@ -400,8 +400,8 @@ export default function WebinarDetailPage() {
                             >
                                 <CopyIcon className="w-4 h-4 text-cyan-600" />
                                 <span className="text-sm font-regular text-cyan-600 whitespace-nowrap">
-                                    <span className="hidden sm:inline">Salin Link Webinar</span>
-                                    <span className="inline sm:hidden">Salin Link Webinar</span>
+                                    <span className="hidden sm:inline">Salin Link Produk</span>
+                                    <span className="inline sm:hidden">Salin Link Produk</span>
                                 </span>
                             </Button>
                             <Button
@@ -797,7 +797,7 @@ export default function WebinarDetailPage() {
                                                         <div className="animate-in fade-in slide-in-from-top-2 duration-200">
                                                             <VoucherSelector
                                                                 selectedIds={watch("vouchers") || []}
-                                                                onChange={(ids) => setValue("vouchers", ids)}
+                                                                onChange={(ids) => setValue("vouchers", ids, { shouldDirty: true, shouldValidate: true })}
                                                             />
                                                         </div>
                                                     )}
@@ -865,25 +865,13 @@ export default function WebinarDetailPage() {
                     </ProductDetailTabs>
                 </div>
 
-                <ConfirmDialog
+                <DeleteConfirmDialog
                     open={showDeleteConfirm}
                     onOpenChange={setShowDeleteConfirm}
-                    icon={<TrashIcon size={52} className="bg-red-100 rounded-full p-3 text-red-500" weight="regular" />}
                     title="Hapus Webinar?"
-                    description={
-                        <>
-                            Kamu yakin ingin menghapus {" "}
-                            <span className="font-semibold text-slate-800">&quot;{product.name}&quot;</span>?
-                            <br />
-                            Tindakan ini tidak bisa dibatalkan.
-                        </>
-                    }
-                    confirmText="Ya, Hapus"
-                    confirmClassName="bg-red-500 hover:bg-red-600 text-white"
+                    itemName={`webinar ${product.name || ""}`.trim()}
                     loading={deleteProduct.isPending}
-                    onConfirm={() => {
-                        deleteProduct.mutate({ id });
-                    }}
+                    onConfirm={() => deleteProduct.mutate({ id })}
                 />
             </div>
         </div>

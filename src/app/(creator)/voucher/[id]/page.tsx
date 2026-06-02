@@ -18,7 +18,7 @@ import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 import { FormInput, FormSelect, SectionHeader } from "~/components/ui/form-layout";
 import { DateRangeOnlyPicker } from "~/components/ui/date-range-only-picker";
-import ConfirmDialog from "~/components/ui/confirm-dialog";
+import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
 import { Skeleton } from "~/components/ui/skeleton";
 import { cn, formatNumberInput } from "~/lib/utils";
 import ButtonSave from "~/components/ui/button-save";
@@ -523,21 +523,11 @@ export default function VoucherDetailPage() {
                 </div>
 
                 {/* Confirm Delete Dialog */}
-                <ConfirmDialog
+                <DeleteConfirmDialog
                     open={showDeleteConfirm}
                     onOpenChange={(open) => !open && setShowDeleteConfirm(false)}
-                    icon={<TrashIcon size={52} className="bg-red-100 rounded-full p-3 text-red-500" weight="regular" />}
                     title="Hapus Voucher?"
-                    description={
-                        <>
-                            Kamu yakin ingin menghapus voucher{" "}
-                            <span className="font-semibold text-slate-800">&quot;{voucher?.code}&quot;</span>?
-                            <br />
-                            Tindakan ini bersifat permanen dan tidak bisa dibatalkan.
-                        </>
-                    }
-                    confirmText="Ya, Hapus"
-                    confirmClassName="bg-red-500 hover:bg-red-600 text-white"
+                    itemName={`voucher ${voucher?.code || ""}`.trim()}
                     loading={deleteMutation.isPending}
                     onConfirm={handleDelete}
                 />

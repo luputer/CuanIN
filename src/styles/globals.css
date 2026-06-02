@@ -145,98 +145,158 @@ html {
   }
 }
 
-/* Neo-brutalist Sonner Toaster Overrides */
+/* =====================================================
+   NEO-BRUTALIST SONNER TOAST OVERRIDES
+   Targets all [data-sonner-toast] elements rendered by Sonner.
+   ===================================================== */
+
+/* --- Base Toast (all types) --- */
 [data-sonner-toast] {
-  border: 2px solid #0f172a !important;
-  box-shadow: 4px 4px 0px #0f172a !important;
-  border-radius: 12px !important;
+  border: 1px solid #1D293D !important;
+  /* Outer border color & thickness — change color/width here */
+  box-shadow: 1.5px 1.5px 0px #1D293D !important;
+  /* Neo-brutalist hard shadow — adjust offset & color here */
+  border-radius: 10px !important;
+  /* Corner roundness — 0 = sharp, higher = rounder */
   font-family: var(--font-sans) !important;
+  /* Font family — inherits --font-sans CSS variable */
   font-weight: 600 !important;
+  /* Text weight — 400=normal, 600=semibold, 700=bold */
   padding: 16px !important;
+  /* Inner spacing around toast content */
   background-color: #ffffff !important;
+  /* Default (light) background color of the toast */
   color: #0f172a !important;
+  /* Default text color (near-black for contrast) */
   transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  /* Hover animation speed & easing */
 }
 
+/* --- Base Toast Hover State --- */
 [data-sonner-toast]:hover {
   transform: translate(-1px, -1px) !important;
-  box-shadow: 5px 5px 0px #0f172a !important;
+  /* Shifts toast up-left on hover (neo-brutalist lift effect) */
+  box-shadow: 2px 2px 0px #016630 !important;
+  /* Slightly bigger shadow on hover to enhance the lift feel */
 }
 
-/* Success Toast (Neo-brutalist Neon Lime) */
+/* =====================================================
+   SUCCESS TOAST (Neo-brutalist Neon Lime)
+   ===================================================== */
 [data-sonner-toast][data-type="success"] {
-  background-color: #adfa1d !important;
-  color: #000000 !important;
+  background-color: #DCFCE7 !important;
+  /* Success background — light green tint */
+  color: #016630 !important;
+  /* Success text color — dark green for readability */
 }
 
 [data-sonner-toast][data-type="success"] [data-icon] {
-  color: #000000 !important;
+  color: #016630 !important;
+  /* Success icon color — matches text color */
 }
 
-/* Error Toast (Neo-brutalist Coral Red) */
+/* =====================================================
+   ERROR TOAST (Neo-brutalist Coral Red)
+   ===================================================== */
 [data-sonner-toast][data-type="error"] {
   background-color: #ff6b6b !important;
+  /* Error background — coral red */
   color: #000000 !important;
+  /* Error text color — black for high contrast on red */
 }
 
 [data-sonner-toast][data-type="error"] [data-icon] {
   color: #000000 !important;
+  /* Error icon color — black to match text */
 }
 
-/* Warning Toast (Neo-brutalist Bright Yellow) */
+/* =====================================================
+   WARNING TOAST (Neo-brutalist Bright Yellow)
+   ===================================================== */
 [data-sonner-toast][data-type="warning"] {
   background-color: #ffb800 !important;
+  /* Warning background — bright amber/yellow */
   color: #000000 !important;
+  /* Warning text color — black for readability on yellow */
 }
 
 [data-sonner-toast][data-type="warning"] [data-icon] {
   color: #000000 !important;
+  /* Warning icon color — black to match text */
 }
 
-/* Info Toast (Neo-brutalist Sky Blue) */
+/* =====================================================
+   INFO TOAST (Neo-brutalist Sky Blue)
+   ===================================================== */
 [data-sonner-toast][data-type="info"] {
   background-color: #38bdf8 !important;
+  /* Info background — sky blue */
   color: #000000 !important;
+  /* Info text color — black for contrast on blue */
 }
 
 [data-sonner-toast][data-type="info"] [data-icon] {
   color: #000000 !important;
+  /* Info icon color — black to match text */
 }
 
-/* Dark Mode Overrides for Neo-brutalism */
+/* =====================================================
+   DARK MODE OVERRIDES (all toast types)
+   ===================================================== */
+
+/* --- Dark: Base Toast --- */
 .dark [data-sonner-toast] {
   border: 2px solid #ffffff !important;
-  box-shadow: 4px 4px 0px #ffffff !important;
+  /* Dark mode border — white, slightly thicker */
+  box-shadow: 2px 2px 0px #ffffff !important;
+  /* Dark mode hard shadow — white offset shadow */
   color: #ffffff !important;
+  /* Dark mode default text — white */
   background-color: #0f172a !important;
+  /* Dark mode default background — very dark navy */
 }
 
+/* --- Dark: Base Toast Hover State --- */
 .dark [data-sonner-toast]:hover {
-  box-shadow: 5px 5px 0px #ffffff !important;
+  box-shadow: 2px 2px 0px #ffffff !important;
+  /* Keep same shadow on hover (no transform override needed) */
 }
 
+/* --- Dark: Success Toast --- */
 .dark [data-sonner-toast][data-type="success"] {
   background-color: #adfa1d !important;
+  /* Dark success background — bright neon lime green */
   color: #000000 !important;
+  /* Dark success text — black for contrast on lime */
 }
 
 .dark [data-sonner-toast][data-type="success"] [data-icon] {
   color: #000000 !important;
+  /* Dark success icon — black to match text */
 }
 
+/* --- Dark: Error Toast --- */
 .dark [data-sonner-toast][data-type="error"] {
   background-color: #ff6b6b !important;
+  /* Dark error background — same coral red (works on dark too) */
   color: #000000 !important;
+  /* Dark error text — black for contrast */
 }
 
+/* --- Dark: Warning Toast --- */
 .dark [data-sonner-toast][data-type="warning"] {
   background-color: #ffb800 !important;
+  /* Dark warning background — same bright amber */
   color: #000000 !important;
+  /* Dark warning text — black for contrast */
 }
 
+/* --- Dark: Info Toast --- */
 .dark [data-sonner-toast][data-type="info"] {
   background-color: #38bdf8 !important;
+  /* Dark info background — same sky blue */
   color: #000000 !important;
+  /* Dark info text — black for contrast */
 }
 
 
@@ -251,11 +311,13 @@ html {
   }
 
   @keyframes caret-blink {
+
     0%,
     70%,
     100% {
       opacity: 1;
     }
+
     20%,
     50% {
       opacity: 0;
@@ -265,4 +327,4 @@ html {
   .animate-caret-blink {
     animation: caret-blink 1.2s ease-out infinite;
   }
-  }
+}

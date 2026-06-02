@@ -39,7 +39,7 @@ import { useProductDigital } from "~/hooks/use-product-digital";
 import { ProductDetailTabs, ProductDetailTabContent } from "~/components/layout/product-detail-tabs";
 import { SectionHeader, FormInput, FormTextarea, FormSelect } from "~/components/ui/form-layout";
 import ButtonSave from "~/components/ui/button-save";
-import ConfirmDialog from "~/components/ui/confirm-dialog";
+import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
 import Pembeli from "~/components/pembeli";
 import { FormCustomizer } from "~/components/form-customizer";
 import { Skeleton } from "~/components/ui/skeleton";
@@ -239,7 +239,7 @@ export default function ProdukDigitalDetailPage() {
         const publicUrl = `${host}/${catalog.slug}/${productSlug}`;
 
         void navigator.clipboard.writeText(publicUrl);
-        toast.success("Link produk disalin!");
+        toast.success("Link produk berhasil disalin!");
     };
 
     // Format initial price value
@@ -717,7 +717,7 @@ export default function ProdukDigitalDetailPage() {
                                                         <div className="animate-in fade-in slide-in-from-top-2 duration-200">
                                                             <VoucherSelector
                                                                 selectedIds={watch("vouchers") || []}
-                                                                onChange={(ids) => setValue("vouchers", ids)}
+                                                                onChange={(ids) => setValue("vouchers", ids, { shouldDirty: true, shouldValidate: true })}
                                                             />
                                                         </div>
                                                     )}
@@ -784,25 +784,13 @@ export default function ProdukDigitalDetailPage() {
                     </ProductDetailTabs>
                 </div>
 
-                <ConfirmDialog
+                <DeleteConfirmDialog
                     open={showDeleteConfirm}
                     onOpenChange={setShowDeleteConfirm}
-                    icon={<TrashIcon size={52} className="bg-red-100 rounded-full p-3 text-red-500" weight="regular" />}
                     title="Hapus Produk Digital?"
-                    description={
-                        <>
-                            Kamu yakin ingin menghapus {" "}
-                            <span className="font-semibold text-slate-800">&quot;{product.name}&quot;</span>?
-                            <br />
-                            Tindakan ini tidak bisa dibatalkan.
-                        </>
-                    }
-                    confirmText="Ya, Hapus"
-                    confirmClassName="bg-red-500 hover:bg-red-600 text-white"
+                    itemName={product.name}
                     loading={deleteProduct.isPending}
-                    onConfirm={() => {
-                        deleteProduct.mutate({ id });
-                    }}
+                    onConfirm={() => deleteProduct.mutate({ id })}
                 />
             </div>
         </div>

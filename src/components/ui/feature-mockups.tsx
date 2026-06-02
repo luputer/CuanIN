@@ -31,7 +31,7 @@ export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: numbe
     <div className="w-full h-full rounded-2xl bg-cyan-50 flex items-center justify-center p-4 md:p-8 relative overflow-hidden transition-colors duration-500">
       {/* Background decoration: Polka Dot Pattern */}
       <div className="absolute inset-0 opacity-[0.15]"
-        style={{ backgroundImage: 'radial-gradient(#0891b2 1px, transparent 1px)', backgroundSize: '20px 20px' }}
+        style={{ backgroundImage: 'radial-gradient(#0891b2 1px, transparent 2px)', backgroundSize: '20px 20px' }}
       />
 
       {/* Decorative Floating Elements */}
@@ -46,10 +46,9 @@ export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: numbe
           ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
           : "opacity-0 scale-90 -rotate-6 translate-x-[-100px] pointer-events-none z-10"
           }`}>
-          <div className="w-88 bg-white border-2 border-slate-800 p-8 rounded-2xl shadow-[1px_1px_0px_rgba(29,41,61)]">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-12 h-12 rounded-full bg-cyan-600 border-2 border-slate-800 flex items-center justify-center text-white text-base font-black shrink-0">1</div>
-              <span className="text-sm font-black text-slate-800 uppercase tracking-tighter">Buat Akun</span>
+          <div className="w-100 h-100 bg-white border-2 border-slate-800 p-8 rounded-2xl">
+            <div className="flex items-center justify-center gap-4 mb-8">
+              <span className="text-xl font-semibold text-slate-800 tracking-tighter">Buat Akun</span>
             </div>
             <div className="space-y-5">
               <div className="space-y-2">
@@ -60,7 +59,11 @@ export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: numbe
                 <div className="h-2.5 w-20 bg-slate-200 rounded" />
                 <div className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
               </div>
-              <div className="h-12 w-full bg-cyan-600 rounded-xl mt-2 border-2 border-slate-800 shadow-[1px_1px_0px_rgba(29,41,61)] flex items-center justify-center">
+              <div className="space-y-2">
+                <div className="h-2.5 w-20 bg-slate-200 rounded" />
+                <div className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
+              </div>
+              <div className="h-12 w-full bg-cyan-600 rounded-xl mt-2 border-2 border-slate-800 shadow-[0.5px_0.5px_0px_rgba(29,41,61)] flex items-center justify-center">
                 <div className="h-2.5 w-24 bg-white/40 rounded-full" />
               </div>
             </div>
@@ -72,28 +75,27 @@ export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: numbe
           ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
           : "opacity-0 scale-90 rotate-6 translate-x-[100px] pointer-events-none z-10"
           }`}>
-          <div className="w-96 bg-white border-2 border-slate-800 rounded-2xl shadow-[1px_1px_0px_rgba(29,41,61)] overflow-hidden flex flex-col">
+          <div className="w-100 h-80 bg-white border-2 border-slate-800 rounded-2xl overflow-hidden flex flex-col">
             <div className="h-10 bg-slate-100 border-b-2 border-slate-800 flex items-center px-4 gap-2 shrink-0">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-400 border border-slate-800 shadow-sm" />
+              <div className="w-2.5 h-2.5 rounded-full bg-cyan-600 border border-slate-800 shadow-sm" />
               <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 border border-slate-800 shadow-sm" />
-              <div className="w-2.5 h-2.5 rounded-full bg-green-400 border border-slate-800 shadow-sm" />
+              <div className="w-2.5 h-2.5 rounded-full bg-orange-400 border border-slate-800 shadow-sm" />
               <div className="ml-3 h-4 w-28 bg-white rounded-full border border-slate-200" />
             </div>
             <div className="p-6 flex flex-col gap-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-cyan-600 border-2 border-slate-800 flex items-center justify-center text-white text-base font-black shrink-0">2</div>
                 <div className="flex flex-col">
-                  <span className="text-sm font-black text-slate-800 uppercase tracking-tighter">Tambah Produk</span>
-                  <span className="text-[10px] text-slate-400 font-bold uppercase leading-none mt-1">Webinar & Kelas</span>
+                  <span className="text-xl font-semibold text-slate-800 tracking-tighter">Tambah Produk</span>
+                  <span className="text-[12px] text-slate-400 font-medium leading-none mt-1">Webinar, Kelas, Produk Digital</span>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="aspect-[4/3] bg-cyan-50 border-2 border-slate-800 rounded-xl shadow-[1px_1px_0px_rgba(29,41,61)] flex flex-col p-3">
+                <div className="aspect-[4/3] bg-cyan-50 border-1 border-cyan-300 rounded-xl flex flex-col p-3">
                   <div className="flex-1 bg-white rounded-md mb-2" />
                   <div className="h-2.5 w-full bg-slate-200 rounded" />
                   <div className="h-2.5 w-1/2 bg-cyan-200 rounded mt-2" />
                 </div>
-                <div className="aspect-[4/3] bg-yellow-50 border-2 border-slate-800 rounded-xl shadow-[1px_1px_0px_rgba(29,41,61)] flex flex-col p-3">
+                <div className="aspect-[4/3] bg-yellow-50 border-1 border-yellow-300 rounded-xl flex flex-col p-3">
                   <div className="flex-1 bg-white rounded-md mb-2" />
                   <div className="h-2.5 w-full bg-slate-200 rounded" />
                   <div className="h-2.5 w-1/2 bg-yellow-200 rounded mt-2" />
@@ -108,21 +110,15 @@ export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: numbe
           ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
           : "opacity-0 scale-90 -rotate-6 translate-x-[-100px] pointer-events-none z-10"
           }`}>
-          <div className="w-96 bg-white border-2 border-slate-800 p-7 rounded-2xl shadow-[1px_1px_0px_rgba(29,41,61)]">
+          <div className="w-100 bg-white border-2 border-slate-800 p-7 rounded-2xl">
             <div className="flex items-center gap-4 mb-7">
-              <div className="w-12 h-12 rounded-full bg-cyan-600 border-2 border-slate-800 flex items-center justify-center text-white text-base font-black shrink-0">3</div>
-              <span className="text-sm font-black text-slate-800 uppercase tracking-tighter">Bagikan Link</span>
+              <span className="text-xl font-semibold text-slate-800 tracking-tighter">Bagikan Link</span>
             </div>
             <div className="space-y-5">
-              <div className="flex gap-3 items-center bg-cyan-50 border-2 border-slate-800 p-4 rounded-xl shadow-[1px_1px_0px_rgba(29,41,61)]">
+              <div className="flex gap-3 items-center bg-cyan-50 border-2 border-slate-800 p-4 rounded-xl">
                 <GlobeIcon size={20} className="text-cyan-600 shrink-0" />
                 <div className="flex-1 h-2.5 bg-cyan-200 rounded-full" />
                 <CopyIcon size={20} className="text-cyan-600 shrink-0" />
-              </div>
-              <div className="flex justify-center gap-5 pt-2">
-                <div className="w-12 h-12 rounded-full bg-pink-50 flex items-center justify-center border-2 border-pink-100 shadow-[1px_1px_0px_rgba(244,63,94)]"><InstagramLogo size={22} className="text-pink-500" /></div>
-                <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-100 shadow-[1px_1px_0px_rgba(16,185,129)]"><WhatsappLogo size={22} className="text-emerald-500" /></div>
-                <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center border-2 border-blue-100 shadow-[1px_1px_0px_rgba(59,130,246)]"><ShareNetworkIcon size={22} className="text-blue-500" /></div>
               </div>
             </div>
           </div>
@@ -133,16 +129,14 @@ export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: numbe
           ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
           : "opacity-0 scale-90 rotate-6 translate-x-[100px] pointer-events-none z-10"
           }`}>
-          <div className="w-96 bg-emerald-50 border-2 border-emerald-500 p-8 rounded-2xl shadow-[1px_1px_0px_rgba(16,185,129)]">
+          <div className="w-100 bg-emerald-50 border-2 border-emerald-500 p-8 rounded-2xl">
             <div className="flex items-center gap-5">
-              <div className="w-16 h-16 bg-cyan-600 border-2 border-slate-800 rounded-full flex items-center justify-center text-white text-xl font-black shadow-[1px_1px_0px_rgba(29,41,61)] shrink-0">4</div>
               <div className="flex flex-col gap-1">
-                <span className="text-sm font-black text-emerald-700 uppercase tracking-tighter">Terima Pembayaran</span>
-                <div className="flex items-center gap-2 mt-1">
-                  <div className="w-4 h-4 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-xl font-black text-emerald-600">+ Rp 150.000</span>
+                <span className="text-lg font-semibold text-green-700 tracking-tighter">Terima Pembayaran</span>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-3xl font-black text-emerald-600">+ Rp 150.000</span>
                 </div>
-                <span className="text-[10px] text-emerald-500 font-bold tracking-wider">VERIFIKASI OTOMATIS</span>
+                <span className="text-sm text-green-500 font-semibold tracking-wider">Verifikasi Otomatis!</span>
               </div>
             </div>
           </div>

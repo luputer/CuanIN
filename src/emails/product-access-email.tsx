@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Body,
   Button,
@@ -25,18 +26,20 @@ import {
 export type ProductAccessEmailProps = {
   productName: string;
   productLink: string;
+  notes?: string | null;
   year: number;
 };
 
 export function ProductAccessEmail({
   productName,
   productLink,
+  notes,
   year,
 }: ProductAccessEmailProps) {
   return (
     <Html>
       <Head />
-      <Preview>Akses produk digital kamu sudah siap.</Preview>
+      <Preview>Akses produk kamu sudah siap.</Preview>
       <Body style={main}>
         <Container style={container}>
           <Text style={heading}>Terima Kasih Atas Pembelian Kamu!</Text>
@@ -46,7 +49,7 @@ export function ProductAccessEmail({
             Pembayaran kamu telah kami terima.
           </Text>
           <Text style={paragraph}>
-            Kamu dapat mengakses produk digital melalui tombol di bawah ini:
+            Kamu dapat mengakses produk melalui tombol di bawah ini:
           </Text>
           <Section style={actionSection}>
             <Button href={productLink} style={button}>
@@ -57,8 +60,18 @@ export function ProductAccessEmail({
             Atau copy dan paste link berikut ke browser kamu:
           </Text>
           <Text style={linkText}>{productLink}</Text>
+
+          {notes && (
+            <>
+              <Text style={heading}>Catatan Tambahan</Text>
+              <Text style={{ ...paragraph, backgroundColor: "#f1f5f9", padding: "16px", borderRadius: "8px", whiteSpace: "pre-wrap" }}>
+                {notes}
+              </Text>
+            </>
+          )}
+
           <Text style={paragraph}>
-            Jika kamu memiliki pertanyaan, jangan ragu untuk membalas email ini.
+            Jika ada pertanyaan, jangan ragu untuk membalas email ini.
           </Text>
           <Hr style={hr} />
           <Text style={footer}>© {year} CuanIN. All rights reserved.</Text>
@@ -67,3 +80,10 @@ export function ProductAccessEmail({
     </Html>
   );
 }
+
+ProductAccessEmail.PreviewProps = {
+  productName: "Webinar Bisnis Sukses",
+  productLink: "https://cuanin.com/product/123",
+  notes: "Terima kasih sudah membeli produk kami. Silakan bergabung di grup WA berikut: https://chat.whatsapp.com/... \nPersiapkan diri 15 menit sebelum dimulai.",
+  year: new Date().getFullYear(),
+} as ProductAccessEmailProps;

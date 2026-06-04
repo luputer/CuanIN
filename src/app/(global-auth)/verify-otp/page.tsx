@@ -102,7 +102,7 @@ function VerifyOtpInner() {
             </div>
           </div>
 
-          <h1 className="mb-2 text-3xl font-bold text-slate-800">Verifikasi OTP</h1>
+          <h1 className="mb-2 text-2xl font-semibold text-slate-800">Verifikasi OTP</h1>
           <p className="mb-8 text-slate-600">
             Masukkan 6 digit kode yang telah kami kirimkan ke email <br />
             <span className="font-semibold text-slate-800">{email}</span>

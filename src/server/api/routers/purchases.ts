@@ -51,9 +51,14 @@ export const purchasesRouter = createTRPCRouter({
           id: true,
           name: true,
           price: true,
+          discountPrice: true,
           link: true,
+          notes: true,
           userId: true,
           capacity: true,
+          user: {
+            select: { name: true },
+          },
           _count: {
             select: {
               purchases: {
@@ -85,7 +90,9 @@ export const purchasesRouter = createTRPCRouter({
         });
       }
 
-      let finalPrice = Number(product.price);
+      const basePrice = Number(product.price);
+      const discountPrice = product.discountPrice != null ? Number(product.discountPrice) : null;
+      let finalPrice = discountPrice != null && discountPrice > 0 && discountPrice < basePrice ? discountPrice : basePrice;
       let voucherId: string | undefined = undefined;
 
       if (input.promoCode) {
@@ -220,6 +227,8 @@ export const purchasesRouter = createTRPCRouter({
             buyerEmail: input.buyerEmail,
             productName: product.name,
             productLink: product.link,
+            creatorName: product.user?.name ?? "Tim CuanIN",
+            notes: product.notes,
           });
         }
 

@@ -5,22 +5,42 @@ import Image from "next/image";
 import Link from "next/link";
 import {
     ArrowLeftIcon,
+    CircleNotchIcon,
+    EyeIcon,
+    EyeSlashIcon,
+    ImageIcon,
     PencilSimpleIcon,
     TrashIcon,
-    PlusIcon,
-    CircleNotchIcon
 } from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { useImageUpload } from "~/hooks/use-upload";
-import {
-    FormGroup,
-    FormInput,
-    FormTextarea,
-    SectionHeader
-} from "~/components/ui/form-layout";
+import { SectionHeader, FormInput, FormTextarea } from "~/components/ui/form-layout";
 import ButtonSave from "~/components/ui/button-save";
 import { Skeleton } from "~/components/ui/skeleton";
+
+// ─── Local Components ────────────────────────────────────────────────────────
+
+const Label = ({ children }: { children: React.ReactNode }) => (
+    <div className="w-full text-slate-500 text-sm font-medium leading-6 mb-1">{children}</div>
+);
+
+const Row = ({
+    label,
+    children,
+}: {
+    label: string;
+    children: React.ReactNode;
+}) => (
+    <div className="flex flex-col items-start pb-5 gap-0.5 w-full">
+        <Label>{label}</Label>
+        <div className="flex-1 w-full text-slate-800 text-sm font-medium leading-6">
+            {children}
+        </div>
+    </div>
+);
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ProfilePage() {
     const utils = api.useUtils();
@@ -42,6 +62,7 @@ export default function ProfilePage() {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [password, setPassword] = useState("");
     const [bio, setBio] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const bannerInputRef = useRef<HTMLInputElement>(null);
@@ -81,7 +102,7 @@ export default function ProfilePage() {
         });
     };
 
-    const isDirty = 
+    const isDirty =
         name !== (user?.name || "") ||
         phoneNumber !== (user?.phoneNumber || "") ||
         bio !== (user?.bio || "") ||
@@ -89,58 +110,53 @@ export default function ProfilePage() {
         (avatarUpload.previewUrl || "") !== (user?.image || "") ||
         (bannerUpload.previewUrl || "") !== (user?.banner || "");
 
+    // ─── Loading Skeleton ──────────────────────────────────────────────────────
+
     if (isLoading) {
         return (
-            <div className="w-full max-w-7xl mx-auto space-y-6">
-                {/* Header Skeleton */}
-                <div className="bg-slate-50">
-                    <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
-                        <Skeleton className="h-4 w-32 mb-2" />
-                        <Skeleton className="h-8 w-48" />
-                    </div>
-                </div>
-
-                <div className="bg-cyan-50 rounded-xl border border-slate-800 overflow-hidden">
-                    <div className="px-4 sm:px-10 py-6 sm:py-8">
-                        <div className="flex items-center justify-between border-b border-cyan-600 pb-2 mb-6">
-                            <Skeleton className="h-6 w-48" />
-                        </div>
-
-                        <div className="mt-4">
-                            {/* Foto Profil Skeleton */}
-                            <div className="flex flex-col md:flex-row gap-2 md:gap-4 items-start py-2">
-                                <Skeleton className="h-4 w-full md:w-[140px] shrink-0" />
-                                <Skeleton className="h-24 w-24 sm:w-32 sm:h-32 rounded-full shrink-0" />
-                            </div>
-
-                            {/* Banner Profile Skeleton */}
-                            <div className="flex flex-col md:flex-row gap-2 md:gap-4 items-start py-2">
-                                <Skeleton className="h-4 w-full md:w-[140px] shrink-0" />
-                                <Skeleton className="w-full aspect-[6/1] md:aspect-[8/1] rounded-xl" />
-                            </div>
-
-                            {/* Input Skeletons */}
-                            {[1, 2, 3].map((i) => (
-                                <div key={i} className="flex flex-col md:flex-row gap-2 md:gap-4 items-start md:items-center py-2">
-                                    <Skeleton className="h-4 w-full md:w-[140px] shrink-0" />
-                                    <Skeleton className="flex-1 h-[52px] w-full rounded-lg" />
+            <div className="w-full max-w-7xl mx-auto animate-pulse">
+                <div className="space-y-6">
+                    {/* Header Skeleton */}
+                    <div className="bg-slate-50">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:sticky sm:top-[74px] bg-slate-50 z-40 -mx-6 px-6 pt-2 pb-0">
+                            <div className="flex-1 flex flex-col gap-1.5">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Skeleton className="h-4 w-4" />
+                                    <Skeleton className="h-4 w-36" />
                                 </div>
-                            ))}
-
-                            {/* Bio Skeleton */}
-                            <div className="flex flex-col md:flex-row gap-2 md:gap-4 items-start py-2">
-                                <Skeleton className="h-4 w-full md:w-[140px] shrink-0" />
-                                <Skeleton className="flex-1 min-h-[100px] w-full rounded-lg" />
+                                <Skeleton className="h-7 w-56 rounded-md" />
+                            </div>
+                            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                                <Skeleton className="h-10 w-40 rounded-lg" />
                             </div>
                         </div>
+                    </div>
 
-                        <div className="mt-8">
-                            <div className="flex items-center justify-between border-b border-cyan-600 pb-2 mb-6">
-                                <Skeleton className="h-6 w-32" />
-                            </div>
-                            <div className="flex flex-col md:flex-row gap-2 md:gap-4 items-start md:items-center py-2">
-                                <Skeleton className="h-4 w-full md:w-[140px] shrink-0" />
-                                <Skeleton className="flex-1 h-[52px] w-full rounded-lg" />
+                    {/* Content Skeleton */}
+                    <div className="flex-1 rounded-xl border border-slate-800 overflow-hidden bg-white">
+                        <div className="px-4 py-6 sm:px-8 sm:py-8">
+                            <Skeleton className="h-6 w-40 mb-8" />
+                            <div className="space-y-5">
+                                {/* Avatar skeleton */}
+                                <div className="flex flex-col gap-1.5">
+                                    <Skeleton className="h-4 w-28" />
+                                    <Skeleton className="h-24 w-24 rounded-full" />
+                                </div>
+                                {/* Banner skeleton */}
+                                <div className="flex flex-col gap-1.5">
+                                    <Skeleton className="h-4 w-28" />
+                                    <Skeleton className="w-full aspect-[8/1] rounded-xl" />
+                                </div>
+                                {[1, 2, 3].map((i) => (
+                                    <div key={i} className="flex flex-col gap-1.5">
+                                        <Skeleton className="h-4 w-28" />
+                                        <Skeleton className="h-[46px] w-full rounded-lg" />
+                                    </div>
+                                ))}
+                                <div className="flex flex-col gap-1.5">
+                                    <Skeleton className="h-4 w-28" />
+                                    <Skeleton className="h-24 w-full rounded-lg" />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -149,214 +165,229 @@ export default function ProfilePage() {
         );
     }
 
+    // ─── Render ────────────────────────────────────────────────────────────────
+
     return (
-        <div className="w-full max-w-7xl mx-auto space-y-6">
-            {/* Header */}
-            <div className="bg-slate-50">
-                <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
-                    <Link
-                        href="/dashboard"
-                        className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
-                    >
-                        <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-                        <span className="leading-none">Kembali ke Dashboard</span>
-                    </Link>
-                    <h1 className="text-2xl font-semibold text-slate-800">Akun Saya</h1>
+        <div className="w-full max-w-7xl mx-auto">
+            <div className="space-y-6">
+                {/* Header */}
+                <div className="bg-slate-50">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:sticky sm:top-[74px] bg-slate-50 z-40 -mx-6 px-6 pt-2 pb-0">
+                        <div className="flex-1 flex flex-col gap-1">
+                            <Link
+                                href="/dashboard"
+                                className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
+                            >
+                                <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                                <span className="leading-none">Kembali ke Dashboard</span>
+                            </Link>
+                            <h1 className="text-xl font-medium text-slate-800">Akun Saya</h1>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div className="bg-cyan-50 rounded-xl border border-slate-800 overflow-hidden">
-                <div className="px-4 sm:px-10 py-6 sm:py-8">
+                {/* Content */}
+                <div className="flex-1 min-w-0 bg-white rounded-xl border border-slate-800 overflow-hidden w-full">
+                    <div className="px-4 py-6 sm:px-8 sm:py-8">
+                        <SectionHeader title="Informasi User" />
 
-                    {/* ── Section 1: Informasi User ── */}
-                    <SectionHeader title="Informasi User" />
-
-                    <div className="mt-4">
-                        {/* Foto Profil */}
-                        <FormGroup label="Foto Profil" align="start" className="py-1.5 md:py-2 gap-2 md:gap-4" labelWidth="md:w-[140px]">
-                            <div className="flex flex-col gap-3">
-                                <div
-                                    className="relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer"
-                                    onClick={() => fileInputRef.current?.click()}
-                                >
-                                    <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-500 group-hover:bg-cyan-50 relative">
-                                        {avatarUpload.uploading ? (
-                                            <div className="absolute inset-0 flex items-center justify-center bg-white/80 z-10">
-                                                <CircleNotchIcon className="animate-spin text-cyan-600" size={24} />
-                                            </div>
-                                        ) : avatarUpload.previewUrl ? (
-                                            <>
-                                                <Image
-                                                    src={avatarUpload.previewUrl}
-                                                    alt="Foto Profil"
-                                                    fill
-                                                    className="object-cover transition-opacity group-hover:opacity-80"
-                                                    unoptimized
-                                                />
-                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10">
-                                                    <div className="bg-white/90 p-1.5 rounded-full shadow-md text-slate-800">
-                                                        <PencilSimpleIcon size={20} weight="bold" />
-                                                    </div>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <div className="flex flex-col items-center gap-1 text-slate-400">
-                                                <PlusIcon size={24} weight="bold" />
-                                                <span className="text-[10px] font-medium">Tambah</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <input
-                                        type="file"
-                                        ref={fileInputRef}
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={onFileChange}
-                                    />
-                                </div>
-                                {avatarUpload.previewUrl && (
-                                    <button
-                                        type="button"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            avatarUpload.setPreviewUrl(null);
-                                        }}
-                                        className="flex items-center gap-2 text-red-500 hover:text-red-700 text-xs font-medium transition-colors w-fit cursor-pointer"
+                        <div className="space-y-0 pt-6">
+                            {/* Foto Profil */}
+                            <Row label="Foto Profil">
+                                <div className="flex flex-col gap-3">
+                                    <div
+                                        className="relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer"
+                                        onClick={() => fileInputRef.current?.click()}
                                     >
-                                        <TrashIcon size={16} weight="bold" />
-                                        <span>Hapus Foto</span>
-                                    </button>
-                                )}
-                                <p className="text-xs text-slate-500 italic">Disarankan rasio 1:1 (square)</p>
-                            </div>
-                        </FormGroup>
-
-                        {/* Banner Profile */}
-                        <FormGroup label="Banner Profile" align="start" className="py-1.5 md:py-2 gap-2 md:gap-4" labelWidth="md:w-[140px]">
-                            <div className="flex flex-col gap-3">
-                                <div
-                                    className="relative group w-full aspect-[6/1] md:aspect-[8/1] cursor-pointer"
-                                    onClick={() => bannerInputRef.current?.click()}
-                                >
-                                    <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-500 group-hover:bg-cyan-50 relative">
-                                        {bannerUpload.uploading ? (
-                                            <div className="absolute inset-0 flex items-center justify-center bg-white/80 z-10">
-                                                <CircleNotchIcon className="animate-spin text-cyan-600" size={24} />
-                                            </div>
-                                        ) : bannerUpload.previewUrl ? (
-                                            <>
-                                                <Image
-                                                    src={bannerUpload.previewUrl}
-                                                    alt="Banner Preview"
-                                                    fill
-                                                    className="object-cover transition-opacity group-hover:opacity-80"
-                                                    unoptimized
-                                                />
-                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10">
-                                                    <div className="bg-white/90 p-1.5 rounded-full shadow-md text-slate-800">
-                                                        <PencilSimpleIcon size={20} weight="bold" />
+                                        <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-500 group-hover:bg-cyan-50 relative">
+                                            {avatarUpload.previewUrl ? (
+                                                <>
+                                                    <Image
+                                                        src={avatarUpload.previewUrl}
+                                                        alt="Foto Profil"
+                                                        fill
+                                                        className="object-cover transition-opacity group-hover:opacity-80"
+                                                        unoptimized
+                                                    />
+                                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10">
+                                                        <div className="bg-white/90 p-1.5 rounded-full shadow-md text-slate-800">
+                                                            <PencilSimpleIcon size={18} weight="bold" />
+                                                        </div>
                                                     </div>
+                                                </>
+                                            ) : (
+                                                <div className="flex flex-col items-center gap-1 text-slate-400">
+                                                    <ImageIcon size={22} weight="light" />
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider">Upload</span>
                                                 </div>
-                                            </>
-                                        ) : (
-                                            <div className="flex flex-col items-center gap-1 text-slate-400">
-                                                <PlusIcon size={24} weight="bold" />
-                                                <span className="text-[10px] font-medium">Tambah</span>
-                                            </div>
-                                        )}
+                                            )}
+                                            {avatarUpload.uploading && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10">
+                                                    <CircleNotchIcon size={22} weight="bold" className="animate-spin text-white" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={onFileChange}
+                                        />
                                     </div>
-                                    <input
-                                        type="file"
-                                        ref={bannerInputRef}
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={(e) => bannerUpload.handleFileUpload(e)}
-                                    />
+                                    {avatarUpload.previewUrl && (
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                avatarUpload.setPreviewUrl(null);
+                                            }}
+                                            className="flex items-center gap-1.5 text-red-500 hover:text-red-700 text-xs font-semibold transition-colors w-fit cursor-pointer"
+                                        >
+                                            <TrashIcon size={14} weight="bold" />
+                                            <span>Hapus Foto</span>
+                                        </button>
+                                    )}
+                                    <p className="text-[11px] text-slate-400 italic">Disarankan rasio 1:1 (square)</p>
                                 </div>
-                                {bannerUpload.previewUrl && (
-                                    <button
-                                        type="button"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            bannerUpload.setPreviewUrl(null);
-                                        }}
-                                        className="flex items-center gap-2 text-red-500 hover:text-red-700 text-xs font-medium transition-colors w-fit cursor-pointer"
+                            </Row>
+
+                            {/* Banner Profile */}
+                            <Row label="Banner Profil">
+                                <div className="flex flex-col gap-3">
+                                    <div
+                                        className="relative group w-full aspect-[6/1] md:aspect-[8/1] cursor-pointer"
+                                        onClick={() => bannerInputRef.current?.click()}
                                     >
-                                        <TrashIcon size={16} weight="bold" />
-                                        <span>Hapus Banner</span>
-                                    </button>
-                                )}
-                                <p className="text-xs text-slate-500 italic">Disarankan rasio 6:1 atau 8:1 (Tipis/Ceper)</p>
-                            </div>
-                        </FormGroup>
+                                        <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-500 group-hover:bg-cyan-50 relative">
+                                            {bannerUpload.previewUrl ? (
+                                                <>
+                                                    <Image
+                                                        src={bannerUpload.previewUrl}
+                                                        alt="Banner Preview"
+                                                        fill
+                                                        className="object-cover transition-opacity group-hover:opacity-80"
+                                                        unoptimized
+                                                    />
+                                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10">
+                                                        <div className="bg-white/90 p-1.5 rounded-full shadow-md text-slate-800">
+                                                            <PencilSimpleIcon size={18} weight="bold" />
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div className="flex flex-col items-center gap-2 text-slate-400">
+                                                    <ImageIcon size={26} weight="light" />
+                                                    <span className="text-xs font-bold uppercase tracking-wider">Upload Banner</span>
+                                                </div>
+                                            )}
+                                            {bannerUpload.uploading && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10">
+                                                    <CircleNotchIcon size={22} weight="bold" className="animate-spin text-white" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <input
+                                            type="file"
+                                            ref={bannerInputRef}
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={(e) => bannerUpload.handleFileUpload(e)}
+                                        />
+                                    </div>
+                                    {bannerUpload.previewUrl && (
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                bannerUpload.setPreviewUrl(null);
+                                            }}
+                                            className="flex items-center gap-1.5 text-red-500 hover:text-red-700 text-xs font-semibold transition-colors w-fit cursor-pointer"
+                                        >
+                                            <TrashIcon size={14} weight="bold" />
+                                            <span>Hapus Banner</span>
+                                        </button>
+                                    )}
+                                    <p className="text-[11px] text-slate-400 italic">Disarankan rasio 6:1 atau 8:1 (Tipis/Ceper)</p>
+                                </div>
+                            </Row>
 
-                        {/* Nama */}
-                        <FormGroup label="Nama" className="py-1.5 md:py-2 gap-2 md:gap-4" labelWidth="md:w-[140px]">
-                            <FormInput
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                placeholder="Masukkan nama lengkap"
-                            />
-                        </FormGroup>
-
-                        {/* Email */}
-                        <FormGroup label="Email" className="py-1.5 md:py-2 gap-2 md:gap-4" labelWidth="md:w-[140px]">
-                            <FormInput
-                                value={email}
-                                disabled
-                                className="bg-slate-100 text-slate-500 cursor-not-allowed border-slate-300"
-                            />
-                        </FormGroup>
-
-                        {/* Nomor Hp */}
-                        <FormGroup label="Nomor Hp" className="py-1.5 md:py-2 gap-2 md:gap-4" labelWidth="md:w-[140px]">
-                            <FormInput
-                                value={phoneNumber}
-                                onChange={(e) => setPhoneNumber(e.target.value)}
-                                placeholder="Masukkan nomor HP aktif"
-                            />
-                        </FormGroup>
-
-                        {/* Bio */}
-                        <FormGroup label="Bio" align="start" className="py-1.5 md:py-2 gap-2 md:gap-4" labelWidth="md:w-[140px]">
-                            <FormTextarea
-                                value={bio}
-                                onChange={(e) => setBio(e.target.value)}
-                                placeholder="Ceritakan tentang tokomu"
-                            />
-                        </FormGroup>
-                    </div>
-
-                    {/* ── Section 2: Keamanan ── */}
-                    <div className="mt-8">
-                        <SectionHeader title="Keamanan" />
-                        <div className="mt-4">
-                            {/* Password */}
-                            <FormGroup label="Password Baru" className="py-1.5 md:py-2 gap-2 md:gap-4" labelWidth="md:w-[140px]">
+                            {/* Nama */}
+                            <Row label="Nama">
                                 <FormInput
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="Biarkan kosong jika tidak ingin mengubah password"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    placeholder="Masukkan nama lengkap"
                                 />
-                            </FormGroup>
-                        </div>
-                    </div>
+                            </Row>
 
-                    {/* Footer Actions */}
-                    <div className="flex flex-col sm:flex-row justify-end sm:items-center mt-4 pt-4 border-t border-slate-200 gap-4 w-full">
-                        <div className="w-full sm:w-auto">
-                            <ButtonSave
-                                onClick={handleSave}
-                                isLoading={updateProfile.isPending || avatarUpload.uploading || bannerUpload.uploading}
-                                disabled={!isDirty}
-                                label="Simpan Perubahan"
-                                loadingLabel="Menyimpan..."
-                                weight="bold"
-                            />
-                        </div>
-                    </div>
+                            {/* Email */}
+                            <Row label="Email">
+                                <FormInput
+                                    value={email}
+                                    disabled
+                                    className="bg-slate-100 text-slate-500 cursor-not-allowed border-slate-300"
+                                />
+                            </Row>
 
+                            {/* Nomor Hp */}
+                            <Row label="Nomor Hp">
+                                <FormInput
+                                    value={phoneNumber}
+                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    placeholder="Masukkan nomor HP aktif"
+                                />
+                            </Row>
+
+                            {/* Bio */}
+                            <Row label="Bio">
+                                <FormTextarea
+                                    value={bio}
+                                    onChange={(e) => setBio(e.target.value)}
+                                    placeholder="Ceritakan tentang tokomu"
+                                />
+                            </Row>
+                        </div>
+
+                        {/* ─── Keamanan ─── */}
+                        <div className="pt-6">
+                            <SectionHeader title="Keamanan" />
+                            <div className="space-y-0 pt-6">
+                                <Row label="Password Baru (Opsional)">
+                                    <FormInput
+                                        type={showPassword ? "text" : "password"}
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="Biarkan kosong jika tidak ingin mengubah password"
+                                        suffix={
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="text-slate-400 hover:text-cyan-600 transition-colors px-2"
+                                            >
+                                                {showPassword ? <EyeSlashIcon size={20} /> : <EyeIcon size={20} />}
+                                            </button>
+                                        }
+                                    />
+                                </Row>
+                            </div>
+                        </div>
+
+                        {/* Footer Form */}
+                        <div className="flex flex-col sm:flex-row justify-end sm:items-center mt-4 pt-4 border-t border-slate-200 gap-4 w-full">
+                            <div className="w-full sm:w-auto flex justify-end">
+                                <ButtonSave
+                                    onClick={handleSave}
+                                    isLoading={updateProfile.isPending || avatarUpload.uploading || bannerUpload.uploading}
+                                    disabled={!isDirty}
+                                    label="Simpan Perubahan"
+                                    loadingLabel="Menyimpan..."
+                                    weight="bold"
+                                />
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>

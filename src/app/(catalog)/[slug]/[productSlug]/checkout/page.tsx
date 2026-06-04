@@ -25,6 +25,8 @@ export default function CheckoutPage() {
     onSubmit,
     purchaseMutation,
     price,
+    originalPrice,
+    hasDiscount,
     discountAmount,
     finalPrice,
     isGratis,
@@ -87,7 +89,13 @@ export default function CheckoutPage() {
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-5">
           {/* LEFT */}
           <div className="space-y-6 lg:col-span-3 lg:pb-12">
-            <CheckoutProductCard product={product} price={price} isGratis={isGratis} />
+            <CheckoutProductCard 
+              product={product} 
+              price={price} 
+              originalPrice={originalPrice}
+              hasDiscount={hasDiscount}
+              isGratis={isGratis} 
+            />
             <CheckoutForm
               form={form}
               status={status}
@@ -109,6 +117,8 @@ export default function CheckoutPage() {
             handleRemoveVoucher={handleRemoveVoucher}
             isBuyingOwnProduct={isBuyingOwnProduct}
             price={price}
+            originalPrice={originalPrice}
+            hasDiscount={hasDiscount}
             discountAmount={discountAmount}
             finalPrice={finalPrice}
             isGratis={isGratis}

@@ -199,14 +199,14 @@ html {
    ERROR TOAST (Neo-brutalist Coral Red)
    ===================================================== */
 [data-sonner-toast][data-type="error"] {
-  background-color: #ff6b6b !important;
+  background-color: #ffe3e3 !important;
   /* Error background — coral red */
-  color: #000000 !important;
+  color: #cc4848 !important;
   /* Error text color — black for high contrast on red */
 }
 
 [data-sonner-toast][data-type="error"] [data-icon] {
-  color: #000000 !important;
+  color: #cc4848 !important;
   /* Error icon color — black to match text */
 }
 
@@ -214,14 +214,14 @@ html {
    WARNING TOAST (Neo-brutalist Bright Yellow)
    ===================================================== */
 [data-sonner-toast][data-type="warning"] {
-  background-color: #ffb800 !important;
+  background-color: #fff3d5 !important;
   /* Warning background — bright amber/yellow */
-  color: #000000 !important;
+  color: #78622a !important;
   /* Warning text color — black for readability on yellow */
 }
 
 [data-sonner-toast][data-type="warning"] [data-icon] {
-  color: #000000 !important;
+  color: #78622a !important;
   /* Warning icon color — black to match text */
 }
 
@@ -229,14 +229,14 @@ html {
    INFO TOAST (Neo-brutalist Sky Blue)
    ===================================================== */
 [data-sonner-toast][data-type="info"] {
-  background-color: #38bdf8 !important;
+  background-color: #e5f7ff !important;
   /* Info background — sky blue */
-  color: #000000 !important;
+  color: #29637e !important;
   /* Info text color — black for contrast on blue */
 }
 
 [data-sonner-toast][data-type="info"] [data-icon] {
-  color: #000000 !important;
+  color: #29637e !important;
   /* Info icon color — black to match text */
 }
 

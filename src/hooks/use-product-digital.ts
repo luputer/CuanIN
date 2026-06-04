@@ -154,7 +154,7 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
                 images: data.images,
                 benefit: data.benefit?.filter((b) => b.trim() !== ""),
                 capacity: data.enableQuota ? data.capacity : 0,
-                notes: data.enableNotes ? data.notes : undefined,
+                notes: data.enableNotes ? data.notes : null,
                 vouchers: data.enableVoucher ? data.vouchers : [],
                 discountPrice: data.enableDiscount ? data.discountPrice : undefined,
             });

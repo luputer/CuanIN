@@ -372,7 +372,10 @@ export default function ProductDetailPage() {
   }
 
   const price = Number(product.price);
-  const isGratis = price === 0;
+  const discountPrice = product.discountPrice != null ? Number(product.discountPrice) : null;
+  const hasDiscount = discountPrice != null && discountPrice > 0 && discountPrice < price;
+  const displayPrice = hasDiscount ? discountPrice : price;
+  const isGratis = displayPrice === 0;
   const isWebinarOrClass =
     product.type === "WEBINAR" || product.type === "KELAS_ONLINE";
 
@@ -438,7 +441,7 @@ export default function ProductDetailPage() {
   const otherProducts = (product.user.products ?? []).filter(
     (p: any) => p.id !== product.id
   );
-  const recommendationList = (otherProducts.length > 0 ? otherProducts : MOCK_RECOMMENDATIONS).slice(0, 4);
+  const recommendationList = otherProducts.slice(0, 4);
 
   const handleCopyLinkOnly = async () => {
     try {
@@ -786,6 +789,15 @@ export default function ProductDetailPage() {
               <div className="mt-4">
                 {isGratis ? (
                   <div className="text-xl font-semibold text-green-600">Gratis</div>
+                ) : hasDiscount ? (
+                  <div className="flex flex-col">
+                    <div className="text-xl font-bold text-cyan-600">
+                      Rp {discountPrice!.toLocaleString("id-ID")}
+                    </div>
+                    <div className="text-sm font-medium text-slate-400 line-through">
+                      Rp {price.toLocaleString("id-ID")}
+                    </div>
+                  </div>
                 ) : (
                   <div className="text-xl font-bold text-cyan-600">
                     Rp {price.toLocaleString("id-ID")}
@@ -820,30 +832,34 @@ export default function ProductDetailPage() {
       </div>
 
       {/* SEPARATOR BORDER */}
-      <div className="mx-auto max-w-6xl px-4">
-        <div className="border-t border-slate-300"></div>
-      </div>
+      {recommendationList.length > 0 && (
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="border-t border-slate-300"></div>
+        </div>
+      )}
 
       {/* ───── RECOMMENDATIONS SECTION ───── */}
-      <div className="mx-auto max-w-6xl px-4 py-12">
-        <h2 className="mb-6 text-xl font-bold text-slate-800 md:text-2xl">
-          Rekomendasi Produk Lainnya
-        </h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {recommendationList.map((rec) => {
-            const normalized = {
-              ...rec,
-              price: (rec as any)?.price && typeof (rec as any)?.price === "object" && typeof (rec as any)?.price.toNumber === "function"
-                ? (rec as any).price.toNumber()
-                : (rec as any).price,
-            };
+      {recommendationList.length > 0 && (
+        <div className="mx-auto max-w-6xl px-4 py-12">
+          <h2 className="mb-6 text-xl font-bold text-slate-800 md:text-2xl">
+            Rekomendasi Produk Lainnya
+          </h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {recommendationList.map((rec) => {
+              const normalized = {
+                ...rec,
+                price: (rec as any)?.price && typeof (rec as any)?.price === "object" && typeof (rec as any)?.price.toNumber === "function"
+                  ? (rec as any).price.toNumber()
+                  : (rec as any).price,
+              };
 
-            return (
-              <RecommendationCard key={rec.id} product={normalized} creatorSlug={slug} />
-            );
-          })}
+              return (
+                <RecommendationCard key={rec.id} product={normalized} creatorSlug={slug} />
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       <Footer />
     </div>

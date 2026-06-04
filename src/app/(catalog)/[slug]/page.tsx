@@ -68,6 +68,7 @@ function ProductCard({
   shortDescription,
   type,
   price,
+  discountPrice,
   image,
   slug,
   startDate,
@@ -81,6 +82,7 @@ function ProductCard({
   shortDescription: string;
   type: string;
   price: number;
+  discountPrice?: number | null;
   image?: string | null;
   slug: string;
   startDate?: Date | null;
@@ -89,7 +91,9 @@ function ProductCard({
   endDate?: Date | null;
   status?: string;
 }) {
-  const isGratis = price === 0;
+  const hasDiscount = discountPrice != null && discountPrice > 0 && discountPrice < price;
+  const displayPrice = hasDiscount ? discountPrice : price;
+  const isGratis = displayPrice === 0;
   const categoryLabel = TYPE_MAP[type] ?? type;
 
   const isWebinarCompleted =
@@ -187,6 +191,15 @@ function ProductCard({
             <div>
               {isGratis ? (
                 <span className="text-md font-semibold text-green-600">Gratis</span>
+              ) : hasDiscount ? (
+                <div className="flex flex-col">
+                  <span className="text-md font-semibold text-cyan-600">
+                    Rp {Number(discountPrice).toLocaleString("id-ID")}
+                  </span>
+                  <span className="text-xs font-medium text-slate-400 line-through">
+                    Rp {Number(price).toLocaleString("id-ID")}
+                  </span>
+                </div>
               ) : (
                 <span className="text-md font-semibold text-cyan-600">
                   Rp {Number(price).toLocaleString("id-ID")}
@@ -498,6 +511,7 @@ export default function CatalogSlugPage() {
                   shortDescription={product.shortDescription ?? ""}
                   type={product.type}
                   price={Number(product.price)}
+                  discountPrice={product.discountPrice != null ? Number(product.discountPrice) : null}
                   image={product.image}
                   startDate={product.startDate}
                   contentType={product.contentType}

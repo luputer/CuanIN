@@ -14,6 +14,8 @@ type CheckoutSummaryProps = {
   handleRemoveVoucher: () => void;
   isBuyingOwnProduct: boolean;
   price: number;
+  originalPrice: number;
+  hasDiscount: boolean;
   discountAmount: number;
   finalPrice: number;
   isGratis: boolean;
@@ -29,6 +31,8 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
   handleRemoveVoucher,
   isBuyingOwnProduct,
   price,
+  originalPrice,
+  hasDiscount,
   discountAmount,
   finalPrice,
   isGratis,
@@ -122,6 +126,15 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
             <span className="text-slate-600">Harga</span>
             {price === 0 ? (
               <span className="font-semibold text-green-600">Gratis</span>
+            ) : hasDiscount ? (
+              <div className="flex flex-col items-end">
+                <span className="font-medium text-slate-700">
+                  Rp {price.toLocaleString("id-ID")}
+                </span>
+                <span className="text-xs font-medium text-slate-400 line-through">
+                  Rp {originalPrice.toLocaleString("id-ID")}
+                </span>
+              </div>
             ) : (
               <span className="font-medium text-slate-700">
                 Rp {price.toLocaleString("id-ID")}

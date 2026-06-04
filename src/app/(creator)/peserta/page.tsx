@@ -149,7 +149,7 @@ export default function UserPage() {
 									<TableCell colSpan={7} className="py-20">
 										<div className="flex flex-col items-center gap-2">
 											<UserMinusIcon size={48} className="text-slate-300" />
-											<span className="text-slate-500">Tidak ada data peserta ditemukan.</span>
+											<span className="text-slate-500">Belum ada data pembeli ditemukan.</span>
 										</div>
 									</TableCell>
 								</TableRow>
@@ -232,7 +232,7 @@ export default function UserPage() {
 						))
 					) : participants.length === 0 ? (
 						<div className="text-center py-8 bg-white border border-slate-800 rounded-xl p-4 text-slate-500">
-							Tidak ada data peserta ditemukan.
+							Belum ada data pembeli ditemukan.
 						</div>
 					) : (
 						participants.map((item, index) => {

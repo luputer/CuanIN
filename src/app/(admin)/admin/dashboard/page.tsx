@@ -1,316 +1,341 @@
-"use client";
+"use client"
 
 import {
-	WalletIcon,
-	BasketIcon,
-	UsersIcon,
-	ChartLineUpIcon,
+    WalletIcon,
+    BasketIcon,
+    UsersIcon,
+    ChartLineUpIcon,
+    ArrowUpRightIcon,
 } from "@phosphor-icons/react";
 import {
-	XAxis,
-	YAxis,
-	Tooltip,
-	CartesianGrid,
-	BarChart,
-	Bar,
-	ResponsiveContainer,
-	AreaChart,
-	Area,
-	Cell,
+    XAxis,
+    YAxis,
+    Tooltip,
+    CartesianGrid,
+    BarChart,
+    Bar,
+    ResponsiveContainer,
+    AreaChart,
+    Area,
+    Cell,
 } from "recharts";
 import { api } from "~/trpc/react";
-import { formatPrice } from "~/lib/utils";
 import Link from "next/link";
 
-// ── Skeleton helpers (same pattern as creator dashboard) ────────────────────
+type CardProps = {
+    title: string;
+    value: string;
+    icon: React.ReactNode;
+    iconColor?: string;
+    bgColor?: string;
+    showArrow?: boolean;
+    change?: number | null;
+};
+
+function Card({
+    title,
+    value,
+    icon,
+    iconColor,
+    bgColor,
+    showArrow,
+    change,
+}: CardProps) {
+    const isPositive = change === null || (change ?? 0) >= 0;
+
+    return (
+        <div className={`${bgColor ?? "bg-white"} gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col transition-transform hover:scale-101`}>
+
+            {/* TOP ROW: ICON & ARROW */}
+            <div className="flex justify-between items-start mb-3">
+                <div className={`rounded-full text-2xl ${iconColor}`}>
+                    {icon}
+                </div>
+                {showArrow && (
+                    <div className="flex items-center justify-center p-1.5 rounded-full bg-cyan-600 text-white cursor-pointer">
+                        <ArrowUpRightIcon size={14} weight="bold" />
+                    </div>
+                )}
+            </div>
+
+            {/* TITLE & VALUE */}
+            <div className="flex flex-col gap-1">
+                <p className="text-xs font-semibold text-slate-800">
+                    {title}
+                </p>
+                <h2 className="text-lg font-semibold text-cyan-600">
+                    {value}
+                </h2>
+            </div>
+
+            {/* INFO */}
+            <div className="mt-1 flex items-center justify-between font-regular text-xs text-slate-600">
+                <span>30 hari terakhir</span>
+                {change !== undefined && (
+                    <span className={`px-2 py-1 rounded-full text-xs font-regular ${isPositive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                        {change === null ? "Baru" : `${isPositive ? "+" : ""}${Math.max(-100, Math.min(100, change)).toFixed(1)}%`}
+                    </span>
+                )}
+            </div>
+        </div>
+    );
+}
 
 function CardSkeleton() {
-	return (
-		<div className="bg-white gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col animate-pulse">
-			<div className="flex justify-between items-start mb-3">
-				<div className="size-8 rounded-full bg-slate-200" />
-			</div>
-			<div className="flex flex-col gap-2">
-				<div className="h-3 w-24 bg-slate-200 rounded" />
-				<div className="h-5 w-32 bg-slate-200 rounded" />
-			</div>
-			<div className="mt-1 flex items-center justify-between">
-				<div className="h-3 w-20 bg-slate-200 rounded" />
-				<div className="h-5 w-12 bg-slate-200 rounded-full" />
-			</div>
-		</div>
-	);
+    return (
+        <div className="bg-white gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col animate-pulse">
+            <div className="flex justify-between items-start mb-3">
+                <div className="w-8 h-8 rounded-full bg-slate-200" />
+            </div>
+            <div className="flex flex-col gap-2">
+                <div className="h-3 w-24 bg-slate-200 rounded" />
+                <div className="h-5 w-32 bg-slate-200 rounded" />
+            </div>
+            <div className="mt-1 flex items-center justify-between">
+                <div className="h-3 w-20 bg-slate-200 rounded" />
+                <div className="h-5 w-12 bg-slate-200 rounded-full" />
+            </div>
+        </div>
+    );
 }
 
 function ChartSkeleton({ height = 300 }: { height?: number }) {
-	return (
-		<div className="w-full bg-slate-100 rounded-lg animate-pulse" style={{ height }} />
-	);
+    return (
+        <div className="w-full bg-slate-100 rounded-lg animate-pulse" style={{ height }} />
+    );
 }
-
-// ── Stat card ───────────────────────────────────────────────────────────────
-
-type CardProps = {
-	title: string;
-	value: string;
-	icon: React.ReactNode;
-	iconColor?: string;
-	bgColor?: string;
-	showArrow?: boolean;
-	change?: number | null;
-};
-
-function Card({ title, value, icon, iconColor, bgColor, showArrow, change }: CardProps) {
-	const isPositive = change === null || (change ?? 0) >= 0;
-
-	return (
-		<div className={`${bgColor ?? "bg-white"} gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col transition-transform hover:scale-101`}>
-			<div className="flex justify-between items-start mb-3">
-				<div className={`rounded-full text-2xl ${iconColor}`}>
-					{icon}
-				</div>
-				{showArrow && (
-					<div className="flex items-center justify-center p-1.5 rounded-full bg-cyan-600 text-white cursor-pointer">
-						{/* arrow icon placeholder if needed */}
-					</div>
-				)}
-			</div>
-			<div className="flex flex-col gap-1">
-				<p className="text-xs font-semibold text-slate-800">{title}</p>
-				<h2 className="text-lg font-semibold text-cyan-600">{value}</h2>
-			</div>
-			<div className="mt-1 flex items-center justify-between font-regular text-xs text-slate-600">
-				<span>30 hari terakhir</span>
-				{change !== undefined && (
-					<span className={`px-2 py-1 rounded-full text-xs font-regular ${isPositive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-						{change === null ? "Baru" : `${isPositive ? "+" : ""}${(change as number).toFixed(1)}%`}
-					</span>
-				)}
-			</div>
-		</div>
-	);
-}
-
-// ── Chart color palette ─────────────────────────────────────────────────────
 
 const CHART_COLORS = ["#FFF085", "#FFB86A"];
 
-// ── Page ────────────────────────────────────────────────────────────────────
+function formatRupiah(amount: number): string {
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(amount);
+}
 
 export default function DashboardPage() {
-	const { data, isLoading, isError } = api.analytics.adminGetStats.useQuery();
+    const { data, isLoading, isError } = api.analytics.adminGetStats.useQuery();
 
-	if (isError) {
-		return (
-			<div className="flex items-center justify-center h-64 text-red-500 text-sm">
-				Gagal memuat data dashboard. Silakan coba lagi.
-			</div>
-		);
-	}
+    if (isError) {
+        return (
+            <div className="flex items-center justify-center h-64 text-red-500 text-sm">
+                Gagal memuat data dashboard. Silakan coba lagi.
+            </div>
+        );
+    }
 
-	return (
-		<div className="w-full max-w-7xl mx-auto space-y-6">
-			{/* Header */}
-			<div className="bg-slate-50">
-				<div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-2">
-					<div className="text-2xl font-bold mb-2 text-cyan-600">Dashboard</div>
-					<div className="text-sm font-regular text-slate-600">
-						Selamat datang Admin. Kelola platform dan pantau statistik di sini.
-					</div>
-				</div>
-			</div>
+    return (
+        <div className="w-full max-w-7xl mx-auto space-y-6">
+            {/* Header */}
+            <div className="bg-slate-50">
+                <div className="sticky top-0 bg-slate-50 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 pt-2 pb-2">
+                    <div className="text-2xl font-bold mb-2 text-cyan-600">Dashboard</div>
+                    <div className="text-sm font-regular text-slate-600">
+                        Selamat datang Admin. Kelola platform dan pantau statistik di sini.
+                    </div>
+                </div>
+            </div>
 
-			{/* TOP CARDS */}
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-				{isLoading ? (
-					<>
-						<CardSkeleton />
-						<CardSkeleton />
-						<CardSkeleton />
-						<CardSkeleton />
-					</>
-				) : (
-					<>
-					  <Link href="transaksi" className="block rounded-xl transition-transform hover:scale-101">
-						<Card
-							title="Total Penghasilan"
-							value={formatPrice(data?.totalIncome ?? 0)}
-							icon={<WalletIcon weight="fill" className="size-8" />}
-							iconColor="text-cyan-600"
-							bgColor="bg-cyan-50"
-							showArrow={true}
-							change={data?.incomeChange}
-						/>
-					  </Link>
-						<Card
-							title="Total Produk"
-							value={(data?.totalProducts ?? 0).toLocaleString("id-ID")}
-							icon={<BasketIcon weight="fill" className="size-8" />}
-							iconColor="text-yellow-500"
-							change={data?.productsChange}
-						/>
-						<Card
-							title="Total Kreator"
-							value={(data?.totalCreators ?? 0).toLocaleString("id-ID")}
-							icon={<UsersIcon weight="fill" className="size-8" />}
-							iconColor="text-orange-500"
-							change={data?.creatorsChange}
-						/>
-						<Card
-							title="Total Pengunjung"
-							value={(data?.totalVisitors ?? 0).toLocaleString("id-ID")}
-							icon={<ChartLineUpIcon weight="fill" className="size-8" />}
-							iconColor="text-green-500"
-							change={data?.visitorsChange}
-						/>
-					</>
-				)}
-			</div>
+            {/* TOP CARDS */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+                {isLoading ? (
+                    <>
+                        <CardSkeleton />
+                        <CardSkeleton />
+                        <CardSkeleton />
+                        <CardSkeleton />
+                    </>
+                ) : (
+                    <>
+                        <Link href="transaksi" className="block rounded-xl transition-transform hover:scale-101">
+                            <Card
+                                title="Total Penghasilan"
+                                value={formatRupiah(data?.totalIncome ?? 0)}
+                                icon={<WalletIcon weight="fill" className="w-8 h-8" />}
+                                iconColor="text-cyan-600"
+                                bgColor="bg-cyan-50"
+                                showArrow={true}
+                                change={data?.incomeChange}
+                            />
+                        </Link>
+                        <Card
+                            title="Total Produk"
+                            value={(data?.totalProducts ?? 0).toLocaleString("id-ID")}
+                            icon={<BasketIcon weight="fill" className="w-8 h-8" />}
+                            iconColor="text-yellow-500"
+                            change={data?.productsChange}
+                        />
+                        <Card
+                            title="Total Kreator"
+                            value={(data?.totalCreators ?? 0).toLocaleString("id-ID")}
+                            icon={<UsersIcon weight="fill" className="w-8 h-8" />}
+                            iconColor="text-orange-500"
+                            change={data?.creatorsChange}
+                        />
+                        <Card
+                            title="Total Pengunjung"
+                            value={(data?.totalVisitors ?? 0).toLocaleString("id-ID")}
+                            icon={<ChartLineUpIcon weight="fill" className="w-8 h-8" color="currentColor" />}
+                            iconColor="text-green-500"
+                            change={data?.visitorsChange}
+                        />
+                    </>
+                )}
+            </div>
 
-			{/* CHART ROW 1 */}
-			<div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-4">
-				<div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
-					<h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Pendapatan Mingguan</h2>
-					{isLoading ? <ChartSkeleton /> : (
-						<ResponsiveContainer width="100%" height={300}>
-							<AreaChart data={data?.weeklyRevenue ?? []}>
-								<defs>
-									<linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-										<stop offset="0%" stopColor="#FDC700" stopOpacity={0.4} />
-										<stop offset="100%" stopColor="#ffffffff" stopOpacity={0} />
-									</linearGradient>
-								</defs>
-								<CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
-								<XAxis
-									dataKey="day"
-									tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 500 }}
-									tickMargin={10}
-									stroke="#A2F4FD"
-								/>
-								<YAxis
-									tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
-									tickMargin={10}
-									width={60}
-									stroke="#A2F4FD"
-									tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
-								/>
-								<Tooltip
-									formatter={(value) => [formatPrice(Number(value) || 0), "Pendapatan"]}
-								/>
-								<Area
-									type="monotone"
-									dataKey="value"
-									stroke="#FFDF20"
-									strokeWidth={3}
-									fill="url(#areaGradient)"
-									fillOpacity={1}
-									dot={{ r: 4, fill: "#FFDF20", stroke: "#FFB86A", strokeWidth: 2 }}
-								/>
-							</AreaChart>
-						</ResponsiveContainer>
-					)}
-				</div>
+            {/* CHART ROW 1 */}
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-4">
+                <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
+                    <h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Pendapatan Mingguan</h2>
+                    {isLoading ? <ChartSkeleton /> : (
+                        <ResponsiveContainer width="100%" height={300}>
+                            <AreaChart data={data?.weeklyRevenue ?? []}>
+                                <defs>
+                                    <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="#FDC700" stopOpacity={0.4} />
+                                        <stop offset="100%" stopColor="#ffffffff" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
+                                <XAxis
+                                    dataKey="day"
+                                    tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 500 }}
+                                    tickMargin={10}
+                                    stroke="#A2F4FD"
+                                />
+                                <YAxis
+                                    tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
+                                    tickMargin={10}
+                                    width={60}
+                                    stroke="#A2F4FD"
+                                    tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
+                                />
+                                <Tooltip
+                                    formatter={(value) => [formatRupiah(Number(value) || 0), "Pendapatan"]}
+                                />
+                                <Area
+                                    type="monotone"
+                                    dataKey="value"
+                                    stroke="#FFDF20"
+                                    strokeWidth={3}
+                                    fill="url(#areaGradient)"
+                                    fillOpacity={1}
+                                    dot={{ r: 4, fill: "#FFDF20", stroke: "#FFB86A", strokeWidth: 2 }}
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    )}
+                </div>
 
-				<div className="lg:col-span-1 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
-					<h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Total per Kategori</h2>
-					{isLoading ? <ChartSkeleton /> : (
-						<ResponsiveContainer width="100%" height={300}>
-							<BarChart data={data?.categoryData ?? []} barCategoryGap="20%">
-								<CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
-								<XAxis
-									dataKey="name"
-									tick={{ fill: "#0f172a", fontSize: 11, fontWeight: 500 }}
-									tickMargin={10}
-									stroke="#A2F4FD"
-								/>
-								<YAxis
-									tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
-									tickMargin={10}
-									width={50}
-									stroke="#A2F4FD"
-								/>
-								<Tooltip formatter={(value) => [value as number | string, "Produk"]} />
-								<Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
-									{(data?.categoryData ?? []).map((item, index) => (
-										<Cell key={item.name} fill={CHART_COLORS[index % CHART_COLORS.length] ?? "#FFF085"} />
-									))}
-								</Bar>
-							</BarChart>
-						</ResponsiveContainer>
-					)}
-				</div>
-			</div>
+                <div className="lg:col-span-1 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
+                    <h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Total per Kategori</h2>
+                    {isLoading ? <ChartSkeleton /> : (
+                        <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={data?.categoryData ?? []} barCategoryGap="20%">
+                                <CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
+                                <XAxis
+                                    dataKey="name"
+                                    tick={{ fill: "#0f172a", fontSize: 11, fontWeight: 500 }}
+                                    tickMargin={10}
+                                    stroke="#A2F4FD"
+                                />
+                                <YAxis
+                                    tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
+                                    tickMargin={10}
+                                    width={50}
+                                    stroke="#A2F4FD"
+                                />
+                                <Tooltip formatter={(value) => [value as number | string, "Produk"]} />
+                                <Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
+                                    {(data?.categoryData ?? []).map((_, index) => (
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={CHART_COLORS[index % CHART_COLORS.length] ?? "#FFF085"}
+                                        />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    )}
+                </div>
+            </div>
 
-			{/* CHART ROW 2 */}
-			<div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
-				<div className="lg:col-span-1 xl:col-span-3 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
-					<h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Traffic Website</h2>
-					{isLoading ? <ChartSkeleton /> : (
-						<ResponsiveContainer width="100%" height={300}>
-							<AreaChart data={data?.trafficData ?? []}>
-								<defs>
-									<linearGradient id="trafficGradient" x1="0" y1="0" x2="0" y2="1">
-										<stop offset="0%" stopColor="#FDC700" stopOpacity={0.4} />
-										<stop offset="100%" stopColor="#ffffffff" stopOpacity={0} />
-									</linearGradient>
-								</defs>
-								<CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
-								<XAxis
-									dataKey="day"
-									tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 500 }}
-									tickMargin={10}
-									stroke="#A2F4FD"
-								/>
-								<YAxis
-									tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
-									tickMargin={10}
-									width={40}
-									stroke="#A2F4FD"
-								/>
-								<Tooltip formatter={(value) => [value as number | string, "Pengunjung"]} />
-								<Area
-									type="monotone"
-									dataKey="value"
-									stroke="#FFDF20"
-									strokeWidth={3}
-									fill="url(#trafficGradient)"
-									fillOpacity={1}
-									dot={{ r: 4, fill: "#FFDF20", stroke: "#FFB86A", strokeWidth: 2 }}
-								/>
-							</AreaChart>
-						</ResponsiveContainer>
-					)}
-				</div>
+            {/* CHART ROW 2 */}
+            <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
+                <div className="lg:col-span-1 xl:col-span-3 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
+                    <h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Traffic Website</h2>
+                    {isLoading ? <ChartSkeleton /> : (
+                        <ResponsiveContainer width="100%" height={300}>
+                            <AreaChart data={data?.trafficData ?? []}>
+                                <defs>
+                                    <linearGradient id="trafficGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="#FDC700" stopOpacity={0.4} />
+                                        <stop offset="100%" stopColor="#ffffffff" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
+                                <XAxis
+                                    dataKey="day"
+                                    tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 500 }}
+                                    tickMargin={10}
+                                    stroke="#A2F4FD"
+                                />
+                                <YAxis
+                                    tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
+                                    tickMargin={10}
+                                    width={40}
+                                    stroke="#A2F4FD"
+                                />
+                                <Tooltip formatter={(value) => [value as number | string, "Pengunjung"]} />
+                                <Area
+                                    type="monotone"
+                                    dataKey="value"
+                                    stroke="#FFDF20"
+                                    strokeWidth={3}
+                                    fill="url(#trafficGradient)"
+                                    fillOpacity={1}
+                                    dot={{ r: 4, fill: "#FFDF20", stroke: "#FFB86A", strokeWidth: 2 }}
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    )}
+                </div>
 
-				<div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
-					<h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Jumlah Kreator (Per Minggu)</h2>
-					{isLoading ? <ChartSkeleton /> : (
-						<ResponsiveContainer width="100%" height={300}>
-							<BarChart data={data?.buyerData ?? []} barCategoryGap="20%">
-								<CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
-								<XAxis
-									dataKey="week"
-									tick={{ fill: "#0f172a", fontSize: 11, fontWeight: 500 }}
-									tickMargin={10}
-									stroke="#A2F4FD"
-								/>
-								<YAxis
-									tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
-									tickMargin={10}
-									width={40}
-									stroke="#A2F4FD"
-								/>
-								<Tooltip formatter={(value) => [value as number | string, "Kreator Baru"]} />
-								<Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
-									{(data?.buyerData ?? []).map((item, index) => (
-										<Cell key={item.week} fill={CHART_COLORS[index % CHART_COLORS.length] ?? "#FFF085"} />
-									))}
-								</Bar>
-							</BarChart>
-						</ResponsiveContainer>
-					)}
-				</div>
-			</div>
-		</div>
-	);
+                <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
+                    <h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Jumlah Kreator (Per Minggu)</h2>
+                    {isLoading ? <ChartSkeleton /> : (
+                        <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={data?.buyerData ?? []} barCategoryGap="20%">
+                                <CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
+                                <XAxis
+                                    dataKey="week"
+                                    tick={{ fill: "#0f172a", fontSize: 11, fontWeight: 500 }}
+                                    tickMargin={10}
+                                    stroke="#A2F4FD"
+                                />
+                                <YAxis
+                                    tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
+                                    tickMargin={10}
+                                    width={40}
+                                    stroke="#A2F4FD"
+                                />
+                                <Tooltip formatter={(value) => [value as number | string, "Kreator Baru"]} />
+                                <Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
+                                    {(data?.buyerData ?? []).map((_, index) => (
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={CHART_COLORS[index % CHART_COLORS.length] ?? "#FFF085"}
+                                        />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
 }

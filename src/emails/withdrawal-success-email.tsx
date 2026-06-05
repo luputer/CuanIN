@@ -65,7 +65,7 @@ export function WithdrawalSuccessEmail({
             Dana akan masuk ke rekening kamu sesuai jam operasional bank.
           </Text>
           <Text style={paragraph}>
-            Jika ada pertanyaan, balas email ini ya.
+            Jika ada pertanyaan, jangan ragu untuk membalas email ini.
           </Text>
           <Hr style={hr} />
           <Text style={footer}>© {year} CuanIN. All rights reserved.</Text>

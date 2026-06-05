@@ -60,7 +60,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <HeaderAdmin onMenuClick={handleHeaderMenuClick} />
 
-                <main className="bg-slate-50 flex-1 overflow-y-auto overflow-x-hidden p-6">
+                <main className="bg-slate-50 flex-1 overflow-y-auto overflow-x-hidden p-6 scroll-smooth">
                     <div className="max-w-none">
                         {children}
                     </div>

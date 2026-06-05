@@ -40,10 +40,13 @@ export function useImageUpload(folder = "products"): UseImageUploadReturn {
 
             if (!res.ok) throw new Error("Gagal upload ke storage");
 
-            const publicUrl = `https://pub-3098f58e584244c8bf48888938b34bae.r2.dev/${key}`;
+            // Menggunakan variabel env dinamis, dengan fallback ke subdomain baru kamu
+            const baseUrl = process.env.NEXT_PUBLIC_BUCKET_PUBLIC_URL ?? "https://storage.cuanin.my.id";
+            const publicUrl = `${baseUrl}/${key}`;
+
             setPreviewUrl(publicUrl);
             toast.success("Gambar berhasil diunggah");
-            return publicUrl; // ← dikembalikan, bukan setValue langsung
+            return publicUrl;
         } catch (error) {
             const errorMessage =
                 error instanceof Error ? error.message : "Terjadi kesalahan";
@@ -54,7 +57,6 @@ export function useImageUpload(folder = "products"): UseImageUploadReturn {
             setUploading(false);
         }
     };
-
 
     return { uploading, previewUrl, handleFileUpload, setPreviewUrl };
 }

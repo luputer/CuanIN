@@ -12,7 +12,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { ChevronDown, LogOut, User } from "lucide-react";
+import { CaretDown as CaretDownIcon, SignOut as SignOutIcon, User as UserIcon } from "@phosphor-icons/react";
 
 export function UserNav() {
     const { data: session } = useSession();
@@ -22,8 +22,8 @@ export function UserNav() {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-3 cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg transition-colors outline-none">
-                    <div className="relative size-8 rounded-full overflow-hidden bg-slate-200">
-                        <Avatar className="size-8">
+                    <div className="relative h-8 w-8 rounded-full overflow-hidden bg-slate-200">
+                        <Avatar className="h-8 w-8">
                             <AvatarImage src={user?.image ?? ""} alt={user?.name ?? ""} />
                             <AvatarFallback>{user?.name?.[0]?.toUpperCase() ?? "U"}</AvatarFallback>
                         </Avatar>
@@ -31,12 +31,12 @@ export function UserNav() {
                     <div className="hidden md:block text-sm font-medium text-slate-700">
                         {user?.name ?? "User"}
                     </div>
-                    <ChevronDown size={16} className="text-slate-400 hidden md:block" />
+                    <CaretDownIcon size={16} className="text-slate-400 hidden md:block" />
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">{user?.name}</p>
                         <p className="text-xs leading-none text-muted-foreground">
                             {user?.email}
@@ -47,7 +47,7 @@ export function UserNav() {
                 <DropdownMenuGroup>
                     <DropdownMenuItem asChild>
                         <Link href="/dashboard/account" className="cursor-pointer">
-                            <User className="mr-2 size-4" />
+                            <UserIcon className="mr-2 h-4 w-4" />
                             <span>Akun Saya</span>
                         </Link>
                     </DropdownMenuItem>
@@ -57,7 +57,7 @@ export function UserNav() {
                     onClick={() => signOut({ callbackUrl: "/sign-in" })}
                     className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
                 >
-                    <LogOut className="mr-2 size-4" />
+                    <SignOutIcon className="mr-2 h-4 w-4" />
                     <span>Logout</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>

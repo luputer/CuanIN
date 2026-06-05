@@ -53,12 +53,12 @@ export default function HeaderKreator({
 
             <div className="flex items-center gap-4">
 
-                <div className="relative w-50" ref={dropdownRef}>
+                <div className="relative w-60" ref={dropdownRef}>
 
                     {/* Profile */}
                     <div
                         onClick={() => setOpen(!open)}
-                        className="flex items-center justify-between cursor-pointer border border-slate-800 rounded-full py-2 px-4 w-full gap-3 shadow-[0px_1px_0px_rgba(30,27,75)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition duration-200 ease-out"
+                        className="flex items-center justify-between cursor-pointer border border-slate-800 rounded-full py-2 px-4 w-full gap-3 transition-transform duration-150 active:scale-95 select-none"
                     >
                         <div className="flex items-center gap-2">
                             {user?.image ? (
@@ -80,13 +80,13 @@ export default function HeaderKreator({
                             </span>
                         </div>
 
-                        <CaretDownIcon size={16} className="text-slate-600" />
+                        <CaretDownIcon size={16} className={`text-slate-600 transition-transform duration-200 ${open ? "rotate-180" : ""}`} suppressHydrationWarning />
 
                     </div>
 
                     {/* Dropdown */}
                     {open && (
-                        <div className="absolute left-1/2 top-14 -translate-x-1/2 w-48 bg-white border border-slate-800 rounded-xl shadow-[0px_3px_0px_rgba(30,27,75)] py-2 px-3 mt-1">
+                        <div className="absolute left-1/2 top-14 -translate-x-1/2 w-56 bg-white border border-slate-800 rounded-xl shadow-[0px_1.5px_0px_rgba(29,41,61)] py-2 px-3">
 
                             {/* Akun Saya */}
                             <button type="button"

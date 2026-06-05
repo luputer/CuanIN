@@ -126,7 +126,7 @@ export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBa
                                 ))}
                             </div>
                         ) : (
-                            <p className="pt-4 text-slate-500 text-sm">Tidak ada data form</p>
+                            <p className="pt-4 text-slate-500 text-sm">Belum ada data form</p>
                         )}
                     </div>
                 </div>

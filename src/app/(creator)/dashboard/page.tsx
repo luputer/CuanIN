@@ -73,7 +73,7 @@ function Card({
                 <span>30 hari terakhir</span>
                 {change !== undefined && (
                     <span className={`px-2 py-1 rounded-full text-xs font-regular ${isPositive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                        {change === null ? "Baru" : `${isPositive ? "+" : ""}${change.toFixed(1)}%`}
+                        {change === null ? "Baru" : `${isPositive ? "+" : ""}${Math.max(-100, Math.min(100, change)).toFixed(1)}%`}
                     </span>
                 )}
             </div>

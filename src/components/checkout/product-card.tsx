@@ -12,6 +12,8 @@ type CheckoutProductCardProps = {
     benefit?: unknown;
   };
   price: number;
+  originalPrice: number;
+  hasDiscount: boolean;
   isGratis: boolean;
 };
 
@@ -30,6 +32,8 @@ const CATEGORY_NAME: Record<string, string> = {
 export const CheckoutProductCard: React.FC<CheckoutProductCardProps> = ({
   product,
   price,
+  originalPrice,
+  hasDiscount,
   isGratis,
 }) => {
   return (
@@ -84,6 +88,15 @@ export const CheckoutProductCard: React.FC<CheckoutProductCardProps> = ({
         <div className="mt-4">
           {isGratis ? (
             <div className="text-xl font-semibold text-green-600">Gratis</div>
+          ) : hasDiscount ? (
+            <div className="flex flex-col">
+              <div className="text-xl font-bold text-cyan-600">
+                Rp {price.toLocaleString("id-ID")}
+              </div>
+              <div className="text-sm font-medium text-slate-400 line-through">
+                Rp {originalPrice.toLocaleString("id-ID")}
+              </div>
+            </div>
           ) : (
             <div className="text-xl font-bold text-cyan-600">
               Rp {price.toLocaleString("id-ID")}

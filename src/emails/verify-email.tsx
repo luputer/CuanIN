@@ -59,7 +59,7 @@ export function VerifyEmail({ otp, name, year }: VerifyEmailProps) {
             <Text style={otpText}>{otp}</Text>
           </Section>
           <Text style={paragraph}>
-            Kode ini hanya berlaku selama 10 menit. Jika Anda tidak merasa mendaftar di CuanIN, abaikan email ini.
+            Kode ini berlaku selama 10 menit. Jika Anda tidak mendaftar di CuanIN, abaikan email ini.
           </Text>
           <Hr style={hr} />
           <Text style={footer}>© {year} CuanIN. All rights reserved.</Text>

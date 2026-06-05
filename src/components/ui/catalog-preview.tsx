@@ -105,13 +105,13 @@ export default function CatalogPreview() {
           {/* ── Profile Section ── */}
           <div className="relative z-10 -mt-10 sm:-mt-12 flex flex-col items-center pb-4 text-center">
             <Avatar className="h-20 w-20 sm:h-24 sm:w-24 overflow-hidden rounded-full border-4 border-white bg-white shadow-md">
-              <AvatarFallback className="bg-yellow-300 text-2xl font-bold text-slate-800">
-                CR
+              <AvatarFallback className="bg-yellow-200 text-2xl font-bold text-slate-800">
+                K
               </AvatarFallback>
             </Avatar>
 
             <h1 className="mt-2 text-base sm:text-lg font-semibold text-slate-800">
-              Creator Studio
+              Kreator
             </h1>
 
             <p className="mt-1 max-w-lg text-xs sm:text-sm text-slate-600 px-4">
@@ -121,7 +121,7 @@ export default function CatalogPreview() {
             {/* Statistik */}
             <div className="mt-4 flex items-center gap-4 sm:gap-6 rounded-full border border-slate-200 bg-white px-6 sm:px-8 py-2 sm:py-3 text-xs sm:text-sm shadow-sm">
               <span className="flex items-center gap-2">
-                <span className="text-lg sm:text-xl font-bold text-cyan-600">3</span>
+                <span className="text-lg sm:text-xl font-bold text-cyan-600">10</span>
                 <span className="text-slate-600 font-medium">Produk</span>
               </span>
 

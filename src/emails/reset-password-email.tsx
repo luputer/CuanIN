@@ -52,7 +52,7 @@ export function ResetPasswordEmail({ resetUrl, name, year }: ResetPasswordEmailP
           </Text>
           <Text style={linkText}>{resetUrl}</Text>
           <Text style={paragraph}>
-            Link ini akan kedaluwarsa dalam 1 jam. Jika Anda tidak merasa meminta reset password, silakan abaikan email ini.
+            Link ini berlaku selama 1 jam. Jika Anda tidak meminta reset password, abaikan email ini.
           </Text>
           <Hr style={hr} />
           <Text style={footer}>© {year} CuanIN. All rights reserved.</Text>

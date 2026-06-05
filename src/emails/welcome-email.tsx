@@ -40,7 +40,7 @@ export function WelcomeEmail({ dashboardUrl, name, year }: WelcomeEmailProps) {
           </Text>
           <Text style={paragraph}>
             Akun kamu telah berhasil dibuat. Sekarang kamu bisa mulai menjual
-            produk digital dan menerima pembayaran dengan mudah.
+            produk dan menerima pembayaran dengan mudah.
           </Text>
           <Section style={actionSection}>
             <Button href={dashboardUrl} style={button}>

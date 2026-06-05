@@ -9,10 +9,12 @@ import {
     CaretDownIcon,
     EyeIcon,
     ArrowLeftIcon,
+    UserCircleIcon,
 } from "@phosphor-icons/react";
 
 import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
     Table,
     TableHead,
@@ -111,7 +113,7 @@ export default function CreatorProductsPage() {
         switch (type) {
             case "WEBINAR": return "Webinar";
             case "DIGITAL_PRODUCT": return "Produk Digital";
-            case "KELAS_ONLINE": return "Kelas Online";
+            case "KELAS_ONLINE": return "Kelas";
             default: return type;
         }
     };
@@ -141,47 +143,40 @@ export default function CreatorProductsPage() {
                 </div>
 
                 {/* Toolbar */}
-                <div className="flex flex-col md:flex-row justify-between gap-4">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    {/* Search */}
                     <SearchInput
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Cari berdasarkan nama produk..."
+                        placeholder="Cari berdasarkan Nama Produk"
+                        className="w-full sm:flex-1 min-w-[280px]"
                     />
 
-                    <div className="flex gap-3">
-                        {/* Filter Kategori */}
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <ButtonFilter label={`Kategori: ${typeFilter === "ALL" ? "Semua" : getCategoryLabel(typeFilter)}`} />
+                                <ButtonFilter
+                                    className="flex-1 lg:flex-none"
+                                    label={`Kategori: ${typeFilter === "ALL" ? "Semua" : getCategoryLabel(typeFilter)}`}
+                                />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-[180px]">
                                 <DropdownMenuRadioGroup value={typeFilter} onValueChange={(v) => setTypeFilter(v as any)}>
                                     <DropdownMenuRadioItem value="ALL">Semua Kategori</DropdownMenuRadioItem>
                                     <DropdownMenuRadioItem value="WEBINAR">Webinar</DropdownMenuRadioItem>
                                     <DropdownMenuRadioItem value="DIGITAL_PRODUCT">Produk Digital</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="KELAS_ONLINE">Kelas Online</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="KELAS_ONLINE">Kelas</DropdownMenuRadioItem>
                                 </DropdownMenuRadioGroup>
                             </DropdownMenuContent>
                         </DropdownMenu>
 
-                        {/* Filter Tipe */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <ButtonFilter label={`Tipe: ${priceTypeFilter === "ALL" ? "Semua" : priceTypeFilter === "FREE" ? "Gratis" : "Berbayar"}`} />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-[160px]">
-                                <DropdownMenuRadioGroup value={priceTypeFilter} onValueChange={(v) => setPriceTypeFilter(v as any)}>
-                                    <DropdownMenuRadioItem value="ALL">Semua Tipe</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="FREE">Gratis</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="PAID">Berbayar</DropdownMenuRadioItem>
-                                </DropdownMenuRadioGroup>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-
-                        {/* Filter Status */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <ButtonFilter label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "published" ? "Published" : statusFilter === "unpublished" ? "Unpublished" : statusFilter === "selesai" ? "Selesai" : "Draft"}`} />
+                                <ButtonFilter
+                                    className="flex-1 lg:flex-none"
+                                    label={`Status: ${statusFilter === "ALL" ? "Semua" : getStatusLabel(statusFilter)}`}
+                                />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-[160px]">
                                 <DropdownMenuRadioGroup value={statusFilter} onValueChange={setStatusFilter}>
@@ -195,8 +190,8 @@ export default function CreatorProductsPage() {
                     </div>
                 </div>
 
-                {/* Table Area */}
-                <div className="">
+                {/* Table (Desktop/Tablet) */}
+                <div className="hidden sm:block w-full pb-2">
                     <Table
                         pagination={
                             <TablePagination
@@ -224,7 +219,7 @@ export default function CreatorProductsPage() {
                                     }}
                                 >
                                     <div className="flex items-center gap-2">
-                                        Nama
+                                        Nama Produk
                                         <div className="flex flex-col h-4 justify-center">
                                             <CaretUpIcon
                                                 weight={sortBy === "name" && sortOrder === "asc" ? "bold" : "regular"}
@@ -237,11 +232,10 @@ export default function CreatorProductsPage() {
                                         </div>
                                     </div>
                                 </TableHead>
-                                <TableHead className="w-[12%]">Thumbnail</TableHead>
                                 <TableHead className="w-[15%]">Kategori</TableHead>
                                 <TableHead className="w-[10%]">Tipe</TableHead>
-                                <TableHead className="w-[13%]">Harga</TableHead>
-                                <TableHead className="w-[15%]">Status</TableHead>
+                                <TableHead className="w-[10%]">Harga</TableHead>
+                                <TableHead className="w-[10%]">Status</TableHead>
                                 <TableHead className="text-left w-[5%]">Aksi</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -250,26 +244,57 @@ export default function CreatorProductsPage() {
                             {isLoading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
                                     <TableRow data-type="body" key={i}>
-                                        <TableCell><Skeleton className="h-4 w-4 mx-auto" /></TableCell>
-                                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                                        <TableCell><Skeleton className="h-12 w-12 rounded-md" /></TableCell>
-                                        <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                                        <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                                        <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                                        <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-                                        <TableCell><Skeleton className="h-8 w-8 rounded-lg" /></TableCell>
+                                        <TableCell className="text-center font-medium whitespace-nowrap">
+                                            <div className="flex items-center justify-center min-h-[48px]">
+                                                <Skeleton className="h-4 w-4" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="max-w-[360px]">
+                                            <div className="flex items-center min-h-[48px] py-1">
+                                                <Skeleton className="h-4 w-48" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="h-4 w-20" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="h-4 w-16" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="h-4 w-20" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="h-6 w-20 rounded-full" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="px-6 py-4 text-right">
+                                            <div className="flex justify-start items-center gap-3">
+                                                <Skeleton className="w-[22px] h-[22px]" />
+                                            </div>
+                                        </TableCell>
                                     </TableRow>
                                 ))
                             ) : !products || products.length === 0 ? (
                                 <TableRow className="text-center">
                                     <TableCell colSpan={8} className="py-20">
-                                        <div className="flex flex-col items-center gap-1 text-slate-500">
-                                            <span>{isFiltered ? "Hasil pencarian atau filter tidak ditemukan." : "Belum ada produk yang ditemukan."}</span>
+                                        <div className="flex flex-col items-center gap-1">
+                                            {isFiltered ? (
+                                                <span className="text-slate-500">Hasil pencarian atau filter tidak ditemukan.</span>
+                                            ) : (
+                                                <span className="text-slate-500">Belum ada produk yang ditemukan.</span>
+                                            )}
                                         </div>
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                products?.map((item, index) => {
+                                products?.map((item: any, index: number) => {
                                     const priceNum = Number(item.price);
                                     const rowNumber = (page - 1) * limit + index + 1;
                                     const isFinished = item.status === "archived" || (item.endDate && new Date() > new Date(item.endDate));
@@ -281,33 +306,9 @@ export default function CreatorProductsPage() {
                                                 {rowNumber}
                                             </TableCell>
 
-                                            <TableCell className="whitespace-nowrap">
-                                                <div className="flex items-center min-h-[48px]">
-                                                    <Link
-                                                        href={`/admin/kreator/${id}/produk/${item.id}`}
-                                                        className="hover:text-cyan-600 transition-colors"
-                                                    >
-                                                        {item.name}
-                                                    </Link>
-                                                </div>
-                                            </TableCell>
-
-                                            <TableCell className="whitespace-nowrap">
-                                                <div className="w-12 h-12 bg-slate-100 overflow-hidden border border-slate-200 rounded-lg">
-                                                    {item.image ? (
-                                                        <Image
-                                                            src={item.image}
-                                                            alt={item.name}
-                                                            width={48}
-                                                            height={48}
-                                                            unoptimized
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center text-[10px] text-slate-400 italic">
-                                                            No image
-                                                        </div>
-                                                    )}
+                                            <TableCell className="max-w-[360px] leading-normal">
+                                                <div className="flex items-center min-h-[48px] py-1 font-medium text-slate-800 line-clamp-2 break-words leading-normal">
+                                                    {item.name}
                                                 </div>
                                             </TableCell>
 
@@ -325,7 +326,7 @@ export default function CreatorProductsPage() {
 
                                             <TableCell className="whitespace-nowrap">
                                                 <div className="flex items-center min-h-[48px]">
-                                                    {priceNum === 0 ? "Rp 0" : `Rp ${priceNum.toLocaleString("id-ID")}`}
+                                                    {priceNum === 0 ? "Gratis" : `Rp ${priceNum.toLocaleString("id-ID")}`}
                                                 </div>
                                             </TableCell>
 
@@ -348,7 +349,7 @@ export default function CreatorProductsPage() {
                                                                 href={`/admin/kreator/${id}/produk/${item.id}`}
                                                                 className="cursor-pointer"
                                                             >
-                                                                <EyeIcon className="w-[24px] h-[24px] text-cyan-600 hover:text-cyan-700" />
+                                                                <EyeIcon className="w-[22px] h-[22px] text-cyan-600 hover:text-cyan-700" />
                                                             </Link>
                                                         </TooltipTrigger>
                                                         <TooltipContent>Lihat Detail</TooltipContent>
@@ -361,6 +362,109 @@ export default function CreatorProductsPage() {
                             )}
                         </TableBody>
                     </Table>
+                </div>
+
+                {/* Mobile Cards (Only visible on mobile) */}
+                <div className="space-y-4 sm:hidden">
+                    {isLoading ? (
+                        Array.from({ length: 3 }).map((_, i) => (
+                            <div key={i} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3 animate-pulse">
+                                <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                                    <Skeleton className="h-4 w-8" />
+                                    <Skeleton className="h-6 w-20 rounded-full" />
+                                </div>
+                                <div className="flex gap-3">
+                                    <div className="space-y-2 flex-1">
+                                        <Skeleton className="h-4 w-3/4" />
+                                        <Skeleton className="h-3 w-1/2" />
+                                        <Skeleton className="h-3 w-1/3" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    ) : !products || products.length === 0 ? (
+                        <div className="text-center py-8 bg-white border border-slate-800 rounded-xl p-4 text-slate-500">
+                            {isFiltered ? (
+                                "Hasil pencarian atau filter tidak ditemukan."
+                            ) : (
+                                "Belum ada produk yang ditemukan."
+                            )}
+                        </div>
+                    ) : (
+                        products?.map((item: any, index: number) => {
+                            const priceNum = Number(item.price);
+                            const rowNumber = (page - 1) * limit + index + 1;
+                            const isFinished = item.status === "archived" || (item.endDate && new Date() > new Date(item.endDate));
+                            const currentStatus = isFinished ? "selesai" : (item.status || "draft");
+
+                            return (
+                                <div key={item.id} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3">
+                                    <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                                        <span className="text-xs font-semibold text-slate-400"># {rowNumber}</span>
+                                        <span className={`px-3 py-0.5 rounded-full text-xs font-medium ${getStatusColor(currentStatus)}`}>
+                                            {getStatusLabel(currentStatus)}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex gap-3 items-start">
+                                        <div className="space-y-1.5 flex-1 min-w-0">
+                                            <div className="font-semibold text-slate-800 line-clamp-2">
+                                                {item.name}
+                                            </div>
+
+                                            <div className="text-xs text-slate-500">
+                                                <span className="font-medium text-slate-400">Kreator: </span>
+                                                <Link href={`/admin/kreator/${creator?.id}`} className="font-medium hover:text-cyan-600 hover:underline">
+                                                    {creator?.name || "-"}
+                                                </Link>
+                                            </div>
+
+                                            <div className="flex justify-between items-center text-xs pt-1">
+                                                <div>
+                                                    <span className="font-medium text-slate-400">Kategori: </span>
+                                                    <span className="font-semibold text-slate-700">{getCategoryLabel(item.type)}</span>
+                                                </div>
+
+                                                <div>
+                                                    <span className="font-medium text-slate-400">Harga: </span>
+                                                    <span className="font-semibold text-slate-700">
+                                                        {priceNum === 0 ? "Gratis" : `Rp ${priceNum.toLocaleString("id-ID")}`}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex justify-between items-center pt-2.5 border-t border-slate-100 gap-2">
+                                        <div className="flex items-center gap-2">
+                                            <Link
+                                                href={`/admin/kreator/${id}/produk/${item.id}`}
+                                                className="p-2 rounded-lg text-cyan-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
+                                                title="Lihat Detail"
+                                            >
+                                                <EyeIcon className="w-5 h-5" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    )}
+
+                    {/* Mobile Pagination */}
+                    {products && products.length > 0 && (
+                        <div className="bg-white border border-slate-800 rounded-xl p-4 shadow-[1.5px_1.5px_0px_rgba(29,41,61)]">
+                            <TablePagination
+                                page={page}
+                                totalPages={totalPages}
+                                limit={limit}
+                                total={total}
+                                onPageChange={setPage}
+                                onLimitChange={setLimit}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
         </TooltipProvider>

@@ -12,7 +12,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { ChevronDown, LogOut, User } from "lucide-react";
+import { CaretDown as CaretDownIcon, SignOut as SignOutIcon, User as UserIcon } from "@phosphor-icons/react";
 
 export function UserNav() {
     const { data: session } = useSession();
@@ -31,7 +31,7 @@ export function UserNav() {
                     <div className="hidden md:block text-sm font-medium text-slate-700">
                         {user?.name ?? "User"}
                     </div>
-                    <ChevronDown size={16} className="text-slate-400 hidden md:block" />
+                    <CaretDownIcon size={16} className="text-slate-400 hidden md:block" />
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -47,7 +47,7 @@ export function UserNav() {
                 <DropdownMenuGroup>
                     <DropdownMenuItem asChild>
                         <Link href="/dashboard/account" className="cursor-pointer">
-                            <User className="mr-2 h-4 w-4" />
+                            <UserIcon className="mr-2 h-4 w-4" />
                             <span>Akun Saya</span>
                         </Link>
                     </DropdownMenuItem>
@@ -57,7 +57,7 @@ export function UserNav() {
                     onClick={() => signOut({ callbackUrl: "/sign-in" })}
                     className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
                 >
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <SignOutIcon className="mr-2 h-4 w-4" />
                     <span>Logout</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>

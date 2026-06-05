@@ -64,11 +64,11 @@ export default function ForgotPasswordPage() {
 
           {isSuccess ? (
             <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-6 text-center">
-              <div className="mb-3 flex justify-center text-green-500">
-                <EnvelopeIcon size={48} weight="fill" />
+              <div className="mb-3 flex items-center justify-center text-green-800">
+                <EnvelopeIcon size={32} weight="fill" />
               </div>
-              <h2 className="mb-2 text-xl font-bold text-green-800">Cek Email Anda</h2>
-              <p className="text-green-700">
+              <h2 className="mb-2 text-lg font-semibold text-green-800">Cek Email Anda</h2>
+              <p className="text-green-700 text-sm">
                 Instruksi reset password telah dikirim ke email Anda. Silakan cek inbox atau folder spam Anda.
               </p>
             </div>
@@ -85,11 +85,10 @@ export default function ForgotPasswordPage() {
                   <input
                     type="email"
                     placeholder="Masukkan Email Anda"
-                    className={`w-full rounded-lg border py-2.5 pr-6 pl-12 text-sm transition-all outline-none placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${
-                      errors.email
-                        ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                        : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
-                    }`}
+                    className={`w-full rounded-lg border py-2.5 pr-6 pl-12 text-sm transition-all outline-none placeholder:text-sm placeholder:text-slate-400 focus:ring-2 ${errors.email
+                      ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                      : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
+                      }`}
                     {...register("email")}
                   />
                 </div>

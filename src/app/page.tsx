@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import Image from "next/image";
 import Button from "~/components/ui/buttonlogin";
 import HeaderLandingPage from "~/components/layout/headerlandingpage";
@@ -20,6 +22,8 @@ import {
 
 
 export default function FormateLanding() {
+  const [activeStep, setActiveStep] = useState(0);
+
   return (
     <>
       <HeaderLandingPage buttonText="Login" buttonHref="/sign-in" />
@@ -186,13 +190,13 @@ export default function FormateLanding() {
             {/* KIRI - IMAGE */}
             <div className="w-full lg:w-1/2 h-full sm:h-[400px] lg:h-[600px] bg-cyan-50 flex items-center justify-center rounded-xl border-2 border-slate-800 shadow-[2px_2px_0px_rgba(29,41,61)]">
 
-              <StepsIllustrationMockup />
+              <StepsIllustrationMockup activeStep={activeStep} />
 
             </div>
 
             {/* KANAN - STEPS SECTION */}
             <div className="w-full lg:w-1/2">
-              <StepsSection />
+              <StepsSection activeStep={activeStep} setActiveStep={setActiveStep} />
             </div>
           </div>
         </section>

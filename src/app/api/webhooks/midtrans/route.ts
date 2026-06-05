@@ -63,7 +63,11 @@ export async function POST(req: NextRequest) {
         select: {
           name: true,
           link: true,
+          notes: true,
           userId: true,
+          user: {
+            select: { name: true },
+          },
         },
       },
     },
@@ -110,6 +114,8 @@ export async function POST(req: NextRequest) {
         buyerEmail: purchase.buyerEmail,
         productName: purchase.product.name,
         productLink: purchase.product.link,
+        notes: purchase.product.notes,
+        creatorName: purchase.product.user?.name ?? "Tim CuanIN",
       });
     } catch (err) {
       console.error("📧 Failed to send product email (Midtrans):", err);

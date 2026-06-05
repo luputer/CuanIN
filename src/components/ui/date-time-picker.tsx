@@ -3,7 +3,7 @@
 import * as React from "react";
 import { format, setHours, setMinutes } from "date-fns";
 import { id } from "date-fns/locale"; // Untuk format Indonesia
-import { Calendar as CalendarIcon } from "lucide-react";
+import { CalendarBlank as CalendarIcon } from "@phosphor-icons/react";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";

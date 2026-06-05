@@ -64,7 +64,7 @@ export const withdrawalsRouter = createTRPCRouter({
             bankName: bank.name,
             accountNumber: input.accountNumber,
             accountHolderName: input.accountHolderName,
-            email: input.email,
+            email: ctx.session.user.email ?? "",
             referenceId:
               "TEMP-" +
               ctx.session.user.id.slice(0, 5) +

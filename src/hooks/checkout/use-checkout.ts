@@ -58,7 +58,10 @@ export function useCheckout() {
     return (product as { formFields?: FormFieldData[] })?.formFields ?? [];
   }, [product]);
 
-  const price = Number(product?.price ?? 0);
+  const originalPrice = Number(product?.price ?? 0);
+  const discountPrice = (product as any)?.discountPrice != null ? Number((product as any)?.discountPrice) : null;
+  const hasDiscount = discountPrice != null && discountPrice > 0 && discountPrice < originalPrice;
+  const price = hasDiscount ? discountPrice : originalPrice;
 
   const discountAmount = React.useMemo(() => {
     if (!appliedVoucher) return 0;
@@ -156,7 +159,7 @@ export function useCheckout() {
     onSuccess: (data) => {
       if (data.status === "free") {
         toast.success("Berhasil daftar!");
-        router.push(`/${slug}`);
+        router.push(`/payment/success?id=${data.purchase.id}`);
         return;
       }
       router.push(`/payment/${data.purchase.id}`);
@@ -202,6 +205,8 @@ export function useCheckout() {
     onSubmit,
     purchaseMutation,
     price,
+    originalPrice,
+    hasDiscount,
     discountAmount,
     finalPrice,
     isGratis,

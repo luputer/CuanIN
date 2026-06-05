@@ -42,6 +42,7 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_URL: z.string().url(),
     NEXT_PUBLIC_XENDIT_PUBLIC_KEY: z.string(),
     NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: z.string(),
+    NEXT_PUBLIC_BUCKET_PUBLIC_URL: z.string().url(),
   },
   /**
    * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
@@ -70,6 +71,7 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_XENDIT_PUBLIC_KEY: process.env.NEXT_PUBLIC_XENDIT_PUBLIC_KEY, // tambah
     NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
+    NEXT_PUBLIC_BUCKET_PUBLIC_URL: process.env.NEXT_PUBLIC_BUCKET_PUBLIC_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

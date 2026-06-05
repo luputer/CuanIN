@@ -27,14 +27,14 @@ export default function SearchInput({
                 className
             )}
         >
-            <MagnifyingGlassIcon className="absolute left-4 text-slate-500 w-4 h-4 pointer-events-none" />
+            <MagnifyingGlassIcon className="absolute left-4 text-slate-500 size-4 pointer-events-none" />
 
             <input
                 type="text"
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className="w-full bg-transparent pl-10 pr-4 h-full text-slate-800 text-sm font-regular focus:outline-none placeholder:text-slate-500"
+                className="size-full bg-transparent pl-10 pr-4 text-slate-800 text-sm font-regular focus:outline-none placeholder:text-slate-500"
             />
         </div>
     );

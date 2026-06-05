@@ -23,6 +23,7 @@ export default function ButtonSave({
 }: ButtonSaveProps) {
     return (
         <button
+            type="button"
             {...props}
             disabled={!!isLoading || !!props.disabled}
             className={cn(
@@ -38,12 +39,12 @@ export default function ButtonSave({
         >
             {isLoading ? (
                 <>
-                    <CircleNotchIcon className="h-5 w-5 animate-spin" />
+                    <CircleNotchIcon className="size-5 animate-spin" />
                     <span>{loadingLabel}</span>
                 </>
             ) : (
                 <>
-                    {Icon && <Icon className="h-5 w-5" weight={weight} />}
+                    {Icon && <Icon className="size-5" weight={weight} />}
                     <span>{label}</span>
                 </>
             )}

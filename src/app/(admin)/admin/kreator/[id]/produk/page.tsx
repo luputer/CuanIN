@@ -40,6 +40,37 @@ import {
     DropdownMenuRadioItem,
 } from "~/components/ui/dropdown-menu";
 
+const getStatusColor = (status: string) => {
+    const s = status.toLowerCase();
+    switch (s) {
+        case "selesai":
+        case "archived": return "bg-blue-100 text-blue-700";
+        case "published": return "bg-green-100 text-green-700";
+        case "unpublished": return "bg-slate-200 text-slate-500";
+        default: return "bg-slate-100 text-slate-600";
+    }
+};
+
+const getStatusLabel = (status: string) => {
+    const s = status.toLowerCase();
+    switch (s) {
+        case "selesai":
+        case "archived": return "Selesai";
+        case "published": return "Published";
+        case "unpublished": return "Unpublished";
+        default: return status;
+    }
+};
+
+const getCategoryLabel = (type: string) => {
+    switch (type) {
+        case "WEBINAR": return "Webinar";
+        case "DIGITAL_PRODUCT": return "Produk Digital";
+        case "KELAS_ONLINE": return "Kelas Online";
+        default: return type;
+    }
+};
+
 export default function CreatorProductsPage() {
     const params = useParams();
     const id = params.id as string;
@@ -85,37 +116,6 @@ export default function CreatorProductsPage() {
     const total = data?.total ?? 0;
     const totalPages = data?.totalPages ?? 1;
 
-    const getStatusColor = (status: string) => {
-        const s = status.toLowerCase();
-        switch (s) {
-            case "selesai":
-            case "archived": return "bg-blue-100 text-blue-700";
-            case "published": return "bg-green-100 text-green-700";
-            case "unpublished": return "bg-slate-200 text-slate-500";
-            default: return "bg-slate-100 text-slate-600";
-        }
-    };
-
-    const getStatusLabel = (status: string) => {
-        const s = status.toLowerCase();
-        switch (s) {
-            case "selesai":
-            case "archived": return "Selesai";
-            case "published": return "Published";
-            case "unpublished": return "Unpublished";
-            default: return status;
-        }
-    };
-
-    const getCategoryLabel = (type: string) => {
-        switch (type) {
-            case "WEBINAR": return "Webinar";
-            case "DIGITAL_PRODUCT": return "Produk Digital";
-            case "KELAS_ONLINE": return "Kelas Online";
-            default: return type;
-        }
-    };
-
     const isFiltered = debouncedSearch !== "" || typeFilter !== "ALL" || priceTypeFilter !== "ALL" || statusFilter !== "ALL";
 
     if (isLoading && !products) {
@@ -132,7 +132,7 @@ export default function CreatorProductsPage() {
                             href={`/admin/kreator/${id}`}
                             className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
                         >
-                            <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                            <ArrowLeftIcon className="size-4 transition-transform group-hover:-translate-x-0.5" />
                             <span className="leading-none">Kembali ke Detail Kreator</span>
                         </Link>
                         <div className="text-2xl font-bold mb-2 text-cyan-600">Daftar Produk</div>
@@ -228,11 +228,11 @@ export default function CreatorProductsPage() {
                                         <div className="flex flex-col h-4 justify-center">
                                             <CaretUpIcon
                                                 weight={sortBy === "name" && sortOrder === "asc" ? "bold" : "regular"}
-                                                className={cn("w-4 h-4 -mb-1", sortBy === "name" && sortOrder === "asc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
+                                                className={cn("size-4 -mb-1", sortBy === "name" && sortOrder === "asc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
                                             />
                                             <CaretDownIcon
                                                 weight={sortBy === "name" && sortOrder === "desc" ? "bold" : "regular"}
-                                                className={cn("w-4 h-4", sortBy === "name" && sortOrder === "desc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
+                                                className={cn("size-4 ", sortBy === "name" && sortOrder === "desc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
                                             />
                                         </div>
                                     </div>
@@ -250,14 +250,14 @@ export default function CreatorProductsPage() {
                             {isLoading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
                                     <TableRow data-type="body" key={i}>
-                                        <TableCell><Skeleton className="h-4 w-4 mx-auto" /></TableCell>
+                                        <TableCell><Skeleton className="size-4 mx-auto" /></TableCell>
                                         <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                                        <TableCell><Skeleton className="h-12 w-12 rounded-md" /></TableCell>
+                                        <TableCell><Skeleton className="size-12 rounded-md" /></TableCell>
                                         <TableCell><Skeleton className="h-4 w-20" /></TableCell>
                                         <TableCell><Skeleton className="h-4 w-12" /></TableCell>
                                         <TableCell><Skeleton className="h-4 w-20" /></TableCell>
                                         <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-                                        <TableCell><Skeleton className="h-8 w-8 rounded-lg" /></TableCell>
+                                        <TableCell><Skeleton className="size-8 rounded-lg" /></TableCell>
                                     </TableRow>
                                 ))
                             ) : !products || products.length === 0 ? (
@@ -293,7 +293,7 @@ export default function CreatorProductsPage() {
                                             </TableCell>
 
                                             <TableCell className="whitespace-nowrap">
-                                                <div className="w-12 h-12 bg-slate-100 overflow-hidden border border-slate-200 rounded-lg">
+                                                <div className="size-12 bg-slate-100 overflow-hidden border border-slate-200 rounded-lg">
                                                     {item.image ? (
                                                         <Image
                                                             src={item.image}
@@ -301,10 +301,10 @@ export default function CreatorProductsPage() {
                                                             width={48}
                                                             height={48}
                                                             unoptimized
-                                                            className="w-full h-full object-cover"
+                                                            className="size-full object-cover"
                                                         />
                                                     ) : (
-                                                        <div className="w-full h-full flex items-center justify-center text-[10px] text-slate-400 italic">
+                                                        <div className="size-full flex items-center justify-center text-[10px] text-slate-400 italic">
                                                             No image
                                                         </div>
                                                     )}

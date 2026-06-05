@@ -101,11 +101,11 @@ export const CreatorTable: React.FC<CreatorTableProps> = ({
                             <div className="flex flex-col h-4 justify-center">
                                 <CaretUpIcon
                                     weight={sortBy === "name" && sortOrder === "asc" ? "bold" : "regular"}
-                                    className={cn("w-4 h-4 -mb-1", sortBy === "name" && sortOrder === "asc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
+                                    className={cn("size-4 -mb-1", sortBy === "name" && sortOrder === "asc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
                                 />
                                 <CaretDownIcon
                                     weight={sortBy === "name" && sortOrder === "desc" ? "bold" : "regular"}
-                                    className={cn("w-4 h-4", sortBy === "name" && sortOrder === "desc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
+                                    className={cn("size-4 ", sortBy === "name" && sortOrder === "desc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
                                 />
                             </div>
                         </div>
@@ -119,11 +119,11 @@ export const CreatorTable: React.FC<CreatorTableProps> = ({
                             <div className="flex flex-col h-4 justify-center">
                                 <CaretUpIcon
                                     weight={sortBy === "email" && sortOrder === "asc" ? "bold" : "regular"}
-                                    className={cn("w-4 h-4 -mb-1", sortBy === "email" && sortOrder === "asc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
+                                    className={cn("size-4 -mb-1", sortBy === "email" && sortOrder === "asc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
                                 />
                                 <CaretDownIcon
                                     weight={sortBy === "email" && sortOrder === "desc" ? "bold" : "regular"}
-                                    className={cn("w-4 h-4", sortBy === "email" && sortOrder === "desc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
+                                    className={cn("size-4 ", sortBy === "email" && sortOrder === "desc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
                                 />
                             </div>
                         </div>
@@ -138,10 +138,10 @@ export const CreatorTable: React.FC<CreatorTableProps> = ({
                 {isLoading ? (
                     Array.from({ length: 5 }).map((_, i) => (
                         <TableRow data-type="body" key={i}>
-                            <TableCell><Skeleton className="h-4 w-4 mx-auto" /></TableCell>
+                            <TableCell><Skeleton className="size-4 mx-auto" /></TableCell>
                             <TableCell>
                                 <div className="flex items-center gap-3">
-                                    <Skeleton className="h-10 w-10 rounded-full" />
+                                    <Skeleton className="size-10 rounded-full" />
                                     <Skeleton className="h-4 w-32" />
                                 </div>
                             </TableCell>
@@ -150,8 +150,8 @@ export const CreatorTable: React.FC<CreatorTableProps> = ({
                             <TableCell><Skeleton className="h-4 w-8 mx-auto" /></TableCell>
                             <TableCell>
                                 <div className="flex justify-start gap-3">
-                                    <Skeleton className="h-5 w-5" />
-                                    <Skeleton className="h-5 w-5" />
+                                    <Skeleton className="size-5" />
+                                    <Skeleton className="size-5" />
                                 </div>
                             </TableCell>
                         </TableRow>
@@ -211,7 +211,7 @@ export const CreatorTable: React.FC<CreatorTableProps> = ({
                                     <div className="flex justify-start items-center gap-3">
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <button onClick={() => router.push(`/admin/kreator/${item.id}`)}>
+                                                <button type="button" onClick={() => router.push(`/admin/kreator/${item.id}`)}>
                                                     <EyeIcon className="w-[24px] h-[24px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
                                                 </button>
                                             </TooltipTrigger>
@@ -220,7 +220,7 @@ export const CreatorTable: React.FC<CreatorTableProps> = ({
 
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <button onClick={() => onDelete(item.id)}>
+                                                <button type="button" onClick={() => onDelete(item.id)}>
                                                     <TrashIcon className="w-[24px] h-[24px] text-red-600 cursor-pointer hover:text-red-700" />
                                                 </button>
                                             </TooltipTrigger>

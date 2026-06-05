@@ -141,7 +141,7 @@ export default function EditCreatorPage() {
                             href={`/admin/kreator/${id}`}
                             className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
                         >
-                            <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                            <ArrowLeftIcon className="size-4 transition-transform group-hover:-translate-x-0.5" />
                             <span className="leading-none">Kembali ke Detail Kreator</span>
                         </Link>
                         <h1 className="text-xl font-semibold text-slate-800">Edit Data Kreator</h1>
@@ -165,10 +165,10 @@ export default function EditCreatorPage() {
                         <FormGroup label="Foto Profil" align="start">
                             <div className="flex flex-col gap-3">
                                 <div
-                                    className="relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer"
+                                    className="relative group shrink-0 size-24 sm:size-32 cursor-pointer"
                                     onClick={() => fileInputRef.current?.click()}
                                 >
-                                    <div className="w-full h-full bg-white border-2 border-dashed border-slate-400 rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-600 group-hover:bg-slate-50 relative">
+                                    <div className="size-full bg-white border-2 border-dashed border-slate-400 rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-600 group-hover:bg-slate-50 relative">
                                         {avatarUpload.previewUrl ? (
                                             <>
                                                 <Image
@@ -228,7 +228,7 @@ export default function EditCreatorPage() {
                                     className="relative group w-full aspect-[6/1] md:aspect-[8/1] cursor-pointer"
                                     onClick={() => bannerInputRef.current?.click()}
                                 >
-                                    <div className="w-full h-full bg-white border-2 border-dashed border-slate-400 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-600 group-hover:bg-slate-50 relative">
+                                    <div className="size-full bg-white border-2 border-dashed border-slate-400 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-600 group-hover:bg-slate-50 relative">
                                         {bannerUpload.previewUrl ? (
                                             <>
                                                 <Image

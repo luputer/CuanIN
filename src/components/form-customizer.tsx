@@ -103,9 +103,10 @@ function SortableFieldItem({
       <div
         {...attributes}
         {...listeners}
+        aria-label="Geser untuk mengatur ulang urutan"
         className="cursor-grab rounded p-1 text-blue-300 hover:bg-slate-100 active:cursor-grabbing"
       >
-        <DotsSixVerticalIcon className="h-6 w-6 text-slate-400" />
+        <DotsSixVerticalIcon className="size-6 text-slate-400" />
       </div>
 
       <div className="flex-1 space-y-3 sm:space-y-4">
@@ -114,6 +115,7 @@ function SortableFieldItem({
             <input
               type="text"
               placeholder="Masukkan Pertanyaan"
+              aria-label="Pertanyaan"
               value={field.label}
               onChange={(e) => updateField(field.id, { label: e.target.value })}
               className="w-full bg-transparent py-1.5 text-[15px] font-medium text-slate-700 focus:outline-none"
@@ -136,14 +138,16 @@ function SortableFieldItem({
                 ))}
               </select>
               <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-slate-400 transition-colors group-hover:text-slate-600">
-                <CaretDownIcon className="h-4 w-4" weight="bold" />
+                <CaretDownIcon className="size-4" weight="bold" />
               </div>
             </div>
             <button
+              type="button"
               onClick={() => removeField(field.id)}
+              aria-label="Hapus Pertanyaan"
               className="cursor-pointer p-2 rounded-md hover:bg-red-50 text-red-500 hover:text-red-700 transition-colors shrink-0"
             >
-              <TrashIcon className="h-5 w-5" />
+              <TrashIcon className="size-5" />
             </button>
           </div>
         </div>
@@ -162,7 +166,7 @@ function SortableFieldItem({
           ) : (
             <div className="space-y-2.5 sm:space-y-3">
               {field.options?.map((option, index) => (
-                <div key={index} className="flex items-center gap-3">
+                <div key={`${field.id}-${option}`} className="flex items-center gap-3">
                   <input
                     type="text"
                     value={option}
@@ -174,15 +178,18 @@ function SortableFieldItem({
                   />
                   {field.options!.length > 1 && (
                     <button
+                      type="button"
                       onClick={() => removeOption(field.id, index)}
+                      aria-label="Hapus Opsi"
                       className="cursor-pointer p-1.5 text-slate-400 hover:bg-slate-100 hover:text-red-500 rounded-md transition-colors shrink-0"
                     >
-                      <XIcon className="h-4 w-4" />
+                      <XIcon className="size-4" />
                     </button>
                   )}
                 </div>
               ))}
               <button
+                type="button"
                 onClick={() => addOption(field.id)}
                 className="cursor-pointer text-[14px] sm:text-[15px] font-medium text-cyan-600 transition-colors hover:text-cyan-700"
               >
@@ -202,7 +209,7 @@ function SortableFieldItem({
                 updateField(field.id, { required: e.target.checked })
               }
             />
-            <div className="peer h-6 w-11 rounded-full bg-slate-200 peer-checked:bg-[#00B4D8] after:absolute after:top-0.5 after:left-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
+            <div className="peer h-6 w-11 rounded-full bg-slate-200 peer-checked:bg-[#00B4D8] after:absolute after:top-0.5 after:left-0.5 after:size-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
             <span className="ml-2 text-[14px] sm:text-[15px] font-medium text-slate-600">
               Wajib diisi
             </span>
@@ -449,7 +456,7 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
                   key={i}
                   className="flex items-center gap-2 rounded-lg border border-slate-800 bg-white p-3.5 sm:gap-4 sm:p-5"
                 >
-                  <Skeleton className="h-6 w-6 rounded" />
+                  <Skeleton className="size-6 rounded" />
 
                   <div className="flex-1 space-y-3 sm:space-y-4">
                     <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center md:gap-4">
@@ -458,7 +465,7 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
                       </div>
                       <div className="flex items-center gap-3 w-full md:w-auto">
                         <Skeleton className="h-8 w-36 rounded" />
-                        <Skeleton className="h-8 w-8 rounded" />
+                        <Skeleton className="size-8 rounded" />
                       </div>
                     </div>
 
@@ -485,12 +492,12 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
         <div className="text-xs font-medium">
           {saveMutation.isPending ? (
             <span className="flex items-center gap-1.5 text-slate-400">
-              <CircleNotchIcon className="h-4 w-4 animate-spin" />
+              <CircleNotchIcon className="size-4 animate-spin" />
               Menyimpan...
             </span>
           ) : saveMutation.isSuccess ? (
             <span className="flex items-center gap-1.5 text-emerald-500">
-              <CheckCircleIcon className="h-4 w-4" weight="fill" />
+              <CheckCircleIcon className="size-4" weight="fill" />
               Tersimpan
             </span>
           ) : null}

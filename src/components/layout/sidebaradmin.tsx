@@ -66,9 +66,11 @@ export default function SidebarAdmin({
                 )}
                 {isMobile && (
                     <button
+                        type="button"
                         onClick={onCloseMobile}
                         className="p-1 rounded-lg text-slate-500 border-1 border-transparent hover:border-slate-300 hover:bg-slate-100 transition-all duration-200 cursor-pointer"
                         title="Tutup Menu"
+                        aria-label="Tutup Menu"
                     >
                         <XIcon size={24} className="text-slate-800" weight="bold" />
                     </button>

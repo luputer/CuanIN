@@ -91,7 +91,7 @@ export default function ConfirmDialog({
                     >
                         {loading ? (
                             <>
-                                <CircleNotchIcon className="w-4 h-4 animate-spin mr-2" />
+                                <CircleNotchIcon className="size-4 animate-spin mr-2" />
                                 Loading...
                             </>
                         ) : (

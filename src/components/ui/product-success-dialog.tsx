@@ -60,7 +60,7 @@ export function ProductSuccessDialog({
             <AlertDialogContent className="text-center sm:max-w-md rounded-xl">
                 {/* ICON */}
                 <div className="flex justify-center mb-2">
-                    <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                    <div className="size-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
                         <CheckCircleIcon size={24} weight="fill" />
                     </div>
                 </div>
@@ -82,7 +82,7 @@ export function ProductSuccessDialog({
                         onClick={handleCopyLink}
                         className={cn(baseBtnStyle, "w-full rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white border-transparent")}
                     >
-                        <CopyIcon className="w-4 h-4 mr-2" weight="bold" />
+                        <CopyIcon className="size-4 mr-2" weight="bold" />
                         Salin Link
                     </button>
 

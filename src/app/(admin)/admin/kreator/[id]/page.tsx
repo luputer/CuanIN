@@ -19,6 +19,24 @@ import {
 } from "~/components/ui/form-layout";
 import { Button } from "~/components/ui/button";
 
+// ─── Shared Components (Matching Webinar Detail Style) ───
+const Label = ({ children }: { children: React.ReactNode }) => (
+    <div className="w-full sm:w-48 md:w-56 shrink-0 text-slate-500 text-sm font-medium leading-6">{children}</div>
+);
+
+const Value = ({ children }: { children: React.ReactNode }) => (
+    <div className="flex-1 text-slate-800 text-sm font-medium leading-6">
+        {children || <span className="text-slate-400">-</span>}
+    </div>
+);
+
+const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
+    <div className="flex flex-col sm:flex-row items-start pb-6 gap-1 sm:gap-8">
+        <Label>{label}</Label>
+        <Value>{children}</Value>
+    </div>
+);
+
 export default function CreatorDetailPage() {
     const router = useRouter();
     const params = useParams();
@@ -27,24 +45,6 @@ export default function CreatorDetailPage() {
     const { data: creator, isLoading: isFetching } = api.creators.getById.useQuery(
         { id },
         { enabled: !!id }
-    );
-
-    // ─── Local Components (Matching Webinar Detail Style) ───
-    const Label = ({ children }: { children: React.ReactNode }) => (
-        <div className="w-full sm:w-48 md:w-56 shrink-0 text-slate-500 text-sm font-medium leading-6">{children}</div>
-    );
-
-    const Value = ({ children }: { children: React.ReactNode }) => (
-        <div className="flex-1 text-slate-800 text-sm font-medium leading-6">
-            {children || <span className="text-slate-400">-</span>}
-        </div>
-    );
-
-    const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
-        <div className="flex flex-col sm:flex-row items-start pb-6 gap-1 sm:gap-8">
-            <Label>{label}</Label>
-            <Value>{children}</Value>
-        </div>
     );
 
     if (isFetching) {
@@ -84,7 +84,7 @@ export default function CreatorDetailPage() {
                             href="/admin/kreator"
                             className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
                         >
-                            <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                            <ArrowLeftIcon className="size-4 transition-transform group-hover:-translate-x-0.5" />
                             <span className="leading-none">Kembali ke Daftar Kreator</span>
                         </Link>
                         <h1 className="text-xl font-semibold text-slate-800">Detail Akun Kreator</h1>
@@ -115,7 +115,7 @@ export default function CreatorDetailPage() {
                             href={`/admin/kreator/${id}/edit`}
                             className="flex items-center gap-1.5 text-sm text-cyan-600 font-medium transition-colors hover:text-cyan-700 cursor-pointer"
                         >
-                            <PencilSimpleIcon className="w-4 h-4" />
+                            <PencilSimpleIcon className="size-4" />
                             Edit
                         </Link>
                     </div>
@@ -128,8 +128,8 @@ export default function CreatorDetailPage() {
                         <div className="mt-8">
                             {/* Foto Profil */}
                             <Row label="Foto Profil">
-                                <div className="relative shrink-0 w-24 h-24 sm:w-32 sm:h-32">
-                                    <div className="w-full h-full bg-white border-2 border-slate-200 rounded-full flex flex-col items-center justify-center overflow-hidden relative shadow-sm">
+                                <div className="relative shrink-0 size-24 sm:size-32">
+                                    <div className="size-full bg-white border-2 border-slate-200 rounded-full flex flex-col items-center justify-center overflow-hidden relative shadow-sm">
                                         {creator.image ? (
                                             <Image
                                                 src={creator.image}
@@ -159,7 +159,7 @@ export default function CreatorDetailPage() {
                                             unoptimized
                                         />
                                     ) : (
-                                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-200">
+                                        <div className="size-full flex flex-col items-center justify-center text-slate-200">
                                             <span className="text-xs font-medium text-slate-400">Belum ada banner</span>
                                         </div>
                                     )}
@@ -209,7 +209,7 @@ export default function CreatorDetailPage() {
                         <div className="space-y-4">
                             {/* Total Produk */}
                             <div className="p-5 rounded-2xl bg-white border border-slate-200 flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-500 shrink-0">
+                                <div className="size-12 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-500 shrink-0">
                                     <BasketIcon size={24} weight="fill" />
                                 </div>
                                 <div className="min-w-0 flex-1">
@@ -220,7 +220,7 @@ export default function CreatorDetailPage() {
 
                             {/* Total Pembeli */}
                             <div className="p-5 rounded-2xl bg-white border border-slate-200 flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 shrink-0">
+                                <div className="size-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 shrink-0">
                                     <UsersIcon size={24} weight="fill" />
                                 </div>
                                 <div className="min-w-0">
@@ -231,7 +231,7 @@ export default function CreatorDetailPage() {
 
                             {/* Total Pendapatan */}
                             <div className="p-5 rounded-2xl bg-white border border-slate-200 flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-500 shrink-0">
+                                <div className="size-12 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-500 shrink-0">
                                     <WalletIcon size={24} weight="fill" />
                                 </div>
                                 <div className="min-w-0">

@@ -17,7 +17,7 @@ export default function Loading() {
 						className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-col gap-3"
 					>
 						{/* icon placeholder */}
-						<Skeleton className="w-8 h-8 rounded-full" />
+						<Skeleton className="size-8 rounded-full" />
 						{/* title */}
 						<Skeleton className="h-4 w-24" />
 						{/* value */}

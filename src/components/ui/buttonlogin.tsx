@@ -16,7 +16,7 @@ export default function Button({ text, onClick, href }: ButtonProps) {
     };
 
     return (
-        <button
+        <button type="button"
             onClick={handleClick}
             className="
         px-8 py-2 

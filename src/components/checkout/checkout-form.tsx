@@ -16,6 +16,13 @@ type CheckoutFormProps = {
   onSubmit: (data: CheckoutFormValues) => void;
 };
 
+const inputClass = (err?: boolean) =>
+  `w-full px-4 py-2.5 rounded-xl border transition bg-white
+        ${err
+    ? "border-red-400 focus:border-red-500 bg-red-50"
+    : "border-slate-300 focus:border-cyan-600 focus:ring-1 focus:ring-cyan-100"
+  }`;
+
 export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   form,
   status,
@@ -58,13 +65,6 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
     });
   };
 
-  const inputClass = (err?: boolean) =>
-    `w-full px-4 py-2.5 rounded-xl border transition bg-white
-        ${err
-      ? "border-red-400 focus:border-red-500 bg-red-50"
-      : "border-slate-300 focus:border-cyan-600 focus:ring-1 focus:ring-cyan-100"
-    }`;
-
   const renderFormField = (field: FormFieldData) => {
     const options = Array.isArray(field.options) ? (field.options as string[]) : [];
     const fieldError = (errors.custom as any)?.[field.id];
@@ -90,8 +90,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
       case "MULTIPLE_CHOICE":
         return (
           <div className="space-y-2">
-            {options.map((opt, i) => (
-              <label key={i} className="flex items-center gap-2 text-sm text-slate-700">
+            {options.map((opt, _i) => (
+              <label key={opt} className="flex items-center gap-2 text-sm text-slate-700">
                 <input type="radio" value={opt} {...register(`custom.${field.id}` as any)} />
                 {opt}
               </label>
@@ -101,12 +101,12 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
       case "CHECKBOX":
         return (
           <div className="space-y-2">
-            {options.map((opt, i) => {
+            {options.map((opt, _i) => {
               const current = watch(`custom.${field.id}` as any) ?? "";
               const values = current.split(",").filter(Boolean);
               const checked = values.includes(opt);
               return (
-                <label key={i} className="flex items-center gap-2 text-sm text-slate-700">
+                <label key={opt} className="flex items-center gap-2 text-sm text-slate-700">
                   <input
                     type="checkbox"
                     checked={checked}
@@ -129,8 +129,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
         return (
           <select {...register(`custom.${field.id}` as any)} className={inputClass(!!fieldError)}>
             <option value="">Pilih {field.label.toLowerCase()}</option>
-            {options.map((opt, i) => (
-              <option key={i} value={opt}>
+            {options.map((opt, _i) => (
+              <option key={opt} value={opt}>
                 {opt}
               </option>
             ))}
@@ -186,12 +186,12 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
         >
           {isGoogleLoading ? (
             <>
-              <span className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
+              <span className="size-5 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
               Menghubungkan...
             </>
           ) : (
             <>
-              <svg className="h-5 w-5" viewBox="0 0 24 24">
+              <svg className="size-5" viewBox="0 0 24 24">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                   fill="#4285F4"

@@ -126,11 +126,11 @@ export const ProductTable: React.FC<ProductTableProps> = ({
 							<div className="flex flex-col h-4 justify-center">
 								<CaretUpIcon
 									weight={sortBy === "name" && sortOrder === "asc" ? "bold" : "regular"}
-									className={cn("w-4 h-4 -mb-1", sortBy === "name" && sortOrder === "asc" ? "text-slate-800" : "text-slate-400")}
+									className={cn("size-4 -mb-1", sortBy === "name" && sortOrder === "asc" ? "text-slate-800" : "text-slate-400")}
 								/>
 								<CaretDownIcon
 									weight={sortBy === "name" && sortOrder === "desc" ? "bold" : "regular"}
-									className={cn("w-4 h-4", sortBy === "name" && sortOrder === "desc" ? "text-slate-800" : "text-slate-400")}
+									className={cn("size-4 ", sortBy === "name" && sortOrder === "desc" ? "text-slate-800" : "text-slate-400")}
 								/>
 							</div>
 						</div>
@@ -148,14 +148,14 @@ export const ProductTable: React.FC<ProductTableProps> = ({
 				{isLoading ? (
 					Array.from({ length: 5 }).map((_, i) => (
 						<TableRow data-type="body" key={i}>
-							<TableCell><Skeleton className="h-4 w-4 mx-auto" /></TableCell>
+							<TableCell><Skeleton className="size-4 mx-auto" /></TableCell>
 							<TableCell><Skeleton className="h-4 w-32" /></TableCell>
 							<TableCell><Skeleton className="h-4 w-48" /></TableCell>
 							<TableCell><Skeleton className="h-4 w-20" /></TableCell>
 							<TableCell><Skeleton className="h-4 w-16" /></TableCell>
 							<TableCell><Skeleton className="h-4 w-20" /></TableCell>
 							<TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-							<TableCell><Skeleton className="h-5 w-5" /></TableCell>
+							<TableCell><Skeleton className="size-5" /></TableCell>
 						</TableRow>
 					))
 				) : products?.length === 0 ? (
@@ -225,7 +225,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
 									<div className="flex justify-start items-center">
 										<Tooltip>
 											<TooltipTrigger asChild>
-												<button onClick={() => router.push(`/admin/produk/${item.id}`)}>
+												<button type="button" onClick={() => router.push(`/admin/produk/${item.id}`)}>
 													<EyeIcon className="w-[24px] h-[24px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
 												</button>
 											</TooltipTrigger>

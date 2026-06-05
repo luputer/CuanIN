@@ -72,7 +72,7 @@ export function TableSkeleton({
                             <Skeleton className="h-6 w-20 rounded-full" />
                         </div>
                         <div className="flex gap-3">
-                            <Skeleton className="h-16 w-16 rounded-lg shrink-0" />
+                            <Skeleton className="size-16 rounded-lg shrink-0" />
                             <div className="space-y-2 flex-1">
                                 <Skeleton className="h-4 w-3/4" />
                                 <Skeleton className="h-3 w-1/2" />

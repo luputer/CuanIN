@@ -44,7 +44,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
         {appliedVoucher ? (
           <div className="mt-2 flex items-center justify-between rounded-xl border border-green-200 bg-green-50 px-4 py-3">
             <div className="flex items-center gap-2">
-              <SealPercentIcon className="h-4 w-4 text-green-500" weight="fill" />
+              <SealPercentIcon className="size-4 text-green-500" weight="fill" />
               <div>
                 <div className="text-sm font-semibold text-green-700">{appliedVoucher.code}</div>
                 <div className="text-xs text-green-600">{appliedVoucher.name}</div>
@@ -63,7 +63,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
             <div className="flex gap-3">
               <div className="relative flex-1">
                 <SealPercentIcon
-                  className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-yellow-400"
+                  className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-yellow-400"
                   weight="fill"
                 />
                 <input
@@ -83,7 +83,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
                 className="cursor-pointer rounded-xl bg-yellow-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isValidatingVoucher ? (
-                  <SpinnerIcon className="h-4 w-4 animate-spin" />
+                  <SpinnerIcon className="size-4 animate-spin" />
                 ) : (
                   "Pakai"
                 )}
@@ -91,7 +91,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
             </div>
             {voucherError && (
               <p className="flex items-center gap-1 text-xs text-red-500">
-                <WarningCircleIcon className="h-3.5 w-3.5 shrink-0" weight="fill" />
+                <WarningCircleIcon className="size-3.5 shrink-0" weight="fill" />
                 {voucherError}
               </p>
             )}
@@ -106,7 +106,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
         </h3>
         {isBuyingOwnProduct && (
           <div className="mb-4 flex gap-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-700">
-            <WarningCircleIcon className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" weight="fill" />
+            <WarningCircleIcon className="mt-0.5 size-5 shrink-0 text-amber-500" weight="fill" />
             <div className="space-y-1 leading-relaxed">
               <p className="font-medium">Tidak dapat melakukan pembelian</p>
               <p className="text-amber-700/80">
@@ -163,7 +163,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
                 : "Bayar Sekarang"}
         </button>
         <div className="mt-3 flex items-center justify-center gap-2 text-xs text-slate-500">
-          <ShieldCheckIcon className="h-4 w-4" />
+          <ShieldCheckIcon className="size-4" />
           Aman & terenkripsi
         </div>
       </div>

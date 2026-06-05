@@ -9,7 +9,7 @@ export default function Loading() {
                     <div className="flex-1 flex flex-col gap-1.5">
                         {/* Back link */}
                         <div className="flex items-center gap-2 mb-2">
-                            <Skeleton className="h-4 w-4" />
+                            <Skeleton className="size-4" />
                             <Skeleton className="h-4 w-32" />
                         </div>
                         {/* Title */}

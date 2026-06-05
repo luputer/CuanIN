@@ -20,25 +20,29 @@ interface ProductDetailTabsProps {
     hidePembeli?: boolean;
 }
 
+const TabButton = ({ value, label, count }: { value: string; label: string; count?: number }) => {
+    const context = useContext(TabsContext);
+    if (!context) return null;
+    const { activeTab, setActiveTab } = context;
+
+    const isActive = activeTab === value;
+    return (
+        <button type="button"
+            onClick={() => setActiveTab(value)}
+            className={cn(
+                "flex-1 sm:flex-initial relative pt-5 pb-3 sm:pt-6 sm:pb-4 px-2 sm:px-4 transition-all cursor-pointer text-center text-sm sm:text-base border-b-4 -mb-[1px] whitespace-nowrap",
+                isActive
+                    ? cn("z-20 font-semibold", ACTIVE_TAB_CLASSES)
+                    : "font-normal text-slate-500 hover:text-slate-800 border-transparent"
+            )}
+        >
+            {label} {count !== undefined && `(${count})`}
+        </button>
+    );
+};
+
 export function ProductDetailTabs({ defaultTab, buyerCount, children, className, hidePembeli }: ProductDetailTabsProps) {
     const [activeTab, setActiveTab] = useState(defaultTab);
-
-    const TabButton = ({ value, label, count }: { value: string; label: string; count?: number }) => {
-        const isActive = activeTab === value;
-        return (
-            <button
-                onClick={() => setActiveTab(value)}
-                className={cn(
-                    "flex-1 sm:flex-initial relative pt-5 pb-3 sm:pt-6 sm:pb-4 px-2 sm:px-4 transition-all cursor-pointer text-center text-sm sm:text-base border-b-4 -mb-[1px] whitespace-nowrap",
-                    isActive
-                        ? cn("z-20 font-semibold", ACTIVE_TAB_CLASSES)
-                        : "font-normal text-slate-500 hover:text-slate-800 border-transparent"
-                )}
-            >
-                {label} {count !== undefined && `(${count})`}
-            </button>
-        );
-    };
 
     return (
         <TabsContext.Provider value={{ activeTab, setActiveTab }}>

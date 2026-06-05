@@ -69,10 +69,10 @@ export function DateRangeOnlyPicker({
                     )}
                 >
                     <div className="flex items-center">
-                        <CalendarIcon className="mr-2.5 h-5 w-5 text-slate-400 shrink-0" />
+                        <CalendarIcon className="mr-2.5 size-5 text-slate-400 shrink-0" />
                         <span className="text-sm">{label}</span>
                     </div>
-                    <CaretDownIcon className="h-4 w-4 text-slate-400" />
+                    <CaretDownIcon className="size-4 text-slate-400" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">

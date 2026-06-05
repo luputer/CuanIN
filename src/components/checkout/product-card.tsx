@@ -44,12 +44,12 @@ export const CheckoutProductCard: React.FC<CheckoutProductCardProps> = ({
             className="object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-slate-400">
-            <ImagesIcon className="h-12 w-12 text-slate-300" />
+          <div className="flex size-full items-center justify-center text-slate-400">
+            <ImagesIcon className="size-12 text-slate-300" />
           </div>
         )}
       </div>
-      <div className="mt-1 flex h-full min-w-0 flex-1 flex-col space-y-2">
+      <div className="mt-1 flex h-full min-w-0 flex-1 flex-col gap-2">
         <span
           className={`w-fit rounded-full border px-3 py-1 text-xs ${CATEGORY_STYLE[product.type]}`}
         >
@@ -65,13 +65,13 @@ export const CheckoutProductCard: React.FC<CheckoutProductCardProps> = ({
               Yang akan Kamu dapatkan:
             </div>
             <div className="space-y-3">
-              {(product.benefit as string[]).map((item, idx) => (
+              {(product.benefit as string[]).map((item, _idx) => (
                 <div
-                  key={idx}
+                  key={item}
                   className="flex items-start gap-2.5 text-sm text-slate-700"
                 >
                   <CheckCircleIcon
-                    className="h-5 w-5 shrink-0 text-cyan-600 mt-0.5"
+                    className="size-5 shrink-0 text-cyan-600 mt-0.5"
                     weight="fill"
                   />
                   <span className="min-w-0 wrap-break-word leading-relaxed">{item}</span>

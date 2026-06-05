@@ -124,7 +124,7 @@ export function TablePagination({
             <option value={20}>20</option>
             <option value={50}>50</option>
           </select>
-          <CaretDownIcon className="w-3 h-3 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <CaretDownIcon className="size-3 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
         <span className="text-slate-500 whitespace-nowrap">
           Hasil: {total > 0 ? (page - 1) * limit + 1 : 0}-
@@ -144,7 +144,7 @@ export function TablePagination({
                 disabled={(page || 1) <= 1}
                 className="flex items-center justify-center p-2 text-slate-400 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <CaretLeftIcon className="w-4 h-4" />
+                <CaretLeftIcon className="size-4" />
               </button>
             </PaginationItem>
 
@@ -164,8 +164,8 @@ export function TablePagination({
                   <React.Fragment key={p}>
                     {showEllipsis && (
                       <PaginationItem>
-                        <div className="flex h-7 w-7 items-center justify-center">
-                          <DotsThreeIcon className="h-4 w-4 text-slate-400" />
+                        <div className="flex size-7 items-center justify-center">
+                          <DotsThreeIcon className="size-4 text-slate-400" />
                         </div>
                       </PaginationItem>
                     )}
@@ -173,10 +173,7 @@ export function TablePagination({
                       <button
                         type="button"
                         onClick={() => onPageChange(p)}
-                        className={`h-7 w-7 rounded-[4px] flex items-center justify-center font-medium text-xs transition-colors ${page === p
-                          ? "bg-[#00B4D8] text-white hover:bg-[#009bc2]"
-                          : "text-slate-500 hover:bg-slate-100"
-                          }`}
+                        className={`size-7 rounded-[4px] flex items-center justify-center font-medium text-xs transition-colors ${page === p ? "bg-[#00B4D8] text-white hover:bg-[#009bc2]" : "text-slate-500 hover:bg-slate-100" }`}
                       >
                         {p}
                       </button>
@@ -195,7 +192,7 @@ export function TablePagination({
                 disabled={(page || 1) >= (totalPages || 1)}
                 className="flex items-center justify-center p-2 text-slate-400 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <CaretRightIcon className="w-4 h-4" />
+                <CaretRightIcon className="size-4" />
               </button>
             </PaginationItem>
           </PaginationContent>

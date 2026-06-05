@@ -12,7 +12,7 @@ export default function ButtonCancel({
     ...props
 }: ButtonCancelProps) {
     return (
-        <button
+        <button type="button"
             {...props}
             className={cn(
                 "w-fit flex items-center justify-center gap-2 px-6 py-4",

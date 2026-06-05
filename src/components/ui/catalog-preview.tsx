@@ -48,7 +48,7 @@ function PreviewProductCard({
           {type}
         </span>
         {/* Placeholder Thumbnail Gradient */}
-        <div className="h-full w-full bg-gradient-to-tr from-slate-200 to-slate-100 opacity-60"></div>
+        <div className="size-full bg-gradient-to-tr from-slate-200 to-slate-100 opacity-60"></div>
         <div className="absolute text-slate-300">
           <ImagesIcon size={32} weight="duotone" />
         </div>
@@ -79,7 +79,7 @@ function PreviewProductCard({
           )}
 
           <div className="rounded-full bg-slate-200 p-1 text-slate-800 transition-colors">
-            <ArrowRightIcon className="h-3.5 w-3.5" />
+            <ArrowRightIcon className="size-3.5" />
           </div>
         </div>
       </div>
@@ -91,8 +91,8 @@ function PreviewProductCard({
 
 export default function CatalogPreview() {
   return (
-    <div className="flex h-full w-full overflow-hidden rounded-xl border-2 border-slate-800 bg-slate-50 shadow-[0px_3px_0px_rgba(30,27,75)] relative z-10 select-none">
-      <div className="h-full w-full overflow-y-auto no-scrollbar pb-10 pointer-events-none">
+    <div className="flex size-full overflow-hidden rounded-xl border-2 border-slate-800 bg-slate-50 shadow-[0px_3px_0px_rgba(30,27,75)] relative z-10 select-none">
+      <div className="size-full overflow-y-auto no-scrollbar pb-10 pointer-events-none">
 
         {/* ── Banner Section ── */}
         <div className="relative h-24 sm:h-32 lg:h-40 w-full overflow-hidden">
@@ -104,7 +104,7 @@ export default function CatalogPreview() {
         <div className="mx-auto max-w-5xl px-4 lg:px-8">
           {/* ── Profile Section ── */}
           <div className="relative z-10 -mt-10 sm:-mt-12 flex flex-col items-center pb-4 text-center">
-            <Avatar className="h-20 w-20 sm:h-24 sm:w-24 overflow-hidden rounded-full border-4 border-white bg-white shadow-md">
+            <Avatar className="size-20 sm:size-24 overflow-hidden rounded-full border-4 border-white bg-white shadow-md">
               <AvatarFallback className="bg-yellow-300 text-2xl font-bold text-slate-800">
                 CR
               </AvatarFallback>
@@ -152,7 +152,7 @@ export default function CatalogPreview() {
 
               <div className="flex flex-wrap gap-2 overflow-x-auto no-scrollbar pb-1 sm:pb-0">
                 {["Semua", "Webinar", "Kelas", "Produk Digital"].map((tab, idx) => (
-                  <button
+                  <button type="button"
                     key={tab}
                     className={`shrink-0 rounded-full px-4 py-1.5 text-[11px] sm:text-xs font-medium transition-all duration-200 ${idx === 0
                       ? "bg-cyan-600 text-white"

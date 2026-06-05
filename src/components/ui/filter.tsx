@@ -30,7 +30,7 @@ const FilterButton = React.forwardRef<HTMLButtonElement, FilterButtonProps>(
                 {...props}
             >
                 <span>{label}</span>
-                <CaretDownIcon className="w-4 h-4 text-slate-600" />
+                <CaretDownIcon className="size-4 text-slate-600" />
             </button>
         );
     }

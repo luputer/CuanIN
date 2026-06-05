@@ -85,7 +85,7 @@ function CardSkeleton() {
     return (
         <div className="bg-white gap-1 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col animate-pulse">
             <div className="flex justify-between items-start mb-3">
-                <div className="w-8 h-8 rounded-full bg-slate-200" />
+                <div className="size-8 rounded-full bg-slate-200" />
             </div>
             <div className="flex flex-col gap-2">
                 <div className="h-3 w-24 bg-slate-200 rounded" />
@@ -154,7 +154,7 @@ export default function DashboardPage() {
                             <Card
                                 title="Total Penghasilan"
                                 value={formatRupiah(data?.totalIncome ?? 0)}
-                                icon={<WalletIcon weight="fill" className="w-8 h-8" />}
+                                icon={<WalletIcon weight="fill" className="size-8" />}
                                 iconColor="text-cyan-600"
                                 bgColor="bg-cyan-50"
                                 showArrow={true}
@@ -164,21 +164,21 @@ export default function DashboardPage() {
                         <Card
                             title="Total Produk"
                             value={(data?.totalProducts ?? 0).toLocaleString("id-ID")}
-                            icon={<BasketIcon weight="fill" className="w-8 h-8" />}
+                            icon={<BasketIcon weight="fill" className="size-8" />}
                             iconColor="text-yellow-500"
                             change={data?.productsChange}
                         />
                         <Card
                             title="Total User"
                             value={(data?.totalUsers ?? 0).toLocaleString("id-ID")}
-                            icon={<UsersIcon weight="fill" className="w-8 h-8" />}
+                            icon={<UsersIcon weight="fill" className="size-8" />}
                             iconColor="text-orange-500"
                             change={data?.usersChange}
                         />
                         <Card
                             title="Total Pengunjung"
                             value={(data?.totalVisitors ?? 0).toLocaleString("id-ID")}
-                            icon={<ChartLineUpIcon weight="fill" className="w-8 h-8" color="currentColor" />}
+                            icon={<ChartLineUpIcon weight="fill" className="size-8" color="currentColor" />}
                             iconColor="text-green-500"
                             change={data?.visitorsChange}
                         />
@@ -250,9 +250,9 @@ export default function DashboardPage() {
                                 />
                                 <Tooltip formatter={(value) => [value as number | string, "Produk"]} />
                                 <Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
-                                    {(data?.categoryData ?? []).map((_, index) => (
+                                    {(data?.categoryData ?? []).map((item, index) => (
                                         <Cell
-                                            key={`cell-${index}`}
+                                            key={item.name}
                                             fill={CHART_COLORS[index % CHART_COLORS.length] ?? "#FFF085"}
                                         />
                                     ))}
@@ -324,9 +324,9 @@ export default function DashboardPage() {
                                 />
                                 <Tooltip formatter={(value) => [value as number | string, "Pembeli"]} />
                                 <Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
-                                    {(data?.buyerData ?? []).map((_, index) => (
+                                    {(data?.buyerData ?? []).map((item, index) => (
                                         <Cell
-                                            key={`cell-${index}`}
+                                            key={item.week}
                                             fill={CHART_COLORS[index % CHART_COLORS.length] ?? "#FFF085"}
                                         />
                                     ))}

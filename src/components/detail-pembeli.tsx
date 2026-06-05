@@ -16,7 +16,7 @@ export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBa
             <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-6 animate-pulse">
                 {/* Header */}
                 <div className="flex items-center gap-2 mb-2">
-                    <Skeleton className="h-5 w-5 rounded-md" />
+                    <Skeleton className="size-5 rounded-md" />
                     <Skeleton className="h-8 w-48 rounded-md" />
                 </div>
 
@@ -62,11 +62,11 @@ export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBa
             <div className="space-y-6">
                 <div className="bg-slate-50">
                     <div className="bg-slate-50 -mx-4 px-4 mb-2">
-                        <button
+                        <button type="button"
                             onClick={onBack}
                             className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2 cursor-pointer"
                         >
-                            <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                            <ArrowLeftIcon className="size-4 transition-transform group-hover:-translate-x-0.5" />
                             <span className="leading-none">Kembali</span>
                         </button>
                     </div>
@@ -81,11 +81,11 @@ export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBa
     return (
         <div className="px-4 sm:px-6 py-4 sm:py-6">
             {/* Header */}
-            <button
+            <button type="button"
                 onClick={onBack}
                 className="group flex items-center gap-2 text-lg sm:text-xl font-semibold text-slate-800 hover:text-slate-800 transition-colors w-fit mb-2 cursor-pointer"
             >
-                <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                <ArrowLeftIcon className="size-4 transition-transform group-hover:-translate-x-0.5" />
                 <h1 className="">
                     {purchase.buyerName}
                 </h1>

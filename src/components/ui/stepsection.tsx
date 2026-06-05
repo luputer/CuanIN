@@ -24,13 +24,13 @@ export default function StepsSection() {
 
                 <div className="space-y-5">
                     {steps.map((step: { title: string; desc: string }, index: number) => (
-                        <div key={index} className="bg-white">
-                            <button
+                        <div key={step.title} className="bg-white">
+                            <button type="button"
                                 onClick={() => toggle(index)}
                                 className="w-full flex justify-between items-center py-2 text-left"
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 flex items-center justify-center rounded-full bg-cyan-600 text-3xl text-white font-semibold border-2 border-slate-800 shadow-[2px_2px_0px_rgba(29,41,61)]">
+                                    <div className="size-16 flex items-center justify-center rounded-full bg-cyan-600 text-3xl text-white font-semibold border-2 border-slate-800 shadow-[2px_2px_0px_rgba(29,41,61)]">
                                         {index + 1}
                                     </div>
                                     <span className="px-2 text-2xl font-medium text-slate-800">{step.title}</span>

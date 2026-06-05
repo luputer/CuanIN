@@ -82,7 +82,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
                     className
                 )}>
                     {Icon && (
-                        <Icon className={cn("w-5 h-5 text-slate-400 shrink-0", iconClassName)} />
+                        <Icon className={cn("size-5 text-slate-400 shrink-0", iconClassName)} />
                     )}
                     {prefix && (
                         <span className={cn("text-slate-500 text-sm font-medium shrink-0", prefixClassName)}>
@@ -173,18 +173,22 @@ interface FormComboboxProps extends Omit<FormInputProps, "onChange"> {
 
 export const FormCombobox = React.forwardRef<HTMLInputElement, FormComboboxProps>(
     ({ options, onValueChange, value, className, ...props }, ref) => {
+        const [prevValue, setPrevValue] = React.useState(value);
         const [inputValue, setInputValue] = React.useState(value ?? "");
-        const [isCustomMode, setIsCustomMode] = React.useState(false);
+        const [isCustomMode, setIsCustomMode] = React.useState(
+            value !== undefined && value !== "" && !options.includes(value)
+        );
 
-        React.useEffect(() => {
-            if (value !== undefined) {
-                setInputValue(value);
-                // Jika value dari luar tidak ada di opsi, otomatis masuk mode custom
-                if (value !== "" && !options.includes(value)) {
-                    setIsCustomMode(true);
-                }
+        if (value !== prevValue) {
+            setPrevValue(value);
+            setInputValue(value ?? "");
+            // Jika value dari luar tidak ada di opsi, otomatis masuk mode custom
+            if (value !== undefined && value !== "" && !options.includes(value)) {
+                setIsCustomMode(true);
+            } else {
+                setIsCustomMode(false);
             }
-        }, [value, options]);
+        }
 
         const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             const newValue = e.target.value;

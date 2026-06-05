@@ -48,6 +48,48 @@ import {
 } from "~/components/ui/tooltip";
 import { formatCurrency, formatNumberInput } from "~/lib/utils";
 
+const getStatusColor = (status: string) => {
+    switch (status.toUpperCase()) {
+        case "SUCCEEDED":
+        case "COMPLETED":
+            return "bg-green-100 text-green-700";
+        case "PENDING":
+        case "REQUESTED":
+        case "ACCEPTED":
+            return "bg-yellow-100 text-yellow-700";
+        case "FAILED":
+        case "CANCELLED":
+        case "REVERSED":
+            return "bg-red-100 text-red-700";
+        case "EXPIRED":
+            return "bg-slate-200 text-slate-500";
+        default:
+            return "bg-slate-100 text-slate-600";
+    }
+};
+
+const getStatusLabel = (status: string) => {
+    switch (status.toUpperCase()) {
+        case "ALL":
+            return "Semua Status";
+        case "SUCCEEDED":
+        case "COMPLETED":
+            return "Berhasil";
+        case "PENDING":
+        case "REQUESTED":
+        case "ACCEPTED":
+            return "Menunggu";
+        case "FAILED":
+        case "CANCELLED":
+        case "REVERSED":
+            return "Gagal";
+        case "EXPIRED":
+            return "Kedaluwarsa";
+        default:
+            return status;
+    }
+};
+
 export default function AdminTransactionPage() {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -144,48 +186,6 @@ export default function AdminTransactionPage() {
         if (!open) setWithdrawErrors({});
     };
 
-    const getStatusColor = (status: string) => {
-        switch (status.toUpperCase()) {
-            case "SUCCEEDED":
-            case "COMPLETED":
-                return "bg-green-100 text-green-700";
-            case "PENDING":
-            case "REQUESTED":
-            case "ACCEPTED":
-                return "bg-yellow-100 text-yellow-700";
-            case "FAILED":
-            case "CANCELLED":
-            case "REVERSED":
-                return "bg-red-100 text-red-700";
-            case "EXPIRED":
-                return "bg-slate-200 text-slate-500";
-            default:
-                return "bg-slate-100 text-slate-600";
-        }
-    };
-
-    const getStatusLabel = (status: string) => {
-        switch (status.toUpperCase()) {
-            case "ALL":
-                return "Semua Status";
-            case "SUCCEEDED":
-            case "COMPLETED":
-                return "Berhasil";
-            case "PENDING":
-            case "REQUESTED":
-            case "ACCEPTED":
-                return "Menunggu";
-            case "FAILED":
-            case "CANCELLED":
-            case "REVERSED":
-                return "Gagal";
-            case "EXPIRED":
-                return "Kedaluwarsa";
-            default:
-                return status;
-        }
-    };
-
     return (
         <TooltipProvider>
             <div className="w-full max-w-7xl mx-auto space-y-6">
@@ -204,7 +204,7 @@ export default function AdminTransactionPage() {
                     {/* Balance Section */}
                     <div className="flex flex-1 flex-col justify-between border-b border-slate-200 p-6 md:border-r md:border-b-0">
                         <div className="mb-4 flex items-center gap-2 text-slate-800">
-                            <WalletIcon className="h-5 w-5 text-cyan-600" weight="fill" />
+                            <WalletIcon className="size-5 text-cyan-600" weight="fill" />
                             <span className="text-sm font-medium">Saldo saat ini</span>
                         </div>
                         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -222,7 +222,7 @@ export default function AdminTransactionPage() {
                                 <DialogContent size="2xl" showCloseButton={false}>
                                     <DialogHeader>
                                         <DialogTitle className="flex items-center justify-center gap-4">
-                                            <CreditCardIcon className="h-6 w-6" weight="fill" />
+                                            <CreditCardIcon className="size-6" weight="fill" />
                                             Penarikan Saldo Admin
                                         </DialogTitle>
                                     </DialogHeader>
@@ -426,7 +426,7 @@ export default function AdminTransactionPage() {
                                     <TableRow key={i} data-type="body">
                                         <TableCell className="text-center font-medium whitespace-nowrap">
                                             <div className="flex items-center justify-center min-h-[48px]">
-                                                <Skeleton className="h-4 w-4" />
+                                                <Skeleton className="size-4" />
                                             </div>
                                         </TableCell>
                                         <TableCell>

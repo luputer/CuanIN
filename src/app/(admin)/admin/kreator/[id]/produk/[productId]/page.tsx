@@ -15,6 +15,32 @@ import { useState, useRef, useEffect } from "react";
 import { SectionHeader } from "~/components/ui/form-layout";
 import React from "react";
 
+const Label = ({ children }: { children: React.ReactNode }) => (
+    <div className="w-full sm:w-48 md:w-60 shrink-0 text-slate-500 text-sm font-medium leading-6">{children}</div>
+);
+
+const Value = ({ children }: { children: React.ReactNode }) => (
+    <div className="flex-1 text-slate-800 text-sm font-medium leading-6">
+        {children}
+    </div>
+);
+
+const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
+    <div className="flex flex-col sm:flex-row items-start pb-6 sm:pb-8 gap-1 sm:gap-8">
+        <Label>{label}</Label>
+        <Value>{children}</Value>
+    </div>
+);
+
+const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+        case "published": return "bg-green-100 rounded-full px-4 py-1 w-fit text-green-700";
+        case "unpublished": return "bg-slate-200 rounded-full px-4 py-1 w-fit text-slate-500";
+        case "archived": return "bg-blue-100 rounded-full px-4 py-1 w-fit text-blue-700";
+        default: return "bg-slate-200 rounded-full px-4 py-1 w-fit text-slate-500";
+    }
+};
+
 export default function AdminCreatorProductDetailPage() {
     const params = useParams();
     const id = params.id as string; // creatorId
@@ -37,33 +63,6 @@ export default function AdminCreatorProductDetailPage() {
             }
         }
     }, [product?.description]);
-
-    const Label = ({ children }: { children: React.ReactNode }) => (
-        <div className="w-full sm:w-48 md:w-60 shrink-0 text-slate-500 text-sm font-medium leading-6">{children}</div>
-    );
-
-    const Value = ({ children }: { children: React.ReactNode }) => (
-        <div className="flex-1 text-slate-800 text-sm font-medium leading-6">
-            {children}
-        </div>
-    );
-
-    const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
-        <div className="flex flex-col sm:flex-row items-start pb-6 sm:pb-8 gap-1 sm:gap-8">
-            <Label>{label}</Label>
-            <Value>{children}</Value>
-        </div>
-    );
-
-    const getStatusColor = (status: string) => {
-        switch (status?.toLowerCase()) {
-            case "published": return "bg-green-100 rounded-full px-4 py-1 w-fit text-green-700";
-            case "unpublished": return "bg-slate-200 rounded-full px-4 py-1 w-fit text-slate-500";
-            case "archived": return "bg-blue-100 rounded-full px-4 py-1 w-fit text-blue-700";
-            default: return "bg-slate-200 rounded-full px-4 py-1 w-fit text-slate-500";
-        }
-    };
-
 
     // ─── Loading ───
     if (isLoading) {
@@ -123,7 +122,7 @@ export default function AdminCreatorProductDetailPage() {
                             href={`/admin/kreator/${id}/produk`}
                             className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
                         >
-                            <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                            <ArrowLeftIcon className="size-4 transition-transform group-hover:-translate-x-0.5" />
                             <span className="leading-none">Kembali ke Daftar Produk</span>
                         </Link>
                         <h1 className="text-xl font-semibold text-slate-800">Detail Produk</h1>
@@ -172,10 +171,10 @@ export default function AdminCreatorProductDetailPage() {
                                             width={32}
                                             height={32}
                                             unoptimized
-                                            className="rounded-full w-8 h-8 object-cover border border-slate-200"
+                                            className="rounded-full size-8 object-cover border border-slate-200"
                                         />
                                     ) : (
-                                        <div className="w-8 h-8 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-600 text-xs font-bold shrink-0">
+                                        <div className="size-8 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-600 text-xs font-bold shrink-0">
                                             {((product as any).user?.name ?? "K")[0]?.toUpperCase()}
                                         </div>
                                     )}
@@ -208,7 +207,7 @@ export default function AdminCreatorProductDetailPage() {
                                                 </ReactMarkdown>
                                             </div>
                                             {(isOverflowing || expanded) && (
-                                                <button
+                                                <button type="button"
                                                     onClick={() => setExpanded(!expanded)}
                                                     className="sm:justify-start mt-2 text-sm text-slate-600 hover:underline cursor-pointer font-regular"
                                                 >
@@ -225,8 +224,8 @@ export default function AdminCreatorProductDetailPage() {
                             <Row label="Manfaat">
                                 {Array.isArray(product.benefit) && product.benefit.length > 0 ? (
                                     <ul className="list-disc list-inside space-y-1">
-                                        {(product.benefit as string[]).map((item, index) => (
-                                            <li key={index} className="text-slate-800 font-medium">
+                                        {(product.benefit as string[]).map((item, _index) => (
+                                            <li key={item} className="text-slate-800 font-medium">
                                                 {item}
                                             </li>
                                         ))}
@@ -279,7 +278,7 @@ export default function AdminCreatorProductDetailPage() {
                                         target="_blank"
                                         className="inline-flex items-center gap-2 bg-white border border-cyan-600 text-cyan-600 hover:bg-cyan-50 text-sm font-medium px-4 py-1.5 rounded-lg transition-all"
                                     >
-                                        <ArrowSquareOutIcon className="w-4 h-4" />
+                                        <ArrowSquareOutIcon className="size-4" />
                                         Lihat Produk
                                     </Link>
                                 ) : <span className="text-slate-400">-</span>}
@@ -308,11 +307,11 @@ export default function AdminCreatorProductDetailPage() {
                                         width={256}
                                         height={256}
                                         unoptimized
-                                        className="w-full h-full object-cover"
+                                        className="size-full object-cover"
                                     />
                                 ) : (
                                     <div className="flex flex-col items-center gap-2 text-slate-400">
-                                        <ImageIcon className="w-12 h-12" />
+                                        <ImageIcon className="size-12" />
                                         <span className="text-xs">Belum ada gambar</span>
                                     </div>
                                 )}

@@ -40,12 +40,12 @@ export default function ButtonAdd({
     <>
       {isLoading ? (
         <>
-          <CircleNotchIcon className="h-5 w-5 animate-spin" />
+          <CircleNotchIcon className="size-5 animate-spin" />
           <span className={cn(responsive && "hidden sm:inline")}>{loadingLabel}</span>
         </>
       ) : (
         <>
-          <Icon className="h-5 w-5" weight={weight} />
+          <Icon className="size-5" weight={weight} />
           <span className={cn(responsive && "hidden sm:inline")}>{label}</span>
         </>
       )}

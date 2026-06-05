@@ -34,6 +34,22 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { Skeleton } from "~/components/ui/skeleton";
 
+const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+        case "completed": return "bg-green-100 text-green-700";
+        case "pending": return "bg-yellow-100 text-yellow-600";
+        default: return "bg-slate-100 text-slate-600";
+    }
+};
+
+const getStatusLabel = (status: string) => {
+    switch (status.toLowerCase()) {
+        case "completed": return "Sudah Bayar";
+        case "pending": return "Pending";
+        default: return status;
+    }
+};
+
 export default function Pembeli({ productId }: { productId: string }) {
     const [view, setView] = useState<"list" | "detail">("list");
     const [selectedPurchaseId, setSelectedPurchaseId] = useState<string | null>(null);
@@ -60,22 +76,6 @@ export default function Pembeli({ productId }: { productId: string }) {
     const items = data?.items ?? [];
     const total = data?.total ?? 0;
     const totalPages = data?.totalPages ?? 1;
-
-    const getStatusColor = (status: string) => {
-        switch (status.toLowerCase()) {
-            case "completed": return "bg-green-100 text-green-700";
-            case "pending": return "bg-yellow-100 text-yellow-600";
-            default: return "bg-slate-100 text-slate-600";
-        }
-    };
-
-    const getStatusLabel = (status: string) => {
-        switch (status.toLowerCase()) {
-            case "completed": return "Sudah Bayar";
-            case "pending": return "Pending";
-            default: return status;
-        }
-    };
 
     if (view === "detail" && selectedPurchaseId) {
         return (
@@ -151,7 +151,7 @@ export default function Pembeli({ productId }: { productId: string }) {
                                     <TableRow data-type="body" key={i}>
                                         <TableCell className="text-center font-medium whitespace-nowrap">
                                             <div className="flex items-center justify-center min-h-12">
-                                                <Skeleton className="h-4 w-4" />
+                                                <Skeleton className="size-4" />
                                             </div>
                                         </TableCell>
                                         <TableCell className="whitespace-nowrap">
@@ -181,7 +181,7 @@ export default function Pembeli({ productId }: { productId: string }) {
                                         </TableCell>
                                         <TableCell className="px-6 py-4 text-right">
                                             <div className="flex items-center gap-3">
-                                                <Skeleton className="h-6 w-6 rounded-md" />
+                                                <Skeleton className="size-6 rounded-md" />
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -202,7 +202,7 @@ export default function Pembeli({ productId }: { productId: string }) {
                                             </TableCell>
 
                                             <TableCell className="whitespace-nowrap">
-                                                <button
+                                                <button type="button"
                                                     onClick={() => {
                                                         setSelectedPurchaseId(item.id);
                                                         setView("detail");
@@ -246,11 +246,11 @@ export default function Pembeli({ productId }: { productId: string }) {
                                                     {/* detail */}
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
-                                                            <button onClick={() => {
+                                                            <button type="button" onClick={() => {
                                                                 setSelectedPurchaseId(item.id);
                                                                 setView("detail");
                                                             }}>
-                                                                <EyeIcon className="w-6 h-6 text-cyan-600 cursor-pointer hover:text-cyan-700" />
+                                                                <EyeIcon className="size-6 text-cyan-600 cursor-pointer hover:text-cyan-700" />
                                                             </button>
                                                         </TooltipTrigger>
                                                         <TooltipContent>Detail</TooltipContent>
@@ -300,7 +300,7 @@ export default function Pembeli({ productId }: { productId: string }) {
                                     <div className="space-y-2 text-sm">
                                         <div className="flex justify-between items-start gap-2">
                                             <span className="text-slate-400 font-medium min-w-[70px]">Nama:</span>
-                                            <button
+                                            <button type="button"
                                                 onClick={() => {
                                                     setSelectedPurchaseId(item.id);
                                                     setView("detail");
@@ -326,14 +326,14 @@ export default function Pembeli({ productId }: { productId: string }) {
                                         </div>
                                     </div>
                                     <div className="flex justify-end pt-2 border-t border-slate-100">
-                                        <button
+                                        <button type="button"
                                             onClick={() => {
                                                 setSelectedPurchaseId(item.id);
                                                 setView("detail");
                                             }}
                                             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-cyan-600 border border-cyan-600 rounded-md hover:bg-cyan-50 transition-colors"
                                         >
-                                            <EyeIcon className="w-4 h-4" />
+                                            <EyeIcon className="size-4" />
                                             Detail Pembeli
                                         </button>
                                     </div>

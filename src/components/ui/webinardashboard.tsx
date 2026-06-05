@@ -175,7 +175,7 @@ export default function DashboardPreview() {
                     </TableCell>
 
                     <TableCell className="py-2">
-                      <div className="h-8 w-8 rounded-md bg-slate-200" />
+                      <div className="size-8 rounded-md bg-slate-200" />
                     </TableCell>
 
                     <TableCell className="text-xs">12 Mei 2026 19:00</TableCell>
@@ -191,15 +191,15 @@ export default function DashboardPreview() {
 
                     <TableCell className="pr-1">
                       <div className="flex items-center gap-1">
-                        <button className="text-cyan-600">
+                        <button type="button" className="text-cyan-600">
                           <EyeIcon size={16} />
                         </button>
 
-                        <button className="text-yellow-500">
+                        <button type="button" className="text-yellow-500">
                           <CopyIcon size={16} />
                         </button>
 
-                        <button className="text-red-500">
+                        <button type="button" className="text-red-500">
                           <TrashIcon size={16} />
                         </button>
                       </div>

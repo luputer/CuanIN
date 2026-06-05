@@ -12,7 +12,6 @@ import {
     AlertDialogContent,
     AlertDialogTitle,
     AlertDialogDescription,
-    AlertDialogFooter,
 } from "~/components/ui/alert-dialog"
 
 type Props = {

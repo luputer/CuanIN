@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import Image from "next/image";
 import {
@@ -8,7 +8,6 @@ import {
     CheckCircleIcon,
     ShieldCheckIcon,
     EnvelopeIcon,
-    ArrowRightIcon,
 } from "@phosphor-icons/react";
 import { Suspense } from "react";
 
@@ -20,7 +19,6 @@ const TYPE_MAP: Record<string, string> = {
 
 function PaymentSuccessContent() {
     const searchParams = useSearchParams();
-    const router = useRouter();
     const id = searchParams.get("id") ?? "";
 
     const { data: purchase, isLoading } = api.purchases.getById.useQuery(

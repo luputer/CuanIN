@@ -4,13 +4,10 @@
 import React from "react";
 
 // Next.js
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 // Third-party
-import { format } from "date-fns";
-import { id as idLocale } from "date-fns/locale";
 
 // Icons
 import {

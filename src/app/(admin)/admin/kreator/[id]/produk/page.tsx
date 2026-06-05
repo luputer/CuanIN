@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
@@ -9,12 +8,10 @@ import {
     CaretDownIcon,
     EyeIcon,
     ArrowLeftIcon,
-    UserCircleIcon,
 } from "@phosphor-icons/react";
 
 import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
     Table,
     TableHead,
@@ -54,7 +51,7 @@ export default function CreatorProductsPage() {
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
     const [typeFilter, setTypeFilter] = useState<"ALL" | "WEBINAR" | "DIGITAL_PRODUCT" | "KELAS_ONLINE">("ALL");
-    const [priceTypeFilter, setPriceTypeFilter] = useState<"ALL" | "FREE" | "PAID">("ALL");
+    const [priceTypeFilter] = useState<"ALL" | "FREE" | "PAID">("ALL");
     const [statusFilter, setStatusFilter] = useState<string>("ALL");
 
     // Debounce search

@@ -71,33 +71,6 @@ const TwitterIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-const MOCK_RECOMMENDATIONS = [
-  {
-    id: "mock-1",
-    name: "Masterclass Next.js 15 & TypeScript untuk Pemula",
-    shortDescription: "Pelajari pembuatan aplikasi web modern berskala besar menggunakan Next.js App Router, TailwindCSS, dan Prisma DB.",
-    price: 149000,
-    type: "KELAS_ONLINE",
-    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&auto=format&fit=crop&q=60",
-    slug: "masterclass-nextjs",
-    duration: "12 Jam",
-    startDate: null,
-    endDate: null,
-  },
-  {
-    id: "mock-2",
-    name: "E-Book Premium: Panduan Copywriting yang Menjual",
-    shortDescription: "Rahasia menulis teks promosi yang menarik perhatian pembeli dan meningkatkan konversi penjualan Anda hingga 300%.",
-    price: 49000,
-    type: "DIGITAL_PRODUCT",
-    image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=60",
-    slug: "copywriting-menjual",
-    contentType: "E-Book (PDF)",
-    startDate: null,
-    endDate: null,
-  }
-];
-
 function RecommendationCard({
   product,
   creatorSlug,

@@ -7,7 +7,6 @@ import { env } from "~/env";
 import Script from "next/script";
 import Image from "next/image";
 import {
-  SpinnerIcon,
   ShieldCheckIcon,
   ArrowLeftIcon,
 } from "@phosphor-icons/react";

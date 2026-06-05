@@ -18,9 +18,6 @@ import {
   PencilSimpleIcon,
   ArrowUpRightIcon,
   CopyIcon,
-  ShareNetworkIcon,
-  InstagramLogo,
-  WhatsappLogo,
   GlobeIcon,
 } from "@phosphor-icons/react";
 

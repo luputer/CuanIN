@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { api } from "~/trpc/react";
 import {
@@ -8,13 +8,11 @@ import {
     XCircleIcon,
     ShieldCheckIcon,
     ArrowCounterClockwiseIcon,
-    ArrowRightIcon,
 } from "@phosphor-icons/react";
 import { Suspense } from "react";
 
 function PaymentFailedContent() {
     const searchParams = useSearchParams();
-    const router = useRouter();
     const id = searchParams.get("id") ?? "";
 
     const { data: purchase, isLoading } = api.purchases.getById.useQuery(

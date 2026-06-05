@@ -15,7 +15,6 @@ import {
     CircleNotchIcon,
     EyeIcon,
     EyeSlashIcon,
-    FloppyDiskIcon,
     ImageIcon,
     PencilSimpleIcon,
     TrashIcon,
@@ -111,7 +110,6 @@ export default function CreatorDetailPage() {
             if (creator.image) avatarUpload.setPreviewUrl(creator.image);
             if (creator.banner) bannerUpload.setPreviewUrl(creator.banner);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [creator]);
 
     const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

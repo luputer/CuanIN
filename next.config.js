@@ -11,6 +11,10 @@ const config = {
       },
       {
         protocol: "https",
+        hostname: "storage.cuanin.my.id",
+      },
+      {
+        protocol: "https",
         hostname: "lh3.googleusercontent.com",
       },
     ],

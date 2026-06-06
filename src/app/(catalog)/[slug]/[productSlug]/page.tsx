@@ -1,28 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeftIcon,
-  ClockIcon,
-  CalendarIcon,
   CalendarBlankIcon,
-  MapPinIcon,
-  ShareNetworkIcon,
+  CalendarIcon,
   CheckCircleIcon,
+  ClockIcon,
+  CopyIcon,
   FileIcon,
   ImagesIcon,
-  CopyIcon,
+  MapPinIcon,
+  ShareNetworkIcon,
 } from "@phosphor-icons/react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
 import { api } from "~/trpc/react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import MarkdownPreview from "~/components/MarkdownPreview";
-import Footer from "~/components/layout/footer";
 import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import MarkdownPreview from "~/components/MarkdownPreview";
+import Footer from "~/components/layout/footer";
 
 const TYPE_MAP: Record<string, string> = {
   WEBINAR: "Webinar",

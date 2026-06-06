@@ -4,7 +4,8 @@ import { type Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/provider";
 import { Toaster } from "sonner";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: {
@@ -52,6 +53,7 @@ export default function RootLayout({
         <TRPCReactProvider>
           {children}
           <Analytics />
+          <SpeedInsights />
         </TRPCReactProvider>
       </body>
     </html>

@@ -11,17 +11,16 @@ import { ResetPasswordEmail } from "~/emails/reset-password-email";
 const transporter = nodemailer.createTransport({
   host: env.SMTP_HOST,
   port: env.SMTP_PORT,
-  secure: true, // Gmail 465 must use secure: true
+  secure: env.SMTP_PORT === 465, // True untuk 465, False untuk 587 (STARTTLS)
   auth: {
     user: env.SMTP_USER,
     pass: env.SMTP_PASS,
   },
   tls: {
-    // Helps with some network environments
-    rejectUnauthorized: false
+    rejectUnauthorized: false, // Menghindari error sertifikat di beberapa cloud
   },
-  connectionTimeout: 10000, // 10 seconds
-  greetingTimeout: 10000,
+  connectionTimeout: 15000, // Tambah jadi 15 detik biar lebih sabar
+  greetingTimeout: 15000,
 });
 
 type SendProductEmailParams = {

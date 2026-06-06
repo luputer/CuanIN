@@ -475,7 +475,7 @@ export const purchasesRouter = createTRPCRouter({
     }),
 
   // ─── GET BY ID ──────────────────────────────────────────────────────────────
-  getById: publicProcedure
+  getById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const purchase = await ctx.db.purchase.findUnique({
@@ -483,6 +483,7 @@ export const purchasesRouter = createTRPCRouter({
         include: {
           product: {
             select: {
+              userId: true,
               name: true,
               image: true,
               type: true,
@@ -502,7 +503,18 @@ export const purchasesRouter = createTRPCRouter({
         },
       });
 
-      if (!purchase) throw new Error("Transaksi tidak ditemukan");
+      if (!purchase) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Transaksi tidak ditemukan" });
+      }
+
+      // Authorization: Admin, Pemilik Produk (Creator), atau Pembeli (Buyer)
+      const isAdmin = ctx.session.user.role === "ADMIN";
+      const isOwner = purchase.product.userId === ctx.session.user.id;
+      const isBuyer = ctx.session.user.email === purchase.buyerEmail;
+
+      if (!isAdmin && !isOwner && !isBuyer) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Kamu tidak memiliki akses ke data ini" });
+      }
 
       return purchase;
     }),

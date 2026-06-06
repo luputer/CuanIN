@@ -223,30 +223,37 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (purchase.status === "completed") {
-    console.log("[Webhook] Purchase already completed:", purchase.id);
+  try {
+    await db.$transaction(async (tx) => {
+      // Atomic Update: Hanya update jika status masih pending
+      const updatedPurchase = await tx.purchase.update({
+        where: { 
+          id: purchase.id,
+          status: "pending" 
+        },
+        data: {
+          status: "completed",
+          xenditPaymentMethod: body.payment_method ?? null,
+          paidAt: new Date(),
+        },
+      });
+
+      // Jika update berhasil, baru buat balanceEntry
+      await tx.balanceEntry.create({
+        data: {
+          userId: purchase.product.userId,
+          amount: purchase.amount,
+          type: "PURCHASE_COMPLETED",
+          refId: purchase.id,
+          note: `Pembelian dari ${purchase.buyerName} (${purchase.buyerEmail})`,
+        },
+      });
+    });
+  } catch (error) {
+    // Jika error karena record tidak ditemukan (berarti sudah bukan pending)
+    console.log("[Webhook] Purchase already completed or failed to update:", purchase.id);
     return NextResponse.json({ message: "Already processed" });
   }
-
-  await db.$transaction([
-    db.purchase.update({
-      where: { id: purchase.id },
-      data: {
-        status: "completed",
-        xenditPaymentMethod: body.payment_method ?? null,
-        paidAt: new Date(),
-      },
-    }),
-    db.balanceEntry.create({
-      data: {
-        userId: purchase.product.userId,
-        amount: purchase.amount,
-        type: "PURCHASE_COMPLETED",
-        refId: purchase.id,
-        note: `Pembelian dari ${purchase.buyerName} (${purchase.buyerEmail})`,
-      },
-    }),
-  ]);
 
   if (purchase.product.link) {
     try {

@@ -80,33 +80,36 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (purchase.status === "completed") {
-    console.log("[Midtrans Webhook] Purchase already completed:", purchase.id);
+  // ─── UPDATE DATABASE (ATOMIC) ─────────────────────────────────────────────
+  try {
+    await db.$transaction(async (tx) => {
+      // Atomic Update: Hanya update jika status masih pending
+      const updatedPurchase = await tx.purchase.update({
+        where: { 
+          id: purchase.id,
+          status: "pending"
+        },
+        data: {
+          status: "completed",
+          paidAt: new Date(),
+          xenditPaymentMethod: `Midtrans: ${payment_type}`,
+        },
+      });
+
+      await tx.balanceEntry.create({
+        data: {
+          userId: purchase.product.userId,
+          amount: purchase.amount,
+          type: "PURCHASE_COMPLETED",
+          refId: purchase.id,
+          note: `Pembelian (Midtrans) dari ${purchase.buyerName} (${purchase.buyerEmail})`,
+        },
+      });
+    });
+  } catch (error) {
+    console.log("[Midtrans Webhook] Purchase already processed or failed to update:", purchase.id);
     return NextResponse.json({ message: "Already processed" });
   }
-
-  // ─── UPDATE DATABASE ──────────────────────────────────────────────────────
-  await db.$transaction([
-    db.purchase.update({
-      where: { id: purchase.id },
-      data: {
-        status: "completed",
-        paidAt: new Date(),
-        // We reuse the xenditPaymentMethod field for now to store payment type info
-        // as we don't want to change the schema yet.
-        xenditPaymentMethod: `Midtrans: ${payment_type}`,
-      },
-    }),
-    db.balanceEntry.create({
-      data: {
-        userId: purchase.product.userId,
-        amount: purchase.amount,
-        type: "PURCHASE_COMPLETED",
-        refId: purchase.id,
-        note: `Pembelian (Midtrans) dari ${purchase.buyerName} (${purchase.buyerEmail})`,
-      },
-    }),
-  ]);
 
   if (purchase.product.link) {
     try {

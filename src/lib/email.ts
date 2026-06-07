@@ -42,6 +42,16 @@ export const sendProductEmail = async ({
   try {
     const textContent = `Terima kasih atas pembelian Anda!\n\nBerikut adalah link untuk mengakses produk Anda:\n${productLink}${notes ? `\n\nCatatan Tambahan:\n${notes}` : ""}\n\nSalam,\nTim CuanIN`;
 
+    if (env.NODE_ENV === "development" && !env.RESEND_API_KEY.startsWith("re_")) {
+        console.log("-----------------------------------------");
+        console.log("📧 LOCAL DEV EMAIL SIMULATION");
+        console.log(`To: ${buyerEmail}`);
+        console.log(`Subject: Akses Produk: ${productName}`);
+        console.log(`Link: ${productLink}`);
+        console.log("-----------------------------------------");
+        return { success: true, messageId: "local-dev-id" };
+    }
+
     const data = await resend.emails.send({
       from: `"${creatorName}" <${env.SMTP_FROM}>`,
       to: buyerEmail,

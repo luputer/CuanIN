@@ -64,7 +64,7 @@ function DialogContent({
         data-slot="dialog-content"
         data-size={size}
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-0 rounded-lg bg-white p-0 text-slate-800 border-2 border-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] duration-100 outline-none data-[size=sm]:max-w-sm data-[size=default]:max-w-lg data-[size=lg]:max-w-lg data-[size=xl]:max-w-xl data-[size=2xl]:max-w-2xl data-[size=3xl]:max-w-3xl data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed top-1/2 left-1/2 z-50 flex flex-col w-full -translate-x-1/2 -translate-y-1/2 gap-0 rounded-lg bg-white p-0 text-slate-800 border-2 border-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] duration-100 outline-none max-h-[90dvh] data-[size=sm]:max-w-sm data-[size=default]:max-w-lg data-[size=lg]:max-w-lg data-[size=xl]:max-w-xl data-[size=2xl]:max-w-2xl data-[size=3xl]:max-w-3xl data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
         )}
         {...props}
@@ -92,7 +92,17 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("bg-cyan-50 px-8 py-6 border-b border-cyan-600 flex flex-col gap-1 text-center rounded-t-lg", className)}
+      className={cn("flex-shrink-0 bg-cyan-50 px-8 py-6 border-b border-cyan-600 flex flex-col gap-1 text-center rounded-t-lg", className)}
+      {...props}
+    />
+  )
+}
+
+function DialogBody({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="dialog-body"
+      className={cn("overflow-y-auto flex-1", className)}
       {...props}
     />
   )
@@ -156,6 +166,7 @@ function DialogDescription({
 
 export {
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,

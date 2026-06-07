@@ -24,6 +24,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import {
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogFooter,
@@ -67,7 +68,6 @@ export default function TransactionPage() {
     bank: "",
     accountNumber: "",
     accountHolderName: "",
-    email: "",
   });
   const [withdrawErrors, setWithdrawErrors] = useState<
     Partial<Record<keyof WithdrawalFormData, string>>
@@ -126,7 +126,6 @@ export default function TransactionPage() {
         bank: "",
         accountNumber: "",
         accountHolderName: "",
-        email: "",
       });
       setWithdrawErrors({});
       await utils.purchases.getAllForCreator.invalidate();
@@ -173,7 +172,6 @@ export default function TransactionPage() {
         bank: fieldErrors.bank?.[0],
         accountNumber: fieldErrors.accountNumber?.[0],
         accountHolderName: fieldErrors.accountHolderName?.[0],
-        email: fieldErrors.email?.[0],
       });
       return;
     }
@@ -276,158 +274,143 @@ export default function TransactionPage() {
                     </DialogTitle>
                   </DialogHeader>
 
-                  <form className="px-6 py-6" onSubmit={handleWithdrawalSubmit}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start mb-6">
-                      <div className="space-y-[-14px]">
-                        <FormGroup
-                          label="Jumlah"
-                          layout="vertical"
-                          error={withdrawErrors.amount}
-                        >
-                        <FormInput
-                          type="text"
-                          inputMode="numeric"
-                          prefix="Rp"
-                          value={formatNumberInput(withdrawForm.amount)}
-                          className={
-                            withdrawErrors.amount ? errorFieldClassName : ""
-                          }
-                          onChange={(event) =>
-                            updateWithdrawField("amount", event.target.value)
-                          }
-                          placeholder="Contoh: 500000"
-                        />
-                      </FormGroup>
+                  <form className="flex flex-col flex-1 overflow-hidden" onSubmit={handleWithdrawalSubmit}>
+                    <DialogBody className="px-6 py-6 flex-1">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                        <div className="space-y-[-14px]">
+                          <FormGroup
+                            label="Jumlah"
+                            layout="vertical"
+                            error={withdrawErrors.amount}
+                          >
+                            <FormInput
+                              type="text"
+                              inputMode="numeric"
+                              prefix="Rp"
+                              value={formatNumberInput(withdrawForm.amount)}
+                              className={
+                                withdrawErrors.amount ? errorFieldClassName : ""
+                              }
+                              onChange={(event) =>
+                                updateWithdrawField("amount", event.target.value)
+                              }
+                              placeholder="Contoh: 500000"
+                            />
+                          </FormGroup>
 
-                        <FormGroup
-                          label="Pilih Bank"
-                          layout="vertical"
-                          error={withdrawErrors.bank}
-                        >
-                        <FormSelect
-                          value={withdrawForm.bank}
-                          className={
-                            withdrawErrors.bank ? errorFieldClassName : ""
-                          }
-                          onChange={(e) =>
-                            updateWithdrawField("bank", e.target.value)
-                          }
-                        >
-                          <option value="" disabled>
-                            Pilih salah satu
-                          </option>
-                          {bankOptions.map((bank) => (
-                            <option key={bank.value} value={bank.value}>
-                              {bank.label}
-                            </option>
-                          ))}
-                        </FormSelect>
-                      </FormGroup>
+                          <FormGroup
+                            label="Pilih Bank"
+                            layout="vertical"
+                            error={withdrawErrors.bank}
+                          >
+                            <FormSelect
+                              value={withdrawForm.bank}
+                              className={
+                                withdrawErrors.bank ? errorFieldClassName : ""
+                              }
+                              onChange={(e) =>
+                                updateWithdrawField("bank", e.target.value)
+                              }
+                            >
+                              <option value="" disabled>
+                                Pilih salah satu
+                              </option>
+                              {bankOptions.map((bank) => (
+                                <option key={bank.value} value={bank.value}>
+                                  {bank.label}
+                                </option>
+                              ))}
+                            </FormSelect>
+                          </FormGroup>
 
-                        <FormGroup
-                          label="Nama Pemilik"
-                          layout="vertical"
-                          error={withdrawErrors.accountHolderName}
-                        >
-                        <FormInput
-                          value={withdrawForm.accountHolderName}
-                          className={
-                            withdrawErrors.accountHolderName
-                              ? errorFieldClassName
-                              : ""
-                          }
-                          onChange={(event) =>
-                            updateWithdrawField(
-                              "accountHolderName",
-                              event.target.value,
-                            )
-                          }
-                          placeholder="Masukkan nama pemilik rekening"
-                        />
-                      </FormGroup>
+                          <FormGroup
+                            label="Atas Nama"
+                            layout="vertical"
+                            error={withdrawErrors.accountHolderName}
+                          >
+                            <FormInput
+                              value={withdrawForm.accountHolderName}
+                              className={
+                                withdrawErrors.accountHolderName
+                                  ? errorFieldClassName
+                                  : ""
+                              }
+                              onChange={(event) =>
+                                updateWithdrawField(
+                                  "accountHolderName",
+                                  event.target.value,
+                                )
+                              }
+                              placeholder="Masukkan nama pemilik rekening"
+                            />
+                          </FormGroup>
 
-                        <FormGroup
-                          label="No Rekening"
-                          layout="vertical"
-                          error={withdrawErrors.accountNumber}
-                        >
-                        <FormInput
-                          inputMode="numeric"
-                          value={withdrawForm.accountNumber}
-                          className={
-                            withdrawErrors.accountNumber
-                              ? errorFieldClassName
-                              : ""
-                          }
-                          onChange={(event) =>
-                            updateWithdrawField(
-                              "accountNumber",
-                              event.target.value,
-                            )
-                          }
-                          placeholder="Masukkan nomor rekening anda"
-                        />
-                      </FormGroup>
+                          <FormGroup
+                            label="No Rekening"
+                            layout="vertical"
+                            error={withdrawErrors.accountNumber}
+                          >
+                            <FormInput
+                              inputMode="numeric"
+                              value={withdrawForm.accountNumber}
+                              className={
+                                withdrawErrors.accountNumber
+                                  ? errorFieldClassName
+                                  : ""
+                              }
+                              onChange={(event) =>
+                                updateWithdrawField(
+                                  "accountNumber",
+                                  event.target.value,
+                                )
+                              }
+                              placeholder="Masukkan nomor rekening anda"
+                            />
+                          </FormGroup>
 
-                        <FormGroup
-                          label="Email"
-                          layout="vertical"
-                          error={withdrawErrors.email}
-                        >
-                        <FormInput
-                          type="email"
-                          value={withdrawForm.email}
-                          className={
-                            withdrawErrors.email ? errorFieldClassName : ""
-                          }
-                          onChange={(event) =>
-                            updateWithdrawField("email", event.target.value)
-                          }
-                          placeholder="Masukkan email anda"
-                        />
-                      </FormGroup>
-                      </div>
+                        </div>
 
-                      <div className="space-y-4 pt-6">
-                        {Number(withdrawForm.amount) > 0 ? (
-                          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2">
-                            <div className="flex justify-between text-[13px] text-slate-600">
-                              <span>Nominal Penarikan</span>
-                              <span className="font-medium text-slate-900">Rp{formatNumberInput(withdrawForm.amount)}</span>
-                            </div>
-                            <div className="flex justify-between text-[13px] text-slate-600">
-                              <span>Biaya Aplikasi (2%)</span>
-                              <span className="font-medium text-slate-700">+ Rp{formatNumberInput(Math.round(Number(withdrawForm.amount) * 0.02).toString())}</span>
-                            </div>
-                            <div className="flex justify-between text-[13px] text-slate-600">
-                              <span>Biaya Transfer Bank</span>
-                              <span className="font-medium text-slate-700">+ Rp4.000</span>
-                            </div>
-                            <div className="border-t border-slate-200 pt-2 flex justify-between font-semibold text-[14px] text-slate-900">
-                              <span>Total Potong Saldo</span>
-                              <span className="text-red-600">
-                                Rp{formatNumberInput((Number(withdrawForm.amount) + Math.round(Number(withdrawForm.amount) * 0.02) + 4000).toString())}
-                              </span>
-                            </div>
-                            <p className="pt-2 text-[11px] text-slate-400 italic leading-relaxed">
-                              * Kamu akan menerima bersih <strong>Rp{formatNumberInput(withdrawForm.amount)}</strong> di rekening bank.
-                              Total saldo CuanIN yang akan terpotong adalah <strong>Rp{formatNumberInput((Number(withdrawForm.amount) + Math.round(Number(withdrawForm.amount) * 0.02) + 4000).toString())}</strong>.
-                            </p>
-                            {Number(withdrawForm.amount) < 10000 && (
-                              <p className="text-red-500 text-xs mt-1 pt-2 border-t border-red-100 text-center font-medium">
-                                Minimal penarikan adalah Rp10.000.
+                        <div className="space-y-4 pt-6">
+                          {Number(withdrawForm.amount) > 0 ? (
+                            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2">
+                              <div className="flex justify-between text-[13px] text-slate-600">
+                                <span>Nominal Penarikan</span>
+                                <span className="font-medium text-slate-900">Rp{formatNumberInput(withdrawForm.amount)}</span>
+                              </div>
+                              <div className="flex justify-between text-[13px] text-slate-600">
+                                <span>Biaya Aplikasi (2%)</span>
+                                <span className="font-medium text-slate-700">+ Rp{formatNumberInput(Math.round(Number(withdrawForm.amount) * 0.02).toString())}</span>
+                              </div>
+                              <div className="flex justify-between text-[13px] text-slate-600">
+                                <span>Biaya Transfer Bank</span>
+                                <span className="font-medium text-slate-700">+ Rp4.000</span>
+                              </div>
+                              <div className="border-t border-slate-200 pt-2 flex justify-between font-semibold text-[14px] text-slate-900">
+                                <span>Total Potong Saldo</span>
+                                <span className="text-red-600">
+                                  Rp{formatNumberInput((Number(withdrawForm.amount) + Math.round(Number(withdrawForm.amount) * 0.02) + 4000).toString())}
+                                </span>
+                              </div>
+                              <p className="pt-2 text-[11px] text-slate-400 italic leading-relaxed">
+                                * Kamu akan menerima bersih <strong>Rp{formatNumberInput(withdrawForm.amount)}</strong>.
+                                Total saldo akun yang akan terpotong adalah <strong>Rp{formatNumberInput((Number(withdrawForm.amount) + Math.round(Number(withdrawForm.amount) * 0.02) + 4000).toString())}</strong>.
                               </p>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-center text-slate-500 text-[13px]">
-                            Masukkan nominal penarikan untuk melihat rincian biaya.
-                          </div>
-                        )}
+                              {Number(withdrawForm.amount) < 10000 && (
+                                <p className="text-red-500 text-xs mt-1 pt-2 border-t border-red-100 text-center font-medium">
+                                  Minimal penarikan adalah Rp10.000.
+                                </p>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-center text-slate-500 text-[13px]">
+                              Masukkan nominal penarikan untuk melihat rincian biaya.
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    </DialogBody>
 
-                    <DialogFooter className="grid grid-cols-2 gap-3 sm:flex sm:justify-end">
+                    <DialogFooter className="px-6 py-4 border-t border-slate-100 bg-slate-50 rounded-b-lg grid grid-cols-2 gap-3 sm:flex sm:justify-end">
                       <DialogClose asChild>
                         <ButtonCancel
                           label="Batal"
@@ -564,12 +547,11 @@ export default function TransactionPage() {
               <TableRow>
                 <TableHead className="w-[5%] text-center">No</TableHead>
                 <TableHead className="w-[8%] whitespace-nowrap">ID</TableHead>
-                <TableHead className="w-[12%] whitespace-nowrap">Nominal</TableHead>
-                <TableHead className="w-[10%] whitespace-nowrap">Biaya</TableHead>
-                <TableHead className="w-[7%] whitespace-nowrap">Jenis</TableHead>
-                <TableHead className="w-[18%] whitespace-nowrap">Keterangan</TableHead>
-                <TableHead className="w-[10%] whitespace-nowrap">Metode</TableHead>
-                <TableHead className="w-[12%] whitespace-nowrap">Tanggal</TableHead>
+                <TableHead className="w-[14%] whitespace-nowrap">Akun</TableHead>
+                <TableHead className="w-[14%] whitespace-nowrap">Nominal</TableHead>
+                <TableHead className="w-[8%] whitespace-nowrap">Tipe</TableHead>
+                <TableHead className="w-[12%] whitespace-nowrap">Metode</TableHead>
+                <TableHead className="w-[15%] whitespace-nowrap">Tanggal</TableHead>
                 <TableHead className="w-[12%] text-center whitespace-nowrap">Status</TableHead>
                 <TableHead className="w-[6%] text-right whitespace-nowrap">Aksi</TableHead>
               </TableRow>
@@ -578,7 +560,7 @@ export default function TransactionPage() {
               {isLoading && !data ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <TableRow key={i} data-type="body">
-                    <TableCell className="text-center font-medium">
+                    <TableCell className="text-center font-medium whitespace-nowrap">
                       <div className="flex items-center justify-center min-h-[48px]">
                         <Skeleton className="h-4 w-4" />
                       </div>
@@ -590,12 +572,12 @@ export default function TransactionPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center min-h-[48px]">
-                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-4 w-32" />
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center min-h-[48px]">
-                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-4 w-24" />
                       </div>
                     </TableCell>
                     <TableCell>
@@ -605,17 +587,12 @@ export default function TransactionPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center min-h-[48px]">
-                        <Skeleton className="h-4 w-32" />
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center min-h-[48px]">
                         <Skeleton className="h-4 w-20" />
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center min-h-[48px]">
-                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-4 w-32" />
                       </div>
                     </TableCell>
                     <TableCell className="whitespace-nowrap">
@@ -633,7 +610,7 @@ export default function TransactionPage() {
               ) : transactions.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={10}
+                    colSpan={9}
                     className="py-20 text-center text-slate-500"
                   >
                     Tidak ada transaksi ditemukan
@@ -645,93 +622,85 @@ export default function TransactionPage() {
                   const nominal = item.type === "INCOME" ? Number(item.amount) : (Number(item.amount) - Number(item.feeAmount ?? 0) - 4000);
 
                   return (
-                  <TableRow key={item.id} data-type="body">
-                    <TableCell className="text-center font-medium">
-                      <div className="flex min-h-[48px] items-center justify-center">
-                        {(page - 1) * limit + index + 1}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className="flex min-h-[48px] max-w-[80px] items-center truncate text-slate-400">
-                            {item.id}
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>ID: {item.id}</TooltipContent>
-                      </Tooltip>
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap">
-                      <div className="flex min-h-[48px] items-center">
-                        <span className={`font-semibold ${item.type === "INCOME" ? "text-green-600" : "text-slate-900"}`}>
-                          {item.type === "INCOME" ? "+" : ""} {formatCurrency(nominal)}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap">
-                      <div className="flex flex-col min-h-[48px] justify-center">
-                        {item.type === "WITHDRAWAL" ? (
-                          <>
-                            <span className="text-red-500 font-medium">App: {formatCurrency(Number(item.feeAmount ?? 0))}</span>
-                            <span className="text-slate-400 text-xs">Bank: Rp4.000</span>
-                          </>
-                        ) : (
-                          <span className="text-slate-300">-</span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap">
-                      <div className="flex min-h-[48px] items-center">
-                        {typeLabel}
-                      </div>
-                    </TableCell>
-                    <TableCell className="max-w-[160px] leading-normal">
-                      <div className="flex flex-col min-h-[48px] py-1.5 justify-center">
-                        <span className="font-medium text-slate-800 line-clamp-1">
-                          {item.type === "INCOME" ? item.product?.name : `Penarikan ke Bank`}
-                        </span>
-                        <span className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
-                          {item.type === "INCOME" ? `Pembeli: ${item.buyerName}` : item.accountNumber}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center min-h-[48px] text-slate-600">
-                        {item.type === "INCOME" ? (item.xenditPaymentMethod ?? "-") : (item.bankName ?? "-")}
-                      </div>
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap">
-                      <div className="flex min-h-[48px] items-center text-slate-600">
-                        {format(new Date(item.createdAt), "dd MMM yyyy HH:mm", {
-                          locale: id,
-                        })}
-                      </div>
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap">
-                      <div className="flex min-h-[48px] items-center justify-center">
-                        <span
-                          className={`px-4 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.status)}`}
-                        >
-                          {getStatusLabel(item.status)}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="px-6 py-4 text-right">
-                      <div className="flex justify-end items-center gap-3">
+                    <TableRow key={item.id} data-type="body">
+                      <TableCell className="text-center font-medium">
+                        <div className="flex min-h-[48px] items-center justify-center">
+                          {(page - 1) * limit + index + 1}
+                        </div>
+                      </TableCell>
+                      <TableCell>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <button onClick={() => {
-                              setSelectedTx(item);
-                              setIsDetailOpen(true);
-                            }}>
-                              <EyeIcon className="w-[22px] h-[22px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
-                            </button>
+                            <div className="flex min-h-[48px] max-w-[80px] items-center truncate text-slate-400">
+                              {item.id}
+                            </div>
                           </TooltipTrigger>
-                          <TooltipContent>Lihat Detail</TooltipContent>
+                          <TooltipContent>ID: {item.id}</TooltipContent>
                         </Tooltip>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                      </TableCell>
+                      <TableCell className="max-w-[120px]">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="flex items-center min-h-[48px]">
+                              <span className="font-medium truncate block w-full">
+                                {item.type === "INCOME" ? item.buyerName : (item.accountHolderName ?? "-")}
+                              </span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {item.type === "INCOME" ? item.buyerName : (item.accountHolderName ?? "-")}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <div className="flex min-h-[48px] items-center">
+                          <span className={`font-semibold ${item.type === "INCOME" ? "text-green-600" : "text-slate-900"}`}>
+                            {item.type === "INCOME" ? "+" : ""} {formatCurrency(nominal)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <div className="flex min-h-[48px] items-center">
+                          {typeLabel}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center min-h-[48px]">
+                          {item.type === "INCOME" ? (item.xenditPaymentMethod ?? "-") : (item.bankName ?? "-")}
+                        </div>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <div className="flex min-h-[48px] items-center text-slate-600">
+                          {format(new Date(item.createdAt), "dd MMM yyyy HH:mm", {
+                            locale: id,
+                          })}
+                        </div>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <div className="flex min-h-[48px] items-center justify-center">
+                          <span
+                            className={`px-4 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.status)}`}
+                          >
+                            {getStatusLabel(item.status)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-6 py-4 text-right">
+                        <div className="flex justify-end items-center gap-3">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button onClick={() => {
+                                setSelectedTx(item);
+                                setIsDetailOpen(true);
+                              }}>
+                                <EyeIcon className="w-[22px] h-[22px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>Lihat Detail</TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </TableCell>
+                    </TableRow>
                   );
                 })
               )}
@@ -762,15 +731,13 @@ export default function TransactionPage() {
           ) : (
             transactions.map((item: any, index: number) => {
               const rowNumber = (page - 1) * limit + index + 1;
+              const typeLabel = item.type === "INCOME" ? "Masuk" : "Tarik";
+              const nominal = item.type === "INCOME" ? Number(item.amount) : (Number(item.amount) - Number(item.feeAmount ?? 0) - 4000);
+
               return (
                 <div key={item.id} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3">
                   <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold text-slate-400"># {rowNumber}</span>
-                      <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${item.type === "INCOME" ? "bg-emerald-50 text-emerald-700" : "bg-blue-50 text-blue-700"}`}>
-                        {item.type === "INCOME" ? "Masuk" : "Tarik"}
-                      </span>
-                    </div>
+                    <span className="text-xs font-semibold text-slate-400"># {rowNumber}</span>
                     <span
                       className={`rounded-full px-3 py-0.5 text-xs font-medium ${getStatusColor(item.status)}`}
                     >
@@ -779,8 +746,13 @@ export default function TransactionPage() {
                   </div>
 
                   <div className="space-y-2 flex-1 min-w-0">
-                    <div className="font-semibold text-slate-800 break-words leading-normal">
-                      {item.type === "INCOME" ? item.product?.name : `Tarik ke ${item.bankName}`}
+                    <div className="font-semibold text-slate-800 break-words leading-normal flex items-center justify-between">
+                      <span className="truncate pr-2">
+                        {item.type === "INCOME" ? item.buyerName : (item.accountHolderName ?? "-")}
+                      </span>
+                      <span className={`text-[12px] font-medium whitespace-nowrap ${item.type === "INCOME" ? "text-green-600" : "text-slate-900"}`}>
+                        {typeLabel}
+                      </span>
                     </div>
 
                     <div className="text-xs text-slate-500">
@@ -789,14 +761,10 @@ export default function TransactionPage() {
                     </div>
 
                     <div className="text-xs text-slate-500">
-                      <span className="font-medium text-slate-400">{item.type === "INCOME" ? "Pembeli: " : "Rekening: "}</span>
-                      <span className="font-medium text-slate-700">{item.type === "INCOME" ? item.buyerName : item.accountNumber}</span>
-                    </div>
-
-                    <div className="text-xs text-slate-500">
                       <span className="font-medium text-slate-400">Metode: </span>
                       <span className="font-medium text-slate-700">{item.type === "INCOME" ? (item.xenditPaymentMethod ?? "-") : item.bankName}</span>
                     </div>
+
 
                     <div className="text-xs text-slate-500">
                       <span className="font-medium text-slate-400">Tanggal: </span>
@@ -807,29 +775,30 @@ export default function TransactionPage() {
                       </span>
                     </div>
 
-                    <div className="text-xs pt-1 border-t border-slate-50 mt-2">
-                      <span className="font-medium text-slate-400">Nominal: </span>
-                      <span className={`font-bold text-sm ${item.type === "INCOME" ? "text-emerald-600" : "text-slate-900"}`}>
-                        {item.type === "INCOME" ? "+" : ""} {formatCurrency(item.type === "INCOME" ? Number(item.amount) : (Number(item.amount) - Number(item.feeAmount ?? 0) - 4000))}
-                      </span>
-                      {item.type === "WITHDRAWAL" && (
-                        <div className="text-[10px] text-slate-400 mt-0.5 italic">
-                          Biaya Total: {formatCurrency(Number(item.feeAmount ?? 0) + 4000)}
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                    {item.type === "WITHDRAWAL" && (
+                      <div className="text-xs text-slate-500">
+                        <span className="font-medium text-slate-400">Biaya: </span>
+                        <span className="font-medium text-red-500">{formatCurrency(Number(item.feeAmount ?? 0) + 4000)}</span>
+                      </div>
+                    )}
 
-                  <div className="pt-3 mt-3 border-t border-slate-100 flex justify-end">
-                    <button 
-                      onClick={() => {
-                        setSelectedTx(item);
-                        setIsDetailOpen(true);
-                      }}
-                      className="text-cyan-600 font-medium text-xs flex items-center gap-1.5 hover:text-cyan-700"
-                    >
-                      <EyeIcon size={16} /> Lihat Detail
-                    </button>
+                    <div className="flex items-center justify-between pt-1 border-t border-slate-50 mt-2">
+                      <div>
+                        <span className="font-medium text-slate-400">Nominal: </span>
+                        <span className={`font-bold text-sm ${item.type === "INCOME" ? "text-green-600" : "text-slate-900"}`}>
+                          {item.type === "INCOME" ? "+" : ""} {formatCurrency(nominal)}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setSelectedTx(item);
+                          setIsDetailOpen(true);
+                        }}
+                        className="p-1.5 rounded-md text-cyan-600 border border-slate-200 hover:bg-slate-50 transition"
+                      >
+                        <EyeIcon className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -864,9 +833,9 @@ export default function TransactionPage() {
             </DialogClose>
           </DialogHeader>
           {selectedTx && (
-            <div className="px-4 py-6 max-w-2xl mx-auto w-full space-y-6">
+            <DialogBody className="px-4 py-6 max-w-2xl mx-auto w-full space-y-6">
               {/* Head Section: Total and Status */}
-              <div className="flex flex-col items-start justify-center space-y-1 bg-slate-50 p-5 rounded-xl border border-slate-100">
+              <div className="flex flex-col items-start justify-center space-y-1 bg-slate-100 p-5 rounded-xl border border-slate-300">
                 <span className="text-slate-500 text-[11px] uppercase tracking-wider font-semibold">
                   {selectedTx.type === "INCOME" ? "Total Pendapatan" : "Total Penarikan"}
                 </span>
@@ -898,25 +867,35 @@ export default function TransactionPage() {
 
               {/* Account Details Group */}
               <div className="space-y-3 px-2">
-                <h4 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Informasi & Keterangan</h4>
+                <h4 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Informasi Akun & Penerima</h4>
 
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-slate-500">Tipe Transaksi</span>
                   <span className="font-medium text-slate-800">{selectedTx.type === "INCOME" ? "Masuk" : "Tarik Saldo"}</span>
                 </div>
+                {selectedTx.type === "INCOME" && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-slate-500">Produk</span>
+                    <span className="font-medium text-slate-800 text-right max-w-[60%] leading-tight">{selectedTx.product?.name ?? "-"}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500">Keterangan</span>
-                  <span className="font-medium text-slate-800 text-right max-w-[60%] leading-tight">{selectedTx.type === "INCOME" ? selectedTx.product?.name : "Penarikan ke Bank"}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500">{selectedTx.type === "INCOME" ? "Pembeli" : "Bank"}</span>
+                  <span className="text-slate-500">{selectedTx.type === "INCOME" ? "Akun" : "Bank"}</span>
                   <span className="font-medium text-slate-800">{selectedTx.type === "INCOME" ? selectedTx.buyerName : (selectedTx.bankName ?? "-")}</span>
                 </div>
                 {selectedTx.type !== "INCOME" && (
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-500">No. Rekening</span>
-                    <span className="font-medium text-slate-800">{selectedTx.accountNumber}</span>
-                  </div>
+                  <>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-slate-500">No. Rekening</span>
+                      <span className="font-medium text-slate-800">{selectedTx.accountNumber}</span>
+                    </div>
+                    {selectedTx.accountHolderName && (
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-slate-500">Atas Nama</span>
+                        <span className="font-medium text-slate-800">{selectedTx.accountHolderName}</span>
+                      </div>
+                    )}
+                  </>
                 )}
                 {selectedTx.type === "INCOME" && selectedTx.xenditPaymentMethod && (
                   <div className="flex justify-between items-center text-sm">
@@ -940,7 +919,7 @@ export default function TransactionPage() {
                     </div>
                     <div className="flex justify-between border-t border-dashed border-slate-200 pt-3 mt-1 font-bold text-[15px] text-slate-900">
                       <span>Total Diterima</span>
-                      <span className="text-emerald-600">{formatCurrency(Number(selectedTx.amount))}</span>
+                      <span className="text-cyan-600">{formatCurrency(Number(selectedTx.amount))}</span>
                     </div>
                   </>
                 ) : (
@@ -958,15 +937,15 @@ export default function TransactionPage() {
                       <span className="font-medium text-slate-800">-Rp4.000</span>
                     </div>
                     <div className="flex justify-between border-t border-dashed border-slate-200 pt-3 mt-1 font-bold text-[15px] text-slate-900">
-                      <span>Total Diterima (Bank)</span>
-                      <span className="text-blue-600">
+                      <span>Total Diterima</span>
+                      <span className="text-cyan-600">
                         {formatCurrency(Number(selectedTx.amount) - Number(selectedTx.feeAmount ?? 0) - 4000)}
                       </span>
                     </div>
                   </>
                 )}
               </div>
-            </div>
+            </DialogBody>
           )}
         </DialogContent>
       </Dialog>

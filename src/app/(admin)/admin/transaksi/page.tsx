@@ -20,6 +20,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import {
     Dialog,
+    DialogBody,
     DialogClose,
     DialogContent,
     DialogFooter,
@@ -223,97 +224,99 @@ export default function AdminTransactionPage() {
                                 </DialogTrigger>
                                 <DialogContent size="2xl" showCloseButton={false}>
                                     <DialogHeader>
-                                        <DialogTitle className="flex items-center justify-center gap-3">
-                                            <CreditCardIcon className="h-5 w-5" weight="fill" />
+                                        <DialogTitle className="flex items-center justify-center gap-4">
+                                            <CreditCardIcon className="h-6 w-6" weight="fill" />
                                             Penarikan Saldo Admin
                                         </DialogTitle>
                                     </DialogHeader>
 
-                                    <form className="px-6 py-6" onSubmit={handleWithdrawalSubmit}>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start mb-6">
-                                            <div className="space-y-[-14px]">
-                                                <FormGroup label="Jumlah" layout="vertical" error={withdrawErrors.amount}>
-                                                    <FormInput
-                                                        type="text"
-                                                        inputMode="numeric"
-                                                        prefix="Rp"
-                                                        value={formatNumberInput(withdrawForm.amount)}
-                                                        className={withdrawErrors.amount ? errorFieldClassName : ""}
-                                                        onChange={(event) => updateWithdrawField("amount", event.target.value)}
-                                                        placeholder="Contoh: 500000"
-                                                    />
-                                                </FormGroup>
+                                    <form className="flex flex-col flex-1 overflow-hidden" onSubmit={handleWithdrawalSubmit}>
+                                        <DialogBody className="px-6 py-6 flex-1">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                                                <div className="space-y-[-14px]">
+                                                    <FormGroup label="Jumlah" layout="vertical" error={withdrawErrors.amount}>
+                                                        <FormInput
+                                                            type="text"
+                                                            inputMode="numeric"
+                                                            prefix="Rp"
+                                                            value={formatNumberInput(withdrawForm.amount)}
+                                                            className={withdrawErrors.amount ? errorFieldClassName : ""}
+                                                            onChange={(event) => updateWithdrawField("amount", event.target.value)}
+                                                            placeholder="Contoh: 500000"
+                                                        />
+                                                    </FormGroup>
 
-                                                <FormGroup label="Pilih Bank" layout="vertical" error={withdrawErrors.bank}>
-                                                    <FormSelect
-                                                        value={withdrawForm.bank}
-                                                        className={withdrawErrors.bank ? errorFieldClassName : ""}
-                                                        onChange={(e) => updateWithdrawField("bank", e.target.value)}
-                                                    >
-                                                        <option value="" disabled>Pilih salah satu</option>
-                                                        {bankOptions.map((bank) => (
-                                                            <option key={bank.value} value={bank.value}>{bank.label}</option>
-                                                        ))}
-                                                    </FormSelect>
-                                                </FormGroup>
+                                                    <FormGroup label="Pilih Bank" layout="vertical" error={withdrawErrors.bank}>
+                                                        <FormSelect
+                                                            value={withdrawForm.bank}
+                                                            className={withdrawErrors.bank ? errorFieldClassName : ""}
+                                                            onChange={(e) => updateWithdrawField("bank", e.target.value)}
+                                                        >
+                                                            <option value="" disabled>Pilih salah satu</option>
+                                                            {bankOptions.map((bank) => (
+                                                                <option key={bank.value} value={bank.value}>{bank.label}</option>
+                                                            ))}
+                                                        </FormSelect>
+                                                    </FormGroup>
 
-                                                <FormGroup label="Atas Nama" layout="vertical" error={withdrawErrors.accountHolderName}>
-                                                    <FormInput
-                                                        value={withdrawForm.accountHolderName}
-                                                        className={withdrawErrors.accountHolderName ? errorFieldClassName : ""}
-                                                        onChange={(event) => updateWithdrawField("accountHolderName", event.target.value)}
-                                                        placeholder="Masukkan nama pemilik rekening"
-                                                    />
-                                                </FormGroup>
+                                                    <FormGroup label="Atas Nama" layout="vertical" error={withdrawErrors.accountHolderName}>
+                                                        <FormInput
+                                                            value={withdrawForm.accountHolderName}
+                                                            className={withdrawErrors.accountHolderName ? errorFieldClassName : ""}
+                                                            onChange={(event) => updateWithdrawField("accountHolderName", event.target.value)}
+                                                            placeholder="Masukkan nama pemilik rekening"
+                                                        />
+                                                    </FormGroup>
 
-                                                <FormGroup label="No Rekening" layout="vertical" error={withdrawErrors.accountNumber}>
-                                                    <FormInput
-                                                        inputMode="numeric"
-                                                        value={withdrawForm.accountNumber}
-                                                        className={withdrawErrors.accountNumber ? errorFieldClassName : ""}
-                                                        onChange={(event) => updateWithdrawField("accountNumber", event.target.value)}
-                                                        placeholder="Masukkan nomor rekening anda"
-                                                    />
-                                                </FormGroup>
-                                            </div>
+                                                    <FormGroup label="No Rekening" layout="vertical" error={withdrawErrors.accountNumber}>
+                                                        <FormInput
+                                                            inputMode="numeric"
+                                                            value={withdrawForm.accountNumber}
+                                                            className={withdrawErrors.accountNumber ? errorFieldClassName : ""}
+                                                            onChange={(event) => updateWithdrawField("accountNumber", event.target.value)}
+                                                            placeholder="Masukkan nomor rekening anda"
+                                                        />
+                                                    </FormGroup>
+                                                </div>
 
-                                            <div className="space-y-4 pt-6">
-                                                {/* Transaction Summary */}
-                                                {Number(withdrawForm.amount) > 0 ? (
-                                                    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2">
-                                                        <div className="flex justify-between text-[13px] text-slate-600">
-                                                            <span>Nominal Penarikan</span>
-                                                            <span className="font-medium text-slate-900">Rp{formatNumberInput(withdrawForm.amount)}</span>
-                                                        </div>
-                                                        <div className="flex justify-between text-[13px] text-slate-600">
-                                                            <span>Biaya Transfer Bank</span>
-                                                            <span className="font-medium text-slate-800">+ Rp4.000</span>
-                                                        </div>
-                                                        <div className="border-t border-slate-200 pt-2 flex justify-between font-semibold text-[14px] text-slate-900">
-                                                            <span>Total Penarikan</span>
-                                                            <span className="text-cyan-600">
-                                                                Rp{formatNumberInput((Number(withdrawForm.amount) + 4000).toString())}
-                                                            </span>
-                                                        </div>
-                                                        <p className="pt-2 text-[11px] text-slate-400 italic leading-relaxed">
-                                                            * Kamu akan menerima bersih <strong>Rp{formatNumberInput(withdrawForm.amount)}</strong> di rekening bank.
-                                                            Total saldo yang akan ditarik adalah <strong>Rp{formatNumberInput((Number(withdrawForm.amount) + 4000).toString())}</strong>.
-                                                        </p>
-                                                        {Number(withdrawForm.amount) < 10000 && (
-                                                            <p className="text-red-500 text-xs pt-2 border-t border-red-100 text-center font-medium">
-                                                                Minimal penarikan adalah Rp10.000.
+                                                <div className="space-y-4 pt-6">
+                                                    {/* Transaction Summary */}
+                                                    {Number(withdrawForm.amount) > 0 ? (
+                                                        <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2">
+                                                            <div className="flex justify-between text-[13px] text-slate-600">
+                                                                <span>Nominal Penarikan</span>
+                                                                <span className="font-medium text-slate-900">Rp{formatNumberInput(withdrawForm.amount)}</span>
+                                                            </div>
+                                                            <div className="flex justify-between text-[13px] text-slate-600">
+                                                                <span>Biaya Transfer Bank</span>
+                                                                <span className="font-medium text-slate-800">+ Rp4.000</span>
+                                                            </div>
+                                                            <div className="border-t border-slate-200 pt-2 flex justify-between font-semibold text-[14px] text-slate-900">
+                                                                <span>Total Potong Saldo</span>
+                                                                <span className="text-red-600">
+                                                                    Rp{formatNumberInput((Number(withdrawForm.amount) + 4000).toString())}
+                                                                </span>
+                                                            </div>
+                                                            <p className="pt-2 text-[11px] text-slate-400 italic leading-relaxed">
+                                                                * Kamu akan menerima bersih <strong>Rp{formatNumberInput(withdrawForm.amount)}</strong>.
+                                                                Total saldo akun yang akan terpotong adalah <strong>Rp{formatNumberInput((Number(withdrawForm.amount) + 4000).toString())}</strong>.
                                                             </p>
-                                                        )}
-                                                    </div>
-                                                ) : (
-                                                    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-center text-slate-500 text-[13px]">
-                                                        Masukkan nominal penarikan untuk melihat rincian biaya.
-                                                    </div>
-                                                )}
+                                                            {Number(withdrawForm.amount) < 10000 && (
+                                                                <p className="text-red-500 text-xs pt-2 border-t border-red-100 text-center font-medium">
+                                                                    Minimal penarikan adalah Rp10.000.
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-center text-slate-500 text-[13px]">
+                                                            Masukkan nominal penarikan untuk melihat rincian biaya.
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-                                        </div>
+                                        </DialogBody>
 
-                                        <DialogFooter className="grid grid-cols-2 gap-3 sm:flex sm:justify-end">
+                                        <DialogFooter className="px-6 py-4 border-t border-slate-100 bg-slate-50 rounded-b-lg grid grid-cols-2 gap-3 sm:flex sm:justify-end">
                                             <DialogClose asChild>
                                                 <ButtonCancel label="Batal" className="text-sm h-12 w-full sm:w-auto" />
                                             </DialogClose>
@@ -708,9 +711,9 @@ export default function AdminTransactionPage() {
                         </DialogClose>
                     </DialogHeader>
                     {selectedTx && (
-                        <div className="px-4 py-6 max-w-2xl mx-auto w-full space-y-6">
+                        <DialogBody className="px-4 py-6 max-w-2xl mx-auto w-full space-y-6">
                             {/* Head Section: Total and Status */}
-                            <div className="flex flex-col items-start justify-center space-y-1 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div className="flex flex-col items-start justify-center space-y-1 bg-slate-100 p-4 rounded-xl border border-slate-300">
                                 <span className="text-slate-500 text-[11px] uppercase tracking-wider font-semibold">
                                     {selectedTx.user?.role === "ADMIN" ? "Total Penarikan" : "Total Transaksi"}
                                 </span>
@@ -812,7 +815,7 @@ export default function AdminTransactionPage() {
                                     </>
                                 )}
                             </div>
-                        </div>
+                        </DialogBody>
                     )}
                 </DialogContent>
             </Dialog>

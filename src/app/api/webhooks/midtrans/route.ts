@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { db } from "~/server/db";
-import { sendProductEmail } from "~/lib/nodemailer";
+import { sendProductEmail } from "~/lib/email";
 import { env } from "~/env";
 import crypto from "crypto";
 

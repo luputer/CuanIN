@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { sendProductEmail } from "../../../lib/nodemailer";
+import { sendProductEmail } from "../../../lib/email";
 import { env } from "~/env";
 import { createInvoice as createXenditInvoice } from "~/lib/xendit";
 import { createSnapTransaction } from "~/lib/midtrans";

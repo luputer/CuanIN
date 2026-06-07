@@ -2,7 +2,7 @@
 
 import { type NextRequest, NextResponse } from "next/server";
 import { db } from "~/server/db";
-import { sendProductEmail, sendWithdrawalEmail } from "~/lib/nodemailer";
+import { sendProductEmail, sendWithdrawalEmail } from "~/lib/email";
 import { env } from "~/env";
 import { WithdrawalStatus } from "../../../../../prisma/generated/prisma";
 

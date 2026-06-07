@@ -1,6 +1,6 @@
 import React from "react";
 import { env } from "~/env";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { render } from "@react-email/render";
 import { ProductAccessEmail } from "~/emails/product-access-email";
 import { WithdrawalSuccessEmail } from "~/emails/withdrawal-success-email";
@@ -8,20 +8,7 @@ import { WelcomeEmail } from "~/emails/welcome-email";
 import { VerifyEmail } from "~/emails/verify-email";
 import { ResetPasswordEmail } from "~/emails/reset-password-email";
 
-const transporter = nodemailer.createTransport({
-  host: env.SMTP_HOST,
-  port: env.SMTP_PORT, // Ini sudah bertipe number murni
-  secure: env.SMTP_PORT === 465, // Ambil perbandingan angka murni (465 === 465)
-  auth: {
-    user: env.SMTP_USER,
-    pass: env.SMTP_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-  connectionTimeout: 15000,
-  greetingTimeout: 15000,
-});
+const resend = new Resend(env.RESEND_API_KEY);
 
 type SendProductEmailParams = {
   buyerEmail: string;
@@ -53,19 +40,19 @@ export const sendProductEmail = async ({
   );
 
   try {
-    const textContent = `Terima kasih atas pembelian Anda!\n\nBerikut adalah link untuk mengakses produk Anda:\n${productLink}${notes ? `\n\nCatatan Tambahan:\n${notes}` : ''}\n\nSalam,\nTim CuanIN`;
+    const textContent = `Terima kasih atas pembelian Anda!\n\nBerikut adalah link untuk mengakses produk Anda:\n${productLink}${notes ? `\n\nCatatan Tambahan:\n${notes}` : ""}\n\nSalam,\nTim CuanIN`;
 
-    const info = await transporter.sendMail({
+    const data = await resend.emails.send({
       from: `"${creatorName}" <${env.SMTP_FROM}>`,
       to: buyerEmail,
       subject: `Akses Produk Anda: ${productName}`,
       text: textContent,
       html,
     });
-    console.log("Email sent: %s", info.messageId);
-    return { success: true, messageId: info.messageId };
+    console.log("Email sent via Resend:", data.data?.id);
+    return { success: true, messageId: data.data?.id };
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error("Error sending email via Resend:", error);
     return { success: false, error };
   }
 };
@@ -110,21 +97,20 @@ export const sendWithdrawalEmail = async ({
   );
 
   try {
-    const info = await transporter.sendMail({
+    const data = await resend.emails.send({
       from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
       to: email,
       subject: `Penarikan Saldo Berhasil – ${formattedNet}`,
       text: `Penarikan saldo sebesar ${formatIDR(amount)} (Total diterima: ${formattedNet} setelah biaya) ke rekening ${bankName} ${accountNumber} atas nama ${accountHolderName} telah berhasil diproses.`,
       html,
     });
-    return { success: true, messageId: info.messageId };
+    return { success: true, messageId: data.data?.id };
   } catch (error) {
-    console.error("Error sending withdrawal email:", error);
+    console.error("Error sending withdrawal email via Resend:", error);
     return { success: false, error };
   }
 };
 
-// saat register email
 export const sendWelcomeEmail = async ({
   email,
   name,
@@ -138,16 +124,16 @@ export const sendWelcomeEmail = async ({
   );
 
   try {
-    const info = await transporter.sendMail({
+    const data = await resend.emails.send({
       from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
       to: email,
       subject: `Selamat Datang di CuanIN, ${name}! 🎉`,
       text: `Halo ${name}, selamat datang di CuanIN! Akun kamu telah berhasil dibuat.`,
       html,
     });
-    return { success: true, messageId: info.messageId };
+    return { success: true, messageId: data.data?.id };
   } catch (error) {
-    console.error("Error sending welcome email:", error);
+    console.error("Error sending welcome email via Resend:", error);
     return { success: false, error };
   }
 };
@@ -172,16 +158,16 @@ export const sendVerificationEmail = async ({
   );
 
   try {
-    const info = await transporter.sendMail({
+    const data = await resend.emails.send({
       from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
       to: email,
       subject: `Kode Verifikasi OTP Anda 🔐`,
       text: `Halo ${name}, kode OTP Anda adalah ${otp}. Kode ini berlaku selama 10 menit.`,
       html,
     });
-    return { success: true, messageId: info.messageId };
+    return { success: true, messageId: data.data?.id };
   } catch (error) {
-    console.error("Error sending verification email:", error);
+    console.error("Error sending verification email via Resend:", error);
     return { success: false, error };
   }
 };
@@ -208,16 +194,16 @@ export const sendPasswordResetEmail = async ({
   );
 
   try {
-    const info = await transporter.sendMail({
+    const data = await resend.emails.send({
       from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
       to: email,
       subject: `Reset Password Anda 🔑`,
       text: `Halo ${name}, klik link berikut untuk mereset password Anda: ${resetLink}`,
       html,
     });
-    return { success: true, messageId: info.messageId };
+    return { success: true, messageId: data.data?.id };
   } catch (error) {
-    console.error("Error sending password reset email:", error);
+    console.error("Error sending password reset email via Resend:", error);
     return { success: false, error };
   }
 };

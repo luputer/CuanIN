@@ -4,13 +4,13 @@ services:
     container_name: cuanin-db
     restart: always
     environment:
-      - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
-      - POSTGRES_DB=${POSTGRES_DB:-cuanin}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Harus set POSTGRES_PASSWORD di .env}
+      - POSTGRES_DB=cuanin
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "127.0.0.1:5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-cuanin}"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cuanin"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -28,10 +28,9 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-cuanin}?schema=public
-      - DIRECT_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-cuanin}?schema=public
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/cuanin?schema=public
+      - DIRECT_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/cuanin?schema=public
       - NODE_ENV=production
-      - SKIP_ENV_VALIDATION=1
     depends_on:
       db:
         condition: service_healthy

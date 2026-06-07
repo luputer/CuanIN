@@ -2,7 +2,7 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { sendVerificationEmail, sendPasswordResetEmail } from "~/lib/nodemailer";
+import { sendVerificationEmail, sendPasswordResetEmail } from "~/lib/email";
 import crypto from "crypto";
 
 export const authRouter = createTRPCRouter({
@@ -37,7 +37,7 @@ export const authRouter = createTRPCRouter({
               name,
               phoneNumber: phone,
               password: hashed,
-              role: "CREATOR",
+              role: existingUser.role === "ADMIN" ? "ADMIN" : "CREATOR",
               emailVerified: new Date(),
             },
           });

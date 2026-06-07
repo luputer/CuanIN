@@ -85,10 +85,9 @@ export const authConfig = {
             }
 
             // 3. Protect Creator/User Pages (dashboard, webinar, etc)
-            // If they are logged in as ADMIN, they shouldn't necessarily be blocked from these, 
+            // If they are logged in as ADMIN, they shouldn't necessarily be blocked from these,
             // but usually they go to admin dashboard.
             if (!isAuthPage && !isAdminPage && isLoggedIn && role === "ADMIN") {
-                // Optional: Redirect admins away from creator pages to admin dashboard
                 return Response.redirect(new URL("/admin/dashboard", nextUrl));
             }
 

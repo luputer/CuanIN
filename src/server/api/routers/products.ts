@@ -1,6 +1,6 @@
 import { z } from "zod";
 // Force TS refresh
-import { createTRPCRouter, protectedProcedure, adminProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, adminProcedure, creatorProcedure } from "../trpc";
 import { s3Client } from "./s3";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { env } from "~/env";
@@ -254,7 +254,7 @@ export const productsRouter = createTRPCRouter({
         }),
 
     // Create a new product
-    create: protectedProcedure
+    create: creatorProcedure
         .input(
             z.object({
                 name: z.string().min(1, "Product name is required"),
@@ -309,7 +309,7 @@ export const productsRouter = createTRPCRouter({
         }),
 
     // Update a product — hanya milik sendiri
-    update: protectedProcedure
+    update: creatorProcedure
         .input(
             z.object({
                 id: z.string(),
@@ -374,7 +374,7 @@ export const productsRouter = createTRPCRouter({
         }),
 
     // Delete a product — hanya milik sendiri
-    delete: protectedProcedure
+    delete: creatorProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
             const product = await ctx.db.product.findUnique({

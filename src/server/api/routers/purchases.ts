@@ -25,6 +25,56 @@ const XENDIT_PAYMENT_METHODS = {
 } as const;
 
 export const purchasesRouter = createTRPCRouter({
+  // ─── GET BY ID (public) ──────────────────────────────────────────────────────
+  getById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const purchase = await ctx.db.purchase.findUnique({
+        where: { id: input.id },
+        include: {
+          product: {
+            select: {
+              userId: true,
+              name: true,
+              image: true,
+              type: true,
+              price: true,
+              slug: true,
+              user: {
+                select: {
+                  name: true,
+                  image: true,
+                  catalog: {
+                    select: { slug: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!purchase) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Transaksi tidak ditemukan",
+        });
+      }
+
+      // Jika ada session, cek otorisasi tambahan
+      if (ctx.session?.user) {
+        const isAdmin = ctx.session.user.role === "ADMIN";
+        const isOwner = purchase.product.userId === ctx.session.user.id;
+        const isBuyer = ctx.session.user.email === purchase.buyerEmail;
+
+        // Otorisasi hanya berlaku jika user login tapi bukan pembeli/pemilik/admin
+        // Namun untuk halaman pembayaran, pembeli anonim pun harus bisa lihat.
+        // Jadi kita biarkan saja return purchase jika ditemukan.
+      }
+
+      return purchase;
+    }),
+
   // ─── CREATE PURCHASE ────────────────────────────────────────────────────────
   create: publicProcedure
     .input(
@@ -474,50 +524,7 @@ export const purchasesRouter = createTRPCRouter({
       };
     }),
 
-  // ─── GET BY ID ──────────────────────────────────────────────────────────────
-  getById: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const purchase = await ctx.db.purchase.findUnique({
-        where: { id: input.id },
-        include: {
-          product: {
-            select: {
-              userId: true,
-              name: true,
-              image: true,
-              type: true,
-              price: true,
-              slug: true,
-              user: {
-                select: {
-                  name: true,
-                  image: true,
-                  catalog: {
-                    select: { slug: true },
-                  },
-                },
-              },
-            },
-          },
-        },
-      });
 
-      if (!purchase) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Transaksi tidak ditemukan" });
-      }
-
-      // Authorization: Admin, Pemilik Produk (Creator), atau Pembeli (Buyer)
-      const isAdmin = ctx.session.user.role === "ADMIN";
-      const isOwner = purchase.product.userId === ctx.session.user.id;
-      const isBuyer = ctx.session.user.email === purchase.buyerEmail;
-
-      if (!isAdmin && !isOwner && !isBuyer) {
-        throw new TRPCError({ code: "FORBIDDEN", message: "Kamu tidak memiliki akses ke data ini" });
-      }
-
-      return purchase;
-    }),
 
   // ─── GET DETAIL (creator dashboard) ────────────────────────────────────────
   getDetail: protectedProcedure

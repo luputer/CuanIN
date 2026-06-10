@@ -226,7 +226,7 @@ export async function POST(req: NextRequest) {
   try {
     await db.$transaction(async (tx) => {
       // Atomic Update: Hanya update jika status masih pending
-      const updatedPurchase = await tx.purchase.update({
+      await tx.purchase.update({
         where: { 
           id: purchase.id,
           status: "pending" 
@@ -249,7 +249,7 @@ export async function POST(req: NextRequest) {
         },
       });
     });
-  } catch (error) {
+  } catch {
     // Jika error karena record tidak ditemukan (berarti sudah bukan pending)
     console.log("[Webhook] Purchase already completed or failed to update:", purchase.id);
     return NextResponse.json({ message: "Already processed" });

@@ -63,9 +63,9 @@ export const purchasesRouter = createTRPCRouter({
 
       // Jika ada session, cek otorisasi tambahan
       if (ctx.session?.user) {
-        const isAdmin = ctx.session.user.role === "ADMIN";
-        const isOwner = purchase.product.userId === ctx.session.user.id;
-        const isBuyer = ctx.session.user.email === purchase.buyerEmail;
+        // const isAdmin = ctx.session.user.role === "ADMIN";
+        // const isOwner = purchase.product.userId === ctx.session.user.id;
+        // const isBuyer = ctx.session.user.email === purchase.buyerEmail;
 
         // Otorisasi hanya berlaku jika user login tapi bukan pembeli/pemilik/admin
         // Namun untuk halaman pembayaran, pembeli anonim pun harus bisa lihat.

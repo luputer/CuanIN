@@ -26,7 +26,15 @@ const config = {
         headers: [
           {
             key: "Content-Security-Policy",
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://app.midtrans.com https://js.xendit.co; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'self' https://app.midtrans.com https://js.xendit.co;",
+            value: [
+              "default-src 'self';",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.midtrans.com https://app.midtrans.com https://snap-assets.midtrans.com https://api.midtrans.com https://pay.google.com https://gwk.gopayapi.com https://js.xendit.co;",
+              "style-src 'self' 'unsafe-inline';",
+              "img-src 'self' blob: data: https:;",
+              "font-src 'self' data:;",
+              "connect-src 'self' https: https://*.midtrans.com https://api.midtrans.com https://api.sandbox.midtrans.com;",
+              "frame-src 'self' https://*.midtrans.com https://app.midtrans.com https://js.xendit.co;"
+            ].join(" "),
           },
           {
             key: "X-Frame-Options",

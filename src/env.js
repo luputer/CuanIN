@@ -32,6 +32,8 @@ export const env = createEnv({
     XENDIT_SECRET_KEY: z.string(),
     XENDIT_WEBHOOK_TOKEN: z.string(),
     MIDTRANS_SERVER_KEY: z.string(),
+    MIDTRANS_IS_PRODUCTION: z.enum(["true", "false"]).default("false"),
+
   },
 
   /**
@@ -74,6 +76,7 @@ export const env = createEnv({
     NEXT_PUBLIC_XENDIT_PUBLIC_KEY: process.env.NEXT_PUBLIC_XENDIT_PUBLIC_KEY, // tambah
     NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
     NEXT_PUBLIC_BUCKET_PUBLIC_URL: process.env.NEXT_PUBLIC_BUCKET_PUBLIC_URL,
+    MIDTRANS_IS_PRODUCTION: process.env.MIDTRANS_IS_PRODUCTION,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

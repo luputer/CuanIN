@@ -3,7 +3,7 @@ import { env } from "~/env";
 
 // Initialize Midtrans Snap client
 export const snap = new midtransClient.Snap({
-  isProduction: env.NODE_ENV === "development",
+  isProduction: env.MIDTRANS_IS_PRODUCTION === "true",
   serverKey: env.MIDTRANS_SERVER_KEY ?? "",
   clientKey: env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY ?? "",
 });

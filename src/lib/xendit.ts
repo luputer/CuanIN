@@ -108,7 +108,7 @@ export async function simulatePayoutSuccess(
   payoutId: string,
   referenceId: string,
 ): Promise<void> {
-  const webhookUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://cuanin-dev.vercel.app"}/api/webhooks/xendit`;
+  const webhookUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.cuanin.my.id"}/api/webhooks/xendit`;
 
   const payload = {
     event: "payout.succeeded",

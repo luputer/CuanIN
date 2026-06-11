@@ -123,10 +123,10 @@ export default function CreatorProductsPage() {
 
     return (
         <TooltipProvider>
-            <div className="space-y-6">
+            <div className="w-full max-w-7xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="bg-slate-50">
-                    <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 px-4 mb-2">
+                    <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-2">
                         <Link
                             href={`/admin/kreator/${id}`}
                             className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"

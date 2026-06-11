@@ -226,7 +226,7 @@ export default function PaymentPage() {
       {/* Script Midtrans Snap */}
       <Script
         src={
-          env.NEXT_PUBLIC_APP_URL?.includes("localhost") || env.NEXT_PUBLIC_APP_URL?.includes("sandbox")
+          env.MIDTRANS_IS_PRODUCTION === "false"
             ? "https://app.sandbox.midtrans.com/snap/snap.js"
             : "https://app.midtrans.com/snap/snap.js"
         }

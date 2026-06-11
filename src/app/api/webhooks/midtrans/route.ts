@@ -65,8 +65,9 @@ export async function POST(req: NextRequest) {
     }
 
     const purchaseId = order_id.split("_")[0];
-    if (!purchaseId) {
-      return NextResponse.json({ message: "Invalid order_id format" }, { status: 400 });
+    if (!purchaseId || order_id.startsWith("payment_notif_test")) {
+      console.log("[Midtrans Webhook] Test/Dummy notification detected:", order_id);
+      return NextResponse.json({ message: "Test notification received" }, { status: 200 });
     }
 
     const purchase = await db.purchase.findUnique({

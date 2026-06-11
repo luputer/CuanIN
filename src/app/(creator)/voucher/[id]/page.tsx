@@ -194,17 +194,79 @@ export default function VoucherDetailPage() {
 
     if (isLoading || !voucher) {
         return (
-            <div className="w-full space-y-6">
-                <div className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-48" />
-                    <Skeleton className="h-10 w-32" />
+            <div className="w-full max-w-7xl mx-auto space-y-6">
+                {/* Header Skeleton */}
+                <div className="bg-slate-50">
+                    <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 pt-2 pb-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="flex-1 flex flex-col gap-1 min-w-0">
+                                <Skeleton className="h-4 w-36" />
+                                <div className="flex items-center gap-2">
+                                    <Skeleton className="h-7 w-52" />
+                                    <Skeleton className="h-5 w-14 rounded-full" />
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 sm:gap-3">
+                                <Skeleton className="h-10 w-32 rounded-lg" />
+                                <Skeleton className="h-10 w-10 rounded-lg" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <Skeleton className="h-8 w-64" />
-                <div className="bg-white rounded-xl overflow-hidden border border-slate-200 p-6 space-y-6">
-                    <Skeleton className="h-6 w-40" />
-                    <Skeleton className="h-12 w-full" />
-                    <Skeleton className="h-12 w-full" />
-                    <Skeleton className="h-40 w-full" />
+
+                {/* Form Card Skeleton */}
+                <div className="rounded-xl border border-slate-800 overflow-hidden bg-white">
+                    <div className="flex-1 min-w-0 bg-white rounded-xl px-4 py-2 sm:px-8 sm:py-8">
+                        <Skeleton className="h-6 w-44" />
+                        <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start pt-6">
+                            <div className="flex-1 min-w-0 w-full space-y-0">
+                                <div className="space-y-5">
+                                    <div className="space-y-1">
+                                        <Skeleton className="h-4 w-24" />
+                                        <Skeleton className="h-10 w-full rounded-lg" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Skeleton className="h-4 w-24" />
+                                        <Skeleton className="h-10 w-full rounded-lg" />
+                                    </div>
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                        <div className="space-y-1">
+                                            <Skeleton className="h-4 w-16" />
+                                            <Skeleton className="h-10 w-full rounded-lg" />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <Skeleton className="h-4 w-16" />
+                                            <Skeleton className="h-10 w-full rounded-lg" />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Skeleton className="h-4 w-16" />
+                                        <Skeleton className="h-10 w-full rounded-lg" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Skeleton className="h-4 w-28" />
+                                        <Skeleton className="h-20 w-full rounded-lg" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="shrink-0 w-full lg:w-[400px] space-y-6">
+                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                                    <Skeleton className="h-4 w-28" />
+                                    <Skeleton className="h-10 w-full rounded-lg" />
+                                    <Skeleton className="h-10 w-full rounded-lg" />
+                                </div>
+                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                                    <Skeleton className="h-4 w-20" />
+                                    <Skeleton className="h-5 w-full" />
+                                    <Skeleton className="h-5 w-full" />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-center mt-4 pt-4 border-t border-slate-200 gap-4 w-full">
+                            <Skeleton className="h-4 w-56" />
+                            <Skeleton className="h-10 w-40 rounded-lg" />
+                        </div>
+                    </div>
                 </div>
             </div>
         );

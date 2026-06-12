@@ -4,6 +4,8 @@ import { getAdminBalance } from "~/lib/balance";
 import { withdrawalSchema } from "~/lib/validation";
 import { createPayout as createXenditPayout, simulatePayoutSuccess } from "~/lib/xendit";
 import { WithdrawalStatus } from "../../../../prisma/generated/prisma";
+import { TRPCError } from "@trpc/server";
+import { sendWithdrawalEmail } from "~/lib/email";
 
 const BANK_OPTIONS = {
   bca: { name: "BCA", channelCode: "ID_BCA" },
@@ -217,4 +219,45 @@ export const adminRouter = createTRPCRouter({
         throw new Error(errorMessage);
       }
     }),
+
+  // mark as paid
+  markWithdrawalPaid: adminProcedure
+    .input(z.object({ withdrawalId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const withdrawal = await ctx.db.withdrawal.findUnique({
+        where: { id: input.withdrawalId },
+      });
+
+      if (!withdrawal) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Withdrawal tidak ditemukan" });
+      }
+
+      if (withdrawal.status === WithdrawalStatus.SUCCEEDED) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Withdrawal sudah ditandai berhasil" });
+      }
+
+      const updated = await ctx.db.withdrawal.update({
+        where: { id: input.withdrawalId },
+        data: {
+          status: WithdrawalStatus.SUCCEEDED,
+          paidAt: new Date(), // tambah field ini ke schema Prisma juga
+        },
+      });
+
+      try {
+        await sendWithdrawalEmail({
+          email: withdrawal.email,
+          amount: Number(withdrawal.amount),
+          feeAmount: Number(withdrawal.feeAmount ?? 0),
+          bankName: withdrawal.bankName,
+          accountNumber: withdrawal.accountNumber,
+          accountHolderName: withdrawal.accountHolderName,
+        });
+      } catch (emailError) {
+        console.error("Email gagal dikirim:", emailError);
+      }
+
+      return updated;
+    }),
+
 });

@@ -239,6 +239,7 @@ model Withdrawal {
   status            WithdrawalStatus @default(PENDING)
   referenceId       String           @unique
   xenditPayoutId    String?
+  paidAt            DateTime?
   failureCode       String?
   failureMessage    String?
   createdAt         DateTime         @default(now())

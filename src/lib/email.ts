@@ -4,11 +4,21 @@ import { Resend } from "resend";
 import { render } from "@react-email/render";
 import { ProductAccessEmail } from "~/emails/product-access-email";
 import { WithdrawalSuccessEmail } from "~/emails/withdrawal-success-email";
+import { WithdrawalPendingEmail } from "~/emails/withdrawal-pending-email";
 import { WelcomeEmail } from "~/emails/welcome-email";
 import { VerifyEmail } from "~/emails/verify-email";
 import { ResetPasswordEmail } from "~/emails/reset-password-email";
 
 const resend = new Resend(env.RESEND_API_KEY);
+
+const formatIDR = (val: number) =>
+  new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(val);
+
+// ─── Tipe ─────────────────────────────────────────────────────────────────────
 
 type SendProductEmailParams = {
   buyerEmail: string;
@@ -22,6 +32,29 @@ type SendWelcomeEmailParams = {
   email: string;
   name: string;
 };
+
+type SendWithdrawalEmailParams = {
+  email: string;
+  amount: number;
+  feeAmount: number;
+  bankName: string;
+  accountNumber: string;
+  accountHolderName: string;
+};
+
+type SendVerificationEmailParams = {
+  email: string;
+  name: string;
+  otp: string;
+};
+
+type SendPasswordResetEmailParams = {
+  email: string;
+  name: string;
+  token: string;
+};
+
+// ─── Product Email ────────────────────────────────────────────────────────────
 
 export const sendProductEmail = async ({
   buyerEmail,
@@ -40,41 +73,70 @@ export const sendProductEmail = async ({
   );
 
   try {
-    const textContent = `Terima kasih atas pembelian Anda!\n\nBerikut adalah link untuk mengakses produk Anda:\n${productLink}${notes ? `\n\nCatatan Tambahan:\n${notes}` : ""}\n\nSalam,\nTim CuanIN`;
-
     if (env.NODE_ENV === "development" && !env.RESEND_API_KEY.startsWith("re_")) {
-        console.log("-----------------------------------------");
-        console.log("📧 LOCAL DEV EMAIL SIMULATION");
-        console.log(`To: ${buyerEmail}`);
-        console.log(`Subject: Akses Produk: ${productName}`);
-        console.log(`Link: ${productLink}`);
-        console.log("-----------------------------------------");
-        return { success: true, messageId: "local-dev-id" };
+      console.log("-----------------------------------------");
+      console.log("📧 LOCAL DEV EMAIL SIMULATION");
+      console.log(`To: ${buyerEmail}`);
+      console.log(`Subject: Akses Produk: ${productName}`);
+      console.log(`Link: ${productLink}`);
+      console.log("-----------------------------------------");
+      return { success: true, messageId: "local-dev-id" };
     }
 
     const data = await resend.emails.send({
       from: `"${creatorName}" <${env.SMTP_FROM}>`,
       to: buyerEmail,
       subject: `Akses Produk Anda: ${productName}`,
-      text: textContent,
+      text: `Terima kasih atas pembelian Anda!\n\nLink akses produk:\n${productLink}${notes ? `\n\nCatatan:\n${notes}` : ""}`,
       html,
     });
-    console.log("Email sent via Resend:", data.data?.id);
     return { success: true, messageId: data.data?.id };
   } catch (error) {
-    console.error("Error sending email via Resend:", error);
+    console.error("Error sending product email:", error);
     return { success: false, error };
   }
 };
 
-type SendWithdrawalEmailParams = {
-  email: string;
-  amount: number;
-  feeAmount: number;
-  bankName: string;
-  accountNumber: string;
-  accountHolderName: string;
+// ─── Withdrawal Pending Email (saat creator ajukan penarikan) ─────────────────
+
+export const sendWithdrawalPendingEmail = async ({
+  email,
+  amount,
+  feeAmount,
+  bankName,
+  accountNumber,
+  accountHolderName,
+}: SendWithdrawalEmailParams) => {
+  const transferFee = 4000;
+  const netAmount = amount - feeAmount - transferFee;
+  const formattedNet = formatIDR(netAmount);
+
+  const html = await render(
+    WithdrawalPendingEmail({
+      accountHolderName,
+      accountNumber,
+      bankName,
+      formattedAmount: formattedNet,
+      year: new Date().getFullYear(),
+    })
+  );
+
+  try {
+    const data = await resend.emails.send({
+      from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
+      to: email,
+      subject: `Permintaan Penarikan Diterima – ${formattedNet}`,
+      text: `Halo ${accountHolderName}, permintaan penarikan sebesar ${formattedNet} ke rekening ${bankName} ${accountNumber} telah kami terima dan sedang diproses.`,
+      html,
+    });
+    return { success: true, messageId: data.data?.id };
+  } catch (error) {
+    console.error("Error sending withdrawal pending email:", error);
+    return { success: false, error };
+  }
 };
+
+// ─── Withdrawal Success Email (saat admin konfirmasi sudah transfer) ──────────
 
 export const sendWithdrawalEmail = async ({
   email,
@@ -84,16 +146,8 @@ export const sendWithdrawalEmail = async ({
   accountNumber,
   accountHolderName,
 }: SendWithdrawalEmailParams) => {
-  const xenditFee = 4000;
-  const netAmount = amount - feeAmount - xenditFee;
-
-  const formatIDR = (val: number) =>
-    new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(val);
-
+  const transferFee = 4000;
+  const netAmount = amount - feeAmount - transferFee;
   const formattedNet = formatIDR(netAmount);
 
   const html = await render(
@@ -111,20 +165,19 @@ export const sendWithdrawalEmail = async ({
       from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
       to: email,
       subject: `Penarikan Saldo Berhasil – ${formattedNet}`,
-      text: `Penarikan saldo sebesar ${formatIDR(amount)} (Total diterima: ${formattedNet} setelah biaya) ke rekening ${bankName} ${accountNumber} atas nama ${accountHolderName} telah berhasil diproses.`,
+      text: `Halo ${accountHolderName}, dana sebesar ${formattedNet} telah berhasil dikirim ke rekening ${bankName} ${accountNumber} atas nama ${accountHolderName}.`,
       html,
     });
     return { success: true, messageId: data.data?.id };
   } catch (error) {
-    console.error("Error sending withdrawal email via Resend:", error);
+    console.error("Error sending withdrawal success email:", error);
     return { success: false, error };
   }
 };
 
-export const sendWelcomeEmail = async ({
-  email,
-  name,
-}: SendWelcomeEmailParams) => {
+// ─── Welcome Email ────────────────────────────────────────────────────────────
+
+export const sendWelcomeEmail = async ({ email, name }: SendWelcomeEmailParams) => {
   const html = await render(
     WelcomeEmail({
       name,
@@ -143,28 +196,16 @@ export const sendWelcomeEmail = async ({
     });
     return { success: true, messageId: data.data?.id };
   } catch (error) {
-    console.error("Error sending welcome email via Resend:", error);
+    console.error("Error sending welcome email:", error);
     return { success: false, error };
   }
 };
 
-type SendVerificationEmailParams = {
-  email: string;
-  name: string;
-  otp: string;
-};
+// ─── Verification Email ───────────────────────────────────────────────────────
 
-export const sendVerificationEmail = async ({
-  email,
-  name,
-  otp,
-}: SendVerificationEmailParams) => {
+export const sendVerificationEmail = async ({ email, name, otp }: SendVerificationEmailParams) => {
   const html = await render(
-    VerifyEmail({
-      name,
-      otp,
-      year: new Date().getFullYear(),
-    })
+    VerifyEmail({ name, otp, year: new Date().getFullYear() })
   );
 
   try {
@@ -177,30 +218,18 @@ export const sendVerificationEmail = async ({
     });
     return { success: true, messageId: data.data?.id };
   } catch (error) {
-    console.error("Error sending verification email via Resend:", error);
+    console.error("Error sending verification email:", error);
     return { success: false, error };
   }
 };
 
-type SendPasswordResetEmailParams = {
-  email: string;
-  name: string;
-  token: string;
-};
+// ─── Password Reset Email ─────────────────────────────────────────────────────
 
-export const sendPasswordResetEmail = async ({
-  email,
-  name,
-  token,
-}: SendPasswordResetEmailParams) => {
+export const sendPasswordResetEmail = async ({ email, name, token }: SendPasswordResetEmailParams) => {
   const resetLink = `${env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
 
   const html = await render(
-    ResetPasswordEmail({
-      name,
-      resetUrl: resetLink,
-      year: new Date().getFullYear(),
-    })
+    ResetPasswordEmail({ name, resetUrl: resetLink, year: new Date().getFullYear() })
   );
 
   try {
@@ -213,7 +242,7 @@ export const sendPasswordResetEmail = async ({
     });
     return { success: true, messageId: data.data?.id };
   } catch (error) {
-    console.error("Error sending password reset email via Resend:", error);
+    console.error("Error sending password reset email:", error);
     return { success: false, error };
   }
 };

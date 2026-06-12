@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     let body;
     try {
       body = await req.json();
-    } catch (e) {
+    } catch {
       console.log("[Midtrans Webhook] Received empty or invalid JSON body");
       return NextResponse.json({ message: "Empty body" }, { status: 200 });
     }
@@ -128,7 +128,7 @@ export async function POST(req: NextRequest) {
           notes: purchase.product.notes,
           creatorName: purchase.product.user?.name ?? "Tim CuanIN",
         });
-      } catch (err) {
+    } catch (err) {
         console.error("📧 Failed to send product email (Midtrans):", err);
       }
     }

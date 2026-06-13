@@ -8,7 +8,6 @@ import {
   Section,
   Text,
 } from "react-email";
-
 import {
   container,
   detailBox,
@@ -41,18 +40,19 @@ export function WithdrawalSuccessEmail({
   return (
     <Html>
       <Head />
-      <Preview>Penarikan saldo {formattedAmount} berhasil diproses.</Preview>
+      <Preview>Dana {formattedAmount} sudah dikirim ke rekening kamu.</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Text style={heading}>Penarikan Saldo Berhasil</Text>
+          <Text style={heading}>Dana Berhasil Dikirim ✅</Text>
           <Text style={paragraph}>
             Halo <strong>{accountHolderName}</strong>,
           </Text>
           <Text style={paragraph}>
-            Penarikan saldo kamu telah berhasil diproses. Berikut detailnya:
+            Kabar baik! Admin CuanIN telah mengkonfirmasi transfer dan dana
+            penarikan kamu sudah dikirim ke rekening berikut:
           </Text>
           <Section style={detailBox}>
-            <Text style={detailLabel}>Jumlah</Text>
+            <Text style={detailLabel}>Jumlah Diterima</Text>
             <Text style={successValue}>{formattedAmount}</Text>
             <Text style={detailLabel}>Bank</Text>
             <Text style={detailValue}>{bankName}</Text>
@@ -63,9 +63,11 @@ export function WithdrawalSuccessEmail({
           </Section>
           <Text style={paragraph}>
             Dana akan masuk ke rekening kamu sesuai jam operasional bank.
+            Biasanya proses ini membutuhkan waktu hingga 1x24 jam kerja.
           </Text>
           <Text style={paragraph}>
-            Jika ada pertanyaan, jangan ragu untuk membalas email ini.
+            Jika dana belum masuk setelah 1x24 jam kerja atau ada pertanyaan,
+            jangan ragu untuk membalas email ini.
           </Text>
           <Hr style={hr} />
           <Text style={footer}>© {year} CuanIN. All rights reserved.</Text>

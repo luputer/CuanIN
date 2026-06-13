@@ -13,7 +13,7 @@ interface TransactionStatsCardProps {
     totalTransactions: number;
     transactionsChange: number;
   };
-  onWithdraw: () => void;
+  onWithdraw?: () => void;
   isAdmin?: boolean;
 }
 
@@ -40,12 +40,14 @@ export function TransactionStatsCard({
               formatCurrency(stats.balance)
             )}
           </h2>
-          <ActionButton
-            label="Tarik Saldo"
-            icon={ArrowUpRightIcon}
-            variant="secondary"
-            onClick={onWithdraw}
-          />
+          {onWithdraw && (
+            <ActionButton
+              label="Tarik Saldo"
+              icon={ArrowUpRightIcon}
+              variant="secondary"
+              onClick={onWithdraw}
+            />
+          )}
         </div>
       </div>
 

@@ -4,6 +4,8 @@ import { getAdminBalance } from "~/lib/balance";
 import { withdrawalSchema } from "~/lib/validation";
 import { createPayout as createXenditPayout, simulatePayoutSuccess } from "~/lib/xendit";
 import { WithdrawalStatus } from "../../../../prisma/generated/prisma";
+import { TRPCError } from "@trpc/server";
+import { sendWithdrawalEmail } from "~/lib/email";
 
 const BANK_OPTIONS = {
   bca: { name: "BCA", channelCode: "ID_BCA" },
@@ -217,4 +219,105 @@ export const adminRouter = createTRPCRouter({
         throw new Error(errorMessage);
       }
     }),
+
+  // mark as paid
+  markWithdrawalPaid: adminProcedure
+    .input(z.object({ withdrawalId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const withdrawal = await ctx.db.withdrawal.findUnique({
+        where: { id: input.withdrawalId },
+      });
+
+      if (!withdrawal) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Withdrawal tidak ditemukan" });
+      }
+
+      if (withdrawal.status === WithdrawalStatus.SUCCEEDED) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Withdrawal sudah ditandai berhasil" });
+      }
+
+      const updated = await ctx.db.withdrawal.update({
+        where: { id: input.withdrawalId },
+        data: {
+          status: WithdrawalStatus.SUCCEEDED,
+          paidAt: new Date(), // tambah field ini ke schema Prisma juga
+        },
+      });
+
+      try {
+        await sendWithdrawalEmail({
+          email: withdrawal.email,
+          amount: Number(withdrawal.amount),
+          feeAmount: Number(withdrawal.feeAmount ?? 0),
+          bankName: withdrawal.bankName,
+          accountNumber: withdrawal.accountNumber,
+          accountHolderName: withdrawal.accountHolderName,
+        });
+      } catch (emailError) {
+        console.error("Email gagal dikirim:", emailError);
+      }
+
+      return updated;
+    }),
+
+  // mark as failed / rejected
+  markWithdrawalFailed: adminProcedure
+    .input(z.object({ withdrawalId: z.string(), failureMessage: z.string().optional() }))
+    .mutation(async ({ ctx, input }) => {
+      const withdrawal = await ctx.db.withdrawal.findUnique({
+        where: { id: input.withdrawalId },
+      });
+
+      if (!withdrawal) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Withdrawal tidak ditemukan" });
+      }
+
+      if (withdrawal.status !== WithdrawalStatus.PENDING && withdrawal.status !== WithdrawalStatus.REQUESTED && withdrawal.status !== WithdrawalStatus.ACCEPTED) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Status withdrawal tidak dapat ditolak" });
+      }
+
+      const updated = await ctx.db.$transaction(async (tx) => {
+        // Update status withdrawal
+        const updatedWd = await tx.withdrawal.update({
+          where: { id: input.withdrawalId },
+          data: {
+            status: WithdrawalStatus.FAILED,
+            failureMessage: input.failureMessage ?? "Ditolak oleh Admin",
+          },
+        });
+
+        // Refund saldo kreator (amount sudah termasuk feeAmount saat debet di withdrawalsRouter)
+        // Kita kreditkan kembali ke kreator menggunakan amount
+        await tx.balanceEntry.create({
+          data: {
+            userId: withdrawal.userId,
+            amount: Number(withdrawal.amount), // Refund penuh
+            type: "WITHDRAWAL_FAILED",
+            refId: withdrawal.id,
+            note: `Pengembalian dana penarikan gagal: ${input.failureMessage ?? "Ditolak oleh Admin"}`,
+          },
+        });
+
+        // Jika ada feeAmount, maka fee tersebut gagal masuk ke admin, kita kembalikan saldo admin
+        if (Number(withdrawal.feeAmount ?? 0) > 0) {
+          const admin = await tx.user.findFirst({ where: { role: "ADMIN" } });
+          if (admin) {
+            await tx.balanceEntry.create({
+              data: {
+                userId: admin.id,
+                amount: -Number(withdrawal.feeAmount), // Tarik balik fee dari admin
+                type: "WITHDRAWAL_REVERSED",
+                refId: withdrawal.id,
+                note: `Pembatalan platform fee karena penarikan gagal (${withdrawal.id})`,
+              },
+            });
+          }
+        }
+
+        return updatedWd;
+      });
+
+      return updated;
+    }),
+
 });

@@ -1,15 +1,22 @@
 "use client";
 
 import Link from "next/link";
-
 import { useState } from "react";
-import { EyeIcon } from "@phosphor-icons/react";
+import { CheckCircleIcon, EyeIcon, XCircleIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { api } from "~/trpc/react";
 import { useDebounce } from "~/hooks/use-debounce";
-import { type WithdrawalFormData } from "~/lib/validation";
 import { toast } from "sonner";
+import { Skeleton } from "~/components/ui/skeleton";
+
+import {
+    ConfirmPaidDialog,
+    ConfirmFailedDialog,
+    TransactionDetailDialog,
+    getStatusColor,
+    getStatusLabel,
+} from "~/components/layout/transaction-dialogs";
 import SearchInput from "~/components/ui/search";
 import {
     Table,
@@ -32,12 +39,6 @@ import { DataTableToolbar, SelectFilter } from "~/components/layout/data-table-t
 import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
 import { TableEmptyState, MobileEmptyState } from "~/components/layout/empty-state";
 import { MobilePaginationWrapper } from "~/components/layout/mobile-pagination-wrapper";
-import { StatusBadge } from "~/components/ui/status-badge";
-import {
-    WithdrawalDialog,
-    TransactionDetailDialog,
-    getStatusLabel,
-} from "~/components/layout/transaction-dialogs";
 import { TransactionStatsCard } from "~/components/layout/transaction-stats-card";
 
 export default function AdminTransactionPage() {
@@ -45,9 +46,11 @@ export default function AdminTransactionPage() {
     const [limit, setLimit] = useState(10);
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("ALL");
-    const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
     const [selectedTx, setSelectedTx] = useState<any>(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
+    const [confirmTx, setConfirmTx] = useState<any>(null);
+    const [isConfirmPaidOpen, setIsConfirmPaidOpen] = useState(false);
+    const [isConfirmFailOpen, setIsConfirmFailOpen] = useState(false);
 
     const debouncedSearch = useDebounce(search, 500);
     const utils = api.useUtils();
@@ -73,20 +76,28 @@ export default function AdminTransactionPage() {
     const totalPages = data?.totalPages ?? 0;
     const totalItems = data?.total ?? 0;
 
-    const createWithdrawal = api.withdrawals.create.useMutation({
+    const markPaid = api.admin.markWithdrawalPaid.useMutation({
         onSuccess: async () => {
-            toast.success("Penarikan saldo berhasil diproses");
-            setIsWithdrawOpen(false);
+            toast.success("Withdrawal ditandai sudah ditransfer");
+            setIsConfirmPaidOpen(false);
+            setConfirmTx(null);
             await utils.admin.getWithdrawals.invalidate();
         },
-        onError: (error) => {
-            toast.error(error.message);
-        },
+        onError: (err) => toast.error(err.message),
     });
 
-    const handleWithdrawalSubmit = (data: WithdrawalFormData) => {
-        createWithdrawal.mutate(data);
-    };
+    const markFailed = api.admin.markWithdrawalFailed.useMutation({
+        onSuccess: async () => {
+            toast.success("Withdrawal ditandai gagal, saldo dikembalikan");
+            setIsConfirmFailOpen(false);
+            setConfirmTx(null);
+            await utils.admin.getWithdrawals.invalidate();
+        },
+        onError: (err) => toast.error(err.message),
+    });
+
+    const isPending = (status: string) =>
+        ["PENDING", "REQUESTED", "ACCEPTED"].includes(status.toUpperCase());
 
     return (
         <TooltipProvider>
@@ -94,17 +105,16 @@ export default function AdminTransactionPage() {
                 {/* Header */}
                 <PageHeader
                     title="Daftar Transaksi"
-                    description="Lihat riwayat penarikan kreator dan tarik pendapatan admin."
+                    description="Lihat dan kelola permintaan penarikan saldo dari kreator."
                 />
 
                 {/* Stats Card */}
-        <TransactionStatsCard
-          isLoading={isLoading}
-          data={data}
-          stats={stats}
-          onWithdraw={() => setIsWithdrawOpen(true)}
-          isAdmin={true}
-        />
+                <TransactionStatsCard
+                    isLoading={isLoading}
+                    data={data}
+                    stats={stats}
+                    isAdmin={true}
+                />
 
                 {/* Toolbar */}
                 <DataTableToolbar
@@ -113,7 +123,7 @@ export default function AdminTransactionPage() {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Cari ID, Nama Kreator, atau Email"
-                            className="w-full"
+                            className="w-full sm:flex-1 min-w-[280px]"
                         />
                     }
                     actions={
@@ -131,7 +141,7 @@ export default function AdminTransactionPage() {
                     }
                 />
 
-                {/* Table (Desktop/Tablet) */}
+                {/* Table Desktop */}
                 <div className="hidden sm:block w-full pb-2">
                     <Table
                         pagination={
@@ -149,19 +159,18 @@ export default function AdminTransactionPage() {
                             <TableRow>
                                 <TableHead className="w-[5%] text-center">No</TableHead>
                                 <TableHead className="w-[8%] whitespace-nowrap">ID</TableHead>
-                                <TableHead className="w-[12%] whitespace-nowrap">Akun</TableHead>
-                                <TableHead className="w-[12%] whitespace-nowrap">Nominal</TableHead>
-                                <TableHead className="w-[7%] whitespace-nowrap">Tipe</TableHead>
-                                <TableHead className="w-[10%] whitespace-nowrap">Metode</TableHead>
-                                <TableHead className="w-[14%] whitespace-nowrap">No. Rek</TableHead>
+                                <TableHead className="w-[12%] whitespace-nowrap">Kreator</TableHead>
+                                <TableHead className="w-[12%] whitespace-nowrap">Nominal Bersih</TableHead>
+                                <TableHead className="w-[10%] whitespace-nowrap">Bank</TableHead>
+                                <TableHead className="w-[14%] whitespace-nowrap">No. Rek / Nama</TableHead>
                                 <TableHead className="w-[14%] whitespace-nowrap">Tanggal</TableHead>
                                 <TableHead className="w-[12%] text-center whitespace-nowrap">Status</TableHead>
-                                <TableHead className="w-[6%] text-right whitespace-nowrap">Aksi</TableHead>
+                                <TableHead className="w-[8%] text-right whitespace-nowrap">Aksi</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {isLoading && !data ? (
-                                <DataTableBodySkeleton columns={10} rows={5} />
+                                <DataTableBodySkeleton columns={9} rows={5} />
                             ) : transactions.length === 0 ? (
                                 <TableEmptyState
                                     colSpan={10}
@@ -169,9 +178,8 @@ export default function AdminTransactionPage() {
                                 />
                             ) : (
                                 transactions.map((item: any, index: number) => {
-                                    const isAdmin = item.user?.role === "ADMIN";
-                                    const typeLabel = isAdmin ? "Tarik" : "Masuk";
-                                    const nominal = isAdmin ? Number(item.amount) : Number(item.feeAmount ?? 0);
+                                    // nominal bersih yang diterima kreator = amount - feeAmount - 4000
+                                    const nominalBersih = Number(item.amount) - Number(item.feeAmount ?? 0) - 4000;
 
                                     return (
                                         <TableRow key={item.id} data-type="body">
@@ -183,7 +191,7 @@ export default function AdminTransactionPage() {
                                             <TableCell>
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
-                                                        <div className="flex min-h-[48px] max-w-[80px] items-center truncate text-slate-400">
+                                                        <div className="flex min-h-[48px] max-w-[80px] items-center truncate text-slate-400 font-mono text-xs">
                                                             {item.id}
                                                         </div>
                                                     </TooltipTrigger>
@@ -203,21 +211,12 @@ export default function AdminTransactionPage() {
                                                             )}
                                                         </div>
                                                     </TooltipTrigger>
-                                                    <TooltipContent>
-                                                        {item.user?.name || item.user?.email || "-"}
-                                                    </TooltipContent>
+                                                    <TooltipContent>{item.user?.name || item.user?.email || "-"}</TooltipContent>
                                                 </Tooltip>
                                             </TableCell>
                                             <TableCell className="whitespace-nowrap">
-                                                <div className="flex min-h-[48px] items-center">
-                                                    <span className={`font-semibold ${isAdmin ? "text-slate-900" : "text-green-600"}`}>
-                                                        {!isAdmin && "+"} {formatCurrency(nominal)}
-                                                    </span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="whitespace-nowrap">
-                                                <div className="flex min-h-[48px] items-center">
-                                                    {typeLabel}
+                                                <div className="flex min-h-[48px] items-center font-semibold text-slate-800">
+                                                    {formatCurrency(nominalBersih)}
                                                 </div>
                                             </TableCell>
                                             <TableCell>
@@ -226,30 +225,54 @@ export default function AdminTransactionPage() {
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                <div className="flex min-h-[48px] max-w-[180px] items-center truncate">
-                                                    {item.accountNumber}
+                                                <div className="flex flex-col justify-center min-h-[48px] gap-0.5">
+                                                    <span className="text-slate-800 font-medium text-sm">{item.accountNumber}</span>
+                                                    <span className="text-slate-400 text-xs">{item.accountHolderName ?? "-"}</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell className="whitespace-nowrap">
-                                                <div className="flex min-h-[48px] items-center">
-                                                    {format(new Date(item.createdAt), "dd MMM yyyy HH:mm", {
-                                                        locale: id,
-                                                    })}
+                                                <div className="flex min-h-[48px] items-center text-slate-600">
+                                                    {format(new Date(item.createdAt), "dd MMM yyyy HH:mm", { locale: id })}
                                                 </div>
                                             </TableCell>
                                             <TableCell className="whitespace-nowrap">
                                                 <div className="flex min-h-[48px] items-center justify-center">
-                                                    <StatusBadge status={item.status} className="px-4 py-1" />
+                                                    <span className={`px-3 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.status)}`}>
+                                                        {getStatusLabel(item.status)}
+                                                    </span>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="px-6 py-4 text-right">
-                                                <div className="flex justify-end items-center gap-3">
+                                            <TableCell className="px-4 py-4 text-right">
+                                                <div className="flex justify-end items-center gap-2">
+                                                    {isPending(item.status) && (
+                                                        <>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <button
+                                                                        onClick={() => { setConfirmTx(item); setIsConfirmPaidOpen(true); }}
+                                                                        className="p-1.5 rounded-md text-green-600 border border-slate-200 hover:bg-green-50 transition"
+                                                                    >
+                                                                        <CheckCircleIcon className="w-4 h-4" weight="fill" />
+                                                                    </button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>Sudah Ditransfer</TooltipContent>
+                                                            </Tooltip>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <button
+                                                                        onClick={() => { setConfirmTx(item); setIsConfirmFailOpen(true); }}
+                                                                        className="p-1.5 rounded-md text-red-500 border border-slate-200 hover:bg-red-50 transition"
+                                                                    >
+                                                                        <XCircleIcon className="w-4 h-4" weight="fill" />
+                                                                    </button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>Tolak / Gagalkan</TooltipContent>
+                                                            </Tooltip>
+                                                        </>
+                                                    )}
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
-                                                            <button onClick={() => {
-                                                                setSelectedTx(item);
-                                                                setIsDetailOpen(true);
-                                                            }}>
+                                                            <button onClick={() => { setSelectedTx(item); setIsDetailOpen(true); }}>
                                                                 <EyeIcon className="w-[22px] h-[22px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
                                                             </button>
                                                         </TooltipTrigger>
@@ -265,7 +288,7 @@ export default function AdminTransactionPage() {
                     </Table>
                 </div>
 
-                {/* Mobile Cards (Only visible on mobile) */}
+                {/* Mobile Cards */}
                 <div className="space-y-4 sm:hidden">
                     {isLoading && !data ? (
                         <DataTableMobileSkeleton rows={3} />
@@ -274,102 +297,116 @@ export default function AdminTransactionPage() {
                     ) : (
                         transactions.map((item: any, index: number) => {
                             const rowNumber = (page - 1) * limit + index + 1;
-                            const isAdmin = item.user?.role === "ADMIN";
-                            const typeLabel = isAdmin ? "Tarik" : "Masuk";
-                            const nominal = isAdmin ? Number(item.amount) : Number(item.feeAmount ?? 0);
+                            const nominalBersih = Number(item.amount) - Number(item.feeAmount ?? 0) - 4000;
 
                             return (
                                 <div key={item.id} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3">
                                     <div className="flex justify-between items-center border-b border-slate-100 pb-2">
                                         <span className="text-xs font-semibold text-slate-400"># {rowNumber}</span>
-                                        <StatusBadge status={item.status} />
+                                        <span className={`rounded-full px-3 py-0.5 text-xs font-medium ${getStatusColor(item.status)}`}>
+                                            {getStatusLabel(item.status)}
+                                        </span>
                                     </div>
 
                                     <div className="space-y-2 flex-1 min-w-0">
-                                        <div className="font-semibold text-slate-800 break-words leading-normal flex items-center justify-between">
-                                            <span>{item.user?.name || item.user?.email || "-"}</span>
-                                            <span className={`text-[12px] font-medium ${isAdmin ? "text-orange-600" : "text-green-600"}`}>
-                                                {typeLabel}
-                                            </span>
+                                        <div className="font-semibold text-slate-800">
+                                            {item.user?.name || item.user?.email || "-"}
                                         </div>
-
                                         <div className="text-xs text-slate-500">
-                                            <span className="font-medium text-slate-400">ID Transaksi: </span>
+                                            <span className="font-medium text-slate-400">ID: </span>
                                             <span className="font-mono text-[11px] text-slate-600">{item.id}</span>
                                         </div>
-
                                         <div className="text-xs text-slate-500">
-                                            <span className="font-medium text-slate-400">Metode: </span>
+                                            <span className="font-medium text-slate-400">Bank: </span>
                                             <span className="font-medium text-slate-700">{item.bankName ?? "-"}</span>
                                         </div>
-
                                         <div className="text-xs text-slate-500">
                                             <span className="font-medium text-slate-400">No. Rek: </span>
-                                            <span className="font-medium text-slate-700">{item.accountNumber}</span>
+                                            <span>{item.accountNumber}</span>
                                         </div>
-
+                                        <div className="text-xs text-slate-500">
+                                            <span className="font-medium text-slate-400">Atas Nama: </span>
+                                            <span>{item.accountHolderName ?? "-"}</span>
+                                        </div>
                                         <div className="text-xs text-slate-500">
                                             <span className="font-medium text-slate-400">Tanggal: </span>
-                                            <span className="text-slate-600">
-                                                {format(new Date(item.createdAt), "dd MMM yyyy HH:mm", {
-                                                    locale: id,
-                                                })}
-                                            </span>
+                                            <span>{format(new Date(item.createdAt), "dd MMM yyyy HH:mm", { locale: id })}</span>
                                         </div>
 
-                                        <div className="flex items-center justify-between pt-1 border-t border-slate-50 mt-2">
+                                        <div className="flex items-center justify-between pt-2 border-t border-slate-100 mt-1">
                                             <div>
-                                                <span className="font-medium text-slate-400">Nominal: </span>
-                                                <span className={`font-bold text-sm ${isAdmin ? "text-slate-900" : "text-green-600"}`}>
-                                                    {!isAdmin && "+"} {formatCurrency(nominal)}
-                                                </span>
+                                                <span className="font-medium text-slate-400 text-xs">Nominal Bersih: </span>
+                                                <span className="font-bold text-sm text-slate-800">{formatCurrency(nominalBersih)}</span>
                                             </div>
-                                            <button
-                                                onClick={() => {
-                                                    setSelectedTx(item);
-                                                    setIsDetailOpen(true);
-                                                }}
-                                                className="p-1.5 rounded-md text-cyan-600 border border-slate-200 hover:bg-slate-50 transition"
-                                            >
-                                                <EyeIcon className="w-4 h-4" />
-                                            </button>
+                                            <div className="flex items-center gap-2">
+                                                {isPending(item.status) && (
+                                                    <>
+                                                        <button
+                                                            onClick={() => { setConfirmTx(item); setIsConfirmPaidOpen(true); }}
+                                                            className="p-1.5 rounded-md text-green-600 border border-slate-200 hover:bg-green-50 transition"
+                                                        >
+                                                            <CheckCircleIcon className="w-4 h-4" weight="fill" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => { setConfirmTx(item); setIsConfirmFailOpen(true); }}
+                                                            className="p-1.5 rounded-md text-red-500 border border-slate-200 hover:bg-red-50 transition"
+                                                        >
+                                                            <XCircleIcon className="w-4 h-4" weight="fill" />
+                                                        </button>
+                                                    </>
+                                                )}
+                                                <button
+                                                    onClick={() => { setSelectedTx(item); setIsDetailOpen(true); }}
+                                                    className="p-1.5 rounded-md text-cyan-600 border border-slate-200 hover:bg-slate-50 transition"
+                                                >
+                                                    <EyeIcon className="w-[18px] h-[18px]" />
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             );
                         })
                     )}
-
-                    {/* Mobile Pagination */}
-                    {transactions && transactions.length > 0 && (
-                        <MobilePaginationWrapper>
-                            <TablePagination
-                                page={page}
-                                totalPages={totalPages}
-                                limit={limit}
-                                total={totalItems}
-                                onPageChange={setPage}
-                                onLimitChange={setLimit}
-                            />
-                        </MobilePaginationWrapper>
-                    )}
                 </div>
+
+                {transactions.length > 0 && (
+                    <MobilePaginationWrapper>
+                        <TablePagination
+                            page={page}
+                            totalPages={totalPages}
+                            limit={limit}
+                            total={totalItems}
+                            onPageChange={setPage}
+                            onLimitChange={setLimit}
+                        />
+                    </MobilePaginationWrapper>
+                )}
+
+                {/* Dialogs */}
+                <ConfirmPaidDialog
+                    open={isConfirmPaidOpen}
+                    onOpenChange={setIsConfirmPaidOpen}
+                    confirmTx={confirmTx}
+                    onConfirm={() => markPaid.mutate({ withdrawalId: confirmTx?.id })}
+                    isPending={markPaid.isPending}
+                />
+
+                <ConfirmFailedDialog
+                    open={isConfirmFailOpen}
+                    onOpenChange={setIsConfirmFailOpen}
+                    confirmTx={confirmTx}
+                    onConfirm={() => markFailed.mutate({ withdrawalId: confirmTx?.id })}
+                    isPending={markFailed.isPending}
+                />
+
+                <TransactionDetailDialog
+                    open={isDetailOpen}
+                    onOpenChange={setIsDetailOpen}
+                    selectedTx={selectedTx}
+                    viewMode="admin"
+                />
             </div>
-
-            <WithdrawalDialog
-                open={isWithdrawOpen}
-                onOpenChange={setIsWithdrawOpen}
-                onSubmit={handleWithdrawalSubmit}
-                isPending={createWithdrawal.isPending}
-                isAdmin={true}
-            />
-
-            <TransactionDetailDialog
-                open={isDetailOpen}
-                onOpenChange={setIsDetailOpen}
-                selectedTx={selectedTx}
-                viewMode="admin"
-            />
         </TooltipProvider>
     );
 }

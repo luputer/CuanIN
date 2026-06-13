@@ -86,7 +86,7 @@ export default function CreatorProductsPage() {
 
     return (
         <TooltipProvider>
-            <div className="space-y-6">
+            <div className="w-full max-w-7xl mx-auto space-y-6">
                 {/* Header */}
                 <PageHeader
                     title="Daftar Produk"

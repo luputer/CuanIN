@@ -299,13 +299,13 @@ export function TransactionDetailDialog({
                         </DialogClose>
                     </DialogHeader>
                     <DialogBody className="px-4 py-6 max-w-2xl mx-auto w-full space-y-6">
-                        <div className="flex flex-col items-start justify-center space-y-1 bg-slate-100 p-4 rounded-xl border border-slate-300">
+                        <div className="flex flex-col items-start space-y-1 bg-slate-100 p-5 rounded-xl border border-slate-300">
                             <span className="text-slate-500 text-[11px] uppercase tracking-wider font-semibold">
-                                {selectedTx.user?.role === "ADMIN" ? "Total Penarikan" : "Total Transaksi"}
+                                Nominal Bersih Diterima Kreator
                             </span>
                             <div className="flex items-center gap-3 pt-1">
                                 <span className="text-2xl font-semibold text-slate-800 tracking-tight">
-                                    {formatCurrency(Number(selectedTx.amount))}
+                                    {formatCurrency(Number(selectedTx.amount) - Number(selectedTx.feeAmount ?? 0) - 4000)}
                                 </span>
                                 <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusColor(selectedTx.status)}`}>
                                     {getStatusLabel(selectedTx.status)}
@@ -316,10 +316,10 @@ export function TransactionDetailDialog({
                         <div className="grid grid-cols-2 gap-4 px-2">
                             <div className="space-y-1">
                                 <span className="text-slate-400 text-[11px] uppercase tracking-wider font-semibold">ID Transaksi</span>
-                                <p className="font-medium text-slate-800 text-sm truncate" title={selectedTx.id}>{selectedTx.id}</p>
+                                <p className="font-medium text-slate-800 text-sm truncate font-mono" title={selectedTx.id}>{selectedTx.id}</p>
                             </div>
                             <div className="space-y-1 text-right">
-                                <span className="text-slate-400 text-[11px] uppercase tracking-wider font-semibold">Tanggal & Waktu</span>
+                                <span className="text-slate-400 text-[11px] uppercase tracking-wider font-semibold">Tanggal</span>
                                 <p className="font-medium text-slate-800 text-sm">
                                     {format(new Date(selectedTx.createdAt), "dd MMM yyyy, HH:mm", { locale: idLocale })}
                                 </p>
@@ -329,76 +329,47 @@ export function TransactionDetailDialog({
                         <hr className="border-slate-100 mx-2" />
 
                         <div className="space-y-3 px-2">
-                            <h4 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Informasi Akun & Penerima</h4>
-                            <div className="flex justify-between items-center text-sm">
-                                <span className="text-slate-500">Tipe Transaksi</span>
-                                <span className="font-medium text-slate-800">{selectedTx.user?.role === "ADMIN" ? "Tarik Saldo" : "Masuk"}</span>
-                            </div>
-                            <div className="flex justify-between items-center text-sm">
-                                <span className="text-slate-500">Akun</span>
+                            <h4 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Informasi Penerima</h4>
+                            <div className="flex justify-between text-sm">
+                                <span className="text-slate-500">Kreator</span>
                                 <span className="font-medium text-slate-800">{selectedTx.user?.name || selectedTx.user?.email || "-"}</span>
                             </div>
-                            <div className="flex justify-between items-center text-sm">
-                                <span className="text-slate-500">Metode / Bank</span>
+                            <div className="flex justify-between text-sm">
+                                <span className="text-slate-500">Bank</span>
                                 <span className="font-medium text-slate-800">{selectedTx.bankName ?? "-"}</span>
                             </div>
-                            <div className="flex justify-between items-center text-sm">
+                            <div className="flex justify-between text-sm">
                                 <span className="text-slate-500">No. Rekening</span>
                                 <span className="font-medium text-slate-800">{selectedTx.accountNumber}</span>
                             </div>
-                            {selectedTx.accountHolderName && (
-                                <div className="flex justify-between items-center text-sm">
-                                    <span className="text-slate-500">Atas Nama</span>
-                                    <span className="font-medium text-slate-800">{selectedTx.accountHolderName}</span>
-                                </div>
-                            )}
+                            <div className="flex justify-between text-sm">
+                                <span className="text-slate-500">Atas Nama</span>
+                                <span className="font-medium text-slate-800">{selectedTx.accountHolderName ?? "-"}</span>
+                            </div>
                         </div>
 
                         <hr className="border-slate-100 mx-2" />
 
                         <div className="space-y-3 px-2">
-                            <h4 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Rincian Transaksi</h4>
-                            {selectedTx.user?.role === "ADMIN" ? (
-                                <>
-                                    <div className="flex justify-between text-sm text-slate-600">
-                                        <span>Total Penarikan</span>
-                                        <span className="font-medium text-slate-800">{formatCurrency(Number(selectedTx.amount))}</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm text-slate-600">
-                                        <span>Biaya Transfer Bank</span>
-                                        <span className="font-medium text-slate-800">-Rp4.000</span>
-                                    </div>
-                                    <div className="flex justify-between border-t border-dashed border-slate-200 pt-3 mt-1 font-bold text-[15px] text-slate-900">
-                                        <span>Total Diterima</span>
-                                        <span className="text-cyan-600">{formatCurrency(Number(selectedTx.amount) - 4000)}</span>
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="flex justify-between text-sm text-slate-600">
-                                        <span>Total Transaksi</span>
-                                        <span className="font-medium text-slate-800">{formatCurrency(Number(selectedTx.amount))}</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm text-slate-600">
-                                        <span>Biaya Transfer Bank</span>
-                                        <span className="font-medium text-slate-800">-Rp4.000</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm text-slate-600">
-                                        <span>Fee Platform</span>
-                                        <span className="font-medium text-green-600">+{formatCurrency(Number(selectedTx.feeAmount ?? 0))}</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm text-slate-600">
-                                        <span>Biaya Transfer Bank</span>
-                                        <span className="font-medium text-slate-500">Rp4.000</span>
-                                    </div>
-                                    <div className="flex justify-between border-t border-dashed border-slate-200 pt-3 mt-1 font-bold text-[15px] text-slate-900">
-                                        <span>Total Diterima</span>
-                                        <span className="text-cyan-600">
-                                            {formatCurrency(Number(selectedTx.amount) - Number(selectedTx.feeAmount ?? 0) - 4000)}
-                                        </span>
-                                    </div>
-                                </>
-                            )}
+                            <h4 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Rincian</h4>
+                            <div className="flex justify-between text-sm text-slate-600">
+                                <span>Total Dipotong Saldo</span>
+                                <span className="font-medium text-slate-800">{formatCurrency(Number(selectedTx.amount))}</span>
+                            </div>
+                            <div className="flex justify-between text-sm text-slate-600">
+                                <span>Fee Platform (2%)</span>
+                                <span className="font-medium text-green-600">+{formatCurrency(Number(selectedTx.feeAmount ?? 0))}</span>
+                            </div>
+                            <div className="flex justify-between text-sm text-slate-600">
+                                <span>Biaya Transfer Bank</span>
+                                <span className="font-medium text-slate-500">Rp4.000</span>
+                            </div>
+                            <div className="flex justify-between border-t border-dashed border-slate-200 pt-3 font-bold text-[15px] text-slate-900">
+                                <span>Nominal Dikirim ke Kreator</span>
+                                <span className="text-cyan-600">
+                                    {formatCurrency(Number(selectedTx.amount) - Number(selectedTx.feeAmount ?? 0) - 4000)}
+                                </span>
+                            </div>
                         </div>
                     </DialogBody>
                 </DialogContent>
@@ -515,6 +486,130 @@ export function TransactionDetailDialog({
                         )}
                     </div>
                 </DialogBody>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+// ─── Confirm Dialogs ───────────────────────────────────────────────────
+
+export interface ConfirmDialogProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    confirmTx: any;
+    onConfirm: () => void;
+    isPending: boolean;
+}
+
+export function ConfirmPaidDialog({ open, onOpenChange, confirmTx, onConfirm, isPending }: ConfirmDialogProps) {
+    if (!confirmTx) return null;
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent size="default" showCloseButton={false}>
+                <DialogHeader className="flex flex-row justify-between items-center text-left pr-4 pl-6 py-4">
+                    <DialogTitle className="text-lg">Konfirmasi Transfer</DialogTitle>
+                    <DialogClose asChild>
+                        <button className="text-slate-400 hover:text-cyan-600 transition-colors p-1 cursor-pointer">
+                            <XIcon size={20} weight="bold" />
+                        </button>
+                    </DialogClose>
+                </DialogHeader>
+                <DialogBody className="px-6 py-4 space-y-4">
+                    <div className="rounded-xl bg-green-50 border border-green-200 p-4 space-y-2">
+                        <p className="text-sm font-semibold text-green-700">Tandai sebagai sudah ditransfer?</p>
+                        <p className="text-xs text-green-600">Pastikan dana sudah benar-benar dikirim ke rekening kreator sebelum konfirmasi.</p>
+                    </div>
+                    <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 space-y-2 text-sm">
+                        <div className="flex justify-between">
+                            <span className="text-slate-500">Kreator</span>
+                            <span className="font-medium text-slate-800">{confirmTx.user?.name || confirmTx.user?.email || "-"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-slate-500">Bank</span>
+                            <span className="font-medium text-slate-800">{confirmTx.bankName}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-slate-500">No. Rekening</span>
+                            <span className="font-medium text-slate-800">{confirmTx.accountNumber}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-slate-500">Atas Nama</span>
+                            <span className="font-medium text-slate-800">{confirmTx.accountHolderName ?? "-"}</span>
+                        </div>
+                        <div className="flex justify-between border-t border-slate-200 pt-2 mt-1">
+                            <span className="text-slate-500 font-semibold">Nominal Dikirim</span>
+                            <span className="font-bold text-slate-900">
+                                {formatCurrency(Number(confirmTx.amount) - Number(confirmTx.feeAmount ?? 0) - 4000)}
+                            </span>
+                        </div>
+                    </div>
+                </DialogBody>
+                <DialogFooter className="px-6 py-4 border-t border-slate-100 bg-slate-50 rounded-b-lg flex justify-end gap-3">
+                    <DialogClose asChild>
+                        <ButtonCancel label="Batal" className="text-sm h-10" />
+                    </DialogClose>
+                    <ButtonSave
+                        type="button"
+                        isLoading={isPending}
+                        label="Ya, Sudah Ditransfer"
+                        icon={null}
+                        className="text-sm h-10 bg-green-600 hover:bg-green-700"
+                        onClick={onConfirm}
+                    />
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+export function ConfirmFailedDialog({ open, onOpenChange, confirmTx, onConfirm, isPending }: ConfirmDialogProps) {
+    if (!confirmTx) return null;
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent size="default" showCloseButton={false}>
+                <DialogHeader className="flex flex-row justify-between items-center text-left pr-4 pl-6 py-4">
+                    <DialogTitle className="text-lg">Tolak Penarikan</DialogTitle>
+                    <DialogClose asChild>
+                        <button className="text-slate-400 hover:text-cyan-600 transition-colors p-1 cursor-pointer">
+                            <XIcon size={20} weight="bold" />
+                        </button>
+                    </DialogClose>
+                </DialogHeader>
+                <DialogBody className="px-6 py-4 space-y-4">
+                    <div className="rounded-xl bg-red-50 border border-red-200 p-4 space-y-2">
+                        <p className="text-sm font-semibold text-red-700">Tolak permintaan penarikan ini?</p>
+                        <p className="text-xs text-red-500">Saldo kreator akan dikembalikan secara otomatis.</p>
+                    </div>
+                    <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 space-y-2 text-sm">
+                        <div className="flex justify-between">
+                            <span className="text-slate-500">Kreator</span>
+                            <span className="font-medium text-slate-800">{confirmTx.user?.name || confirmTx.user?.email || "-"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-slate-500">Bank</span>
+                            <span className="font-medium text-slate-800">{confirmTx.bankName}</span>
+                        </div>
+                        <div className="flex justify-between border-t border-slate-200 pt-2 mt-1">
+                            <span className="text-slate-500 font-semibold">Saldo Dikembalikan</span>
+                            <span className="font-bold text-slate-900">
+                                {formatCurrency(Number(confirmTx.amount))}
+                            </span>
+                        </div>
+                    </div>
+                </DialogBody>
+                <DialogFooter className="px-6 py-4 border-t border-slate-100 bg-slate-50 rounded-b-lg flex justify-end gap-3">
+                    <DialogClose asChild>
+                        <ButtonCancel label="Batal" className="text-sm h-10" />
+                    </DialogClose>
+                    <ButtonSave
+                        type="button"
+                        isLoading={isPending}
+                        label="Ya, Tolak & Kembalikan Saldo"
+                        icon={null}
+                        className="text-sm h-10 bg-red-600 hover:bg-red-700"
+                        onClick={onConfirm}
+                    />
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

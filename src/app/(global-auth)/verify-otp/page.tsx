@@ -1,12 +1,16 @@
 "use client";
 
+import { type Metadata } from "next";
 import { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { OTPInput, type SlotProps } from "input-otp";
 import { EnvelopeIcon, ArrowClockwiseIcon } from "@phosphor-icons/react";
-import HeaderLandingPage from "~/components/layout/headerlandingpage";
-import Footer from "~/components/layout/footer";
+
+export const metadata: Metadata = {
+  title: "Verifikasi OTP - CuanIN",
+  description: "Verifikasi email Anda dengan kode OTP.",
+};
 
 function Slot(props: SlotProps) {
   return (
@@ -92,82 +96,76 @@ function VerifyOtpInner() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <HeaderLandingPage buttonText="Login" buttonHref="/sign-in" />
-      <main className="flex flex-1 items-center justify-center px-4 py-12">
-        <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-6 shadow-[0px_4px_0px_rgba(29,41,61)] sm:p-10 text-center">
-          <div className="mb-6 flex justify-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-cyan-100 text-cyan-600">
-              <EnvelopeIcon size={40} weight="fill" />
-            </div>
-          </div>
-
-          <h1 className="mb-2 text-2xl font-semibold text-slate-800">Verifikasi OTP</h1>
-          <p className="mb-8 text-slate-600">
-            Masukkan 6 digit kode yang telah kami kirimkan ke email <br />
-            <span className="font-semibold text-slate-800">{email}</span>
-          </p>
-
-          <div className="flex justify-center mb-6">
-            <OTPInput
-              maxLength={6}
-              value={otp}
-              onChange={setOtp}
-              disabled={verifyMutation.isPending}
-              containerClassName="group flex items-center gap-2"
-              render={({ slots }) => (
-                <>
-                  {slots.map((slot, idx) => (
-                    <Slot key={idx} {...slot} />
-                  ))}
-                </>
-              )}
-            />
-          </div>
-
-          {error && (
-            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 py-2 text-sm text-red-600">
-              {error}
-            </div>
-          )}
-
-          <div className="space-y-4">
-            <button
-              onClick={handleVerify}
-              disabled={otp.length !== 6 || verifyMutation.isPending}
-              className="w-full rounded-lg border-2 border-slate-800 bg-yellow-200 py-3 text-lg font-semibold text-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {verifyMutation.isPending ? "Memverifikasi..." : "Verifikasi Akun"}
-            </button>
-
-            <div className="text-sm text-slate-500">
-              Tidak menerima kode?{" "}
-              {resendTimer > 0 ? (
-                <span className="font-medium text-cyan-600">
-                  Kirim ulang dalam {resendTimer}s
-                </span>
-              ) : (
-                <button
-                  onClick={handleResend}
-                  disabled={resendMutation.isPending}
-                  className="font-medium text-cyan-600 hover:text-cyan-800 hover:underline inline-flex items-center gap-1"
-                >
-                  <ArrowClockwiseIcon className={resendMutation.isPending ? "animate-spin" : ""} />
-                  Kirim Ulang Kode
-                </button>
-              )}
-            </div>
-          </div>
+    <div className="text-center">
+      <div className="mb-6 flex justify-center">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-cyan-100 text-cyan-600">
+          <EnvelopeIcon size={40} weight="fill" />
         </div>
-      </main>
-      <Footer />
+      </div>
+
+      <h1 className="mb-2 text-2xl font-semibold text-slate-800">Verifikasi OTP</h1>
+      <p className="mb-8 text-slate-600">
+        Masukkan 6 digit kode yang telah kami kirimkan ke email <br />
+        <span className="font-semibold text-slate-800">{email}</span>
+      </p>
+
+      <div className="flex justify-center mb-6">
+        <OTPInput
+          maxLength={6}
+          value={otp}
+          onChange={setOtp}
+          disabled={verifyMutation.isPending}
+          containerClassName="group flex items-center gap-2"
+          render={({ slots }) => (
+            <>
+              {slots.map((slot, idx) => (
+                <Slot key={idx} {...slot} />
+              ))}
+            </>
+          )}
+        />
+      </div>
+
+      {error && (
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 py-2 text-sm text-red-600">
+          {error}
+        </div>
+      )}
+
+      <div className="space-y-4">
+        <button
+          onClick={handleVerify}
+          disabled={otp.length !== 6 || verifyMutation.isPending}
+          className="w-full rounded-lg border-2 border-slate-800 bg-yellow-200 py-3 text-lg font-semibold text-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {verifyMutation.isPending ? "Memverifikasi..." : "Verifikasi Akun"}
+        </button>
+
+        <div className="text-sm text-slate-500">
+          Tidak menerima kode?{" "}
+          {resendTimer > 0 ? (
+            <span className="font-medium text-cyan-600">
+              Kirim ulang dalam {resendTimer}s
+            </span>
+          ) : (
+            <button
+              onClick={handleResend}
+              disabled={resendMutation.isPending}
+              className="font-medium text-cyan-600 hover:text-cyan-800 hover:underline inline-flex items-center gap-1"
+            >
+              <ArrowClockwiseIcon className={resendMutation.isPending ? "animate-spin" : ""} />
+              Kirim Ulang Kode
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
 
 export default function VerifyOtpPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="flex w-full justify-center text-cyan-600">Loading...</div>}>
       <VerifyOtpInner />
     </Suspense>
   );

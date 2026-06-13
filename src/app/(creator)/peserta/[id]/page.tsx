@@ -34,34 +34,8 @@ import {
 import { Skeleton } from "~/components/ui/skeleton";
 import { FormGroup, SectionHeader } from "~/components/ui/form-layout";
 import { TooltipProvider } from "~/components/ui/tooltip";
-
-const getStatusColor = (status: string) => {
-  const s = status.toLowerCase();
-  switch (s) {
-    case "completed":
-      return "bg-green-100 text-green-700";
-    case "pending":
-      return "bg-yellow-100 text-yellow-700";
-    case "failed":
-      return "bg-red-100 text-red-700";
-    default:
-      return "bg-slate-100 text-slate-600";
-  }
-};
-
-const getStatusLabel = (status: string) => {
-  const s = status.toLowerCase();
-  switch (s) {
-    case "completed":
-      return "Berhasil";
-    case "pending":
-      return "Pending";
-    case "failed":
-      return "Gagal";
-    default:
-      return status;
-  }
-};
+import { DetailHeader } from "~/components/layout/detail-header";
+import { StatusBadge } from "~/components/ui/status-badge";
 
 export default function ParticipantDetailPage() {
   // ─── States & Hooks ──────────────────────────────────────────────────────
@@ -85,24 +59,11 @@ export default function ParticipantDetailPage() {
     <TooltipProvider>
       <div className="w-full max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-slate-50">
-          <div className="sticky top-[74px] z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-2 bg-slate-50">
-            <Link
-              href="/peserta"
-              className="group font-regular mb-2 flex w-fit items-center gap-2 text-sm text-slate-600 transition-colors hover:text-slate-800"
-            >
-              <ArrowLeftIcon className="size-4 transition-transform group-hover:-translate-x-0.5" />
-              <span className="leading-none">Kembali ke Daftar User</span>
-            </Link>
-            <div className="mb-2 text-2xl font-semibold text-slate-800">
-              {isLoading ? (
-                <Skeleton className="h-8 w-48" />
-              ) : (
-                participant?.name
-              )}
-            </div>
-          </div>
-        </div>
+        <DetailHeader
+          backLink="/peserta"
+          backLabel="Kembali ke Daftar User"
+          title={isLoading ? <Skeleton className="h-8 w-48" /> : participant?.name ?? "Detail User"}
+        />
 
         {/* User Information */}
         <div className="overflow-hidden rounded-xl border border-slate-800 bg-cyan-50">
@@ -245,11 +206,7 @@ export default function ParticipantDetailPage() {
 
                       <TableCell className="whitespace-nowrap">
                         <div className="flex min-h-[48px] items-center">
-                          <span
-                            className={`rounded-full px-4 py-1 text-[13px] leading-tight font-medium ${getStatusColor(item.status)}`}
-                          >
-                            {getStatusLabel(item.status)}
-                          </span>
+                          <StatusBadge status={item.status} />
                         </div>
                       </TableCell>
                     </TableRow>
@@ -284,11 +241,7 @@ export default function ParticipantDetailPage() {
                 <div key={item.id} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3">
                   <div className="flex justify-between items-center border-b border-slate-100 pb-2">
                     <span className="text-xs font-semibold text-slate-400"># {index + 1}</span>
-                    <span
-                      className={`rounded-full px-3 py-0.5 text-xs font-medium ${getStatusColor(item.status)}`}
-                    >
-                      {getStatusLabel(item.status)}
-                    </span>
+                    <StatusBadge status={item.status} />
                   </div>
 
                   <div className="space-y-2 flex-1 min-w-0">

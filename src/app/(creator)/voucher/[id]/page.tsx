@@ -16,31 +16,13 @@ import { id as idLocale } from "date-fns/locale";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
-import { FormInput, FormSelect, SectionHeader } from "~/components/ui/form-layout";
+import { FormInput, FormSelect, SectionHeader, FormRow } from "~/components/ui/form-layout";
 import { DateRangeOnlyPicker } from "~/components/ui/date-range-only-picker";
 import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
+import { DetailHeader } from "~/components/layout/detail-header";
 import { Skeleton } from "~/components/ui/skeleton";
 import { cn, formatNumberInput } from "~/lib/utils";
 import ButtonSave from "~/components/ui/button-save";
-
-const Label = ({ children }: { children: React.ReactNode }) => (
-    <div className="w-full text-slate-500 text-sm font-medium leading-6 mb-1">{children}</div>
-);
-
-const Row = ({ label, error, children, extra }: { label: string; error?: string; children: React.ReactNode, extra?: React.ReactNode }) => (
-    <div className="flex flex-col items-start pb-5 gap-0.5 w-full">
-        <div className="flex items-center justify-between w-full mb-1">
-            <Label>{label}</Label>
-            {extra}
-        </div>
-        <div className="flex-1 w-full text-slate-800 text-sm font-medium leading-6">
-            {children}
-            {error && <span className="text-red-500 text-xs mt-1 block">{error}</span>}
-        </div>
-    </div>
-);
-
-
 
 export default function VoucherDetailPage() {
     const params = useParams();
@@ -214,34 +196,24 @@ export default function VoucherDetailPage() {
         <div className="w-full max-w-7xl mx-auto">
             <div className="space-y-6">
                 {/* Header */}
-                <div className="bg-slate-50">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sticky top-[74px] bg-slate-50 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 pt-2 pb-0">
-                        <div className="flex-1 flex flex-col gap-1 min-w-0">
-                            <Link
-                                href="/voucher"
-                                className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
-                            >
-                                <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-                                <span className="leading-none">Kembali ke Daftar</span>
-                            </Link>
-                            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                                <h1 className="text-xl font-medium text-slate-800 break-words max-w-full">
-                                    {voucher.code}
-                                </h1>
-                                <span className={cn(
-                                    "px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wider",
-                                    voucher.status === "aktif"
-                                        ? "bg-green-100 text-green-700 border border-green-200"
-                                        : voucher.status === "expired"
-                                            ? "bg-red-100 text-red-700 border border-red-200"
-                                            : "bg-slate-200 text-slate-500 border border-slate-300"
-                                )}>
-                                    {voucher.status === "aktif" ? "Aktif" : voucher.status === "expired" ? "Expired" : "Nonaktif"}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 sm:gap-3">
+                <DetailHeader
+                    backLink="/voucher"
+                    backLabel="Kembali ke Daftar"
+                    title={voucher.code}
+                    badges={
+                        <span className={cn(
+                            "px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wider",
+                            voucher.status === "aktif"
+                                ? "bg-green-100 text-green-700 border border-green-200"
+                                : voucher.status === "expired"
+                                    ? "bg-red-100 text-red-700 border border-red-200"
+                                    : "bg-slate-200 text-slate-500 border border-slate-300"
+                        )}>
+                            {voucher.status === "aktif" ? "Aktif" : voucher.status === "expired" ? "Expired" : "Nonaktif"}
+                        </span>
+                    }
+                    actions={
+                        <>
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -265,9 +237,9 @@ export default function VoucherDetailPage() {
                             >
                                 <TrashIcon className="w-4 h-4 text-red-500" />
                             </Button>
-                        </div>
-                    </div>
-                </div>
+                        </>
+                    }
+                />
 
                 {/* Form Box */}
                 <div className="rounded-xl border border-slate-800 overflow-hidden bg-white">
@@ -278,33 +250,33 @@ export default function VoucherDetailPage() {
                             {/* Kiri: Informasi Voucher */}
                             <div className="flex-1 min-w-0 w-full space-y-0">
                                 {/* Nama Voucher */}
-                                <Row label="Nama Voucher">
+                                <FormRow label="Nama Voucher">
                                     <FormInput
                                         value={name}
                                         onChange={(event) => setName(event.target.value)}
                                         placeholder="Masukkan nama voucher"
                                     />
-                                </Row>
+                                </FormRow>
 
                                 {/* Kode Voucher */}
-                                <Row label="Kode Voucher">
+                                <FormRow label="Kode Voucher">
                                     <FormInput
                                         value={code}
                                         onChange={(event) => setCode(event.target.value)}
                                         placeholder="Masukkan kode voucher"
                                     />
-                                </Row>
+                                </FormRow>
 
                                 {/* Tipe & Diskon */}
                                 <div className="grid gap-4 md:grid-cols-2">
-                                    <Row label="Tipe">
+                                    <FormRow label="Tipe">
                                         <FormSelect value={type} onChange={(event) => setType(event.target.value as "PERSEN" | "NOMINAL")}>
                                             <option value="PERSEN">Persen</option>
                                             <option value="NOMINAL">Nominal</option>
                                         </FormSelect>
-                                    </Row>
+                                    </FormRow>
 
-                                    <Row label="Diskon">
+                                    <FormRow label="Diskon">
                                         <FormInput
                                             type="text"
                                             inputMode="numeric"
@@ -326,20 +298,20 @@ export default function VoucherDetailPage() {
                                                 </div>
                                             }
                                         />
-                                    </Row>
+                                    </FormRow>
                                 </div>
 
                                 {/* Status */}
-                                <Row label="Status">
+                                <FormRow label="Status">
                                     <FormSelect value={status} onChange={(event) => setStatus(event.target.value as "aktif" | "nonaktif" | "expired")}>
                                         <option value="aktif">Aktif</option>
                                         <option value="nonaktif">Nonaktif</option>
                                         <option value="expired">Expired</option>
                                     </FormSelect>
-                                </Row>
+                                </FormRow>
 
                                 {/* Penggunaan */}
-                                <Row label="Jenis Penggunaan">
+                                <FormRow label="Jenis Penggunaan">
                                     <div className="flex flex-col gap-3 w-full border border-slate-300 rounded-lg bg-white p-3">
                                         <label className="flex items-center gap-2 cursor-pointer">
                                             <input
@@ -410,7 +382,7 @@ export default function VoucherDetailPage() {
                                             </div>
                                         </div>
                                     )}
-                                </Row>
+                                </FormRow>
 
 
                             </div>

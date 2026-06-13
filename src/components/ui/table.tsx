@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "~/lib/utils"
-import { CaretDownIcon, CaretLeftIcon, CaretRightIcon, DotsThreeIcon } from "@phosphor-icons/react"
+import { CaretDownIcon, CaretLeftIcon, CaretRightIcon, DotsThreeIcon, CaretUpIcon } from "@phosphor-icons/react"
 import {
   Pagination,
   PaginationContent,
@@ -65,6 +65,48 @@ export function TableHead({ className, ...props }: React.ComponentProps<"th">) {
       )}
       {...props}
     />
+  )
+}
+
+type SortableTableHeadProps<T extends string> = React.ComponentProps<"th"> & {
+  label: React.ReactNode;
+  field: T;
+  currentSortBy: string;
+  currentSortOrder: "asc" | "desc";
+  onSort: (field: T) => void;
+};
+
+export function SortableTableHead<T extends string>({
+  className,
+  label,
+  field,
+  currentSortBy,
+  currentSortOrder,
+  onSort,
+  children,
+  ...props
+}: SortableTableHeadProps<T>) {
+  return (
+    <TableHead
+      className={cn("cursor-pointer select-none hover:text-slate-900 transition-colors group", className)}
+      onClick={() => onSort(field)}
+      {...props}
+    >
+      <div className="flex items-center gap-2">
+        {label}
+        {children}
+        <div className="flex flex-col h-4 justify-center shrink-0">
+          <CaretUpIcon
+            weight={currentSortBy === field && currentSortOrder === "asc" ? "bold" : "regular"}
+            className={cn("w-4 h-4 -mb-1", currentSortBy === field && currentSortOrder === "asc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
+          />
+          <CaretDownIcon
+            weight={currentSortBy === field && currentSortOrder === "desc" ? "bold" : "regular"}
+            className={cn("w-4 h-4", currentSortBy === field && currentSortOrder === "desc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
+          />
+        </div>
+      </div>
+    </TableHead>
   )
 }
 

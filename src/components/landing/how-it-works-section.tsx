@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
+import { StepsIllustrationMockup } from "~/components/landing/feature-mockups";
 import { CaretDownIcon } from "@phosphor-icons/react";
 
-export default function StepsSection({ activeStep, setActiveStep }: { activeStep: number; setActiveStep: (index: number) => void }) {
+function StepsSection({ activeStep, setActiveStep }: { activeStep: number; setActiveStep: (index: number) => void }) {
     const steps: { title: string; desc: string }[] = [
         { title: "Buat Akun", desc: "Mulai dengan mendaftarkan akunmu secara gratis dan cepat." },
         { title: "Tambahkan Produk", desc: "Buat webinar, kelas, atau produk digital lainnya sesuai kebutuhanmu." },
@@ -60,4 +62,24 @@ export default function StepsSection({ activeStep, setActiveStep }: { activeStep
             </div>
         </section>
     );
+}
+
+export default function HowItWorksSection() {
+  const [activeStep, setActiveStep] = useState(0);
+
+  return (
+    <section id="cara-kerja" className="py-20 md:py-30 bg-white w-full">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 flex flex-col lg:flex-row items-center gap-12 lg:gap-10">
+        {/* KIRI - IMAGE */}
+        <div className="size-full lg:w-1/2 sm:h-[400px] lg:h-[600px] bg-cyan-50 flex items-center justify-center rounded-xl border-2 border-slate-800 shadow-[2px_2px_0px_rgba(29,41,61)] order-2 lg:order-1">
+          <StepsIllustrationMockup activeStep={activeStep} />
+        </div>
+
+        {/* KANAN - STEPS SECTION */}
+        <div className="w-full lg:w-1/2 order-1 lg:order-2">
+          <StepsSection activeStep={activeStep} setActiveStep={setActiveStep} />
+        </div>
+      </div>
+    </section>
+  );
 }

@@ -21,7 +21,8 @@ import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
-import MarkdownPreview from "~/components/MarkdownPreview";
+import MarkdownPreview from "~/components/markdown-preview";
+import { getProductTypeLabel } from "~/lib/constants";
 import Footer from "~/components/layout/footer";
 
 const TYPE_MAP: Record<string, string> = {
@@ -92,7 +93,7 @@ function RecommendationCard({
 }) {
   const price = Number(product.price);
   const isGratis = price === 0;
-  const categoryLabel = TYPE_MAP[product.type] ?? product.type;
+  const categoryLabel = getProductTypeLabel(product.type);
 
   const CATEGORY_STYLE: Record<string, string> = {
     WEBINAR: "bg-cyan-100 text-cyan-700 border-cyan-200",
@@ -352,7 +353,7 @@ export default function ProductDetailPage() {
   const isWebinarOrClass =
     product.type === "WEBINAR" || product.type === "KELAS_ONLINE";
 
-  const categoryLabel = TYPE_MAP[product.type] ?? product.type;
+  const categoryLabel = getProductTypeLabel(product.type);
 
   const CATEGORY_STYLE: Record<string, string> = {
     WEBINAR: "bg-cyan-100 text-cyan-700 border-cyan-200",
@@ -627,7 +628,7 @@ export default function ProductDetailPage() {
                     <InfoItem
                       icon={<ClockIcon className="h-5 w-5" />}
                       label="Waktu"
-                      value={`${format(start, "HH:mm")} - ${format(end, "HH:mm")} WIB`}
+                      value={`${format(start, "HH:mm")} - ${format(end, "HH:mm")}`}
                     />
                   )}
                 </div>

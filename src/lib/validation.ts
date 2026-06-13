@@ -11,7 +11,7 @@ export const signupSchema = z
         /^(\+62|62|0)8[1-9][0-9]{6,9}$/,
         "Format nomor HP tidak valid (contoh: 08123456789)",
       ),
-    password: z.string({ required_error: "Password wajib diisi" }).min(6, "Password minimal 6 karakter"),
+    password: z.string({ required_error: "Password wajib diisi" }).min(8, "Password minimal 8 karakter"),
     confirmPassword: z.string({ required_error: "Konfirmasi password wajib diisi" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -306,7 +306,7 @@ export const creatorSchema = z.object({
       /^(\+62|62|0)8[1-9][0-9]{6,9}$/,
       "Format nomor HP tidak valid (contoh: 08123456789)",
     ),
-  password: z.string({ required_error: "Password wajib diisi" }).min(6, "Password minimal 6 karakter").optional().or(z.literal("")),
+  password: z.string({ required_error: "Password wajib diisi" }).min(8, "Password minimal 8 karakter").optional().or(z.literal("")),
   image: z.string({ required_error: "Gambar wajib diunggah" }).optional().nullable(),
   banner: z.string({ required_error: "Banner wajib diunggah" }).optional().nullable(),
   bio: z.string({ required_error: "Bio wajib diisi" }).optional().nullable(),

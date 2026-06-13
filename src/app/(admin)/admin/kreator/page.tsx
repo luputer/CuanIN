@@ -7,10 +7,7 @@ import {
     TrashIcon,
     EyeIcon,
     UserCircleIcon,
-    CaretUpIcon,
-    CaretDownIcon,
 } from "@phosphor-icons/react";
-import { cn } from "~/lib/utils";
 import { useAdminCreators } from "~/hooks/admin/use-admin-creators";
 
 import {
@@ -26,6 +23,7 @@ import {
     TableBody,
     TableCell,
     TablePagination,
+    SortableTableHead,
 } from "~/components/ui/table";
 import { Skeleton } from "~/components/ui/skeleton";
 import {
@@ -37,6 +35,10 @@ import {
 import SearchInput from "~/components/ui/search";
 import ActionButton from "~/components/ui/button-add";
 import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
+import { PageHeader } from "~/components/layout/page-header";
+import { DataTableToolbar } from "~/components/layout/data-table-toolbar";
+import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
+import { TableEmptyState, MobileEmptyState } from "~/components/layout/empty-state";
 
 export default function AdminCreatorsPage() {
     const router = useRouter();
@@ -65,29 +67,29 @@ export default function AdminCreatorsPage() {
         <TooltipProvider>
             <div className="w-full max-w-7xl mx-auto space-y-6">
                 {/* Header */}
-                <div className="bg-slate-50">
-                    <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-2">
-                        <div className="text-2xl font-bold mb-2 text-cyan-600">Daftar Kreator</div>
-                        <div className="text-sm font-regular text-slate-600">Pantau dan kelola semua data kreator di platform CuanIN.</div>
-                    </div>
-                </div>
+                <PageHeader
+                    title="Daftar Kreator"
+                    description="Pantau dan kelola semua data kreator di platform CuanIN."
+                />
 
                 {/* Toolbar */}
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                    <SearchInput
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Cari Nama, Email atau No. HP"
-                        className="w-full sm:flex-1 min-w-[280px]"
-                    />
-                    <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                <DataTableToolbar
+                    search={
+                        <SearchInput
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Cari Nama, Email atau No. HP"
+                            className="w-full"
+                        />
+                    }
+                    actions={
                         <ActionButton
                             href="/admin/kreator/create"
                             label="Tambah Kreator"
                             responsive
                         />
-                    </div>
-                </div>
+                    }
+                />
 
                 {/* Table (Desktop/Tablet) */}
                 <div className="hidden sm:block w-full pb-2">
@@ -106,42 +108,22 @@ export default function AdminCreatorsPage() {
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="w-[5%] text-center">No</TableHead>
-                                <TableHead
-                                    className="w-[35%] cursor-pointer select-none hover:text-slate-900 transition-colors group"
-                                    onClick={() => handleSort("name")}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        Nama Kreator
-                                        <div className="flex flex-col h-4 justify-center">
-                                            <CaretUpIcon
-                                                weight={sortBy === "name" && sortOrder === "asc" ? "bold" : "regular"}
-                                                className={cn("w-4 h-4 -mb-1", sortBy === "name" && sortOrder === "asc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
-                                            />
-                                            <CaretDownIcon
-                                                weight={sortBy === "name" && sortOrder === "desc" ? "bold" : "regular"}
-                                                className={cn("w-4 h-4", sortBy === "name" && sortOrder === "desc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
-                                            />
-                                        </div>
-                                    </div>
-                                </TableHead>
-                                <TableHead
-                                    className="w-[30%] cursor-pointer select-none hover:text-slate-900 transition-colors group"
-                                    onClick={() => handleSort("email")}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        Email
-                                        <div className="flex flex-col h-4 justify-center">
-                                            <CaretUpIcon
-                                                weight={sortBy === "email" && sortOrder === "asc" ? "bold" : "regular"}
-                                                className={cn("w-4 h-4 -mb-1", sortBy === "email" && sortOrder === "asc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
-                                            />
-                                            <CaretDownIcon
-                                                weight={sortBy === "email" && sortOrder === "desc" ? "bold" : "regular"}
-                                                className={cn("w-4 h-4", sortBy === "email" && sortOrder === "desc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
-                                            />
-                                        </div>
-                                    </div>
-                                </TableHead>
+                                <SortableTableHead
+                                    className="w-[35%]"
+                                    label="Nama Kreator"
+                                    field="name"
+                                    currentSortBy={sortBy}
+                                    currentSortOrder={sortOrder}
+                                    onSort={handleSort}
+                                />
+                                <SortableTableHead
+                                    className="w-[30%]"
+                                    label="Email"
+                                    field="email"
+                                    currentSortBy={sortBy}
+                                    currentSortOrder={sortOrder}
+                                    onSort={handleSort}
+                                />
                                 <TableHead className="w-[15%]">Nomor Hp</TableHead>
                                 <TableHead className="w-[15%] text-center">Total Produk</TableHead>
                                 <TableHead className="text-left w-[10%]">Aksi</TableHead>
@@ -150,57 +132,19 @@ export default function AdminCreatorsPage() {
 
                         <TableBody>
                             {isLoading ? (
-                                Array.from({ length: 5 }).map((_, i) => (
-                                    <TableRow data-type="body" key={i}>
-                                        <TableCell className="text-center font-medium whitespace-nowrap">
-                                            <div className="flex items-center justify-center min-h-[48px]">
-                                                <Skeleton className="h-4 w-4" />
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="whitespace-nowrap">
-                                            <div className="flex items-center gap-3 min-h-[48px]">
-                                                <Skeleton className="h-10 w-10 rounded-full" />
-                                                <Skeleton className="h-4 w-32" />
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="whitespace-nowrap">
-                                            <div className="flex items-center min-h-[48px]">
-                                                <Skeleton className="h-4 w-40" />
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="whitespace-nowrap">
-                                            <div className="flex items-center min-h-[48px]">
-                                                <Skeleton className="h-4 w-24" />
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="whitespace-nowrap">
-                                            <div className="flex items-center justify-center min-h-[48px]">
-                                                <Skeleton className="h-4 w-8" />
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="px-6 py-4 text-right">
-                                            <div className="flex justify-start items-center gap-3">
-                                                <Skeleton className="w-[22px] h-[22px]" />
-                                                <Skeleton className="w-[22px] h-[22px]" />
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
+                                <DataTableBodySkeleton columns={6} rows={5} />
                             ) : creators?.length === 0 ? (
-                                <TableRow className="text-center">
-                                    <TableCell colSpan={6} className="py-20">
-                                        <div className="flex flex-col items-center gap-1">
-                                            <span className="text-slate-500">
-                                                {debouncedSearch ? "Hasil pencarian tidak ditemukan." : "Belum ada kreator yang terdaftar."}
-                                            </span>
-                                            {!debouncedSearch && (
-                                                <Link href="/admin/kreator/create" className="text-cyan-600 font-medium hover:underline">
-                                                    Daftarkan kreator pertama!
-                                                </Link>
-                                            )}
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
+                                <TableEmptyState
+                                    colSpan={6}
+                                    title={debouncedSearch ? "Hasil pencarian tidak ditemukan." : "Belum ada kreator yang terdaftar."}
+                                    action={
+                                        !debouncedSearch ? (
+                                            <Link href="/admin/kreator/create" className="text-cyan-600 font-medium hover:underline">
+                                                Daftarkan kreator pertama!
+                                            </Link>
+                                        ) : undefined
+                                    }
+                                />
                             ) : (
                                 creators?.map((item: any, index: number) => {
                                     const rowNumber = (page - 1) * limit + index + 1;
@@ -269,36 +213,18 @@ export default function AdminCreatorsPage() {
                 {/* Mobile Cards */}
                 <div className="space-y-4 sm:hidden">
                     {isLoading ? (
-                        Array.from({ length: 3 }).map((_, i) => (
-                            <div key={i} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3 animate-pulse">
-                                <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-                                    <Skeleton className="h-4 w-8" />
-                                    <Skeleton className="h-6 w-20 rounded-full" />
-                                </div>
-                                <div className="flex gap-3">
-                                    <Skeleton className="h-16 w-16 rounded-full shrink-0" />
-                                    <div className="space-y-2 flex-1">
-                                        <Skeleton className="h-4 w-3/4" />
-                                        <Skeleton className="h-3 w-1/2" />
-                                        <Skeleton className="h-3 w-1/3" />
-                                    </div>
-                                </div>
-                            </div>
-                        ))
+                        <DataTableMobileSkeleton rows={3} />
                     ) : creators?.length === 0 ? (
-                        <div className="text-center py-8 bg-white border border-slate-800 rounded-xl p-4 text-slate-500">
-                            {debouncedSearch ? (
-                                "Hasil pencarian tidak ditemukan."
-                            ) : (
-                                <>
-                                    <span>Belum ada kreator yang terdaftar.</span>
-                                    <br />
+                        <MobileEmptyState
+                            title={debouncedSearch ? "Hasil pencarian tidak ditemukan." : "Belum ada kreator yang terdaftar."}
+                            action={
+                                !debouncedSearch ? (
                                     <Link href="/admin/kreator/create" className="text-cyan-600 font-medium hover:underline mt-1 inline-block">
                                         Daftarkan kreator pertama!
                                     </Link>
-                                </>
-                            )}
-                        </div>
+                                ) : undefined
+                            }
+                        />
                     ) : (
                         creators?.map((item: any, index: number) => {
                             const rowNumber = (page - 1) * limit + index + 1;

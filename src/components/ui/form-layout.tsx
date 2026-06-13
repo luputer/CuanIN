@@ -266,3 +266,34 @@ export const FormCombobox = React.forwardRef<HTMLInputElement, FormComboboxProps
     }
 );
 FormCombobox.displayName = "FormCombobox";
+
+/**
+ * Simple Form Label used in read-only or layout contexts
+ */
+export const FormLabel = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <p className={cn("text-slate-500 font-medium mb-1 text-sm", className)}>{children}</p>
+);
+
+/**
+ * Row wrapper used for label-value pairs, typically in detail views
+ */
+export const FormRow = ({
+    label,
+    error,
+    children,
+    extra,
+    className
+}: {
+    label: string;
+    error?: string;
+    children: React.ReactNode;
+    extra?: React.ReactNode;
+    className?: string;
+}) => (
+    <div className={cn("flex flex-col pb-5 gap-0", className)}>
+        <FormLabel>{label}</FormLabel>
+        {children}
+        {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+        {extra}
+    </div>
+);

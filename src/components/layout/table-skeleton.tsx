@@ -8,6 +8,61 @@ import {
     TableCell,
 } from "~/components/ui/table";
 
+/**
+ * Skeleton khusus untuk di dalam <TableBody> (Desktop/Tablet)
+ */
+export function DataTableBodySkeleton({
+    columns = 6,
+    rows = 5,
+}: {
+    columns?: number;
+    rows?: number;
+}) {
+    return (
+        <>
+            {Array.from({ length: rows }).map((_, rowIndex) => (
+                <TableRow key={rowIndex} data-type="body">
+                    {Array.from({ length: columns }).map((_, colIndex) => (
+                        <TableCell key={colIndex}>
+                            <Skeleton className="h-4 w-full max-w-[120px]" />
+                        </TableCell>
+                    ))}
+                </TableRow>
+            ))}
+        </>
+    );
+}
+
+/**
+ * Skeleton khusus untuk mobile cards (hanya tampil di layar kecil)
+ */
+export function DataTableMobileSkeleton({
+    rows = 3,
+}: {
+    rows?: number;
+}) {
+    return (
+        <>
+            {Array.from({ length: rows }).map((_, i) => (
+                <div key={i} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3 animate-pulse">
+                    <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                        <Skeleton className="h-4 w-8" />
+                        <Skeleton className="h-6 w-20 rounded-full" />
+                    </div>
+                    <div className="flex gap-3">
+                        <Skeleton className="size-16 rounded-lg shrink-0" />
+                        <div className="space-y-2 flex-1">
+                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-3 w-1/2" />
+                            <Skeleton className="h-3 w-1/3" />
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </>
+    );
+}
+
 export function TableSkeleton({
     columns = 6,
     hasToolbar = true,

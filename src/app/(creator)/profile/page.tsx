@@ -15,30 +15,10 @@ import {
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { useImageUpload } from "~/hooks/use-upload";
-import { SectionHeader, FormInput, FormTextarea } from "~/components/ui/form-layout";
+import { FormInput, FormRow, FormTextarea, SectionHeader } from "~/components/ui/form-layout";
 import ButtonSave from "~/components/ui/button-save";
-import { Skeleton } from "~/components/ui/skeleton";
-
-// ─── Local Components ────────────────────────────────────────────────────────
-
-const Label = ({ children }: { children: React.ReactNode }) => (
-    <div className="w-full text-slate-500 text-sm font-medium leading-6 mb-1">{children}</div>
-);
-
-const Row = ({
-    label,
-    children,
-}: {
-    label: string;
-    children: React.ReactNode;
-}) => (
-    <div className="flex flex-col items-start pb-5 gap-0.5 w-full">
-        <Label>{label}</Label>
-        <div className="flex-1 w-full text-slate-800 text-sm font-medium leading-6">
-            {children}
-        </div>
-    </div>
-);
+import { CreatorProfileSkeleton } from "~/components/layout/detail-skeletons";
+import { DetailHeader } from "~/components/layout/detail-header";
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -113,56 +93,7 @@ export default function ProfilePage() {
     // ─── Loading Skeleton ──────────────────────────────────────────────────────
 
     if (isLoading) {
-        return (
-            <div className="w-full max-w-7xl mx-auto animate-pulse">
-                <div className="space-y-6">
-                    {/* Header Skeleton */}
-                    <div className="bg-slate-50">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:sticky sm:top-[74px] bg-slate-50 z-40 -mx-6 px-6 pt-2 pb-0">
-                            <div className="flex-1 flex flex-col gap-1.5">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Skeleton className="h-4 w-4" />
-                                    <Skeleton className="h-4 w-36" />
-                                </div>
-                                <Skeleton className="h-7 w-56 rounded-md" />
-                            </div>
-                            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                                <Skeleton className="h-10 w-40 rounded-lg" />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Content Skeleton */}
-                    <div className="flex-1 rounded-xl border border-slate-800 overflow-hidden bg-white">
-                        <div className="px-4 py-6 sm:px-8 sm:py-8">
-                            <Skeleton className="h-6 w-40 mb-8" />
-                            <div className="space-y-5">
-                                {/* Avatar skeleton */}
-                                <div className="flex flex-col gap-1.5">
-                                    <Skeleton className="h-4 w-28" />
-                                    <Skeleton className="h-24 w-24 rounded-full" />
-                                </div>
-                                {/* Banner skeleton */}
-                                <div className="flex flex-col gap-1.5">
-                                    <Skeleton className="h-4 w-28" />
-                                    <Skeleton className="w-full aspect-[8/1] rounded-xl" />
-                                </div>
-                                {[1, 2, 3].map((i) => (
-                                    <div key={i} className="flex flex-col gap-1.5">
-                                        <Skeleton className="h-4 w-28" />
-                                        <Skeleton className="h-[46px] w-full rounded-lg" />
-                                    </div>
-                                ))}
-                                <div className="flex flex-col gap-1.5">
-                                    <Skeleton className="h-4 w-28" />
-                                    <Skeleton className="h-24 w-full rounded-lg" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
+        return <CreatorProfileSkeleton />;
     }
 
     // ─── Render ────────────────────────────────────────────────────────────────
@@ -171,20 +102,18 @@ export default function ProfilePage() {
         <div className="w-full max-w-7xl mx-auto">
             <div className="space-y-6">
                 {/* Header */}
-                <div className="bg-slate-50">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:sticky sm:top-[74px] bg-slate-50 z-40 -mx-6 px-6 pt-2 pb-0">
-                        <div className="flex-1 flex flex-col gap-1">
-                            <Link
-                                href="/dashboard"
-                                className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
-                            >
-                                <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-                                <span className="leading-none">Kembali ke Dashboard</span>
-                            </Link>
-                            <h1 className="text-xl font-medium text-slate-800">Akun Saya</h1>
-                        </div>
-                    </div>
-                </div>
+                <DetailHeader
+                    backLink="/dashboard"
+                    backLabel="Kembali ke Dashboard"
+                    title="Akun Saya"
+                    actions={
+                        <ButtonSave
+                            isLoading={updateProfile.isPending}
+                            disabled={!isDirty || updateProfile.isPending}
+                            onClick={handleSave}
+                        />
+                    }
+                />
 
                 {/* Content */}
                 <div className="flex-1 min-w-0 bg-white rounded-xl border border-slate-800 overflow-hidden w-full">
@@ -193,7 +122,7 @@ export default function ProfilePage() {
 
                         <div className="space-y-0 pt-6">
                             {/* Foto Profil */}
-                            <Row label="Foto Profil">
+                            <FormRow label="Foto Profil">
                                 <div className="flex flex-col gap-3">
                                     <div
                                         className="relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer"
@@ -250,10 +179,10 @@ export default function ProfilePage() {
                                     )}
                                     <p className="text-[11px] text-slate-400 italic">Disarankan rasio 1:1 (square)</p>
                                 </div>
-                            </Row>
+                            </FormRow>
 
                             {/* Banner Profile */}
-                            <Row label="Banner Profil">
+                            <FormRow label="Banner Profil">
                                 <div className="flex flex-col gap-3">
                                     <div
                                         className="relative group w-full aspect-[6/1] md:aspect-[8/1] cursor-pointer"
@@ -310,50 +239,50 @@ export default function ProfilePage() {
                                     )}
                                     <p className="text-[11px] text-slate-400 italic">Disarankan rasio 6:1 atau 8:1 (Tipis/Ceper)</p>
                                 </div>
-                            </Row>
+                            </FormRow>
 
                             {/* Nama */}
-                            <Row label="Nama">
+                            <FormRow label="Nama">
                                 <FormInput
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     placeholder="Masukkan nama lengkap"
                                 />
-                            </Row>
+                            </FormRow>
 
                             {/* Email */}
-                            <Row label="Email">
+                            <FormRow label="Email">
                                 <FormInput
                                     value={email}
                                     disabled
                                     className="bg-slate-100 text-slate-500 cursor-not-allowed border-slate-300"
                                 />
-                            </Row>
+                            </FormRow>
 
                             {/* Nomor Hp */}
-                            <Row label="Nomor Hp">
+                            <FormRow label="Nomor Hp">
                                 <FormInput
                                     value={phoneNumber}
                                     onChange={(e) => setPhoneNumber(e.target.value)}
                                     placeholder="Masukkan nomor HP aktif"
                                 />
-                            </Row>
+                            </FormRow>
 
                             {/* Bio */}
-                            <Row label="Bio">
+                            <FormRow label="Bio">
                                 <FormTextarea
                                     value={bio}
                                     onChange={(e) => setBio(e.target.value)}
                                     placeholder="Ceritakan tentang tokomu"
                                 />
-                            </Row>
+                            </FormRow>
                         </div>
 
                         {/* ─── Keamanan ─── */}
                         <div className="pt-6">
                             <SectionHeader title="Keamanan" />
                             <div className="space-y-0 pt-6">
-                                <Row label="Password Baru (Opsional)">
+                                <FormRow label="Password Baru (Opsional)">
                                     <FormInput
                                         type={showPassword ? "text" : "password"}
                                         value={password}
@@ -369,7 +298,7 @@ export default function ProfilePage() {
                                             </button>
                                         }
                                     />
-                                </Row>
+                                </FormRow>
                             </div>
                         </div>
 

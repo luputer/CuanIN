@@ -30,6 +30,7 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
             status: "published",
             price: 0,
             benefit: isEdit ? [] : [""],
+            links: isEdit ? [] : [""],
             contentType: "",
             platformCustom: "",
             duration: "",
@@ -51,6 +52,11 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
     const { fields, append, remove } = useFieldArray({
         control,
         name: "benefit" as never,
+    });
+
+    const { fields: linkFields, append: appendLink, remove: removeLink } = useFieldArray({
+        control,
+        name: "links" as never,
     });
 
     const { uploading, handleFileUpload } = useImageUpload("products");
@@ -76,6 +82,7 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
                 image: product.image ?? undefined,
                 images: (product.images as string[]) ?? [],
                 benefit: (product.benefit as string[]) ?? [],
+                links: (product.links as string[]) ?? [],
                 capacity: product.capacity ?? 0,
                 enableQuota: (product.capacity ?? 0) > 0,
                 vouchers: product.vouchers?.map((v) => v.id) ?? [],
@@ -153,6 +160,7 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
                 image: data.image,
                 images: data.images,
                 benefit: data.benefit?.filter((b) => b.trim() !== ""),
+                links: data.links?.filter((l) => l.trim() !== ""),
                 capacity: data.enableQuota ? data.capacity : 0,
                 notes: data.enableNotes ? data.notes : null,
                 vouchers: data.enableVoucher ? data.vouchers : [],
@@ -170,6 +178,7 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
                 image: data.image,
                 images: data.images,
                 benefit: data.benefit?.filter((b) => b.trim() !== ""),
+                links: data.links?.filter((l) => l.trim() !== ""),
                 capacity: data.enableQuota ? data.capacity : 0,
                 notes: data.enableNotes ? data.notes : undefined,
                 vouchers: data.enableVoucher ? data.vouchers : [],
@@ -183,6 +192,9 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
         fields,
         append,
         remove,
+        linkFields,
+        appendLink,
+        removeLink,
         uploading,
         onFilesChange,
         removeImage,

@@ -177,7 +177,7 @@ function PaymentFailedContent() {
 
                 <div className="text-xs text-slate-400 flex items-center justify-center gap-1.5">
                     <ShieldCheckIcon className="w-3.5 h-3.5" />
-                    Transaksi aman & terenkripsi oleh Xendit
+                    Transaksi aman & terenkripsi oleh Midtrans
                 </div>
 
             </div>

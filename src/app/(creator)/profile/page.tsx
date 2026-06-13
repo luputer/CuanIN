@@ -19,19 +19,11 @@ import { SectionHeader, FormInput, FormTextarea } from "~/components/ui/form-lay
 import ButtonSave from "~/components/ui/button-save";
 import { Skeleton } from "~/components/ui/skeleton";
 
-// ─── Local Components ────────────────────────────────────────────────────────
-
 const Label = ({ children }: { children: React.ReactNode }) => (
     <div className="w-full text-slate-500 text-sm font-medium leading-6 mb-1">{children}</div>
 );
 
-const Row = ({
-    label,
-    children,
-}: {
-    label: string;
-    children: React.ReactNode;
-}) => (
+const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
     <div className="flex flex-col items-start pb-5 gap-0.5 w-full">
         <Label>{label}</Label>
         <div className="flex-1 w-full text-slate-800 text-sm font-medium leading-6">
@@ -40,21 +32,29 @@ const Row = ({
     </div>
 );
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
 export default function ProfilePage() {
     const utils = api.useUtils();
+
     const { data: user, isLoading } = api.profile.get.useQuery();
+    const { data: catalogData } = api.catalog.getMine.useQuery();
 
     const updateProfile = api.profile.update.useMutation({
         onSuccess: () => {
-            toast.success("Profil berhasil diperbarui");
             void utils.profile.get.invalidate();
-            setPassword(""); // Clear password field after save
+            setPassword("");
         },
         onError: (e) => {
             toast.error(e.message || "Gagal memperbarui profil");
-        }
+        },
+    });
+
+    const upsertCatalog = api.catalog.upsert.useMutation({
+        onSuccess: () => {
+            void utils.catalog.getMine.invalidate();
+        },
+        onError: (e) => {
+            toast.error(e.message || "Gagal memperbarui catalog name");
+        },
     });
 
     const [name, setName] = useState("");
@@ -62,13 +62,13 @@ export default function ProfilePage() {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [password, setPassword] = useState("");
     const [bio, setBio] = useState("");
+    const [catalogName, setCatalogName] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const bannerInputRef = useRef<HTMLInputElement>(null);
     const avatarUpload = useImageUpload("avatars");
     const bannerUpload = useImageUpload("banners");
-
     const isInitializedRef = useRef(false);
 
     useEffect(() => {
@@ -77,29 +77,41 @@ export default function ProfilePage() {
             setEmail(user.email ?? "");
             setPhoneNumber(user.phoneNumber ?? "");
             setBio(user.bio ?? "");
-            if (user.image) {
-                avatarUpload.setPreviewUrl(user.image);
-            }
-            if (user.banner) {
-                bannerUpload.setPreviewUrl(user.banner);
-            }
+            if (user.image) avatarUpload.setPreviewUrl(user.image);
+            if (user.banner) bannerUpload.setPreviewUrl(user.banner);
             isInitializedRef.current = true;
         }
     }, [user]);
+
+    useEffect(() => {
+        if (catalogData?.slug) {
+            setCatalogName(catalogData.slug);
+        }
+    }, [catalogData]);
 
     const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         await avatarUpload.handleFileUpload(e);
     };
 
-    const handleSave = () => {
-        updateProfile.mutate({
-            name,
-            phoneNumber,
-            image: avatarUpload.previewUrl,
-            banner: bannerUpload.previewUrl,
-            bio,
-            password: password ? password : undefined,
-        });
+    const handleSave = async () => {
+        try {
+            await updateProfile.mutateAsync({
+                name,
+                phoneNumber,
+                image: avatarUpload.previewUrl,
+                banner: bannerUpload.previewUrl,
+                bio,
+                password: password ? password : undefined,
+            });
+
+            if (catalogName && catalogName !== catalogData?.slug) {
+                await upsertCatalog.mutateAsync({ slug: catalogName });
+            }
+
+            toast.success("Profil berhasil diperbarui");
+        } catch {
+            // error sudah di-handle di masing-masing onError
+        }
     };
 
     const isDirty =
@@ -107,16 +119,14 @@ export default function ProfilePage() {
         phoneNumber !== (user?.phoneNumber || "") ||
         bio !== (user?.bio || "") ||
         password !== "" ||
+        catalogName !== (catalogData?.slug || "") ||
         (avatarUpload.previewUrl || "") !== (user?.image || "") ||
         (bannerUpload.previewUrl || "") !== (user?.banner || "");
-
-    // ─── Loading Skeleton ──────────────────────────────────────────────────────
 
     if (isLoading) {
         return (
             <div className="w-full max-w-7xl mx-auto animate-pulse">
                 <div className="space-y-6">
-                    {/* Header Skeleton */}
                     <div className="bg-slate-50">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:sticky sm:top-[74px] bg-slate-50 z-40 -mx-6 px-6 pt-2 pb-0">
                             <div className="flex-1 flex flex-col gap-1.5">
@@ -131,18 +141,14 @@ export default function ProfilePage() {
                             </div>
                         </div>
                     </div>
-
-                    {/* Content Skeleton */}
                     <div className="flex-1 rounded-xl border border-slate-800 overflow-hidden bg-white">
                         <div className="px-4 py-6 sm:px-8 sm:py-8">
                             <Skeleton className="h-6 w-40 mb-8" />
                             <div className="space-y-5">
-                                {/* Avatar skeleton */}
                                 <div className="flex flex-col gap-1.5">
                                     <Skeleton className="h-4 w-28" />
                                     <Skeleton className="h-24 w-24 rounded-full" />
                                 </div>
-                                {/* Banner skeleton */}
                                 <div className="flex flex-col gap-1.5">
                                     <Skeleton className="h-4 w-28" />
                                     <Skeleton className="w-full aspect-[8/1] rounded-xl" />
@@ -164,8 +170,6 @@ export default function ProfilePage() {
             </div>
         );
     }
-
-    // ─── Render ────────────────────────────────────────────────────────────────
 
     return (
         <div className="w-full max-w-7xl mx-auto">
@@ -339,6 +343,24 @@ export default function ProfilePage() {
                                 />
                             </Row>
 
+                            {/* Catalog Name */}
+                            <Row label="Catalog Name (URL Toko)">
+                                <FormInput
+                                    value={catalogName}
+                                    onChange={(e) =>
+                                        setCatalogName(
+                                            e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "")
+                                        )
+                                    }
+                                    placeholder="nama-toko-kamu"
+                                />
+                                {catalogName && (
+                                    <p className="text-xs text-slate-400 mt-2 ml-1">
+                                        {process.env.NEXT_PUBLIC_BASE_URL}/<span className="text-cyan-600 font-medium">{catalogName}</span>
+                                    </p>
+                                )}
+                            </Row>
+
                             {/* Bio */}
                             <Row label="Bio">
                                 <FormTextarea
@@ -378,7 +400,12 @@ export default function ProfilePage() {
                             <div className="w-full sm:w-auto flex justify-end">
                                 <ButtonSave
                                     onClick={handleSave}
-                                    isLoading={updateProfile.isPending || avatarUpload.uploading || bannerUpload.uploading}
+                                    isLoading={
+                                        updateProfile.isPending ||
+                                        upsertCatalog.isPending ||
+                                        avatarUpload.uploading ||
+                                        bannerUpload.uploading
+                                    }
                                     disabled={!isDirty}
                                     label="Simpan Perubahan"
                                     loadingLabel="Menyimpan..."
@@ -386,7 +413,6 @@ export default function ProfilePage() {
                                 />
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

@@ -36,7 +36,6 @@ export async function POST(req: NextRequest) {
       payment_type: string;
     };
 
-    // Handle Midtrans "Ping" or test request without signature
     if (!signature_key || !order_id) {
       console.log("[Midtrans Webhook] Ping detected (no signature or order_id)");
       return NextResponse.json({ message: "Ping received" }, { status: 200 });
@@ -113,7 +112,7 @@ export async function POST(req: NextRequest) {
         });
       });
       console.log("[Midtrans Webhook] Success update purchase:", purchase.id);
-    } catch (err) {
+    } catch {
       console.log("[Midtrans Webhook] Purchase already processed or failed to update:", purchase.id);
       return NextResponse.json({ message: "Already processed" });
     }
@@ -128,8 +127,8 @@ export async function POST(req: NextRequest) {
           notes: purchase.product.notes,
           creatorName: purchase.product.user?.name ?? "Tim CuanIN",
         });
-    } catch (err) {
-        console.error("📧 Failed to send product email (Midtrans):", err);
+      } catch (error) {
+        console.error("📧 Failed to send product email (Midtrans):", error);
       }
     }
 

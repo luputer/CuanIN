@@ -48,6 +48,7 @@ model Product {
   discountPrice    Decimal?
   slug             String?       @unique @default(cuid())
   benefit          Json?
+  links            Json?
   dateDeadline     DateTime?
   contentType      String?
   capacity         Int?

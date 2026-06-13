@@ -274,6 +274,7 @@ export default function KelasOnlinePage() {
                                 <TableHead className="w-[6%]">Tipe</TableHead>
                                 <TableHead className="w-[15%]">Harga</TableHead>
                                 <TableHead className="w-[6%]">Pembeli</TableHead>
+                                <TableHead className="w-[6%]">Link</TableHead>
                                 <TableHead className="w-[6%]">Status</TableHead>
                                 <TableHead className="text-left w-[5%]">Aksi</TableHead>
                             </TableRow>
@@ -321,6 +322,11 @@ export default function KelasOnlinePage() {
                                         </TableCell>
                                         <TableCell className="whitespace-nowrap">
                                             <div className="flex items-center min-h-[48px]">
+                                                <Skeleton className="h-4 w-4" />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">
+                                            <div className="flex items-center min-h-[48px]">
                                                 <Skeleton className="h-[26px] w-[90px] rounded-full" />
                                             </div>
                                         </TableCell>
@@ -335,7 +341,7 @@ export default function KelasOnlinePage() {
                                 ))
                             ) : products?.length === 0 ? (
                                 <TableRow className="text-center">
-                                    <TableCell colSpan={9} className="py-20">
+                                    <TableCell colSpan={10} className="py-20">
                                         <div className="flex flex-col items-center gap-1">
                                             {isFiltered ? (
                                                 <span className="text-slate-500">Hasil pencarian atau filter tidak ditemukan.</span>
@@ -414,6 +420,12 @@ export default function KelasOnlinePage() {
                                                     >
                                                         Lihat
                                                     </button>
+                                                </div>
+                                            </TableCell>
+
+                                            <TableCell className="whitespace-nowrap">
+                                                <div className="flex items-center min-h-[48px]">
+                                                    {(item.links as string[])?.length ?? 0}
                                                 </div>
                                             </TableCell>
 
@@ -552,6 +564,11 @@ export default function KelasOnlinePage() {
                                                 <div>
                                                     <span className="font-medium text-slate-400">Pembeli: </span>
                                                     <span className="font-semibold text-slate-700">{buyerCounts?.[item.id] ?? 0}</span>
+                                                </div>
+
+                                                <div>
+                                                    <span className="font-medium text-slate-400">Link: </span>
+                                                    <span className="font-semibold text-slate-700">{(item.links as string[])?.length ?? 0}</span>
                                                 </div>
                                             </div>
                                         </div>

@@ -154,6 +154,7 @@ type KelasOnlineFormValues = {
     description: string;
     price?: number;
     link: string;
+    links?: string[];
     contentType?: string;
     platformCustom?: string;
     duration: string;
@@ -267,6 +268,25 @@ export default function CreateKelasPage() {
         updated[index] = val;
         setBenefits(updated);
         setValue("benefit", updated);
+    };
+
+    const [links, setLinks] = useState<string[]>([]);
+
+    const handleAddLink = () => {
+        setLinks([...links, ""]);
+    };
+
+    const handleRemoveLink = (index: number) => {
+        const updated = links.filter((_, i) => i !== index);
+        setLinks(updated);
+        setValue("links", updated);
+    };
+
+    const handleLinkChange = (index: number, val: string) => {
+        const updated = [...links];
+        updated[index] = val;
+        setLinks(updated);
+        setValue("links", updated);
     };
 
     // Format price input helper
@@ -390,6 +410,7 @@ export default function CreateKelasPage() {
             price: data.price ?? 0,
             contentType: actualContentType,
             link: data.link,
+            links: links.filter((l) => l.trim() !== ""),
             duration: data.duration,
             status: data.status,
             benefit: benefits.filter((b) => b.trim() !== ""),
@@ -423,7 +444,7 @@ export default function CreateKelasPage() {
             {/* Tabs */}
             <div className="rounded-xl border border-slate-800 overflow-hidden">
                 <ProductDetailTabs defaultTab="detail" buyerCount={0} hidePembeli={true}>
-                    <ProductDetailTabContent value="detail" className="bg-transparent overflow-visible">
+                    <ProductDetailTabContent value="detail" className="bg-transparent">
                         {/* Main Content Area */}
                         <div className="flex-1 min-w-0 bg-white rounded-xl px-4 py-2 sm:px-8 sm:py-8">
                             <SectionHeader title="Informasi Kelas" />
@@ -469,7 +490,7 @@ export default function CreateKelasPage() {
                                     <Row label="Keuntungan" error={errors.benefit?.message}>
                                         <div className="space-y-3 flex flex-col w-full">
                                             {benefits.map((benefit, index) => (
-                                                <div key={benefit} className="flex gap-2">
+                                                <div key={index} className="flex gap-2">
                                                     <FormInput
                                                         placeholder={`Keuntungan ${index + 1}`}
                                                         className="flex-1"
@@ -608,8 +629,34 @@ export default function CreateKelasPage() {
                                                 </div>
                                             </Row>
 
-                                            <Row label="Link Akses" error={errors.link?.message}>
-                                                <FormInput placeholder="https://..." {...register("link")} />
+                                            <Row label="Link Akses" error={errors.links?.message}>
+                                                <div className="space-y-3 flex flex-col w-full">
+                                                    {links.map((link, index) => (
+                                                        <div key={index} className="flex gap-2">
+                                                            <FormInput
+                                                                placeholder={`Link ${index + 1}`}
+                                                                className="flex-1"
+                                                                value={link}
+                                                                onChange={(e) => handleLinkChange(index, e.target.value)}
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                className="flex h-[52px] w-[52px] items-center justify-center rounded-lg bg-white border border-slate-300 text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors shrink-0 cursor-pointer"
+                                                                onClick={() => handleRemoveLink(index)}
+                                                            >
+                                                                <TrashIcon className="size-5 translate-y-[0.5px]" weight="bold" />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleAddLink}
+                                                        className="flex justify-center items-center gap-2 bg-white border border-slate-400 rounded-lg py-2 px-4 text-sm font-regular text-slate-800 hover:bg-slate-100 w-fit cursor-pointer"
+                                                    >
+                                                        <PlusIcon className="size-4" weight="regular" />
+                                                        <span>Tambah Link Akses</span>
+                                                    </button>
+                                                </div>
                                             </Row>
 
                                             <Row label="Durasi" error={errors.duration?.message}>

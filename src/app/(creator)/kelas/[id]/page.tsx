@@ -165,6 +165,9 @@ export default function KelasDetailPage() {
         fields,
         append,
         remove,
+        linkFields,
+        appendLink,
+        removeLink,
         uploading,
         onFilesChange,
         removeImage,
@@ -381,7 +384,7 @@ export default function KelasDetailPage() {
                 {/* Tabs */}
                 <div className="rounded-xl border border-slate-800 overflow-hidden">
                     <ProductDetailTabs defaultTab={defaultTab} buyerCount={buyerCount ?? 0}>
-                        <ProductDetailTabContent value="detail" className="bg-transparent overflow-visible">
+                        <ProductDetailTabContent value="detail" className="bg-transparent">
                             {/* Main Content Area */}
                             <div className="flex-1 min-w-0 bg-white rounded-xl px-4 py-2 sm:px-8 sm:py-8">
                                 <SectionHeader title="Informasi Kelas" />
@@ -555,19 +558,44 @@ export default function KelasDetailPage() {
                                                             <option value="website">Website Kelas</option>
                                                             <option value="other">Lainnya</option>
                                                         </FormSelect>
-                                                        {watch("contentType") === "other" && (
-                                                            <FormInput
-                                                                placeholder="Nama platform"
-                                                                className="animate-in fade-in slide-in-from-top-1 duration-200"
-                                                                {...register("platformCustom")}
-                                                            />
-                                                        )}
-                                                    </div>
-                                                </Row>
+                                                    {watch("contentType") === "other" && (
+                                                        <FormInput
+                                                            placeholder="Nama platform"
+                                                            className="animate-in fade-in slide-in-from-top-1 duration-200"
+                                                            {...register("platformCustom")}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </Row>
 
-                                                <Row label="Link Akses" error={errors.link?.message}>
-                                                    <FormInput placeholder="https://..." {...register("link")} />
-                                                </Row>
+                                            <Row label="Link Akses" error={errors.links?.message}>
+                                                <div className="space-y-3 flex flex-col w-full">
+                                                    {linkFields.map((field, index) => (
+                                                        <div key={field.id} className="flex gap-2">
+                                                            <FormInput
+                                                                placeholder={`Link ${index + 1}`}
+                                                                className="flex-1"
+                                                                {...register(`links.${index}` as const)}
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                className="flex h-[52px] w-[52px] items-center justify-center rounded-lg bg-white border border-slate-300 text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors shrink-0 cursor-pointer"
+                                                                onClick={() => removeLink(index)}
+                                                            >
+                                                                <TrashIcon className="h-5 w-5 translate-y-[0.5px]" weight="bold" />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => appendLink("")}
+                                                        className="flex justify-center items-center gap-2 bg-white border border-slate-400 rounded-lg py-2 px-4 text-sm font-regular text-slate-800 hover:bg-slate-100 w-fit cursor-pointer"
+                                                    >
+                                                        <PlusIcon className="h-4 w-4" weight="regular" />
+                                                        <span>Tambah Link Akses</span>
+                                                    </button>
+                                                </div>
+                                            </Row>
 
                                                 <Row label="Durasi" error={errors.duration?.message}>
                                                     <FormInput

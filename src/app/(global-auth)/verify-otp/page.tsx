@@ -1,17 +1,10 @@
 "use client";
 
-import { type Metadata } from "next";
 import { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { OTPInput, type SlotProps } from "input-otp";
 import { EnvelopeIcon, ArrowClockwiseIcon } from "@phosphor-icons/react";
-
-export const metadata: Metadata = {
-  title: "Verifikasi OTP - CuanIN",
-  description: "Verifikasi email Anda dengan kode OTP.",
-};
-
 function Slot(props: SlotProps) {
   return (
     <div

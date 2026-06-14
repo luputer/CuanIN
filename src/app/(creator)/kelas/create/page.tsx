@@ -178,7 +178,7 @@ export default function CreateKelasPage() {
     const utils = api.useUtils();
 
     const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-    const [createdProduct, setCreatedProduct] = useState<{name: string, slug: string} | null>(null);
+    const [createdProduct, setCreatedProduct] = useState<{ name: string, slug: string } | null>(null);
 
     // Editor Height drag-resize state
     const [editorHeight, setEditorHeight] = useState(150);
@@ -220,6 +220,7 @@ export default function CreateKelasPage() {
     const form = useForm<KelasOnlineFormValues>({
         resolver: zodResolver(productKelasOnlineSchema) as any,
         defaultValues: {
+            link: "",
             status: "published",
             price: 0,
             benefit: [],
@@ -629,12 +630,19 @@ export default function CreateKelasPage() {
                                                 </div>
                                             </Row>
 
-                                            <Row label="Link Akses" error={errors.links?.message}>
+                                            <Row label="Link Akses" error={errors.link?.message ?? errors.links?.message}>
                                                 <div className="space-y-3 flex flex-col w-full">
+                                                    {/* Input utama — selalu ada, tidak bisa dihapus */}
+                                                    <FormInput
+                                                        placeholder="Link utama (wajib)"
+                                                        {...register("link")}
+                                                    />
+
+                                                    {/* Input tambahan — bisa ditambah/hapus */}
                                                     {links.map((link, index) => (
                                                         <div key={index} className="flex gap-2">
                                                             <FormInput
-                                                                placeholder={`Link ${index + 1}`}
+                                                                placeholder={`Link tambahan ${index + 1}`}
                                                                 className="flex-1"
                                                                 value={link}
                                                                 onChange={(e) => handleLinkChange(index, e.target.value)}
@@ -648,6 +656,7 @@ export default function CreateKelasPage() {
                                                             </button>
                                                         </div>
                                                     ))}
+
                                                     <button
                                                         type="button"
                                                         onClick={handleAddLink}
@@ -860,7 +869,10 @@ export default function CreateKelasPage() {
                                         onClick={() => router.push("/kelas")}
                                     />
                                     <ButtonSave
-                                        onClick={handleSubmit(onSubmit)}
+                                        onClick={handleSubmit(onSubmit, (errs) => {
+                                            console.log("Form errors:", errs);
+                                            toast.error("Ada field yang belum diisi dengan benar");
+                                        })}
                                         isLoading={createProduct.isPending || saveMutation.isPending}
                                         label="Tambah Kelas"
                                         loadingLabel="Menambahkan..."

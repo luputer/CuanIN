@@ -6,6 +6,7 @@ import {
   Head,
   Hr,
   Html,
+  Link,
   Preview,
   Section,
   Text,
@@ -27,12 +28,14 @@ export type ProductAccessEmailProps = {
   productName: string;
   productLink: string;
   notes?: string | null;
+  links?: string[] | null;
   year: number;
 };
 
 export function ProductAccessEmail({
   productName,
   productLink,
+  links,
   notes,
   year,
 }: ProductAccessEmailProps) {
@@ -61,6 +64,21 @@ export function ProductAccessEmail({
           </Text>
           <Text style={linkText}>{productLink}</Text>
 
+          {links && links.length > 0 && (
+            <>
+              <Text style={heading}>Link Tambahan</Text>
+              <Section style={{ backgroundColor: "#f1f5f9", padding: "16px", borderRadius: "8px" }}>
+                {links.map((link, index) => (
+                  <Text key={index} style={{ ...paragraph, margin: "4px 0" }}>
+                    {index + 1}.{" "}
+                    <Link href={link} style={{ color: "#0891b2", wordBreak: "break-all" }}>
+                      {link}
+                    </Link>
+                  </Text>
+                ))}
+              </Section>
+            </>
+          )}
           {notes && (
             <>
               <Text style={heading}>Catatan Tambahan</Text>
@@ -81,9 +99,3 @@ export function ProductAccessEmail({
   );
 }
 
-ProductAccessEmail.PreviewProps = {
-  productName: "Webinar Bisnis Sukses",
-  productLink: "https://cuanin.com/product/123",
-  notes: "Terima kasih sudah membeli produk kami. Silakan bergabung di grup WA berikut: https://chat.whatsapp.com/... \nPersiapkan diri 15 menit sebelum dimulai.",
-  year: new Date().getFullYear(),
-} as ProductAccessEmailProps;

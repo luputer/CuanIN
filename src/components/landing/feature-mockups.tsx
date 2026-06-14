@@ -43,24 +43,24 @@ export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: numbe
           ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
           : "opacity-0 scale-90 -rotate-6 translate-x-[-100px] pointer-events-none z-10"
           }`}>
-          <div className="w-100 h-100 bg-white border-2 border-slate-800 p-8 rounded-2xl">
-            <div className="flex items-center justify-center gap-4 mb-8">
-              <span className="text-xl font-semibold text-slate-800 tracking-tighter">Buat Akun</span>
+          <div className="w-full max-w-[320px] sm:max-w-[380px] bg-white border-2 border-slate-800 p-5 sm:p-8 rounded-2xl">
+            <div className="flex items-center justify-center gap-4 mb-5 sm:mb-8">
+              <span className="text-base sm:text-xl font-semibold text-slate-800 tracking-tighter">Buat Akun</span>
             </div>
-            <div className="space-y-5">
+            <div className="space-y-3 sm:space-y-5">
               <div className="space-y-2">
                 <div className="h-2.5 w-16 bg-slate-200 rounded" />
-                <div className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
+                <div className="h-9 sm:h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
               </div>
               <div className="space-y-2">
                 <div className="h-2.5 w-20 bg-slate-200 rounded" />
-                <div className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
+                <div className="h-9 sm:h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
               </div>
               <div className="space-y-2">
                 <div className="h-2.5 w-20 bg-slate-200 rounded" />
-                <div className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
+                <div className="h-9 sm:h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
               </div>
-              <div className="h-12 w-full bg-cyan-600 rounded-xl mt-2 border-2 border-slate-800 shadow-[0.5px_0.5px_0px_rgba(29,41,61)] flex items-center justify-center">
+              <div className="h-10 sm:h-12 w-full bg-cyan-600 rounded-xl mt-2 border-2 border-slate-800 shadow-[0.5px_0.5px_0px_rgba(29,41,61)] flex items-center justify-center">
                 <div className="h-2.5 w-24 bg-white/40 rounded-full" />
               </div>
             </div>
@@ -72,7 +72,7 @@ export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: numbe
           ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
           : "opacity-0 scale-90 rotate-6 translate-x-[100px] pointer-events-none z-10"
           }`}>
-          <div className="w-100 h-80 bg-white border-2 border-slate-800 rounded-2xl overflow-hidden flex flex-col">
+          <div className="w-full max-w-[320px] sm:max-w-[380px] bg-white border-2 border-slate-800 rounded-2xl overflow-hidden flex flex-col">
             <div className="h-10 bg-slate-100 border-b-2 border-slate-800 flex items-center px-4 gap-2 shrink-0">
               <div className="w-2.5 h-2.5 rounded-full bg-cyan-600 border border-slate-800 shadow-sm" />
               <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 border border-slate-800 shadow-sm" />
@@ -107,7 +107,7 @@ export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: numbe
           ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
           : "opacity-0 scale-90 -rotate-6 translate-x-[-100px] pointer-events-none z-10"
           }`}>
-          <div className="w-100 bg-white border-2 border-slate-800 p-7 rounded-2xl">
+          <div className="w-full max-w-[320px] sm:max-w-[380px] bg-white border-2 border-slate-800 p-5 sm:p-7 rounded-2xl">
             <div className="flex items-center gap-4 mb-7">
               <span className="text-xl font-semibold text-slate-800 tracking-tighter">Bagikan Link</span>
             </div>
@@ -126,7 +126,7 @@ export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: numbe
           ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
           : "opacity-0 scale-90 rotate-6 translate-x-[100px] pointer-events-none z-10"
           }`}>
-          <div className="w-100 bg-emerald-50 border-2 border-emerald-500 p-8 rounded-2xl">
+          <div className="w-full max-w-[320px] sm:max-w-[380px] bg-emerald-50 border-2 border-emerald-500 p-5 sm:p-8 rounded-2xl">
             <div className="flex items-center gap-5">
               <div className="flex flex-col gap-1">
                 <span className="text-lg font-semibold text-green-700 tracking-tighter">Terima Pembayaran</span>

@@ -1,3 +1,5 @@
+"use client";
+
 import { PhoneIcon, EnvelopeIcon, MapPinIcon } from "@phosphor-icons/react";
 
 export default function Footer() {
@@ -33,7 +35,7 @@ export default function Footer() {
                 </div>
             </div>
             <div className="py-6 md:py-8 border-t border-white/20 text-center text-sm text-white px-4">
-                &copy; 2026 CuanIN. All rights reserved.
+                &copy; {new Date().getFullYear()} CuanIN. All rights reserved.
             </div>
         </footer>
     );

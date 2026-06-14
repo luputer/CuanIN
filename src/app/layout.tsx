@@ -8,10 +8,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
-  title: {
-    default: "CuanIN",
-    template: "%s | CuanIN",
-  },
+  title: "CuanIN",
   description:
     "Platform jual beli produk digital, webinar, dan kelas online. Buat toko online kamu dan mulai dapatkan penghasilan.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],

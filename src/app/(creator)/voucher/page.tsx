@@ -1,7 +1,7 @@
 "use client";
 
 // React
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 // Next.js
 import Link from "next/link";
@@ -13,13 +13,13 @@ import { toast } from "sonner";
 
 // Icons
 import {
-    CaretUpIcon,
-    CaretDownIcon,
     PencilSimpleIcon,
     TrashIcon,
 } from "@phosphor-icons/react";
 
 // Internal & Utils
+import { api } from "~/trpc/react";
+import { useDataTable } from "~/hooks/use-data-table";
 import { cn } from "~/lib/utils";
 
 // Components
@@ -32,50 +32,38 @@ import {
     TableCell,
     TablePagination,
 } from "~/components/ui/table";
-import { TableSkeleton } from "~/components/layout/table-skeleton";
+import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
 import SearchInput from "~/components/ui/search";
 import ButtonFilter from "~/components/ui/filter";
 import ActionButton from "~/components/ui/button-add";
 import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
+import { PageHeader } from "~/components/layout/page-header";
+import { SortableTableHead } from "~/components/layout/sortable-table-head";
+import { TableEmptyState, MobileEmptyState } from "~/components/layout/empty-state";
+import { MobilePaginationWrapper } from "~/components/layout/mobile-pagination-wrapper";
+import { StatusBadge } from "~/components/ui/status-badge";
+import { DataTableToolbar, SelectFilter } from "~/components/layout/data-table-toolbar";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from "~/components/ui/tooltip";
-import {
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-} from "~/components/ui/dropdown-menu";
-
-import { api } from "~/trpc/react";
 
 export default function VoucherPage() {
     // ─── States & Hooks ──────────────────────────────────────────────────────
 
-    const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(10);
-    const [search, setSearch] = useState("");
-    const [debouncedSearch, setDebouncedSearch] = useState("");
-    const [sortBy, setSortBy] = useState<"code" | "createdAt" | "startDate">("createdAt");
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+    const {
+        page, setPage,
+        limit, setLimit,
+        search, setSearch,
+        debouncedSearch,
+        sortBy, sortOrder,
+        handleSort,
+    } = useDataTable<"code" | "createdAt" | "startDate">("createdAt", "desc");
 
     const [typeFilter, setTypeFilter] = useState<"ALL" | "PERSEN" | "NOMINAL">("ALL");
     const [statusFilter, setStatusFilter] = useState<string>("ALL");
-
-    // ─── Effects ─────────────────────────────────────────────────────────────
-
-    // Debounce search
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setDebouncedSearch(search);
-            setPage(1); // Reset to page 1 on search
-        }, 500);
-        return () => clearTimeout(timer);
-    }, [search]);
 
     // ─── API Logic ───────────────────────────────────────────────────────────
     const utils = api.useUtils();
@@ -118,99 +106,56 @@ export default function VoucherPage() {
         }
     };
 
-    // ─── Helpers ─────────────────────────────────────────────────────────────
-
-    const getStatusColor = (status: string) => {
-        const s = status.toLowerCase();
-        switch (s) {
-            case "aktif": return "bg-green-100 text-green-700";
-            case "expired": return "bg-red-100 text-red-700";
-            case "nonaktif": return "bg-slate-200 text-slate-500";
-            default: return "bg-slate-100 text-slate-600";
-        }
-    };
-
-    const getStatusLabel = (status: string) => {
-        const s = status.toLowerCase();
-        switch (s) {
-            case "aktif": return "Aktif";
-            case "expired": return "Expired";
-            case "nonaktif": return "Nonaktif";
-            default: return status;
-        }
-    };
-
     // ─── Render ──────────────────────────────────────────────────────────────
-
-    if (isLoading) {
-        return <TableSkeleton columns={7} />;
-    }
 
     return (
         <TooltipProvider>
             <div className="w-full max-w-7xl mx-auto space-y-6">
                 {/* Header */}
-                <div className="bg-slate-50">
-                    <div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-2">
-                        <div className="text-2xl font-bold mb-2 text-cyan-600">Voucher</div>
-                        <div className="text-sm font-regular text-slate-600">
-                            Kelola seluruh voucher diskon Anda di sini.
-                        </div>
-                    </div>
-                </div>
+                <PageHeader
+                    title="Voucher"
+                    description="Kelola seluruh voucher diskon Anda di sini."
+                />
 
                 {/* Toolbar */}
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                    {/* Search */}
-                    <SearchInput
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Cari berdasarkan Kode Voucher"
-                        className="w-full sm:flex-1 min-w-[280px]"
-                    />
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <ButtonFilter
-                                    className="flex-1 lg:flex-none"
-                                    label={`Tipe: ${typeFilter === "ALL" ? "Semua" : typeFilter === "PERSEN" ? "Persen" : "Nominal"}`}
-                                />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-[160px]">
-                                <DropdownMenuRadioGroup value={typeFilter} onValueChange={(v) => setTypeFilter(v as "ALL" | "PERSEN" | "NOMINAL")}>
-                                    <DropdownMenuRadioItem value="ALL">Semua Tipe</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="PERSEN">Persen</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="NOMINAL">Nominal</DropdownMenuRadioItem>
-                                </DropdownMenuRadioGroup>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <ButtonFilter
-                                    className="flex-1 lg:flex-none"
-                                    label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "aktif" ? "Aktif" : statusFilter === "nonaktif" ? "Nonaktif" : "Expired"}`}
-                                />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-[160px]">
-                                <DropdownMenuRadioGroup value={statusFilter} onValueChange={setStatusFilter}>
-                                    <DropdownMenuRadioItem value="ALL">Semua Status</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="aktif">Aktif</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="nonaktif">Nonaktif</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="expired">Expired</DropdownMenuRadioItem>
-                                </DropdownMenuRadioGroup>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-
-                        <ActionButton
-                            href="/voucher/create"
-                            label="Tambah Voucher"
-                            responsive
+                <DataTableToolbar
+                    search={
+                        <SearchInput
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Cari berdasarkan Kode Voucher"
+                            className="w-full"
                         />
-                    </div>
-                </div>
+                    }
+                    actions={
+                        <>
+                            <SelectFilter
+                                label={`Tipe: ${typeFilter === "ALL" ? "Semua" : typeFilter === "PERSEN" ? "Persen" : "Nominal"}`}
+                                value={typeFilter}
+                                onValueChange={(v) => setTypeFilter(v as "ALL" | "PERSEN" | "NOMINAL")}
+                                options={[
+                                    { value: "ALL", label: "Semua Tipe" },
+                                    { value: "PERSEN", label: "Persen" },
+                                    { value: "NOMINAL", label: "Nominal" },
+                                ]}
+                            />
+
+                            <SelectFilter
+                                label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "aktif" ? "Aktif" : statusFilter === "nonaktif" ? "Nonaktif" : "Expired"}`}
+                                value={statusFilter}
+                                onValueChange={setStatusFilter}
+                                options={[
+                                    { value: "ALL", label: "Semua Status" },
+                                    { value: "aktif", label: "Aktif" },
+                                    { value: "nonaktif", label: "Nonaktif" },
+                                    { value: "expired", label: "Expired" },
+                                ]}
+                            />
+
+                            <ActionButton href="/voucher/create" label="Tambah Voucher" responsive />
+                        </>
+                    }
+                />
 
                 {/* Table (Desktop/Tablet) */}
                 <div className="hidden sm:block w-full pb-2">
@@ -229,82 +174,49 @@ export default function VoucherPage() {
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="w-[5%] text-center">No</TableHead>
-                                <TableHead
-                                    className="w-[18%] cursor-pointer select-none hover:text-slate-900 transition-colors group whitespace-nowrap"
-                                    onClick={() => {
-                                        if (sortBy === "code") {
-                                            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-                                        } else {
-                                            setSortBy("code");
-                                            setSortOrder("asc");
-                                        }
-                                    }}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        Kode Voucher
-                                        <div className="flex flex-col h-4 justify-center">
-                                            <CaretUpIcon
-                                                weight={sortBy === "code" && sortOrder === "asc" ? "bold" : "regular"}
-                                                className={cn("w-4 h-4 -mb-1", sortBy === "code" && sortOrder === "asc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
-                                            />
-                                            <CaretDownIcon
-                                                weight={sortBy === "code" && sortOrder === "desc" ? "bold" : "regular"}
-                                                className={cn("w-4 h-4", sortBy === "code" && sortOrder === "desc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
-                                            />
-                                        </div>
-                                    </div>
-                                </TableHead>
+                                <SortableTableHead
+                                    title="Kode Voucher"
+                                    sortKey="code"
+                                    isActive={sortBy === "code"}
+                                    sortOrder={sortOrder}
+                                    onClick={() => handleSort("code")}
+                                    className="w-[18%] whitespace-nowrap"
+                                />
                                 <TableHead className="w-[17%] whitespace-nowrap">Nama</TableHead>
                                 <TableHead className="w-[10%] whitespace-nowrap">Tipe</TableHead>
                                 <TableHead className="w-[13%] whitespace-nowrap">Diskon</TableHead>
-                                <TableHead
-                                    className="w-[25%] cursor-pointer select-none hover:text-slate-900 transition-colors group whitespace-nowrap"
-                                    onClick={() => {
-                                        if (sortBy === "startDate") {
-                                            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-                                        } else {
-                                            setSortBy("startDate");
-                                            setSortOrder("asc");
-                                        }
-                                    }}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        Waktu Berlaku
-                                        <div className="flex flex-col h-4 justify-center">
-                                            <CaretUpIcon
-                                                weight={sortBy === "startDate" && sortOrder === "asc" ? "bold" : "regular"}
-                                                className={cn("w-4 h-4 -mb-1", sortBy === "startDate" && sortOrder === "asc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
-                                            />
-                                            <CaretDownIcon
-                                                weight={sortBy === "startDate" && sortOrder === "desc" ? "bold" : "regular"}
-                                                className={cn("w-4 h-4", sortBy === "startDate" && sortOrder === "desc" ? "text-slate-800" : "text-slate-400 group-hover:text-slate-400")}
-                                            />
-                                        </div>
-                                    </div>
-                                </TableHead>
+                                <SortableTableHead
+                                    title="Waktu Berlaku"
+                                    sortKey="startDate"
+                                    isActive={sortBy === "startDate"}
+                                    sortOrder={sortOrder}
+                                    onClick={() => handleSort("startDate")}
+                                    className="w-[25%] whitespace-nowrap"
+                                />
                                 <TableHead className="w-[15%] whitespace-nowrap">Status</TableHead>
                                 <TableHead className="text-right w-[10%] whitespace-nowrap">Aksi</TableHead>
                             </TableRow>
                         </TableHeader>
 
                         <TableBody>
-                            {paginatedVouchers.length === 0 ? (
-                                <TableRow className="text-center">
-                                    <TableCell colSpan={7} className="py-20">
-                                        <div className="flex flex-col items-center gap-1">
-                                            {isFiltered ? (
-                                                <span className="text-slate-500">Hasil pencarian atau filter tidak ditemukan.</span>
-                                            ) : (
-                                                <>
-                                                    <span className="text-slate-500">Belum ada voucher.</span>
-                                                    <Link href="/voucher/create" className="text-cyan-600 font-medium hover:underline">
-                                                        Yuk, buat voucher diskon pertamamu!
-                                                    </Link>
-                                                </>
-                                            )}
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
+                            {isLoading ? (
+                                <DataTableBodySkeleton columns={8} rows={5} />
+                            ) : paginatedVouchers.length === 0 ? (
+                                <TableEmptyState
+                                    colSpan={8}
+                                    description={
+                                        isFiltered ? (
+                                            "Hasil pencarian atau filter tidak ditemukan."
+                                        ) : (
+                                            <div className="flex flex-col items-center gap-1">
+                                                <span>Belum ada voucher.</span>
+                                                <Link href="/voucher/create" className="text-cyan-600 font-medium hover:underline">
+                                                    Yuk, buat voucher diskon pertamamu!
+                                                </Link>
+                                            </div>
+                                        )
+                                    }
+                                />
                             ) : (
                                 paginatedVouchers.map((item, index) => {
                                     const rowNumber = (page - 1) * limit + index + 1;
@@ -346,9 +258,7 @@ export default function VoucherPage() {
 
                                             <TableCell className="whitespace-nowrap">
                                                 <div className="flex items-center min-h-[48px]">
-                                                    <span className={`px-4 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.status)}`}>
-                                                        {getStatusLabel(item.status)}
-                                                    </span>
+                                                    <StatusBadge status={item.status} />
                                                 </div>
                                             </TableCell>
 
@@ -383,10 +293,18 @@ export default function VoucherPage() {
 
                 {/* Mobile Cards (Only visible on mobile) */}
                 <div className="space-y-4 sm:hidden">
-                    {paginatedVouchers.length === 0 ? (
-                        <div className="text-center py-8 bg-white border border-slate-800 rounded-xl p-4 text-slate-500">
-                            {isFiltered ? "Hasil pencarian atau filter tidak ditemukan." : "Belum ada voucher."}
-                        </div>
+                    {isLoading ? (
+                        <DataTableMobileSkeleton rows={3} />
+                    ) : paginatedVouchers.length === 0 ? (
+                        <MobileEmptyState
+                            description={
+                                isFiltered ? (
+                                    "Hasil pencarian atau filter tidak ditemukan."
+                                ) : (
+                                    "Belum ada voucher."
+                                )
+                            }
+                        />
                     ) : (
                         paginatedVouchers.map((item, index) => {
                             const rowNumber = (page - 1) * limit + index + 1;
@@ -394,11 +312,7 @@ export default function VoucherPage() {
                                 <div key={item.id} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3 shadow-[1.5px_1.5px_0px_rgba(29,41,61)]">
                                     <div className="flex justify-between items-center border-b border-slate-100 pb-2">
                                         <span className="text-xs font-semibold text-slate-400"># {rowNumber}</span>
-                                        <span
-                                            className={`rounded-full px-3 py-0.5 text-xs font-medium ${getStatusColor(item.status)}`}
-                                        >
-                                            {getStatusLabel(item.status)}
-                                        </span>
+                                        <StatusBadge status={item.status} />
                                     </div>
 
                                     <div className="space-y-2 flex-1 min-w-0">
@@ -448,7 +362,7 @@ export default function VoucherPage() {
 
                     {/* Mobile Pagination */}
                     {paginatedVouchers && paginatedVouchers.length > 0 && (
-                        <div className="bg-white border border-slate-800 rounded-xl p-4 shadow-[1.5px_1.5px_0px_rgba(29,41,61)]">
+                        <MobilePaginationWrapper>
                             <TablePagination
                                 page={page}
                                 totalPages={totalPages}
@@ -457,7 +371,7 @@ export default function VoucherPage() {
                                 onPageChange={setPage}
                                 onLimitChange={setLimit}
                             />
-                        </div>
+                        </MobilePaginationWrapper>
                     )}
                 </div>
 

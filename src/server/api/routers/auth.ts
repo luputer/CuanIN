@@ -28,8 +28,22 @@ export const authRouter = createTRPCRouter({
       const existingUser = await ctx.db.user.findUnique({ where: { email } });
 
       if (existingUser) {
+        // If email is not verified yet, it means they abandoned the OTP step previously.
+        // We can just update their info and resend the OTP.
+        if (!existingUser.emailVerified) {
+          const hashed = await bcrypt.hash(password, 12);
+          await ctx.db.user.update({
+            where: { email },
+            data: {
+              name,
+              phoneNumber: phone,
+              password: hashed,
+            },
+          });
+          // Proceed to send OTP outside this block
+        } 
         // Google SSO user completing profile (phoneNumber not set yet)
-        if (!existingUser.phoneNumber) {
+        else if (!existingUser.phoneNumber) {
           const hashed = await bcrypt.hash(password, 12);
           await ctx.db.user.update({
             where: { email },
@@ -43,24 +57,26 @@ export const authRouter = createTRPCRouter({
           });
 
           return { success: true };
+        } 
+        // Otherwise, they are fully registered and verified
+        else {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Email sudah terdaftar",
+          });
         }
-
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "Email sudah terdaftar",
+      } else {
+        const hashed = await bcrypt.hash(password, 12);
+        await ctx.db.user.create({
+          data: {
+            name,
+            email,
+            phoneNumber: phone,
+            password: hashed,
+            role: "CREATOR",
+          },
         });
       }
-
-      const hashed = await bcrypt.hash(password, 12);
-      await ctx.db.user.create({
-        data: {
-          name,
-          email,
-          phoneNumber: phone,
-          password: hashed,
-          role: "CREATOR",
-        },
-      });
 
       // Generate 6-digit OTP
       const otp = crypto.randomInt(100000, 999999).toString();

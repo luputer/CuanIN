@@ -1,4 +1,6 @@
 import { type Metadata } from "next";
+import HeaderLogin from "~/components/layout/header-login";
+import Footer from "~/components/layout/footer";
 
 export const metadata: Metadata = {
   title: "Akun - CuanIN",
@@ -7,5 +9,17 @@ export const metadata: Metadata = {
 };
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <div className="flex min-h-screen flex-col bg-white">
+      <HeaderLogin />
+
+      <main className="flex flex-1 items-center justify-center px-4 py-12 sm:py-20">
+        <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-6 shadow-[0px_3px_0px_rgba(29,41,61)] sm:p-10">
+          {children}
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
 }

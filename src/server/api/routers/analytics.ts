@@ -384,7 +384,7 @@ export const analyticsRouter = createTRPCRouter({
             format(p.createdAt, "yyyy-MM-dd") === format(date, "yyyy-MM-dd"),
         )
         .reduce((sum, p) => sum + Number(p.amount), 0);
-      return { day: dayName, value: dayTotal };
+      return { day: dayName as string, value: dayTotal };
     });
 
     // Format weekly views (traffic)
@@ -396,7 +396,7 @@ export const analyticsRouter = createTRPCRouter({
       const dayCatalogViews = weeklyCatalogViews.filter(
         (v) => format(v.createdAt, "yyyy-MM-dd") === format(date, "yyyy-MM-dd"),
       ).length;
-      return { day: dayName, value: dayProductViews + dayCatalogViews };
+      return { day: dayName as string, value: dayProductViews + dayCatalogViews };
     });
 
     const categoryMap: Record<string, string> = {
@@ -613,7 +613,7 @@ export const analyticsRouter = createTRPCRouter({
       const dayTotal = weeklyWithdrawals
         .filter((w) => format(w.updatedAt, "yyyy-MM-dd") === format(date, "yyyy-MM-dd"))
         .reduce((sum, w) => sum + Number(w.feeAmount ?? 0), 0);
-      return { day: dayNames[date.getDay()], value: dayTotal };
+      return { day: (dayNames[date.getDay()] ?? "") as string, value: dayTotal };
     });
 
     const trafficData = last7Days.map((date) => {
@@ -623,7 +623,7 @@ export const analyticsRouter = createTRPCRouter({
       const dayCatalogViews = weeklyCatalogViews.filter(
         (v) => format(v.createdAt, "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
       ).length;
-      return { day: dayNames[date.getDay()], value: dayProductViews + dayCatalogViews };
+      return { day: (dayNames[date.getDay()] ?? "") as string, value: dayProductViews + dayCatalogViews };
     });
 
     const categoryMap: Record<string, string> = {

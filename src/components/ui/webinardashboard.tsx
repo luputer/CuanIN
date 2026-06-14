@@ -14,7 +14,7 @@ import {
   TrashIcon,
 } from "@phosphor-icons/react";
 
-import HeaderKreator from "~/components/layout/headerkreator";
+import HeaderKreator from "~/components/layout/header-kreator";
 import ActionButton from "~/components/ui/button-add";
 import SearchInput from "~/components/ui/search";
 import ButtonFilter from "~/components/ui/filter";

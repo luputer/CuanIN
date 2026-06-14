@@ -2,12 +2,14 @@
 
 import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { LockKeyIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon } from "@phosphor-icons/react";
+import { LockKeyIcon, CheckCircleIcon } from "@phosphor-icons/react";
+import { AuthInput } from "~/components/auth/auth-components";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api } from "~/trpc/react";
-import HeaderLandingPage from "~/components/layout/headerlandingpage";
+import HeaderLandingPage from "~/components/layout/header-landing";
+
 import Footer from "~/components/layout/footer";
 import Link from "next/link";
 
@@ -29,8 +31,7 @@ function ResetPasswordInner() {
   const token = searchParams.get("token") ?? "";
   const emailParam = searchParams.get("email"); // Fallback display email
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+
   const [isSuccess, setIsSuccess] = useState(false);
 
   // Pre-validate token on page load
@@ -132,68 +133,24 @@ function ResetPasswordInner() {
               )}
 
               {/* Password */}
-              <div className="space-y-1">
-                <label className="block text-sm font-medium text-slate-800">
-                  Password Baru
-                </label>
-                <div className="relative">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                    <LockKeyIcon size={24} />
-                  </div>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Minimal 8 karakter"
-                    className={`w-full rounded-lg border py-2.5 pr-10 pl-12 text-sm transition-all outline-none focus:ring-2 ${
-                      errors.password
-                        ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                        : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
-                    }`}
-                    {...register("password")}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
-                  >
-                    {showPassword ? <EyeSlashIcon size={18} /> : <EyeIcon size={18} />}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-xs text-red-500">{errors.password.message}</p>
-                )}
-              </div>
+              <AuthInput
+                label="Password Baru"
+                type="password"
+                placeholder="Minimal 8 karakter"
+                icon={<LockKeyIcon size={24} />}
+                registration={register("password")}
+                error={errors.password}
+              />
 
               {/* Confirm Password */}
-              <div className="space-y-1">
-                <label className="block text-sm font-medium text-slate-800">
-                  Konfirmasi Password Baru
-                </label>
-                <div className="relative">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                    <LockKeyIcon size={24} />
-                  </div>
-                  <input
-                    type={showConfirm ? "text" : "password"}
-                    placeholder="Ulangi Password Baru"
-                    className={`w-full rounded-lg border py-2.5 pr-10 pl-12 text-sm transition-all outline-none focus:ring-2 ${
-                      errors.confirmPassword
-                        ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                        : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
-                    }`}
-                    {...register("confirmPassword")}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirm((v) => !v)}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
-                  >
-                    {showConfirm ? <EyeSlashIcon size={18} /> : <EyeIcon size={18} />}
-                  </button>
-                </div>
-                {errors.confirmPassword && (
-                  <p className="text-xs text-red-500">{errors.confirmPassword.message}</p>
-                )}
-              </div>
+              <AuthInput
+                label="Konfirmasi Password Baru"
+                type="password"
+                placeholder="Ulangi Password Baru"
+                icon={<LockKeyIcon size={24} />}
+                registration={register("confirmPassword")}
+                error={errors.confirmPassword}
+              />
 
               <button
                 type="submit"

@@ -9,12 +9,12 @@ import { api } from "~/trpc/react";
 import { useImageUpload } from "./use-upload";
 import { productDigitalSchema, type DigitalProductFormValues } from "../lib/validation";
 
-interface UseProductDigitalProps {
+interface UseProdukDigitalKelasProps {
     id?: string;
     isEdit?: boolean;
 }
 
-export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps = {}) {
+export function useProdukDigitalKelas({ id, isEdit = false }: UseProdukDigitalKelasProps = {}) {
     const router = useRouter();
     const utils = api.useUtils();
 
@@ -187,6 +187,21 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
         }
     });
 
+    const handlePriceAdjust = (step: number) => {
+        const currentPrice = form.getValues("price") || 0;
+        form.setValue("price", Math.max(0, currentPrice + step), { shouldValidate: true, shouldDirty: true });
+    };
+
+    const handleDiscountPriceAdjust = (step: number) => {
+        const currentPrice = form.getValues("discountPrice") || 0;
+        form.setValue("discountPrice", Math.max(0, currentPrice + step), { shouldValidate: true, shouldDirty: true });
+    };
+
+    const handleQuotaAdjust = (step: number) => {
+        const currentQuota = form.getValues("capacity") || 0;
+        form.setValue("capacity", Math.max(0, currentQuota + step), { shouldValidate: true, shouldDirty: true });
+    };
+
     return {
         form,
         fields,
@@ -198,6 +213,9 @@ export function useProductDigital({ id, isEdit = false }: UseProductDigitalProps
         uploading,
         onFilesChange,
         removeImage,
+        handlePriceAdjust,
+        handleDiscountPriceAdjust,
+        handleQuotaAdjust,
         onSubmit,
         isPending: createMutation.isPending || updateMutation.isPending,
         isLoadingProduct,

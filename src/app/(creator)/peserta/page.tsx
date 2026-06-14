@@ -1,21 +1,20 @@
 "use client";
 
 // React
-import { useState, useEffect } from "react";
+// (No React imports needed currently)
 
 // Next.js
 import Link from "next/link";
 
 // Icons
 import {
-	CaretUpIcon,
-	CaretDownIcon,
 	EyeIcon,
 	UserMinusIcon,
 } from "@phosphor-icons/react";
 
 // Internal & Utils
 import { api } from "~/trpc/react";
+import { useDataTable } from "~/hooks/use-data-table";
 
 // Components
 import {
@@ -29,6 +28,12 @@ import {
 } from "~/components/ui/table";
 import { Skeleton } from "~/components/ui/skeleton";
 import SearchInput from "~/components/ui/search";
+import { PageHeader } from "~/components/layout/page-header";
+import { DataTableToolbar } from "~/components/layout/data-table-toolbar";
+import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
+import { TableEmptyState, MobileEmptyState } from "~/components/layout/empty-state";
+import { MobilePaginationWrapper } from "~/components/layout/mobile-pagination-wrapper";
+import { SortableTableHead } from "~/components/layout/sortable-table-head";
 import {
 	Tooltip,
 	TooltipContent,
@@ -39,21 +44,13 @@ import {
 export default function UserPage() {
 	// ─── States & Hooks ──────────────────────────────────────────────────────
 
-	const [search, setSearch] = useState("");
-	const [debouncedSearch, setDebouncedSearch] = useState("");
-	const [page, setPage] = useState(1);
-	const [limit, setLimit] = useState(10);
 
-	// ─── Effects ─────────────────────────────────────────────────────────────
-
-	// Debounce search
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			setDebouncedSearch(search);
-			setPage(1);
-		}, 500);
-		return () => clearTimeout(timer);
-	}, [search]);
+	const {
+		page, setPage,
+		limit, setLimit,
+		search, setSearch,
+		debouncedSearch,
+	} = useDataTable<"name">("name", "asc");
 
 	// ─── API ─────────────────────────────────────────────────────────────────
 
@@ -75,23 +72,22 @@ export default function UserPage() {
 		<TooltipProvider>
 			<div className="w-full max-w-7xl mx-auto space-y-6">
 				{/* Header */}
-				<div className="bg-slate-50">
-					<div className="sticky top-[74px] bg-slate-50 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-2">
-						<div className="text-2xl font-bold mb-2 text-cyan-600">Daftar User</div>
-						<div className="text-sm font-regular text-slate-600">Pantau semua user yang membeli produkmu.</div>
-					</div>
-				</div>
+				<PageHeader
+					title="Daftar User"
+					description="Pantau semua user yang membeli produkmu."
+				/>
 
 				{/* Toolbar */}
-				<div className="flex flex-wrap items-center justify-between gap-4">
-					{/* Search */}
-					<SearchInput
-						value={search}
-						onChange={(e) => setSearch(e.target.value)}
-						placeholder="Cari berdasarkan Nama atau Email"
-						className="w-full sm:flex-1 min-w-[280px]"
-					/>
-				</div>
+				<DataTableToolbar
+					search={
+						<SearchInput
+							value={search}
+							onChange={(e) => setSearch(e.target.value)}
+							placeholder="Cari berdasarkan Nama atau Email"
+							className="w-full"
+						/>
+					}
+				/>
 
 				{/* Table (Desktop/Tablet) */}
 				<div className="hidden sm:block w-full pb-2">
@@ -110,15 +106,13 @@ export default function UserPage() {
 						<TableHeader>
 							<TableRow>
 								<TableHead className="w-[5%] text-center whitespace-nowrap">No</TableHead>
-								<TableHead className="w-[20%] whitespace-nowrap">
-									<div className="flex items-center gap-2 cursor-pointer hover:text-slate-900 transition-colors group">
-										Nama
-										<div className="flex flex-col h-4 justify-center">
-											<CaretUpIcon className="w-3 h-3 text-slate-400" />
-											<CaretDownIcon className="w-3 h-3 text-slate-400" />
-										</div>
-									</div>
-								</TableHead>
+								<SortableTableHead
+									title="Nama"
+									sortKey="name"
+									isActive={false}
+									sortOrder="asc"
+									className="w-[20%] whitespace-nowrap"
+								/>
 								<TableHead className="w-[20%] whitespace-nowrap">Email</TableHead>
 								<TableHead className="w-[15%] whitespace-nowrap">Nomor Hp</TableHead>
 								<TableHead className="w-[15%] text-center whitespace-nowrap">Produk Dibeli</TableHead>
@@ -129,30 +123,13 @@ export default function UserPage() {
 
 						<TableBody>
 							{isLoading ? (
-								Array.from({ length: 5 }).map((_, i) => (
-									<TableRow data-type="body" key={i}>
-										<TableCell><Skeleton className="h-4 w-4 mx-auto" /></TableCell>
-										<TableCell><Skeleton className="h-4 w-32" /></TableCell>
-										<TableCell><Skeleton className="h-4 w-40" /></TableCell>
-										<TableCell><Skeleton className="h-4 w-24" /></TableCell>
-										<TableCell><Skeleton className="h-4 w-12 mx-auto" /></TableCell>
-										<TableCell><Skeleton className="h-4 w-24" /></TableCell>
-										<TableCell>
-											<div className="flex justify-start">
-												<Skeleton className="h-5 w-5" />
-											</div>
-										</TableCell>
-									</TableRow>
-								))
+								<DataTableBodySkeleton columns={7} rows={5} />
 							) : participants.length === 0 ? (
-								<TableRow className="text-center">
-									<TableCell colSpan={7} className="py-20">
-										<div className="flex flex-col items-center gap-2">
-											<UserMinusIcon size={48} className="text-slate-300" />
-											<span className="text-slate-500">Belum ada data pembeli ditemukan.</span>
-										</div>
-									</TableCell>
-								</TableRow>
+								<TableEmptyState
+									colSpan={7}
+									icon={<UserMinusIcon size={48} className="text-slate-300" />}
+									description="Belum ada data pembeli ditemukan."
+								/>
 							) : (
 								participants.map((item, index) => {
 									const rowNumber = (page - 1) * limit + index + 1;
@@ -217,23 +194,11 @@ export default function UserPage() {
 				{/* Mobile Cards (Only visible on mobile) */}
 				<div className="space-y-4 sm:hidden">
 					{isLoading ? (
-						Array.from({ length: 3 }).map((_, i) => (
-							<div key={i} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3 animate-pulse">
-								<div className="flex justify-between items-center border-b border-slate-100 pb-2">
-									<Skeleton className="h-4 w-8" />
-									<Skeleton className="h-6 w-20 rounded-full" />
-								</div>
-								<div className="space-y-2 flex-1">
-									<Skeleton className="h-4 w-3/4" />
-									<Skeleton className="h-3 w-1/2" />
-									<Skeleton className="h-3 w-1/3" />
-								</div>
-							</div>
-						))
+						<DataTableMobileSkeleton rows={3} />
 					) : participants.length === 0 ? (
-						<div className="text-center py-8 bg-white border border-slate-800 rounded-xl p-4 text-slate-500">
-							Belum ada data pembeli ditemukan.
-						</div>
+						<MobileEmptyState
+							description="Belum ada data pembeli ditemukan."
+						/>
 					) : (
 						participants.map((item, index) => {
 							const rowNumber = (page - 1) * limit + index + 1;
@@ -290,7 +255,7 @@ export default function UserPage() {
 
 					{/* Mobile Pagination */}
 					{participants && participants.length > 0 && (
-						<div className="bg-white border border-slate-800 rounded-xl p-4 shadow-[1.5px_1.5px_0px_rgba(29,41,61)]">
+						<MobilePaginationWrapper>
 							<TablePagination
 								page={page}
 								totalPages={totalPages}
@@ -299,7 +264,7 @@ export default function UserPage() {
 								onPageChange={setPage}
 								onLimitChange={setLimit}
 							/>
-						</div>
+						</MobilePaginationWrapper>
 					)}
 				</div>
 			</div>

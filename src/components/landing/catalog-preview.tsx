@@ -91,7 +91,7 @@ function PreviewProductCard({
 
 export default function CatalogPreview() {
   return (
-    <div className="flex h-full w-full overflow-hidden rounded-xl border-2 border-slate-800 bg-slate-50 shadow-[0px_3px_0px_rgba(30,27,75)] relative z-10 select-none">
+    <div className="flex h-full w-full overflow-hidden rounded-xl border-2 border-slate-800 bg-slate-50 shadow-[0px_3px_0px_rgba(29,41,61)] relative z-10 select-none">
       <div className="h-full w-full overflow-y-auto no-scrollbar pb-10 pointer-events-none">
 
         {/* ── Banner Section ── */}

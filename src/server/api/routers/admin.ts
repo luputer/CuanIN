@@ -260,4 +260,64 @@ export const adminRouter = createTRPCRouter({
       return updated;
     }),
 
+  // mark as failed / rejected
+  markWithdrawalFailed: adminProcedure
+    .input(z.object({ withdrawalId: z.string(), failureMessage: z.string().optional() }))
+    .mutation(async ({ ctx, input }) => {
+      const withdrawal = await ctx.db.withdrawal.findUnique({
+        where: { id: input.withdrawalId },
+      });
+
+      if (!withdrawal) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Withdrawal tidak ditemukan" });
+      }
+
+      if (withdrawal.status !== WithdrawalStatus.PENDING && withdrawal.status !== WithdrawalStatus.REQUESTED && withdrawal.status !== WithdrawalStatus.ACCEPTED) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Status withdrawal tidak dapat ditolak" });
+      }
+
+      const updated = await ctx.db.$transaction(async (tx) => {
+        // Update status withdrawal
+        const updatedWd = await tx.withdrawal.update({
+          where: { id: input.withdrawalId },
+          data: {
+            status: WithdrawalStatus.FAILED,
+            failureMessage: input.failureMessage ?? "Ditolak oleh Admin",
+          },
+        });
+
+        // Refund saldo kreator (amount sudah termasuk feeAmount saat debet di withdrawalsRouter)
+        // Kita kreditkan kembali ke kreator menggunakan amount
+        await tx.balanceEntry.create({
+          data: {
+            userId: withdrawal.userId,
+            amount: Number(withdrawal.amount), // Refund penuh
+            type: "WITHDRAWAL_FAILED",
+            refId: withdrawal.id,
+            note: `Pengembalian dana penarikan gagal: ${input.failureMessage ?? "Ditolak oleh Admin"}`,
+          },
+        });
+
+        // Jika ada feeAmount, maka fee tersebut gagal masuk ke admin, kita kembalikan saldo admin
+        if (Number(withdrawal.feeAmount ?? 0) > 0) {
+          const admin = await tx.user.findFirst({ where: { role: "ADMIN" } });
+          if (admin) {
+            await tx.balanceEntry.create({
+              data: {
+                userId: admin.id,
+                amount: -Number(withdrawal.feeAmount), // Tarik balik fee dari admin
+                type: "WITHDRAWAL_REVERSED",
+                refId: withdrawal.id,
+                note: `Pembatalan platform fee karena penarikan gagal (${withdrawal.id})`,
+              },
+            });
+          }
+        }
+
+        return updatedWd;
+      });
+
+      return updated;
+    }),
+
 });

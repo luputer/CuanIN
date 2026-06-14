@@ -530,7 +530,6 @@ export const purchasesRouter = createTRPCRouter({
     }),
 
 
-
   // ─── GET DETAIL (creator dashboard) ────────────────────────────────────────
   getDetail: protectedProcedure
     .input(z.object({ purchaseId: z.string() }))

@@ -1,7 +1,7 @@
 "use client";
 
-import SidebarKreator from "~/components/layout/sidebarkreator";
-import HeaderKreator from "~/components/layout/headerkreator";
+import SidebarKreator from "~/components/layout/sidebar-kreator";
+import HeaderKreator from "~/components/layout/header-kreator";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { useState, useEffect } from "react";

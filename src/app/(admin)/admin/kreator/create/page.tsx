@@ -25,33 +25,11 @@ import {
     SectionHeader,
     FormInput,
     FormTextarea,
+    FormRow,
 } from "~/components/ui/form-layout";
 import ButtonSave from "~/components/ui/button-save";
 import ButtonCancel from "~/components/ui/button-cancel";
-
-// ─── Local Components ────────────────────────────────────────────────────────
-
-const Label = ({ children }: { children: React.ReactNode }) => (
-    <div className="w-full text-slate-500 text-sm font-medium leading-6 mb-1">{children}</div>
-);
-
-const Row = ({
-    label,
-    error,
-    children,
-}: {
-    label: string;
-    error?: string;
-    children: React.ReactNode;
-}) => (
-    <div className="flex flex-col items-start pb-5 gap-0.5 w-full">
-        <Label>{label}</Label>
-        <div className="flex-1 w-full text-slate-800 text-sm font-medium leading-6">
-            {children}
-            {error && <span className="text-red-500 text-xs mt-1 block">{error}</span>}
-        </div>
-    </div>
-);
+import { DetailHeader } from "~/components/layout/detail-header";
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -126,20 +104,11 @@ export default function CreateCreatorPage() {
         <div className="w-full max-w-7xl mx-auto">
             <div className="space-y-6">
                 {/* Header */}
-                <div className="bg-slate-50">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:sticky sm:top-[74px] bg-slate-50 z-40 -mx-6 px-6 pt-2 pb-0">
-                        <div className="flex-1 flex flex-col gap-1">
-                            <Link
-                                href="/admin/kreator"
-                                className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
-                            >
-                                <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-                                <span className="leading-none">Kembali ke Daftar Kreator</span>
-                            </Link>
-                            <h1 className="text-xl font-medium text-slate-800">Tambah Kreator Baru</h1>
-                        </div>
-                    </div>
-                </div>
+                <DetailHeader
+                    backLink="/admin/kreator"
+                    backLabel="Kembali ke Daftar Kreator"
+                    title="Tambah Kreator Baru"
+                />
 
                 {/* Content */}
                 <div className="flex flex-col lg:flex-row gap-6 items-start">
@@ -150,7 +119,7 @@ export default function CreateCreatorPage() {
 
                             <div className="space-y-0 pt-6">
                                 {/* Foto Profil */}
-                                <Row label="Foto Profil">
+                                <FormRow label="Foto Profil">
                                     <div className="flex flex-col gap-3">
                                         <div
                                             className="relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer"
@@ -207,10 +176,10 @@ export default function CreateCreatorPage() {
                                         )}
                                         <p className="text-[11px] text-slate-400 italic">Disarankan rasio 1:1 (square)</p>
                                     </div>
-                                </Row>
+                                </FormRow>
 
                                 {/* Banner */}
-                                <Row label="Banner Profil">
+                                <FormRow label="Banner Profil">
                                     <div className="flex flex-col gap-3">
                                         <div
                                             className="relative group w-full aspect-[6/1] md:aspect-[8/1] cursor-pointer"
@@ -267,47 +236,47 @@ export default function CreateCreatorPage() {
                                         )}
                                         <p className="text-[11px] text-slate-400 italic">Disarankan rasio 6:1 atau 8:1 (Tipis/Ceper)</p>
                                     </div>
-                                </Row>
+                                </FormRow>
 
                                 {/* Nama */}
-                                <Row label="Nama" error={errors.name?.message}>
+                                <FormRow label="Nama" error={errors.name?.message}>
                                     <FormInput
                                         placeholder="Masukkan nama lengkap"
                                         {...register("name")}
                                     />
-                                </Row>
+                                </FormRow>
 
                                 {/* Email */}
-                                <Row label="Email" error={errors.email?.message}>
+                                <FormRow label="Email" error={errors.email?.message}>
                                     <FormInput
                                         type="email"
                                         placeholder="Masukkan email aktif"
                                         {...register("email")}
                                     />
-                                </Row>
+                                </FormRow>
 
                                 {/* Nomor HP */}
-                                <Row label="Nomor HP" error={errors.phone?.message}>
+                                <FormRow label="Nomor HP" error={errors.phone?.message}>
                                     <FormInput
                                         placeholder="Masukkan nomor HP aktif"
                                         {...register("phone")}
                                     />
-                                </Row>
+                                </FormRow>
 
                                 {/* Bio */}
-                                <Row label="Bio" error={errors.bio?.message}>
+                                <FormRow label="Bio" error={errors.bio?.message}>
                                     <FormTextarea
                                         placeholder="Ceritakan sedikit tentang kreator ini..."
                                         {...register("bio")}
                                     />
-                                </Row>
+                                </FormRow>
                             </div>
 
                             {/* ─── Keamanan ─── */}
                             <div className="pt-6">
                                 <SectionHeader title="Keamanan" />
                                 <div className="space-y-0 pt-6">
-                                    <Row label="Password Baru" error={errors.password?.message}>
+                                    <FormRow label="Password Baru" error={errors.password?.message}>
                                         <FormInput
                                             type={showPassword ? "text" : "password"}
                                             placeholder="Minimal 6 karakter"
@@ -322,7 +291,7 @@ export default function CreateCreatorPage() {
                                                 </button>
                                             }
                                         />
-                                    </Row>
+                                    </FormRow>
                                 </div>
                             </div>
 

@@ -10,26 +10,14 @@ import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
-import { Skeleton } from "~/components/ui/skeleton";
 import { useState, useRef, useEffect } from "react";
-import { SectionHeader } from "~/components/ui/form-layout";
+import { SectionHeader, FormRow } from "~/components/ui/form-layout";
 import React from "react";
 import { cn } from "~/lib/utils";
+import { DetailHeader } from "~/components/layout/detail-header";
+import { AdminDetailSkeleton } from "~/components/layout/detail-skeletons";
+import { StatusBadge } from "~/components/ui/status-badge";
 
-const Label = ({ children }: { children: React.ReactNode }) => (
-    <div className="w-full text-slate-500 text-sm font-medium leading-6 mb-1">{children}</div>
-);
-
-const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
-    <div className="flex flex-col items-start pb-5 gap-0.5 w-full">
-        <div className="flex items-center justify-between w-full mb-1">
-            <Label>{label}</Label>
-        </div>
-        <div className="flex-1 w-full text-slate-800 text-sm font-medium leading-6">
-            {children}
-        </div>
-    </div>
-);
 
 export default function AdminProductDetailPage() {
     const params = useParams();
@@ -55,75 +43,7 @@ export default function AdminProductDetailPage() {
     }, [product?.description]);
 
     // ─── Loading ───
-    if (isLoading) {
-        return (
-            <div className="w-full max-w-7xl mx-auto animate-pulse">
-                <div className="space-y-6">
-                    {/* Header Skeleton */}
-                    <div className="bg-slate-50">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:sticky sm:top-[74px] bg-slate-50 z-40 -mx-6 px-6 pt-2 pb-0">
-                            <div className="flex-1 flex flex-col gap-1.5">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Skeleton className="h-4 w-4" />
-                                    <Skeleton className="h-4 w-32" />
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <Skeleton className="h-7 w-64 rounded-md" />
-                                    <Skeleton className="h-6 w-16 rounded-full" />
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                                <Skeleton className="h-10 w-[180px] rounded-lg" />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Content card Skeleton */}
-                    <div className="rounded-xl border border-slate-800 overflow-hidden bg-white">
-                        <div className="flex-1 min-w-0 bg-white rounded-xl px-4 py-6 sm:px-8 sm:py-8">
-                            <Skeleton className="h-6 w-48 mb-6" />
-
-                            <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start pt-6">
-                                {/* Left detail fields */}
-                                <div className="flex-1 min-w-0 w-full space-y-5">
-                                    {[1, 2, 3, 4, 5, 6].map((i) => (
-                                        <div key={i} className="flex flex-col gap-1.5">
-                                            <Skeleton className="h-4 w-32" />
-                                            <Skeleton className="h-[46px] w-full rounded-lg" />
-                                        </div>
-                                    ))}
-                                </div>
-
-                                {/* Right Sidebar */}
-                                <div className="shrink-0 w-full lg:w-[400px] space-y-6">
-                                    {/* Thumbnail Skeleton */}
-                                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                        <Skeleton className="h-4 w-24 mb-3" />
-                                        <Skeleton className="w-full aspect-square rounded-xl" />
-                                    </div>
-
-                                    {/* Status Skeleton */}
-                                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
-                                        <div className="space-y-1.5">
-                                            <Skeleton className="h-4 w-16" />
-                                            <Skeleton className="h-[46px] w-full rounded-lg" />
-                                        </div>
-                                        <div className="space-y-1.5">
-                                            <Skeleton className="h-4 w-20" />
-                                            <Skeleton className="h-[46px] w-full rounded-lg" />
-                                        </div>
-                                        <div className="pt-4 border-t border-slate-200 flex justify-end">
-                                            <Skeleton className="h-3 w-40" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    if (isLoading) return <AdminDetailSkeleton />;
 
     if (!product) {
         return (
@@ -147,11 +67,6 @@ export default function AdminProductDetailPage() {
             ? "archived"
             : product.status ?? "draft";
 
-    const displayStatus =
-        currentStatus === "archived"
-            ? "Selesai"
-            : currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
-
     const priceNum = Number(product.price);
 
     // Parse images array
@@ -166,46 +81,36 @@ export default function AdminProductDetailPage() {
         <div className="w-full max-w-7xl mx-auto">
             <div className="space-y-6">
                 {/* Header */}
-                <div className="bg-slate-50">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:sticky sm:top-[74px] bg-slate-50 z-40 -mx-6 px-6 pt-2 pb-0">
-                        <div className="flex-1 flex flex-col gap-1">
-                            <Link
-                                href="/admin/produk"
-                                className="group flex items-center gap-2 text-sm font-regular text-slate-600 hover:text-slate-800 transition-colors w-fit mb-2"
+                <DetailHeader
+                    backLink="/admin/produk"
+                    backLabel="Kembali ke Daftar Produk"
+                    title={product.name}
+                    badges={
+                        <div className={cn(
+                            "px-2 py-0.5 rounded-full text-xs font-semibold tracking-wider",
+                            priceNum > 0
+                                ? "bg-amber-100 text-amber-700 border border-amber-200"
+                                : "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                        )}>
+                            {priceNum > 0 ? "Berbayar" : "Gratis"}
+                        </div>
+                    }
+                    actions={
+                        product.slug && (product as any).user?.catalog?.slug && (
+                            <a
+                                href={`/${(product as any).user.catalog.slug}/${product.slug}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-cyan-600 hover:bg-cyan-50 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
                             >
-                                <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-                                <span className="leading-none">Kembali ke Daftar</span>
-                            </Link>
-                            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                                <h1 className="text-xl font-medium text-slate-800 break-words max-w-full">{product.name}</h1>
-                                <div className={cn(
-                                    "px-2 py-0.5 rounded-full text-xs font-semibold tracking-wider",
-                                    priceNum > 0
-                                        ? "bg-amber-100 text-amber-700 border border-amber-200"
-                                        : "bg-emerald-100 text-emerald-700 border border-emerald-200"
-                                )}>
-                                    {priceNum > 0 ? "Berbayar" : "Gratis"}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                            {product.slug && (product as any).user?.catalog?.slug && (
-                                <a
-                                    href={`/${(product as any).user.catalog.slug}/${product.slug}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-cyan-600 hover:bg-cyan-50 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
-                                >
-                                    <ArrowSquareOutIcon className="w-4 h-4 text-cyan-600" />
-                                    <span className="text-sm font-regular text-cyan-600 whitespace-nowrap">
-                                        Lihat Katalog Produk
-                                    </span>
-                                </a>
-                            )}
-                        </div>
-                    </div>
-                </div>
+                                <ArrowSquareOutIcon className="w-4 h-4 text-cyan-600" />
+                                <span className="text-sm font-regular text-cyan-600 whitespace-nowrap">
+                                    Lihat Katalog Produk
+                                </span>
+                            </a>
+                        )
+                    }
+                />
 
                 {/* Content card */}
                 <div className="rounded-xl border border-slate-800 overflow-hidden bg-white">
@@ -219,13 +124,13 @@ export default function AdminProductDetailPage() {
                         <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start pt-6">
                             {/* Left: detail fields */}
                             <div className="flex-1 min-w-0 w-full space-y-0">
-                                <Row label="Nama">
+                                <FormRow label="Nama">
                                     <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full text-slate-800 font-medium">
                                         {product.name}
                                     </div>
-                                </Row>
+                                </FormRow>
 
-                                <Row label="Kreator">
+                                <FormRow label="Kreator">
                                     <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full">
                                         {(product as any).user?.image ? (
                                             <Image
@@ -248,15 +153,15 @@ export default function AdminProductDetailPage() {
                                             {(product as any).user?.name ?? "-"}
                                         </Link>
                                     </div>
-                                </Row>
+                                </FormRow>
 
-                                <Row label="Ringkasan">
+                                <FormRow label="Ringkasan">
                                     <div className="bg-white border border-slate-200 rounded-lg px-4 py-3 w-full text-slate-700 leading-relaxed">
                                         {product.shortDescription ?? "-"}
                                     </div>
-                                </Row>
+                                </FormRow>
 
-                                <Row label="Deskripsi Lengkap">
+                                <FormRow label="Deskripsi Lengkap">
                                     <div className="bg-white border border-slate-200 rounded-lg p-4 w-full">
                                         {product.description ? (
                                             <>
@@ -285,9 +190,9 @@ export default function AdminProductDetailPage() {
                                             <span className="text-slate-400">-</span>
                                         )}
                                     </div>
-                                </Row>
+                                </FormRow>
 
-                                <Row label="Keuntungan">
+                                <FormRow label="Keuntungan">
                                     <div className="bg-white border border-slate-200 rounded-lg p-4 w-full">
                                         {Array.isArray(product.benefit) && product.benefit.length > 0 ? (
                                             <ul className="list-disc list-inside space-y-1">
@@ -301,15 +206,15 @@ export default function AdminProductDetailPage() {
                                             <span className="text-slate-400">-</span>
                                         )}
                                     </div>
-                                </Row>
+                                </FormRow>
 
-                                <Row label="Tipe">
+                                <FormRow label="Tipe">
                                     <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full text-slate-800 font-medium">
                                         {Number(product.price) === 0 ? "Gratis" : "Berbayar"}
                                     </div>
-                                </Row>
+                                </FormRow>
 
-                                <Row label="Harga">
+                                <FormRow label="Harga">
                                     <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full">
                                         <span className={cn(
                                             "font-medium",
@@ -325,7 +230,7 @@ export default function AdminProductDetailPage() {
                                             </span>
                                         )}
                                     </div>
-                                </Row>
+                                </FormRow>
 
                                 <div className="pt-8">
                                     <SectionHeader title={
@@ -336,68 +241,67 @@ export default function AdminProductDetailPage() {
                                         {/* Webinar-specific */}
                                         {isWebinar && (
                                             <>
-                                                <Row label="Platform">
+                                                <FormRow label="Platform">
                                                     <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full font-medium capitalize text-slate-800">
                                                         {product.contentType || "-"}
                                                     </div>
-                                                </Row>
-                                                <Row label="Waktu Mulai">
+                                                </FormRow>
+                                                <FormRow label="Jadwal Webinar">
                                                     <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full font-medium text-slate-800">
-                                                        {product.startDate ? format(new Date(product.startDate), "d MMMM yyyy, HH:mm", { locale: idLocale }) : "-"}
+                                                        {product.startDate ? (
+                                                            `${format(new Date(product.startDate), "d MMMM yyyy, HH:mm", { locale: idLocale })}${product.endDate ? ` - ${format(new Date(product.endDate), "HH:mm", { locale: idLocale })}` : ""}`
+                                                        ) : (
+                                                            "-"
+                                                        )}
                                                     </div>
-                                                </Row>
-                                                <Row label="Waktu Selesai">
-                                                    <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full font-medium text-slate-800">
-                                                        {product.endDate ? format(new Date(product.endDate), "d MMMM yyyy, HH:mm", { locale: idLocale }) : "-"}
-                                                    </div>
-                                                </Row>
-                                                <Row label="Batas Pendaftaran">
+                                                </FormRow>
+                                                <FormRow label="Batas Pendaftaran">
                                                     <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full font-medium text-slate-800">
                                                         {product.dateDeadline ? format(new Date(product.dateDeadline), "d MMMM yyyy, HH:mm", { locale: idLocale }) : "-"}
                                                     </div>
-                                                </Row>
-                                                <Row label="Kuota">
+                                                </FormRow>
+                                                <FormRow label="Kuota">
                                                     <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full font-medium text-slate-800">
                                                         {product.capacity ? (Number(product.capacity) === 0 ? "Tidak Terbatas" : `${product.capacity} Peserta`) : "Tidak Terbatas"}
                                                     </div>
-                                                </Row>
+                                                </FormRow>
                                             </>
                                         )}
 
                                         {/* Kelas-specific */}
                                         {isKelas && (
                                             <>
-                                                <Row label="Platform">
+                                                <FormRow label="Platform">
                                                     <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full font-medium capitalize text-slate-800">
                                                         {product.contentType || "-"}
                                                     </div>
-                                                </Row>
-                                                <Row label="Durasi">
+                                                </FormRow>
+                                                <FormRow label="Durasi">
                                                     <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full font-medium text-slate-800">
                                                         {product.duration ?? "-"}
                                                     </div>
-                                                </Row>
-                                                <Row label="Batasi Kuota">
+                                                </FormRow>
+                                                <FormRow label="Batasi Kuota">
                                                     <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full font-medium text-slate-800">
                                                         {product.capacity ? (Number(product.capacity) === 0 ? "Tidak Terbatas" : `${product.capacity} Peserta`) : "Tidak Terbatas"}
                                                     </div>
-                                                </Row>
+                                                </FormRow>
                                             </>
                                         )}
 
                                         {/* Digital-specific */}
                                         {isDigital && (
                                             <>
-                                                <Row label="Tipe Konten">
+                                                <FormRow label="Tipe Konten">
                                                     <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full font-medium capitalize text-slate-800">
                                                         {product.contentType || "-"}
                                                     </div>
-                                                </Row>
-                                                <Row label="Batasi Stok">
+                                                </FormRow>
+                                                <FormRow label="Batasi Stok">
                                                     <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full font-medium text-slate-800">
                                                         {product.capacity ? (Number(product.capacity) === 0 ? "Tidak Terbatas" : `${product.capacity} Unit`) : "Tidak Terbatas"}
                                                     </div>
-                                                </Row>
+                                                </FormRow>
                                             </>
                                         )}
                                     </div>
@@ -456,11 +360,10 @@ export default function AdminProductDetailPage() {
                                     )}
                                 </div>
 
-                                {/* Status */}
                                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                                     <p className="text-slate-700 text-sm font-semibold mb-3">Status</p>
-                                    <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full text-slate-800 text-sm">
-                                        {displayStatus}
+                                    <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full">
+                                        <StatusBadge status={currentStatus} />
                                     </div>
                                 </div>
 

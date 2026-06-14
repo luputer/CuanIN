@@ -25,7 +25,6 @@ import {
     TablePagination,
     SortableTableHead,
 } from "~/components/ui/table";
-import { Skeleton } from "~/components/ui/skeleton";
 import {
     Tooltip,
     TooltipContent,

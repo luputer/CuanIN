@@ -24,7 +24,6 @@ import {
     TableCell,
     TablePagination,
 } from "~/components/ui/table";
-import { Skeleton } from "~/components/ui/skeleton";
 import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
 import { ProductThumbnail, ProductActions } from "~/components/layout/product-list-components";
 import SearchInput from "~/components/ui/search";
@@ -38,10 +37,7 @@ import { MobilePaginationWrapper } from "~/components/layout/mobile-pagination-w
 import { StatusBadge } from "~/components/ui/status-badge";
 import { DataTableToolbar } from "~/components/layout/data-table-toolbar";
 import {
-    Tooltip,
-    TooltipContent,
     TooltipProvider,
-    TooltipTrigger,
 } from "~/components/ui/tooltip";
 import {
     DropdownMenu,

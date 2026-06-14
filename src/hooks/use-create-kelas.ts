@@ -49,6 +49,7 @@ export function useCreateKelas() {
             status: "published",
             price: 0,
             benefit: [""],
+            links: [],
             contentType: "zoom",
             platformCustom: "",
             capacity: 0,
@@ -66,9 +67,13 @@ export function useCreateKelas() {
 
     const { setValue, getValues, watch, handleSubmit, control } = form;
 
-    const { fields, append, remove } = useFieldArray({
+    const {
+        fields: linkFields,
+        append: appendLink,
+        remove: removeLink,
+    } = useFieldArray({
         control,
-        name: "benefit" as never,
+        name: "links" as never,
     });
 
     const images = watch("images") || [];
@@ -163,6 +168,7 @@ export function useCreateKelas() {
             price: data.price ?? 0,
             contentType: actualContentType,
             link: data.link ?? undefined,
+            links: data.links?.filter((l) => l.trim() !== "") ?? [],
             notes: data.enableNotes ? data.notes : undefined,
             status: data.status,
             duration: data.duration,
@@ -188,6 +194,9 @@ export function useCreateKelas() {
             uploading,
             fileInputRef,
             description,
+            linkFields,
+            appendLink,
+            removeLink,
             isPending: createProduct.isPending || saveMutation.isPending
         },
         handlers: {

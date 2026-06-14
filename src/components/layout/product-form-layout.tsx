@@ -49,7 +49,6 @@ export function ProductFormLayout({
     backLabel,
     productId,
     isEdit = false,
-    isLoading = false,
     buyerCount = 0,
     createdAt,
     onSubmit,

@@ -25,12 +25,6 @@ import MarkdownPreview from "~/components/markdown-preview";
 import { getProductTypeLabel } from "~/lib/constants";
 import Footer from "~/components/layout/footer";
 
-const TYPE_MAP: Record<string, string> = {
-  WEBINAR: "Webinar",
-  KELAS_ONLINE: "Kelas",
-  DIGITAL_PRODUCT: "Produk Digital",
-};
-
 const PLATFORM_MAP: Record<string, string> = {
   zoom: "Zoom",
   "google-meet": "Google Meet",

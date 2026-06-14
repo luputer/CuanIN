@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import {
-    ArrowLeftIcon,
     BasketIcon,
     CircleNotchIcon,
     EyeIcon,
@@ -31,7 +30,6 @@ import {
     FormTextarea,
     FormRow,
 } from "~/components/ui/form-layout";
-import { Skeleton } from "~/components/ui/skeleton";
 import ButtonSave from "~/components/ui/button-save";
 import { DetailHeader } from "~/components/layout/detail-header";
 import { AdminCreatorDetailSkeleton } from "~/components/layout/detail-skeletons";

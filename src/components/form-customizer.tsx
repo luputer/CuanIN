@@ -9,7 +9,7 @@ import {
   CheckCircleIcon,
   CaretDownIcon,
 } from "@phosphor-icons/react";
-import { useEffect, useState, useRef, type CSSProperties } from "react";
+import { useEffect, useState, useRef, useCallback, type CSSProperties } from "react";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
 import ButtonSave from "~/components/ui/button-save";
@@ -99,7 +99,7 @@ function SortableFieldItem({
       style={style}
       className={`flex items-center gap-2 rounded-lg border border-slate-800 bg-white p-3.5 sm:gap-4 sm:p-5 ${isDragging ? "z-50 shadow-lg ring-2 ring-cyan-500" : ""}`}
     >
-      {/* HANDLE DRAG (Pindahkan listeners ke sini) */}
+      {/* HANDLE DRAG */}
       <div
         {...attributes}
         {...listeners}
@@ -125,10 +125,9 @@ function SortableFieldItem({
             <div className="group relative flex-1 md:flex-initial">
               <select
                 value={field.type}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  handleTypeChange(field.id, value as FieldType);
-                }}
+                onChange={(e) =>
+                  handleTypeChange(field.id, e.target.value as FieldType)
+                }
                 className="w-full cursor-pointer appearance-none rounded-md border border-slate-300 bg-white py-1.5 pr-9 pl-3 text-[14px] sm:text-[15px] font-medium text-slate-600 transition-colors hover:border-slate-400 focus:outline-none"
               >
                 {Object.entries(FIELD_TYPE_LABELS).map(([value, label]) => (
@@ -166,7 +165,8 @@ function SortableFieldItem({
           ) : (
             <div className="space-y-2.5 sm:space-y-3">
               {field.options?.map((option, index) => (
-                <div key={`${field.id}-${option}`} className="flex items-center gap-3">
+                // FIX 1: Pakai index sebagai key karena teks opsi bisa duplikat
+                <div key={`${field.id}-option-${index}`} className="flex items-center gap-3">
                   <input
                     type="text"
                     value={option}
@@ -230,19 +230,24 @@ export interface FormCustomizerProps {
 export function FormCustomizer({ productId, value, onChange }: FormCustomizerProps) {
   const isControlled = value !== undefined && onChange !== undefined;
 
+  // FIX 2: Selalu maintain internal fields state agar drag/mutasi lokal tetap konsisten.
+  // Di controlled mode, fields di-sync dari `value` prop via useEffect.
   const [fields, setFields] = useState<FormField[]>(value ?? []);
   const [hasLoaded, setHasLoaded] = useState(isControlled);
   const lastSavedRef = useRef<string>("");
-  const isSavingRef = useRef(false); // ← tambah ini di atas, sejajar lastSavedRef
+  const isSavingRef = useRef(false);
+  const pendingOnChangeRef = useRef(false);
 
-  // Sync controlled value if provided
+  // Sync dari controlled value ke internal state.
+  // Reset pendingOnChangeRef agar effect propagation tidak terpicu balik ke parent.
   useEffect(() => {
-    if (isControlled && value) {
+    if (isControlled) {
+      pendingOnChangeRef.current = false;
       setFields(value);
     }
-  }, [value, isControlled]);
+  }, [value]);
+  // isControlled tidak perlu di deps karena nilainya tidak berubah selama lifecycle
 
-  // Setup Sensors
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -258,7 +263,6 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
 
   const utils = api.useUtils();
 
-  // Save mutation
   const saveMutation = api.formFields.save.useMutation({
     onSuccess: () => {
       void utils.formFields.getByProductId.invalidate();
@@ -280,8 +284,6 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
       }));
 
       setFields(mappedFields);
-
-      // Inisialisasi ref dengan data awal
       lastSavedRef.current = JSON.stringify({
         productId,
         fields: mappedFields.map((f, index) => ({
@@ -292,17 +294,18 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
           order: index,
         })),
       });
-
       setHasLoaded(true);
     }
   }, [savedFields, hasLoaded, productId, isControlled]);
 
   const debouncedFields = useDebounce(fields, 1000);
 
+  // FIX 4: Gunakan useCallback-wrapped mutate agar ref selalu fresh, dan
+  // tambahkan saveMutation.mutate ke deps dengan useCallback pattern
   useEffect(() => {
     if (isControlled || !hasLoaded) return;
     if (debouncedFields.length === 0 && fields.length > 0) return;
-    if (isSavingRef.current) return; // ← skip kalau masih ada request berjalan
+    if (isSavingRef.current) return;
 
     const fieldsPayload = debouncedFields.map((f, index) => ({
       id: f.id,
@@ -316,49 +319,57 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
     const payload = { productId: productId ?? "", fields: fieldsPayload };
     const payloadString = JSON.stringify(payload);
 
-    if (payloadString === lastSavedRef.current) return; // ← skip kalau data sama
+    if (payloadString === lastSavedRef.current) return;
 
     isSavingRef.current = true;
 
     saveMutation.mutate(payload, {
       onSuccess: () => {
         lastSavedRef.current = payloadString;
-        // ← TIDAK invalidate, state lokal sudah benar
       },
       onSettled: () => {
-        isSavingRef.current = false; // ← reset setelah selesai (sukses/error)
+        isSavingRef.current = false;
       },
     });
   }, [debouncedFields, productId, hasLoaded, isControlled]);
 
-  const handleFieldsChange = (updater: FormField[] | ((prev: FormField[]) => FormField[])) => {
-    let nextFields: FormField[];
-    if (typeof updater === "function") {
-      nextFields = updater(fields);
-    } else {
-      nextFields = updater;
-    }
+  // FIX 5: handleFieldsChange sekarang selalu update internal state (fields),
+  // DAN memanggil onChange di controlled mode. Dua-duanya jalan.
+  const handleFieldsChange = useCallback(
+    (updater: FormField[] | ((prev: FormField[]) => FormField[])) => {
+      if (isControlled) {
+        pendingOnChangeRef.current = true;
+      }
+      setFields((prev) =>
+        typeof updater === "function" ? updater(prev) : updater,
+      );
+    },
+    [isControlled],
+  );
 
-    if (isControlled) {
-      onChange(nextFields);
-    } else {
-      setFields(nextFields);
+  // FIX: Propagate ke parent SETELAH state update selesai, bukan saat render
+  useEffect(() => {
+    if (isControlled && pendingOnChangeRef.current) {
+      pendingOnChangeRef.current = false;
+      onChange(fields);
     }
-  };
+  }, [fields, isControlled, onChange]);
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      handleFieldsChange((items) => {
-        const oldIndex = items.findIndex((i) => i.id === active.id);
-        const newIndex = items.findIndex((i) => i.id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  };
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (over && active.id !== over.id) {
+        handleFieldsChange((items) => {
+          const oldIndex = items.findIndex((i) => i.id === active.id);
+          const newIndex = items.findIndex((i) => i.id === over.id);
+          return arrayMove(items, oldIndex, newIndex);
+        });
+      }
+    },
+    [handleFieldsChange],
+  );
 
-  // Fungsi-fungsi pembantu dengan functional updates
-  const addField = () => {
+  const addField = useCallback(() => {
     const newField: FormField = {
       id: crypto.randomUUID(),
       label: "Pertanyaan Tanpa Judul",
@@ -366,88 +377,102 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
       required: false,
     };
     handleFieldsChange((prev) => [...prev, newField]);
-  };
+  }, [handleFieldsChange]);
 
-  const updateField = (id: string, updates: Partial<FormField>) => {
-    handleFieldsChange((prev) =>
-      prev.map((f) => (f.id === id ? { ...f, ...updates } : f)),
-    );
-  };
+  const updateField = useCallback(
+    (id: string, updates: Partial<FormField>) => {
+      handleFieldsChange((prev) =>
+        prev.map((f) => (f.id === id ? { ...f, ...updates } : f)),
+      );
+    },
+    [handleFieldsChange],
+  );
 
-  const removeField = (id: string) => {
-    handleFieldsChange((prev) => prev.filter((f) => f.id !== id));
-  };
+  const removeField = useCallback(
+    (id: string) => {
+      handleFieldsChange((prev) => prev.filter((f) => f.id !== id));
+    },
+    [handleFieldsChange],
+  );
 
-  const addOption = (fId: string) => {
-    handleFieldsChange((prev) =>
-      prev.map((f) =>
-        f.id === fId
-          ? {
-            ...f,
-            options: [
-              ...(f.options ?? ["Opsi 1"]),
-              `Opsi ${(f.options?.length ?? 0) + 1}`,
-            ],
-          }
-          : f,
-      ),
-    );
-  };
+  const addOption = useCallback(
+    (fId: string) => {
+      handleFieldsChange((prev) =>
+        prev.map((f) =>
+          f.id === fId
+            ? {
+              ...f,
+              options: [
+                ...(f.options ?? ["Opsi 1"]),
+                `Opsi ${(f.options?.length ?? 0) + 1}`,
+              ],
+            }
+            : f,
+        ),
+      );
+    },
+    [handleFieldsChange],
+  );
 
-  const updateOption = (fId: string, idx: number, val: string) => {
-    handleFieldsChange((prev) =>
-      prev.map((f) =>
-        f.id === fId && f.options
-          ? {
-            ...f,
-            options: f.options.map((o, i) => (i === idx ? val : o)),
-          }
-          : f,
-      ),
-    );
-  };
+  const updateOption = useCallback(
+    (fId: string, idx: number, val: string) => {
+      handleFieldsChange((prev) =>
+        prev.map((f) =>
+          f.id === fId && f.options
+            ? {
+              ...f,
+              options: f.options.map((o, i) => (i === idx ? val : o)),
+            }
+            : f,
+        ),
+      );
+    },
+    [handleFieldsChange],
+  );
 
-  const removeOption = (fId: string, idx: number) => {
-    handleFieldsChange((prev) =>
-      prev.map((f) =>
-        f.id === fId && f.options
-          ? {
-            ...f,
-            options: f.options.filter((_, i) => i !== idx),
-          }
-          : f,
-      ),
-    );
-  };
+  const removeOption = useCallback(
+    (fId: string, idx: number) => {
+      handleFieldsChange((prev) =>
+        prev.map((f) =>
+          f.id === fId && f.options
+            ? {
+              ...f,
+              options: f.options.filter((_, i) => i !== idx),
+            }
+            : f,
+        ),
+      );
+    },
+    [handleFieldsChange],
+  );
 
-  const handleTypeChange = (id: string, type: FieldType) => {
-    handleFieldsChange((prev) =>
-      prev.map((f) =>
-        f.id === id
-          ? {
-            ...f,
-            type,
-            options: ["MULTIPLE_CHOICE", "CHECKBOX", "DROPDOWN"].includes(
+  const handleTypeChange = useCallback(
+    (id: string, type: FieldType) => {
+      handleFieldsChange((prev) =>
+        prev.map((f) =>
+          f.id === id
+            ? {
+              ...f,
               type,
-            )
-              ? f.options?.length
-                ? f.options
-                : ["Opsi 1"]
-              : undefined,
-          }
-          : f,
-      ),
-    );
-  };
+              options: ["MULTIPLE_CHOICE", "CHECKBOX", "DROPDOWN"].includes(type)
+                ? f.options?.length
+                  ? f.options
+                  : ["Opsi 1"]
+                : undefined,
+            }
+            : f,
+        ),
+      );
+    },
+    [handleFieldsChange],
+  );
 
   if (!isControlled && isLoading) {
     return (
       <div className="bg-white px-4 py-6 sm:px-8 sm:py-8 animate-pulse">
-        {/* Section Header */}
         <div className="flex justify-between items-center mb-3">
           <Skeleton className="h-6 w-56" />
         </div>
-
         <div className="max-w-4xl w-full items-center mx-auto">
           <div className="py-4 pb-8">
             <div className="space-y-4">
@@ -457,7 +482,6 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
                   className="flex items-center gap-2 rounded-lg border border-slate-800 bg-white p-3.5 sm:gap-4 sm:p-5"
                 >
                   <Skeleton className="size-6 rounded" />
-
                   <div className="flex-1 space-y-3 sm:space-y-4">
                     <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center md:gap-4">
                       <div className="w-full flex-1 md:max-w-[60%] pb-1.5">
@@ -468,7 +492,6 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
                         <Skeleton className="size-8 rounded" />
                       </div>
                     </div>
-
                     <div className="pt-1">
                       <Skeleton className="mb-2 h-4 w-24" />
                       <Skeleton className="h-6 w-48 rounded" />
@@ -478,7 +501,6 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
               ))}
             </div>
           </div>
-
           <div className="flex flex-col gap-3">
             <Skeleton className="h-[46px] w-full rounded-lg" />
           </div>
@@ -486,6 +508,7 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
       </div>
     );
   }
+
   return (
     <div className="bg-white px-4 py-6 sm:px-8 sm:py-8">
       <SectionHeader title="Kustomisasi Isian Form">

@@ -1,13 +1,12 @@
-import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { api } from "~/trpc/react";
-import { productDigitalSchema } from "~/lib/validation";
-import { formatNumberInput } from "~/lib/utils";
-import { useImageUpload } from "~/hooks/use-upload";
 import type { FormField } from "~/components/form-customizer";
+import { useImageUpload } from "~/hooks/use-upload";
+import { productDigitalSchema } from "~/lib/validation";
+import { api } from "~/trpc/react";
 
 type DigitalProductFormValues = {
     name: string;
@@ -65,12 +64,7 @@ export function useCreateProdukDigital() {
         },
     });
 
-    const { setValue, getValues, watch, handleSubmit, control } = form;
-
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "benefit" as never,
-    });
+    const { setValue, getValues, watch, handleSubmit } = form;
 
     const description = watch("description");
     const images = watch("images") || [];

@@ -4,20 +4,13 @@
 import React from "react";
 
 // Next.js
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 // Third-party
 
 // Icons
-import {
-	EyeIcon,
-	UserCircleIcon,
-} from "@phosphor-icons/react";
 
 // Internal & Utils
 import { useAdminProducts } from "~/hooks/admin/use-admin-products";
-import { cn } from "~/lib/utils";
 import { getProductTypeLabel } from "~/lib/constants";
 
 // Components
@@ -27,30 +20,21 @@ import {
 	TableHeader,
 	TableRow,
 	TableBody,
-	TableCell,
 	TablePagination,
 	SortableTableHead,
 } from "~/components/ui/table";
-import { Skeleton } from "~/components/ui/skeleton";
-import { TableSkeleton, DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
+import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
 import { TableEmptyState, MobileEmptyState } from "~/components/layout/empty-state";
-import { StatusBadge } from "~/components/ui/status-badge";
 import { AdminProductTableRow, AdminProductMobileCard } from "~/components/admin/products/admin-product-table-items";
 import SearchInput from "~/components/ui/search";
 import {
-	Tooltip,
-	TooltipContent,
 	TooltipProvider,
-	TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { PageHeader } from "~/components/layout/page-header";
 import { DataTableToolbar, SelectFilter } from "~/components/layout/data-table-toolbar";
 
 export default function AdminProductsPage() {
 	// ─── States & Hooks ──────────────────────────────────────────────────────
-
-	const router = useRouter();
 
 	const {
 		page,

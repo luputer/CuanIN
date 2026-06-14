@@ -27,6 +27,7 @@ type SendProductEmailParams = {
   buyerEmail: string;
   productName: string;
   productLink: string;
+  links: string[] | null;
   creatorName: string;
   notes?: string | null;
 };
@@ -40,6 +41,7 @@ export const sendProductEmail = async ({
   buyerEmail,
   productName,
   productLink,
+  links,
   creatorName,
   notes,
 }: SendProductEmailParams) => {
@@ -47,13 +49,15 @@ export const sendProductEmail = async ({
     React.createElement(ProductAccessEmail, {
       productName,
       productLink,
+      links,
       notes,
       year: new Date().getFullYear(),
     })
   );
 
   try {
-    const textContent = `Terima kasih atas pembelian Anda!\n\nBerikut adalah link untuk mengakses produk Anda:\n${productLink}${notes ? `\n\nCatatan Tambahan:\n${notes}` : ''}\n\nSalam,\nTim CuanIN`;
+    const linksText = links && links.length > 0 ? `\n\nLink Tambahan:\n${links.map((l, i) => `${i + 1}. ${l}`).join("\n")}` : "";
+    const textContent = `Terima kasih atas pembelian Anda!\n\nBerikut adalah link untuk mengakses produk Anda:\n${productLink}${linksText}${notes ? `\n\nCatatan Tambahan:\n${notes}` : ''}\n\nSalam,\nTim CuanIN`;
 
     const info = await transporter.sendMail({
       from: `"${creatorName}" <${env.SMTP_FROM}>`,

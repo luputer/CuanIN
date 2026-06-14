@@ -1,11 +1,10 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
 import { webinarSchema } from "~/lib/validation";
-import { formatNumberInput } from "~/lib/utils";
 import { useImageUpload } from "~/hooks/use-upload";
 import type { FormField } from "~/components/form-customizer";
 import type { z } from "zod";

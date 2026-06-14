@@ -103,6 +103,7 @@ export const purchasesRouter = createTRPCRouter({
           price: true,
           discountPrice: true,
           link: true,
+          links: true,
           notes: true,
           userId: true,
           capacity: true,
@@ -277,6 +278,7 @@ export const purchasesRouter = createTRPCRouter({
             buyerEmail: input.buyerEmail,
             productName: product.name,
             productLink: product.link,
+            links: product.links as string[] | null,
             creatorName: product.user?.name ?? "Tim CuanIN",
             notes: product.notes,
           });

@@ -5,7 +5,6 @@ import { PencilIcon, TrashIcon, CopyIcon } from "@phosphor-icons/react";
 import {
     Tooltip,
     TooltipContent,
-    TooltipProvider,
     TooltipTrigger,
 } from "~/components/ui/tooltip";
 

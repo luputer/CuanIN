@@ -4,20 +4,20 @@ import React, { useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { CopyIcon, TrashIcon } from "@phosphor-icons/react";
+import { CopyIcon, TrashIcon, PlusIcon } from "@phosphor-icons/react";
 
 import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
-import { useProdukDigitalKelas } from "~/hooks/use-produk-digital-kelas";
+import { useEditKelas } from "~/hooks/use-edit-kelas";
 import { Button } from "~/components/ui/button";
 import { SectionHeader, FormInput, FormRow } from "~/components/ui/form-layout";
 import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
 import { CreatorDetailSkeleton } from "~/components/layout/detail-skeletons";
-import { 
-    BasicInfoSection, 
-    PricingSection, 
-    QuotaSection, 
-    PlatformSelector 
+import {
+    BasicInfoSection,
+    PricingSection,
+    QuotaSection,
+    PlatformSelector
 } from "~/components/creator/product-form-sections";
 import { ProductFormLayout } from "~/components/layout/product-form-layout";
 
@@ -30,7 +30,7 @@ export default function KelasDetailPage() {
     const id = params.id as string;
     const router = useRouter();
     const utils = api.useUtils();
-    
+
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -42,11 +42,14 @@ export default function KelasDetailPage() {
         handlePriceAdjust,
         handleDiscountPriceAdjust,
         handleQuotaAdjust,
+        linkFields,
+        appendLink,
+        removeLink,
         onSubmit,
         isPending,
         isLoadingProduct,
         product,
-    } = useProdukDigitalKelas({ id, isEdit: true });
+    } = useEditKelas({ id, isEdit: true });
 
     const { register, watch, formState: { errors } } = form;
 
@@ -69,7 +72,6 @@ export default function KelasDetailPage() {
 
     const { data: catalog } = api.catalog.getMine.useQuery();
 
-    // Helper untuk menyalin link produk ke clipboard
     const handleCopyLink = () => {
         if (!product || !catalog?.slug) {
             toast.error("Gagal menyalin link: Data belum siap");
@@ -78,7 +80,7 @@ export default function KelasDetailPage() {
         const host = window.location.origin;
         const productSlug = product.slug ?? product.id;
         const publicUrl = `${host}/${catalog.slug}/${productSlug}`;
-        
+
         void navigator.clipboard.writeText(publicUrl);
         toast.success("Link produk berhasil disalin!");
     };
@@ -149,11 +151,11 @@ export default function KelasDetailPage() {
                 }
             >
                 <BasicInfoSection form={form} />
-                
-                <PricingSection 
-                    form={form} 
-                    onAdjustPrice={handlePriceAdjust} 
-                    onAdjustDiscount={handleDiscountPriceAdjust} 
+
+                <PricingSection
+                    form={form}
+                    onAdjustPrice={handlePriceAdjust}
+                    onAdjustDiscount={handleDiscountPriceAdjust}
                 />
 
                 <div className="pt-8">
@@ -161,8 +163,39 @@ export default function KelasDetailPage() {
                     <div className="space-y-0 pt-6">
                         <PlatformSelector form={form} type="class" />
 
-                        <FormRow label="Link Akses" error={errors.link?.message as string}>
-                            <FormInput placeholder="https://..." {...register("link")} />
+                        <FormRow label="Link Akses" error={errors.link?.message ?? errors.links?.message}>
+                            <div className="space-y-3 flex flex-col w-full">
+                                <FormInput
+                                    placeholder="Link utama (wajib)"
+                                    {...register("link")}
+                                />
+
+                                {linkFields.map((field, index) => (
+                                    <div key={field.id} className="flex gap-2">
+                                        <FormInput
+                                            placeholder={`Link tambahan ${index + 1}`}
+                                            className="flex-1"
+                                            {...register(`links.${index}` as const)}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="flex h-[52px] w-[52px] items-center justify-center rounded-lg bg-white border border-slate-300 text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors shrink-0 cursor-pointer"
+                                            onClick={() => removeLink(index)}
+                                        >
+                                            <TrashIcon className="size-5 translate-y-[0.5px]" weight="bold" />
+                                        </button>
+                                    </div>
+                                ))}
+
+                                <button
+                                    type="button"
+                                    onClick={() => appendLink("")}
+                                    className="flex justify-center items-center gap-2 bg-white border border-slate-400 rounded-lg py-2 px-4 text-sm font-regular text-slate-800 hover:bg-slate-100 w-fit cursor-pointer"
+                                >
+                                    <PlusIcon className="size-4" weight="regular" />
+                                    <span>Tambah Link Akses</span>
+                                </button>
+                            </div>
                         </FormRow>
 
                         <FormRow label="Durasi" error={errors.duration?.message as string}>
@@ -172,9 +205,9 @@ export default function KelasDetailPage() {
                             />
                         </FormRow>
 
-                        <QuotaSection 
-                            form={form} 
-                            onAdjustQuota={handleQuotaAdjust} 
+                        <QuotaSection
+                            form={form}
+                            onAdjustQuota={handleQuotaAdjust}
                             label="Batasi Kuota"
                             placeholder="Masukkan batas kuota peserta"
                         />

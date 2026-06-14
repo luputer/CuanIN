@@ -76,6 +76,7 @@ export async function POST(req: NextRequest) {
           select: {
             name: true,
             link: true,
+            links: true,
             notes: true,
             userId: true,
             user: { select: { name: true } },
@@ -124,6 +125,7 @@ export async function POST(req: NextRequest) {
           buyerEmail: purchase.buyerEmail,
           productName: purchase.product.name,
           productLink: purchase.product.link,
+          links: purchase.product.links as string[] | null,
           notes: purchase.product.notes,
           creatorName: purchase.product.user?.name ?? "Tim CuanIN",
         });

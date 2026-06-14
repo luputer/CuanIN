@@ -26,7 +26,6 @@ import {
 	TableCell,
 	TablePagination,
 } from "~/components/ui/table";
-import { Skeleton } from "~/components/ui/skeleton";
 import SearchInput from "~/components/ui/search";
 import { PageHeader } from "~/components/layout/page-header";
 import { DataTableToolbar } from "~/components/layout/data-table-toolbar";

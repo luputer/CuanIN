@@ -12,46 +12,42 @@ import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { toast } from "sonner";
 
-import { api } from "~/trpc/react";
-import { useDataTable } from "~/hooks/use-data-table";
 import { useCopyProductLink } from "~/hooks/use-copy-product-link";
+import { useDataTable } from "~/hooks/use-data-table";
+import { api } from "~/trpc/react";
 
 // Components
-import {
-    Table,
-    TableHead,
-    TableHeader,
-    TableRow,
-    TableBody,
-    TableCell,
-    TablePagination,
-} from "~/components/ui/table";
-import { Skeleton } from "~/components/ui/skeleton";
+import { DataTableToolbar } from "~/components/layout/data-table-toolbar";
+import { MobileEmptyState, TableEmptyState } from "~/components/layout/empty-state";
+import { MobilePaginationWrapper } from "~/components/layout/mobile-pagination-wrapper";
+import { PageHeader } from "~/components/layout/page-header";
+import { ProductActions, ProductThumbnail } from "~/components/layout/product-list-components";
+import { SortableTableHead } from "~/components/layout/sortable-table-head";
 import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
-import { ProductThumbnail, ProductActions } from "~/components/layout/product-list-components";
-import SearchInput from "~/components/ui/search";
-import ButtonFilter from "~/components/ui/filter";
 import ActionButton from "~/components/ui/button-add";
 import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
-import { PageHeader } from "~/components/layout/page-header";
-import { SortableTableHead } from "~/components/layout/sortable-table-head";
-import { TableEmptyState, MobileEmptyState } from "~/components/layout/empty-state";
-import { MobilePaginationWrapper } from "~/components/layout/mobile-pagination-wrapper";
-import { StatusBadge } from "~/components/ui/status-badge";
-import { DataTableToolbar } from "~/components/layout/data-table-toolbar";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "~/components/ui/tooltip";
 import {
     DropdownMenu,
-    DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuRadioGroup,
     DropdownMenuRadioItem,
+    DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import ButtonFilter from "~/components/ui/filter";
+import SearchInput from "~/components/ui/search";
+import { StatusBadge } from "~/components/ui/status-badge";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TablePagination,
+    TableRow,
+} from "~/components/ui/table";
+import {
+    TooltipProvider
+} from "~/components/ui/tooltip";
 
 export default function WebinarPage() {
     // ─── States & Hooks ──────────────────────────────────────────────────────

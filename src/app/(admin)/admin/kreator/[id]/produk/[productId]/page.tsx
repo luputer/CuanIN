@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeftIcon, ImageIcon, ArrowSquareOutIcon } from "@phosphor-icons/react";
+import { ImageIcon, ArrowSquareOutIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { format } from "date-fns";
@@ -10,7 +10,6 @@ import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
-import { Skeleton } from "~/components/ui/skeleton";
 import { useState, useRef, useEffect } from "react";
 import { SectionHeader, FormRow } from "~/components/ui/form-layout";
 import React from "react";

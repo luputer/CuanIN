@@ -1,15 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
-import {
-    EyeIcon,
-    ArrowLeftIcon,
-} from "@phosphor-icons/react";
 
 import { api } from "~/trpc/react";
-import { cn } from "~/lib/utils";
 import { getProductTypeLabel } from "~/lib/constants";
 import {
     Table,
@@ -17,24 +11,16 @@ import {
     TableHeader,
     TableRow,
     TableBody,
-    TableCell,
     TablePagination,
     SortableTableHead,
 } from "~/components/ui/table";
-import { Skeleton } from "~/components/ui/skeleton";
-import { TableSkeleton, DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
+import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
 import { TableEmptyState, MobileEmptyState } from "~/components/layout/empty-state";
-import { StatusBadge } from "~/components/ui/status-badge";
 import { AdminProductTableRow, AdminProductMobileCard } from "~/components/admin/products/admin-product-table-items";
 import SearchInput from "~/components/ui/search";
 import { DataTableToolbar, SelectFilter } from "~/components/layout/data-table-toolbar";
 import { PageHeader } from "~/components/layout/page-header";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "~/components/ui/tooltip";
+import { TooltipProvider } from "~/components/ui/tooltip";
 
 export default function CreatorProductsPage() {
     const params = useParams();

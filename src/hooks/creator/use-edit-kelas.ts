@@ -1,35 +1,37 @@
-"use client";
-
 import { useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
-import { useImageUpload } from "./use-upload";
-import { productDigitalSchema, type DigitalProductFormValues } from "../lib/validation";
+import { useImageUpload } from "~/hooks/shared/use-upload";
+import { productKelasOnlineSchema } from "~/lib/validation";
+import type { z } from "zod";
 
-interface UseProdukDigitalKelasProps {
+type KelasOnlineFormValues = z.infer<typeof productKelasOnlineSchema>;
+
+const KELAS_PLATFORMS = ["zoom", "google-meet", "website"];
+
+interface UseEditKelasProps {
     id?: string;
     isEdit?: boolean;
 }
 
-export function useProdukDigitalKelas({ id, isEdit = false }: UseProdukDigitalKelasProps = {}) {
+export function useEditKelas({ id, isEdit = false }: UseEditKelasProps = {}) {
     const router = useRouter();
     const utils = api.useUtils();
 
-    // Query for edit mode
     const { data: product, isLoading: isLoadingProduct } = api.products.getById.useQuery(
         { id: id! },
         { enabled: !!id && isEdit }
     );
 
-    const form = useForm<DigitalProductFormValues>({
-        resolver: zodResolver(productDigitalSchema) as any,
+    const form = useForm<KelasOnlineFormValues>({
+        resolver: zodResolver(productKelasOnlineSchema) as any,
         defaultValues: {
             status: "published",
             price: 0,
-            benefit: isEdit ? [] : [""],
+            benefit: [],
             contentType: "",
             platformCustom: "",
             duration: "",
@@ -53,29 +55,38 @@ export function useProdukDigitalKelas({ id, isEdit = false }: UseProdukDigitalKe
         name: "benefit" as never,
     });
 
+    const {
+        fields: linkFields,
+        append: appendLink,
+        remove: removeLink,
+    } = useFieldArray({
+        control,
+        name: "links" as never,
+    });
+
     const { uploading, handleFileUpload } = useImageUpload("products");
 
-    // Pre-fill form when data loads (Edit mode)
     useEffect(() => {
         if (product && isEdit) {
             const priceVal = Number(product.price);
             const discVal = Number(product.discountPrice ?? 0);
-            const isStandardFormat = ["PDF", "Video", "Template", "E-book", "ZIP"].includes(product.contentType ?? "");
+            const isKelasPlatform = KELAS_PLATFORMS.includes(product.contentType ?? "");
             reset({
                 name: product.name,
                 shortDescription: product.shortDescription ?? "",
                 description: product.description ?? "",
                 price: priceVal,
                 link: product.link ?? "",
-                contentType: isStandardFormat ? (product.contentType ?? "") : "other",
-                platformCustom: isStandardFormat ? "" : (product.contentType ?? ""),
-                duration: product.duration ?? undefined,
+                contentType: isKelasPlatform ? (product.contentType ?? "") : "other",
+                platformCustom: isKelasPlatform ? "" : (product.contentType ?? ""),
+                duration: product.duration ?? "",
                 status: product.status ?? "published",
                 notes: product.notes ?? "",
                 enableNotes: !!product.notes,
                 image: product.image ?? undefined,
                 images: (product.images as string[]) ?? [],
                 benefit: (product.benefit as string[]) ?? [],
+                links: ((product as any).links as string[]) ?? [],
                 capacity: product.capacity ?? 0,
                 enableQuota: (product.capacity ?? 0) > 0,
                 vouchers: product.vouchers?.map((v) => v.id) ?? [],
@@ -93,7 +104,6 @@ export function useProdukDigitalKelas({ id, isEdit = false }: UseProdukDigitalKe
             if (currentImages.length < 4) {
                 const newImages = [...currentImages, url];
                 setValue("images", newImages, { shouldValidate: true, shouldDirty: true });
-                // Main image is the first one if not set
                 if (!form.getValues("image")) {
                     setValue("image", url, { shouldValidate: true, shouldDirty: true });
                 }
@@ -108,32 +118,20 @@ export function useProdukDigitalKelas({ id, isEdit = false }: UseProdukDigitalKe
         const currentImages = form.getValues("images") || [];
         const newImages = currentImages.filter((_, i) => i !== index);
         setValue("images", newImages, { shouldValidate: true, shouldDirty: true });
-        // Update main image if we removed it
         if (form.getValues("image") === currentImages[index]) {
             setValue("image", newImages[0] || "", { shouldValidate: true, shouldDirty: true });
         }
     };
 
-    const createMutation = api.products.create.useMutation({
-        onSuccess: () => {
-            void utils.products.getAll.invalidate();
-            toast.success("Produk Digital berhasil dibuat");
-            router.push("/produk-digital");
-        },
-        onError: (error) => {
-            toast.error(`Gagal membuat produk digital: ${error.message}`);
-        },
-    });
-
     const updateMutation = api.products.update.useMutation({
         onSuccess: () => {
             if (id) void utils.products.getById.invalidate({ id });
             void utils.products.getAll.invalidate();
-            toast.success("Produk Digital berhasil diperbarui");
-            router.push(`/produk-digital/${id}`);
+            toast.success("Kelas Online berhasil diperbarui");
+            router.push(`/kelas/${id}`);
         },
         onError: (error) => {
-            toast.error(`Gagal memperbarui produk: ${error.message}`);
+            toast.error(`Gagal memperbarui kelas: ${error.message}`);
         },
     });
 
@@ -146,35 +144,18 @@ export function useProdukDigitalKelas({ id, isEdit = false }: UseProdukDigitalKe
                 shortDescription: data.shortDescription,
                 description: data.description,
                 price: data.price ?? 0,
-                link: data.link,
+                links: data.links?.filter((l) => l.trim() !== "") ?? [],
                 contentType: actualContentType,
                 duration: data.duration,
                 status: data.status,
                 image: data.image,
-                images: data.images,
+                images: data.images as string[],
                 benefit: data.benefit?.filter((b) => b.trim() !== ""),
                 capacity: data.enableQuota ? data.capacity : 0,
                 notes: data.enableNotes ? data.notes : null,
                 vouchers: data.enableVoucher ? data.vouchers : [],
                 discountPrice: data.enableDiscount ? data.discountPrice : undefined,
-            });
-        } else {
-            createMutation.mutate({
-                name: data.name,
-                description: data.description,
-                price: data.price ?? 0,
-                type: "DIGITAL_PRODUCT",
-                link: data.link,
-                contentType: actualContentType,
-                duration: data.duration,
-                image: data.image,
-                images: data.images,
-                benefit: data.benefit?.filter((b) => b.trim() !== ""),
-                capacity: data.enableQuota ? data.capacity : 0,
-                notes: data.enableNotes ? data.notes : undefined,
-                vouchers: data.enableVoucher ? data.vouchers : [],
-                discountPrice: data.enableDiscount ? data.discountPrice : undefined,
-            });
+            } as any);
         }
     });
 
@@ -198,6 +179,9 @@ export function useProdukDigitalKelas({ id, isEdit = false }: UseProdukDigitalKe
         fields,
         append,
         remove,
+        linkFields,
+        appendLink,
+        removeLink,
         uploading,
         onFilesChange,
         removeImage,
@@ -205,7 +189,7 @@ export function useProdukDigitalKelas({ id, isEdit = false }: UseProdukDigitalKe
         handleDiscountPriceAdjust,
         handleQuotaAdjust,
         onSubmit,
-        isPending: createMutation.isPending || updateMutation.isPending,
+        isPending: updateMutation.isPending,
         isLoadingProduct,
         product,
     };

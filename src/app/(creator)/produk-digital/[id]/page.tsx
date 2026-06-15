@@ -8,7 +8,7 @@ import { CopyIcon, TrashIcon } from "@phosphor-icons/react";
 
 import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
-import { useProdukDigitalKelas } from "~/hooks/use-produk-digital-kelas";
+import { useEditProdukDigital } from "~/hooks/creator/use-edit-produk-digital";
 import { Button } from "~/components/ui/button";
 import { SectionHeader, FormInput, FormRow } from "~/components/shared/form-layout";
 import DeleteConfirmDialog from "~/components/shared/delete-confirm-dialog";
@@ -42,7 +42,7 @@ export default function ProdukDigitalDetailPage() {
         isPending,
         isLoadingProduct,
         product,
-    } = useProdukDigitalKelas({ id, isEdit: true });
+    } = useEditProdukDigital({ id, isEdit: true });
 
     const { register, watch, formState: { errors } } = form;
 

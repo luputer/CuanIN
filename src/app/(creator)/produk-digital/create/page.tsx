@@ -4,7 +4,7 @@ import React from "react";
 import { ProductSuccessDialog } from "~/components/shared/product-success-dialog";
 import { SectionHeader, FormInput, FormRow } from "~/components/shared/form-layout";
 import { PlusIcon } from "@phosphor-icons/react";
-import { useCreateProdukDigital } from "~/hooks/use-create-produk-digital";
+import { useCreateProdukDigital } from "~/hooks/creator/use-create-produk-digital";
 import { BasicInfoSection, PricingSection, QuotaSection, PlatformSelector } from "~/components/creator/product-form-sections";
 import { ProductFormLayout } from "~/components/shared/product-form-layout";
 

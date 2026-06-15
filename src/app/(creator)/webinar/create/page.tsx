@@ -6,7 +6,7 @@ import { PlusIcon } from "@phosphor-icons/react";
 import { ProductSuccessDialog } from "~/components/shared/product-success-dialog";
 import { SectionHeader, FormInput, FormRow } from "~/components/shared/form-layout";
 import { DateRangePicker } from "~/components/shared/date-range-picker";
-import { useCreateWebinar } from "~/hooks/use-create-webinar";
+import { useCreateWebinar } from "~/hooks/creator/use-create-webinar";
 import { BasicInfoSection, PricingSection, QuotaSection, PlatformSelector } from "~/components/creator/product-form-sections";
 import { ProductFormLayout } from "~/components/shared/product-form-layout";
 

@@ -12,21 +12,11 @@ import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { toast } from "sonner";
 
+import { useCopyProductLink } from "~/hooks/shared/use-copy-product-link";
+import { useDataTable } from "~/hooks/shared/use-data-table";
 import { api } from "~/trpc/react";
-import { useDataTable } from "~/hooks/use-data-table";
-import { useCopyProductLink } from "~/hooks/use-copy-product-link";
 
 // Components
-import {
-    Table,
-    TableHead,
-    TableHeader,
-    TableRow,
-    TableBody,
-    TableCell,
-    TablePagination,
-} from "~/components/ui/table";
-import { Skeleton } from "~/components/ui/skeleton";
 import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/table/skeleton";
 import { ProductThumbnail, ProductActions } from "~/components/shared/product-list-components";
 import SearchInput from "~/components/ui/search";
@@ -40,18 +30,24 @@ import { MobilePaginationWrapper } from "~/components/shared/mobile-pagination-w
 import { StatusBadge } from "~/components/ui/status-badge";
 import { DataTableToolbar } from "~/components/table/toolbar";
 import {
-    Tooltip,
-    TooltipContent,
     TooltipProvider,
-    TooltipTrigger,
 } from "~/components/ui/tooltip";
 import {
     DropdownMenu,
-    DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuRadioGroup,
     DropdownMenuRadioItem,
+    DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TablePagination,
+    TableRow,
+} from "~/components/ui/table";
 
 export default function WebinarPage() {
     // ─── States & Hooks ──────────────────────────────────────────────────────
@@ -434,3 +430,4 @@ export default function WebinarPage() {
         </TooltipProvider>
     );
 }
+

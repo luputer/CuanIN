@@ -127,7 +127,7 @@ export function PaymentSuccessContent() {
 
                 <div className="text-xs text-slate-400 flex items-center justify-center gap-1.5">
                     <ShieldCheckIcon className="size-3.5" />
-                    Transaksi aman & terenkripsi oleh Xendit
+                    Transaksi aman & terenkripsi oleh Midtrans
                 </div>
 
             </div>

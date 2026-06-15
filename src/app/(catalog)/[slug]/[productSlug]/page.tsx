@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  CalendarBlankIcon,
   CalendarIcon,
   CheckCircleIcon,
   ClockIcon,
@@ -19,14 +20,13 @@ import MarkdownPreview from "~/components/shared/markdown/preview";
 import Footer from "~/components/layout/footer";
 import { getProductTypeLabel, CATEGORY_STYLE, CATEGORY_STYLE_DEFAULT, PLATFORM_MAP } from "~/lib/constants";
 import { getVisitorId } from "~/lib/visitor";
-import { CatalogProductCard, CatalogProductCardSkeleton } from "~/components/catalog/product-card";
+import { CatalogProductCard } from "~/components/catalog/product-card";
 import { CatalogNavHeader, CatalogNavHeaderSkeleton } from "~/components/layout/catalog-nav-header";
 import { InfoItem } from "~/components/catalog/info-item";
 import { ProductMainInfoCard } from "~/components/catalog/product-main-info-card";
 import { CardContainer } from "~/components/ui/card-container";
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
-
 
 function ProductDetailSkeleton() {
   return (

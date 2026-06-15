@@ -1,48 +1,20 @@
-import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
-import { productDigitalSchema } from "~/lib/validation";
-import { formatNumberInput } from "~/lib/utils";
-import { useImageUpload } from "~/hooks/use-upload";
-import type { FormField } from "~/components/form-customizer";
-
-type DigitalProductFormValues = {
-    name: string;
-    shortDescription?: string;
-    description: string;
-    price?: number;
-    link: string;
-    contentType?: string;
-    platformCustom?: string;
-    status: string;
-    image?: string;
-    images?: string[];
-    benefit?: string[];
-    capacity?: number;
-    enableQuota?: boolean;
-    enableVoucher?: boolean;
-    vouchers?: string[];
-    enableNotes?: boolean;
-    notes?: string;
-    enableDiscount?: boolean;
-    discountPrice?: number;
-};
+import { useImageUpload } from "~/hooks/shared/use-upload";
+import { productDigitalSchema, type DigitalProductFormValues } from "~/lib/validation";
+import type { FormField } from "~/components/creator/form-customizer";
 
 export function useCreateProdukDigital() {
     const router = useRouter();
-    const fileInputRef = useRef<HTMLInputElement>(null);
     const utils = api.useUtils();
-
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-    const [createdProduct, setCreatedProduct] = useState<{ name: string, slug: string } | null>(null);
-
-    // Form Customizer State
+    const [createdProduct, setCreatedProduct] = useState<{name: string, slug: string} | null>(null);
     const [customFields, setCustomFields] = useState<FormField[]>([]);
-
-    const { uploading, handleFileUpload } = useImageUpload("products");
 
     const form = useForm<DigitalProductFormValues>({
         resolver: zodResolver(productDigitalSchema) as any,
@@ -50,13 +22,15 @@ export function useCreateProdukDigital() {
             status: "published",
             price: 0,
             benefit: [""],
-            contentType: "PDF",
+            links: [""],
+            contentType: "",
             platformCustom: "",
+            duration: "",
             capacity: 0,
             enableQuota: false,
             enableNotes: false,
             notes: "",
-            enableVoucher: false,
+            enableVoucher: true,
             vouchers: [],
             enableDiscount: false,
             discountPrice: 0,
@@ -65,33 +39,9 @@ export function useCreateProdukDigital() {
         },
     });
 
-    const { setValue, getValues, watch, handleSubmit, control } = form;
+    const { control, setValue, handleSubmit, getValues } = form;
 
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "benefit" as never,
-    });
-
-    const description = watch("description");
-    const images = watch("images") || [];
-
-    const handlePriceAdjust = (amount: number) => {
-        const currentPrice = Number(getValues("price")?.toString() ?? "0");
-        const newPrice = Math.max(0, currentPrice + amount);
-        setValue("price", newPrice, { shouldValidate: true, shouldDirty: true });
-    };
-
-    const handleDiscountPriceAdjust = (amount: number) => {
-        const currentPrice = Number(getValues("discountPrice")?.toString() ?? "0");
-        const newPrice = Math.max(0, currentPrice + amount);
-        setValue("discountPrice", newPrice, { shouldValidate: true, shouldDirty: true });
-    };
-
-    const handleQuotaAdjust = (amount: number) => {
-        const currentQuota = Number(getValues("capacity")?.toString() ?? "0");
-        const newQuota = Math.max(1, currentQuota + amount);
-        setValue("capacity", newQuota, { shouldValidate: true, shouldDirty: true });
-    };
+    const { uploading, handleFileUpload } = useImageUpload("products");
 
     const onFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const url = await handleFileUpload(e);
@@ -119,29 +69,10 @@ export function useCreateProdukDigital() {
         }
     };
 
-    const saveMutation = api.formFields.save.useMutation();
-
-    const createProduct = api.products.create.useMutation({
-        onSuccess: async (product) => {
-            if (customFields.length > 0) {
-                try {
-                    await saveMutation.mutateAsync({
-                        productId: product.id,
-                        fields: customFields.map((f, index) => ({
-                            id: f.id,
-                            label: f.label.trim() || "Pertanyaan Tanpa Judul",
-                            type: f.type,
-                            required: f.required,
-                            options: f.options,
-                            order: index,
-                        })),
-                    });
-                } catch (e) {
-                    console.error("Gagal menyimpan kustomisasi form:", e);
-                }
-            }
-
+    const createMutation = api.products.create.useMutation({
+        onSuccess: (product) => {
             void utils.products.getAll.invalidate();
+            toast.success("Produk Digital berhasil dibuat");
             setCreatedProduct({
                 name: product.name,
                 slug: product.slug ?? product.id
@@ -155,7 +86,7 @@ export function useCreateProdukDigital() {
 
     const onSubmit = (data: DigitalProductFormValues) => {
         const actualContentType = data.contentType === "other" ? data.platformCustom : data.contentType;
-        createProduct.mutate({
+        createMutation.mutate({
             type: "DIGITAL_PRODUCT",
             name: data.name,
             shortDescription: data.shortDescription,
@@ -163,10 +94,12 @@ export function useCreateProdukDigital() {
             price: data.price ?? 0,
             link: data.link,
             contentType: actualContentType,
+            duration: data.duration,
             status: data.status,
-            benefit: data.benefit?.filter((b) => b.trim() !== ""),
             image: data.image,
             images: data.images,
+            benefit: data.benefit?.filter((b) => b.trim() !== ""),
+            links: data.links?.filter((l) => l.trim() !== ""),
             capacity: data.enableQuota ? data.capacity : 0,
             notes: data.enableNotes ? data.notes : undefined,
             vouchers: data.enableVoucher ? data.vouchers : [],
@@ -174,29 +107,41 @@ export function useCreateProdukDigital() {
         });
     };
 
+    const handlePriceAdjust = (step: number) => {
+        const currentPrice = getValues("price") || 0;
+        setValue("price", Math.max(0, currentPrice + step), { shouldValidate: true, shouldDirty: true });
+    };
+
+    const handleDiscountPriceAdjust = (step: number) => {
+        const currentPrice = getValues("discountPrice") || 0;
+        setValue("discountPrice", Math.max(0, currentPrice + step), { shouldValidate: true, shouldDirty: true });
+    };
+
+    const handleQuotaAdjust = (step: number) => {
+        const currentQuota = getValues("capacity") || 0;
+        setValue("capacity", Math.max(0, currentQuota + step), { shouldValidate: true, shouldDirty: true });
+    };
+
     return {
         form,
         router,
         state: {
-            successDialogOpen,
-            setSuccessDialogOpen,
-            createdProduct,
-            customFields,
-            setCustomFields,
-            images,
+            isPending: createMutation.isPending,
             uploading,
             fileInputRef,
-            description,
-            isPending: createProduct.isPending || saveMutation.isPending
+            customFields,
+            setCustomFields,
+            createdProduct,
+            successDialogOpen,
+            setSuccessDialogOpen,
         },
         handlers: {
+            onSubmit: handleSubmit(onSubmit),
+            onFilesChange,
+            removeImage,
             handlePriceAdjust,
             handleDiscountPriceAdjust,
             handleQuotaAdjust,
-            onFilesChange,
-            removeImage,
-            onSubmit: handleSubmit(onSubmit)
         }
     };
 }
-

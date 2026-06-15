@@ -9,7 +9,7 @@ import { CopyIcon, TrashIcon } from "@phosphor-icons/react";
 
 import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
-import { useWebinar } from "~/hooks/use-webinar";
+import { useEditWebinar } from "~/hooks/creator/use-edit-webinar";
 import { Button } from "~/components/ui/button";
 import { SectionHeader, FormInput, FormRow } from "~/components/shared/form-layout";
 import { DateRangePicker } from "~/components/shared/date-range-picker";
@@ -48,7 +48,7 @@ export default function WebinarDetailPage() {
         isPending,
         isLoadingProduct,
         product,
-    } = useWebinar({ id, isEdit: true });
+    } = useEditWebinar({ id, isEdit: true });
 
     const { register, watch, setValue, formState: { errors } } = form;
 

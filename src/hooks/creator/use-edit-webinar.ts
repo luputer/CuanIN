@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
-import { useImageUpload } from "./use-upload";
+import { useImageUpload } from "~/hooks/shared/use-upload";
 import { webinarSchema } from "~/lib/validation";
 import type { z } from "zod";
 
@@ -17,7 +17,7 @@ interface UseWebinarProps {
     isEdit?: boolean;
 }
 
-export function useWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
+export function useEditWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
     const router = useRouter();
     const utils = api.useUtils();
 

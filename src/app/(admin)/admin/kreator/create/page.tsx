@@ -2,13 +2,11 @@
 
 import React, { useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import {
-    ArrowLeftIcon,
     CircleNotchIcon,
     EyeIcon,
     EyeSlashIcon,

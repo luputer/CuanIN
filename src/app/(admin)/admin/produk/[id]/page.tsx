@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeftIcon, ImageIcon, ArrowSquareOutIcon } from "@phosphor-icons/react";
+import { ImageIcon, ArrowSquareOutIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { format } from "date-fns";

@@ -2,9 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import {
-    ArrowLeftIcon,
     CircleNotchIcon,
     EyeIcon,
     EyeSlashIcon,
@@ -14,7 +12,7 @@ import {
 } from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
-import { useImageUpload } from "~/hooks/use-upload";
+import { useImageUpload } from "~/hooks/shared/use-upload";
 import { FormInput, FormRow, FormTextarea, SectionHeader } from "~/components/shared/form-layout";
 import ButtonSave from "~/components/shared/button-save";
 import { CreatorProfileSkeleton } from "~/components/shared/detail-skeletons";

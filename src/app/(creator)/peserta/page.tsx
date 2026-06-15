@@ -14,7 +14,7 @@ import {
 
 // Internal & Utils
 import { api } from "~/trpc/react";
-import { useDataTable } from "~/hooks/use-data-table";
+import { useDataTable } from "~/hooks/shared/use-data-table";
 
 // Components
 import {
@@ -26,7 +26,6 @@ import {
 	TableCell,
 	TablePagination,
 } from "~/components/ui/table";
-import { Skeleton } from "~/components/ui/skeleton";
 import SearchInput from "~/components/ui/search";
 import { PageHeader } from "~/components/shared/page-header";
 import { DataTableToolbar } from "~/components/table/toolbar";
@@ -271,3 +270,4 @@ export default function UserPage() {
 		</TooltipProvider>
 	);
 }
+

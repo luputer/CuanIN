@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     let body;
     try {
       body = await req.json();
-    } catch (e) {
+    } catch {
       console.log("[Midtrans Webhook] Received empty or invalid JSON body");
       return NextResponse.json({ message: "Empty body" }, { status: 200 });
     }
@@ -36,7 +36,6 @@ export async function POST(req: NextRequest) {
       payment_type: string;
     };
 
-    // Handle Midtrans "Ping" or test request without signature
     if (!signature_key || !order_id) {
       console.log("[Midtrans Webhook] Ping detected (no signature or order_id)");
       return NextResponse.json({ message: "Ping received" }, { status: 200 });
@@ -77,6 +76,7 @@ export async function POST(req: NextRequest) {
           select: {
             name: true,
             link: true,
+            links: true,
             notes: true,
             userId: true,
             user: { select: { name: true } },
@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
         });
       });
       console.log("[Midtrans Webhook] Success update purchase:", purchase.id);
-    } catch (err) {
+    } catch {
       console.log("[Midtrans Webhook] Purchase already processed or failed to update:", purchase.id);
       return NextResponse.json({ message: "Already processed" });
     }
@@ -125,11 +125,12 @@ export async function POST(req: NextRequest) {
           buyerEmail: purchase.buyerEmail,
           productName: purchase.product.name,
           productLink: purchase.product.link,
+          links: purchase.product.links as string[] | null,
           notes: purchase.product.notes,
           creatorName: purchase.product.user?.name ?? "Tim CuanIN",
         });
-      } catch (err) {
-        console.error("📧 Failed to send product email (Midtrans):", err);
+      } catch (error) {
+        console.error("📧 Failed to send product email (Midtrans):", error);
       }
     }
 

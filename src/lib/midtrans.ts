@@ -22,6 +22,11 @@ type CreateSnapTransactionParams = {
     email: string;
     phone: string;
   };
+  callbacks?: {
+    finish?: string;
+    error?: string;
+    pending?: string;
+  };
 };
 
 export async function createSnapTransaction(params: CreateSnapTransactionParams) {
@@ -42,6 +47,13 @@ export async function createSnapTransaction(params: CreateSnapTransactionParams)
       phone: params.customerDetails.phone,
     },
     usage_limit: 1, // Limit usage to 1 to prevent multiple payments for same snap token
+    ...(params.callbacks && {
+      callbacks: {
+        finish: params.callbacks.finish,
+        error: params.callbacks.error,
+        pending: params.callbacks.pending,
+      },
+    }),
   };
 
   try {

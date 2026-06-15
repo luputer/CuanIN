@@ -103,6 +103,7 @@ export const purchasesRouter = createTRPCRouter({
           price: true,
           discountPrice: true,
           link: true,
+          links: true,
           notes: true,
           userId: true,
           capacity: true,
@@ -277,6 +278,7 @@ export const purchasesRouter = createTRPCRouter({
             buyerEmail: input.buyerEmail,
             productName: product.name,
             productLink: product.link,
+            links: product.links as string[] | null,
             creatorName: product.user?.name ?? "Tim CuanIN",
             notes: product.notes,
           });
@@ -458,6 +460,11 @@ export const purchasesRouter = createTRPCRouter({
           firstName: purchase.buyerName,
           email: purchase.buyerEmail,
           phone: purchase.buyerPhone,
+        },
+        callbacks: {
+          finish: `${env.NEXT_PUBLIC_APP_URL}/payment/success?id=${purchase.id}`,
+          error: `${env.NEXT_PUBLIC_APP_URL}/payment/failed?id=${purchase.id}`,
+          pending: `${env.NEXT_PUBLIC_APP_URL}/payment/success?id=${purchase.id}`,
         },
       });
 

@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import Link from "next/link";
 import {
-    ArrowLeftIcon,
     EyeIcon,
     EyeSlashIcon,
 } from "@phosphor-icons/react";

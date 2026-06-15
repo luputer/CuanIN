@@ -3,16 +3,12 @@
 // React
 import { useParams } from "next/navigation";
 
-// Next.js
-import Link from "next/link";
-
 // Third-party
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 
 // Icons
 import {
-  ArrowLeftIcon,
   CalendarBlankIcon,
   PhoneIcon,
   EnvelopeSimpleIcon,

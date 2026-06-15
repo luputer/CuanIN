@@ -48,7 +48,7 @@ export function ProductDetailTabs({ defaultTab, buyerCount, children, className,
         <TabsContext.Provider value={{ activeTab, setActiveTab }}>
             <div className="flex flex-col">
                 <div className={cn("bg-cyan-50 border-b border-cyan-200 px-4 sm:px-10", className)}>
-                    <div className="flex w-full gap-2 sm:gap-10 items-end -mb-[1px] overflow-x-auto no-scrollbar">
+                    <div className="flex w-full gap-2 sm:gap-10 items-end -mb-[1px]">
                         <TabButton value="detail" label="Detail Produk" />
                         <TabButton value="form" label="Kustomisasi Form" />
                         {!hidePembeli && <TabButton value="user" label="Pembeli" count={buyerCount} />}
@@ -70,7 +70,7 @@ export function ProductDetailTabContent({ value, children, className }: { value:
 
     return (
         <div className="p-2 bg-white">
-            <div className={cn("bg-white rounded-xl overflow-hidden", className)}>
+            <div className={cn("bg-white rounded-xl", className)}>
                 {children}
             </div>
         </div>

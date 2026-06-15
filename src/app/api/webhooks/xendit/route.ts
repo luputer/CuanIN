@@ -206,6 +206,7 @@ export async function POST(req: NextRequest) {
         select: {
           name: true,
           link: true,
+          links: true,
           notes: true,
           userId: true,
           user: {
@@ -227,9 +228,9 @@ export async function POST(req: NextRequest) {
     await db.$transaction(async (tx) => {
       // Atomic Update: Hanya update jika status masih pending
       await tx.purchase.update({
-        where: { 
+        where: {
           id: purchase.id,
-          status: "pending" 
+          status: "pending"
         },
         data: {
           status: "completed",
@@ -261,6 +262,7 @@ export async function POST(req: NextRequest) {
         buyerEmail: purchase.buyerEmail,
         productName: purchase.product.name,
         productLink: purchase.product.link,
+        links: purchase.product.links as string[] | null, // ← fix cast
         creatorName: purchase.product.user?.name ?? "Tim CuanIN",
         notes: purchase.product.notes,
       });

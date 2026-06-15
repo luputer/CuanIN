@@ -19,8 +19,7 @@ import {
 
 // Internal & Utils
 import { api } from "~/trpc/react";
-import { useDataTable } from "~/hooks/use-data-table";
-import { cn } from "~/lib/utils";
+import { useDataTable } from "~/hooks/shared/use-data-table";
 
 // Components
 import {
@@ -34,7 +33,6 @@ import {
 } from "~/components/ui/table";
 import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/table/skeleton";
 import SearchInput from "~/components/ui/search";
-import ButtonFilter from "~/components/shared/filter";
 import ActionButton from "~/components/shared/button-add";
 import DeleteConfirmDialog from "~/components/shared/delete-confirm-dialog";
 import { PageHeader } from "~/components/shared/page-header";
@@ -387,4 +385,5 @@ export default function VoucherPage() {
         </TooltipProvider>
     );
 }
+
 

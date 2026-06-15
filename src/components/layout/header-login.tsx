@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Button from "~/components/ui/buttonlogin";
+import Button from "~/components/shared/buttonlogin";
 
 export default function HeaderLogin() {
     const pathname = usePathname();

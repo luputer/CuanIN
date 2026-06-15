@@ -6,7 +6,7 @@ import {
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import DetailPembeli from "./detail-pembeli";
+import DetailPembeli from "./detail";
 import { api } from "~/trpc/react";
 import {
     Table,
@@ -18,7 +18,7 @@ import {
     TablePagination,
 } from "~/components/ui/table";
 import SearchInput from "~/components/ui/search";
-import ButtonFilter from "~/components/ui/filter";
+import ButtonFilter from "~/components/shared/filter";
 import {
     Tooltip,
     TooltipContent,

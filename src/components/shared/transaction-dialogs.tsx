@@ -12,9 +12,9 @@ import {
     DialogHeader,
     DialogTitle,
 } from "~/components/ui/dialog";
-import { FormGroup, FormInput, FormSelect } from "~/components/ui/form-layout";
-import ButtonSave from "~/components/ui/button-save";
-import ButtonCancel from "~/components/ui/button-cancel";
+import { FormGroup, FormInput, FormSelect } from "~/components/shared/form-layout";
+import ButtonSave from "~/components/shared/button-save";
+import ButtonCancel from "~/components/shared/button-cancel";
 import { StatusBadge } from "~/components/ui/status-badge";
 import { formatCurrency, formatNumberInput } from "~/lib/utils";
 import { withdrawalSchema, type WithdrawalFormData } from "~/lib/validation";

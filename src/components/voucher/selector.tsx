@@ -4,7 +4,7 @@ import React from "react";
 import { CircleNotchIcon } from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
-import { FormLabel } from "~/components/ui/form-layout";
+import { FormLabel } from "~/components/shared/form-layout";
 
 interface VoucherSelectorProps {
     selectedIds: string[];

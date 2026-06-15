@@ -3,7 +3,7 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
 import { Skeleton } from "~/components/ui/skeleton";
-import { FormGroup, SectionHeader, FormInput, FormTextarea } from "~/components/ui/form-layout";
+import { FormGroup, SectionHeader, FormInput, FormTextarea } from "~/components/shared/form-layout";
 
 export function DetailPembeli({ purchaseId, onBack }: { purchaseId: string; onBack: () => void }) {
     const { data: purchase, isLoading } = api.purchases.getDetail.useQuery(

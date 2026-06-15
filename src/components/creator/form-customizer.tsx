@@ -12,10 +12,10 @@ import {
 import { useEffect, useState, useRef, type CSSProperties } from "react";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
-import ButtonSave from "~/components/ui/button-save";
+import ButtonSave from "~/components/shared/button-save";
 import { Skeleton } from "~/components/ui/skeleton";
-import { useDebounce } from "~/hooks/use-debounce";
-import { SectionHeader } from "~/components/ui/form-layout";
+import { useDebounce } from "~/hooks/shared/use-debounce";
+import { SectionHeader } from "~/components/shared/form-layout";
 
 // --- IMPORT DND KIT ---
 import {

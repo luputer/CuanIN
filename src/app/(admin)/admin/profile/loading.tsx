@@ -1,4 +1,4 @@
-import { AdminProfileSkeleton } from "~/components/layout/detail-skeletons";
+import { AdminProfileSkeleton } from "~/components/shared/detail-skeletons";
 
 export default function Loading() {
     return <AdminProfileSkeleton />;

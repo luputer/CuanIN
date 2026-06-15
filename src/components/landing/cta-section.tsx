@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Button from "~/components/ui/buttonlogin";
+import Button from "~/components/shared/buttonlogin";
 import Figure11 from "public/assets/Figure11.png";
 
 export default function CtaSection() {

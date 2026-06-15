@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import ButtonFilter from "~/components/ui/filter";
+import ButtonFilter from "~/components/shared/filter";
 import {
     DropdownMenu,
     DropdownMenuContent,

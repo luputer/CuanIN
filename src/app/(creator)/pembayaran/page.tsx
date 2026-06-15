@@ -15,18 +15,18 @@ import {
 
 // Internal & Utils
 import { api } from "~/trpc/react";
-import { useDebounce } from "~/hooks/use-debounce";
+import { useDebounce } from "~/hooks/shared/use-debounce";
 import { type WithdrawalFormData } from "~/lib/validation";
 import { formatCurrency } from "~/lib/utils";
 
 // Components
 import { Skeleton } from "~/components/ui/skeleton";
 import SearchInput from "~/components/ui/search";
-import { PageHeader } from "~/components/layout/page-header";
-import { DataTableToolbar, SelectFilter } from "~/components/layout/data-table-toolbar";
-import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
-import { TableEmptyState, MobileEmptyState } from "~/components/layout/empty-state";
-import { MobilePaginationWrapper } from "~/components/layout/mobile-pagination-wrapper";
+import { PageHeader } from "~/components/shared/page-header";
+import { DataTableToolbar, SelectFilter } from "~/components/table/toolbar";
+import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/table/skeleton";
+import { TableEmptyState, MobileEmptyState } from "~/components/shared/empty-state";
+import { MobilePaginationWrapper } from "~/components/shared/mobile-pagination-wrapper";
 import { StatusBadge } from "~/components/ui/status-badge";
 import {
   Table,
@@ -47,8 +47,8 @@ import {
   WithdrawalDialog,
   TransactionDetailDialog,
   getStatusLabel,
-} from "~/components/layout/transaction-dialogs";
-import { TransactionStatsCard } from "~/components/layout/transaction-stats-card";
+} from "~/components/shared/transaction-dialogs";
+import { TransactionStatsCard } from "~/components/shared/transaction-stats-card";
 
 export default function TransactionPage() {
   // ─── States & Hooks ──────────────────────────────────────────────────────

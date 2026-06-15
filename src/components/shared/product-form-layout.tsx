@@ -2,13 +2,13 @@
 
 import React, { useEffect } from "react";
 import { FormProvider, type UseFormReturn } from "react-hook-form";
-import { ProductDetailTabs, ProductDetailTabContent } from "~/components/layout/product-detail-tabs";
-import { DetailHeader } from "~/components/layout/detail-header";
-import { FormCustomizer } from "~/components/form-customizer";
-import Pembeli from "~/components/pembeli";
+import { ProductDetailTabs, ProductDetailTabContent } from "~/components/shared/product-detail-tabs";
+import { DetailHeader } from "~/components/shared/detail-header";
+import { FormCustomizer } from "~/components/creator/form-customizer";
+import Pembeli from "~/components/shared/pembeli/list";
 import { SidebarMetadataSection } from "~/components/creator/product-form-sections";
-import ButtonSave from "~/components/ui/button-save";
-import ButtonCancel from "~/components/ui/button-cancel";
+import ButtonSave from "~/components/shared/button-save";
+import ButtonCancel from "~/components/shared/button-cancel";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 

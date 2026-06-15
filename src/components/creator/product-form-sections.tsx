@@ -12,9 +12,9 @@ import {
 } from "@phosphor-icons/react";
 import { Controller, useFieldArray } from "react-hook-form";
 import type { UseFormReturn } from "react-hook-form";
-import { SectionHeader, FormInput, FormTextarea, FormSelect, FormRow } from "~/components/ui/form-layout";
-import { DraggableEditor } from "~/components/ui/draggable-editor";
-import { VoucherSelector } from "~/components/voucher-selector";
+import { SectionHeader, FormInput, FormTextarea, FormSelect, FormRow } from "~/components/shared/form-layout";
+import { DraggableEditor } from "~/components/shared/draggable-editor";
+import { VoucherSelector } from "~/components/voucher/selector";
 import { formatNumberInput } from "~/lib/utils";
 
 /**

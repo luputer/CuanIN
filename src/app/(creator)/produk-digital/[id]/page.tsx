@@ -10,16 +10,16 @@ import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
 import { useProdukDigitalKelas } from "~/hooks/use-produk-digital-kelas";
 import { Button } from "~/components/ui/button";
-import { SectionHeader, FormInput, FormRow } from "~/components/ui/form-layout";
-import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
-import { CreatorDetailSkeleton } from "~/components/layout/detail-skeletons";
+import { SectionHeader, FormInput, FormRow } from "~/components/shared/form-layout";
+import DeleteConfirmDialog from "~/components/shared/delete-confirm-dialog";
+import { CreatorDetailSkeleton } from "~/components/shared/detail-skeletons";
 import { 
     BasicInfoSection, 
     PricingSection, 
     QuotaSection, 
     PlatformSelector 
 } from "~/components/creator/product-form-sections";
-import { ProductFormLayout } from "~/components/layout/product-form-layout";
+import { ProductFormLayout } from "~/components/shared/product-form-layout";
 
 export default function ProdukDigitalDetailPage() {
     const params = useParams();

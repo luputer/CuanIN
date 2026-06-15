@@ -1,7 +1,7 @@
 "use client";
 
-import SidebarAdmin from "~/components/layout/sidebar-admin";
-import HeaderAdmin from "~/components/layout/header-admin";
+import SidebarAdmin from "~/components/admin/sidebar";
+import HeaderAdmin from "~/components/admin/header";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { useState, useEffect } from "react";

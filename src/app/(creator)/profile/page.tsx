@@ -15,10 +15,10 @@ import {
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { useImageUpload } from "~/hooks/use-upload";
-import { FormInput, FormRow, FormTextarea, SectionHeader } from "~/components/ui/form-layout";
-import ButtonSave from "~/components/ui/button-save";
-import { CreatorProfileSkeleton } from "~/components/layout/detail-skeletons";
-import { DetailHeader } from "~/components/layout/detail-header";
+import { FormInput, FormRow, FormTextarea, SectionHeader } from "~/components/shared/form-layout";
+import ButtonSave from "~/components/shared/button-save";
+import { CreatorProfileSkeleton } from "~/components/shared/detail-skeletons";
+import { DetailHeader } from "~/components/shared/detail-header";
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 

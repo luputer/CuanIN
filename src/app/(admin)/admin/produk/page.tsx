@@ -32,8 +32,8 @@ import {
 	SortableTableHead,
 } from "~/components/ui/table";
 import { Skeleton } from "~/components/ui/skeleton";
-import { TableSkeleton, DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
-import { TableEmptyState, MobileEmptyState } from "~/components/layout/empty-state";
+import { TableSkeleton, DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/table/skeleton";
+import { TableEmptyState, MobileEmptyState } from "~/components/shared/empty-state";
 import { StatusBadge } from "~/components/ui/status-badge";
 import { AdminProductTableRow, AdminProductMobileCard } from "~/components/admin/products/admin-product-table-items";
 import SearchInput from "~/components/ui/search";
@@ -44,8 +44,8 @@ import {
 	TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { PageHeader } from "~/components/layout/page-header";
-import { DataTableToolbar, SelectFilter } from "~/components/layout/data-table-toolbar";
+import { PageHeader } from "~/components/shared/page-header";
+import { DataTableToolbar, SelectFilter } from "~/components/table/toolbar";
 
 export default function AdminProductsPage() {
 	// ─── States & Hooks ──────────────────────────────────────────────────────

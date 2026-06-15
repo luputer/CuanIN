@@ -16,13 +16,13 @@ import { id as idLocale } from "date-fns/locale";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
-import { FormInput, FormSelect, SectionHeader, FormRow } from "~/components/ui/form-layout";
-import { DateRangeOnlyPicker } from "~/components/ui/date-range-only-picker";
-import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
-import { DetailHeader } from "~/components/layout/detail-header";
+import { FormInput, FormSelect, SectionHeader, FormRow } from "~/components/shared/form-layout";
+import { DateRangeOnlyPicker } from "~/components/shared/date-range-only-picker";
+import DeleteConfirmDialog from "~/components/shared/delete-confirm-dialog";
+import { DetailHeader } from "~/components/shared/detail-header";
 import { Skeleton } from "~/components/ui/skeleton";
 import { cn, formatNumberInput } from "~/lib/utils";
-import ButtonSave from "~/components/ui/button-save";
+import ButtonSave from "~/components/shared/button-save";
 
 export default function VoucherDetailPage() {
     const params = useParams();

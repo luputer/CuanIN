@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import { ProductSuccessDialog } from "~/components/ui/product-success-dialog";
-import { SectionHeader, FormInput, FormRow } from "~/components/ui/form-layout";
+import { ProductSuccessDialog } from "~/components/shared/product-success-dialog";
+import { SectionHeader, FormInput, FormRow } from "~/components/shared/form-layout";
 import { PlusIcon } from "@phosphor-icons/react";
-import { useCreateKelas } from "~/hooks/use-create-kelas";
+import { useCreateKelas } from "~/hooks/creator/use-create-kelas";
 import { BasicInfoSection, PricingSection, QuotaSection, PlatformSelector } from "~/components/creator/product-form-sections";
-import { ProductFormLayout } from "~/components/layout/product-form-layout";
+import { ProductFormLayout } from "~/components/shared/product-form-layout";
 
 export default function CreateKelasPage() {
     const { form, router, state, handlers } = useCreateKelas();

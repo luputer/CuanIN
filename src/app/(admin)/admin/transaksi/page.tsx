@@ -6,7 +6,7 @@ import { CheckCircleIcon, EyeIcon, XCircleIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { api } from "~/trpc/react";
-import { useDebounce } from "~/hooks/use-debounce";
+import { useDebounce } from "~/hooks/shared/use-debounce";
 import { toast } from "sonner";
 import { Skeleton } from "~/components/ui/skeleton";
 
@@ -16,7 +16,7 @@ import {
     TransactionDetailDialog,
     getStatusColor,
     getStatusLabel,
-} from "~/components/layout/transaction-dialogs";
+} from "~/components/shared/transaction-dialogs";
 import SearchInput from "~/components/ui/search";
 import {
     Table,
@@ -34,12 +34,12 @@ import {
     TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { formatCurrency } from "~/lib/utils";
-import { PageHeader } from "~/components/layout/page-header";
-import { DataTableToolbar, SelectFilter } from "~/components/layout/data-table-toolbar";
-import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
-import { TableEmptyState, MobileEmptyState } from "~/components/layout/empty-state";
-import { MobilePaginationWrapper } from "~/components/layout/mobile-pagination-wrapper";
-import { TransactionStatsCard } from "~/components/layout/transaction-stats-card";
+import { PageHeader } from "~/components/shared/page-header";
+import { DataTableToolbar, SelectFilter } from "~/components/table/toolbar";
+import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/table/skeleton";
+import { TableEmptyState, MobileEmptyState } from "~/components/shared/empty-state";
+import { MobilePaginationWrapper } from "~/components/shared/mobile-pagination-wrapper";
+import { TransactionStatsCard } from "~/components/shared/transaction-stats-card";
 
 export default function AdminTransactionPage() {
     const [page, setPage] = useState(1);

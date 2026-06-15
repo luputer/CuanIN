@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
 import { productKelasOnlineSchema } from "~/lib/validation";
-import { useImageUpload } from "~/hooks/use-upload";
+import { useImageUpload } from "~/hooks/shared/use-upload";
 import type { FormField } from "~/components/form-customizer";
 import type { z } from "zod";
 

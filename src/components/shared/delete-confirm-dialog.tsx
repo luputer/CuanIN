@@ -1,6 +1,6 @@
 "use client"
 
-import ConfirmDialog from "~/components/ui/confirm-dialog"
+import ConfirmDialog from "~/components/shared/confirm-dialog"
 import { Trash } from "@phosphor-icons/react"
 import React from "react"
 

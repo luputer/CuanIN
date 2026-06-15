@@ -3,12 +3,12 @@
 import React from "react";
 import { isBefore, startOfDay } from "date-fns";
 import { PlusIcon } from "@phosphor-icons/react";
-import { ProductSuccessDialog } from "~/components/ui/product-success-dialog";
-import { SectionHeader, FormInput, FormRow } from "~/components/ui/form-layout";
-import { DateRangePicker } from "~/components/ui/date-range-picker";
+import { ProductSuccessDialog } from "~/components/shared/product-success-dialog";
+import { SectionHeader, FormInput, FormRow } from "~/components/shared/form-layout";
+import { DateRangePicker } from "~/components/shared/date-range-picker";
 import { useCreateWebinar } from "~/hooks/use-create-webinar";
 import { BasicInfoSection, PricingSection, QuotaSection, PlatformSelector } from "~/components/creator/product-form-sections";
-import { ProductFormLayout } from "~/components/layout/product-form-layout";
+import { ProductFormLayout } from "~/components/shared/product-form-layout";
 
 export default function CreateWebinarPage() {
     const { form, router, state, handlers } = useCreateWebinar();

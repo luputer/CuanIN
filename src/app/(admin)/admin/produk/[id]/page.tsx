@@ -11,11 +11,11 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import { useState, useRef, useEffect } from "react";
-import { SectionHeader, FormRow } from "~/components/ui/form-layout";
+import { SectionHeader, FormRow } from "~/components/shared/form-layout";
 import React from "react";
 import { cn } from "~/lib/utils";
-import { DetailHeader } from "~/components/layout/detail-header";
-import { AdminDetailSkeleton } from "~/components/layout/detail-skeletons";
+import { DetailHeader } from "~/components/shared/detail-header";
+import { AdminDetailSkeleton } from "~/components/shared/detail-skeletons";
 import { StatusBadge } from "~/components/ui/status-badge";
 
 

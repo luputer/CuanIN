@@ -1,4 +1,4 @@
-import { TableSkeleton } from "~/components/layout/table-skeleton";
+import { TableSkeleton } from "~/components/table/skeleton";
 
 export default function Loading() {
     return <TableSkeleton columns={7} />;

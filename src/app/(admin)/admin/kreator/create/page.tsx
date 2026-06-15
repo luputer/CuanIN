@@ -20,16 +20,16 @@ import {
 
 import { api } from "~/trpc/react";
 import { creatorSchema, type CreatorFormValues } from "~/lib/validation";
-import { useImageUpload } from "~/hooks/use-upload";
+import { useImageUpload } from "~/hooks/shared/use-upload";
 import {
     SectionHeader,
     FormInput,
     FormTextarea,
     FormRow,
-} from "~/components/ui/form-layout";
-import ButtonSave from "~/components/ui/button-save";
-import ButtonCancel from "~/components/ui/button-cancel";
-import { DetailHeader } from "~/components/layout/detail-header";
+} from "~/components/shared/form-layout";
+import ButtonSave from "~/components/shared/button-save";
+import ButtonCancel from "~/components/shared/button-cancel";
+import { DetailHeader } from "~/components/shared/detail-header";
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 

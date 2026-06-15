@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import Button from "~/components/ui/buttonlogin";
+import Button from "~/components/shared/buttonlogin";
 import { ListIcon, XIcon } from "@phosphor-icons/react";
 
 type HeaderProps = {

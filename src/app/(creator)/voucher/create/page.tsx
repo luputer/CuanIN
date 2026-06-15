@@ -12,12 +12,12 @@ import {
 import { isBefore, startOfDay } from "date-fns";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
-import { FormInput, FormSelect, SectionHeader, FormRow } from "~/components/ui/form-layout";
-import { DateRangeOnlyPicker } from "~/components/ui/date-range-only-picker";
+import { FormInput, FormSelect, SectionHeader, FormRow } from "~/components/shared/form-layout";
+import { DateRangeOnlyPicker } from "~/components/shared/date-range-only-picker";
 import { cn, formatNumberInput } from "~/lib/utils";
-import ButtonSave from "~/components/ui/button-save";
-import ButtonCancel from "~/components/ui/button-cancel";
-import { DetailHeader } from "~/components/layout/detail-header";
+import ButtonSave from "~/components/shared/button-save";
+import ButtonCancel from "~/components/shared/button-cancel";
+import { DetailHeader } from "~/components/shared/detail-header";
 
 export default function VoucherCreatePage() {
     const router = useRouter();

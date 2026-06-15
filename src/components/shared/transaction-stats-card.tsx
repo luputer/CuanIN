@@ -1,6 +1,6 @@
 import { WalletIcon, ArrowUpRightIcon } from "@phosphor-icons/react";
 import { Skeleton } from "~/components/ui/skeleton";
-import ActionButton from "~/components/ui/button-add";
+import ActionButton from "~/components/shared/button-add";
 import { formatCurrency } from "~/lib/utils";
 
 interface TransactionStatsCardProps {

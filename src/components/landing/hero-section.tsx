@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Button from "~/components/ui/buttonlogin";
+import Button from "~/components/shared/buttonlogin";
 import Figure6 from "public/assets/Figure6.png";
 
 export default function HeroSection() {

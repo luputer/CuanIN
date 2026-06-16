@@ -1,4 +1,5 @@
 import { type Metadata } from "next";
+import { PurchaseHistoryButton } from "~/components/catalog/purchase-history-button";
 
 export const metadata: Metadata = {
   title: "Katalog Kreator - CuanIN",
@@ -7,5 +8,10 @@ export const metadata: Metadata = {
 };
 
 export default function CatalogLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      {children}
+      <PurchaseHistoryButton />
+    </>
+  );
 }

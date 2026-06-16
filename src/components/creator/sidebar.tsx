@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import React from "react";
-import { SquaresFourIcon, VideoCameraIcon, BookOpenIcon, CloudArrowUpIcon, UsersIcon, CreditCardIcon, StorefrontIcon, TagIcon, XIcon } from "@phosphor-icons/react";
+import { SquaresFourIcon, VideoCameraIcon, BookOpenIcon, CloudArrowUpIcon, UsersIcon, CreditCardIcon, StorefrontIcon, TagIcon, XIcon, ShoppingBagIcon } from "@phosphor-icons/react";
 import { usePathname } from "next/navigation";
 import { api } from "~/trpc/react";
 

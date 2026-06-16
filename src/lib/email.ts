@@ -8,6 +8,7 @@ import { WithdrawalPendingEmail } from "~/emails/withdrawal-pending-email";
 import { WelcomeEmail } from "~/emails/welcome-email";
 import { VerifyEmail } from "~/emails/verify-email";
 import { ResetPasswordEmail } from "~/emails/reset-password-email";
+import { PurchaseHistoryOtpEmail } from "~/emails/purchase-history-otp-email";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
@@ -264,6 +265,40 @@ export const sendPasswordResetEmail = async ({ email, name, token }: SendPasswor
     return { success: true, messageId: data.data?.id };
   } catch (error) {
     console.error("Error sending password reset email:", error);
+    return { success: false, error };
+  }
+};
+
+// ─── Purchase History OTP Email ───────────────────────────────────────────────
+
+type SendPurchaseHistoryOtpParams = {
+  email: string;
+  otp: string;
+};
+
+export const sendPurchaseHistoryOtpEmail = async ({
+  email,
+  otp,
+}: SendPurchaseHistoryOtpParams) => {
+  const html = await render(
+    React.createElement(PurchaseHistoryOtpEmail, {
+      otp,
+      email,
+      year: new Date().getFullYear(),
+    })
+  );
+
+  try {
+    const data = await resend.emails.send({
+      from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
+      to: email,
+      subject: `Kode OTP Akses Riwayat Pembelian 🛒`,
+      text: `Kode OTP untuk mengakses riwayat pembelian Anda: ${otp}. Kode ini berlaku selama 10 menit.`,
+      html,
+    });
+    return { success: true, messageId: data.data?.id };
+  } catch (error) {
+    console.error("Error sending purchase history OTP email:", error);
     return { success: false, error };
   }
 };

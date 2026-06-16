@@ -1,5 +1,5 @@
 "use client";
-import { CaretDownIcon, UserIcon, SignOutIcon, ListIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, UserIcon, SignOutIcon, ListIcon, ShoppingBagIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
@@ -95,6 +95,15 @@ export default function HeaderKreator({
                             >
                                 <UserIcon size={20} />
                                 <span>Akun Saya</span>
+                            </button>
+
+                            {/* Riwayat Pembelian */}
+                            <button type="button"
+                                onClick={() => router.push('/riwayat-pembelian?ref=dashboard')}
+                                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition cursor-pointer"
+                            >
+                                <ShoppingBagIcon size={20} />
+                                <span>Riwayat Pembelian</span>
                             </button>
 
                             {/* Divider */}

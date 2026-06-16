@@ -43,7 +43,7 @@ export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: numbe
           ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
           : "opacity-0 scale-90 -rotate-6 translate-x-[-100px] pointer-events-none z-10"
           }`}>
-          <div className="w-full max-w-[320px] sm:max-w-[380px] bg-white border-2 border-slate-800 p-5 sm:p-8 rounded-2xl">
+          <div className="w-full max-w-[280px] sm:max-w-[380px] bg-white border-2 border-slate-800 p-5 sm:p-8 rounded-2xl">
             <div className="flex items-center justify-center gap-4 mb-5 sm:mb-8">
               <span className="text-base sm:text-xl font-semibold text-slate-800 tracking-tighter">Buat Akun</span>
             </div>
@@ -56,7 +56,7 @@ export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: numbe
                 <div className="h-2.5 w-20 bg-slate-200 rounded" />
                 <div className="h-9 sm:h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
               </div>
-              <div className="space-y-2">
+              <div className="hidden lg:block space-y-2">
                 <div className="h-2.5 w-20 bg-slate-200 rounded" />
                 <div className="h-9 sm:h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
               </div>
@@ -174,10 +174,10 @@ export function ProductManagementMockup() {
   return (
     <div className="w-full h-full bg-slate-50 flex flex-col p-4 overflow-y-auto no-scrollbar">
       <div className="flex justify-between items-center mb-4 shrink-0">
-        <h3 className="text-sm font-bold text-cyan-600">Webinar</h3>
+        <h3 className="text-sm font-bold text-cyan-600">Produk</h3>
         <div className="bg-cyan-600 text-white px-4 py-2 rounded-lg text-[10px] font-bold border border-slate-800 shadow-[1.5px_1.5px_0px_rgba(29,41,61)] flex items-center gap-1.5 cursor-default transition-all">
           <PlusIcon size={12} weight="bold" />
-          <span>Tambah Webinar</span>
+          <span>Tambah Produk</span>
         </div>
       </div>
 
@@ -196,7 +196,7 @@ export function ProductManagementMockup() {
               <TableCell className="py-3 px-4">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg border-2 border-dashed border-slate-300 bg-slate-100" />
-                  <div className="flex flex-col">
+                  <div className="flex flex-col gap-1">
                     <span className="text-[10px] font-semibold text-slate-800 truncate max-w-[80px]">{item.name}</span>
                     <span className="text-[8px] text-slate-400">{item.date}</span>
                   </div>
@@ -225,13 +225,11 @@ export function ProductManagementMockup() {
 export function PaymentMockup() {
   const transactions = [
     { id: "TX-9012", total: "Rp 150.000", buyer: "Budi Santoso", status: "Sudah Bayar", color: "bg-green-100 text-green-700" },
-    { id: "TX-9011", total: "Rp 50.000", buyer: "Ani Wijaya", status: "Sudah Bayar", color: "bg-green-100 text-green-700" },
     { id: "TX-9010", total: "Rp 350.000", buyer: "Siska Putri", status: "Menunggu", color: "bg-yellow-100 text-yellow-700" },
-    { id: "TX-9009", total: "Rp 200.000", buyer: "Dedi Kurnia", status: "Sudah Bayar", color: "bg-green-100 text-green-700" },
   ];
 
   return (
-    <div className="w-full h-full bg-slate-50 flex flex-col p-4 gap-4 overflow-y-auto no-scrollbar">
+    <div className="w-full h-full bg-slate-50 flex flex-col p-4 gap-4 overflow-y-auto no-scrollbar justify-center">
       {/* Balance Section */}
       <div className="bg-cyan-50 border border-slate-800 p-4 rounded-xl shadow-[0px_1px_0px_rgba(29,41,61)] flex justify-between items-center">
         <div className="flex flex-col gap-1">

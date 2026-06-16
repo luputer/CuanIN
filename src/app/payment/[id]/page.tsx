@@ -54,15 +54,17 @@ export default function PaymentPage() {
     return (
       <div className="min-h-screen bg-slate-50 animate-pulse">
         <CatalogNavHeaderSkeleton />
-        <div className="mx-auto max-w-6xl px-4 py-10">
-          <div className="mb-8 h-9 w-36 rounded-xl bg-slate-200" />
-          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-5">
+        <div className="mx-auto max-w-6xl px-4 py-8 md:py-10">
+          <div className="mb-6 md:mb-8 h-8 md:h-9 w-32 md:w-36 rounded-xl bg-slate-200" />
+          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-5 md:gap-8">
+            {/* KIRI SKELETON */}
             <div className="space-y-6 lg:col-span-3">
-              <div className="h-64 w-full rounded-xl bg-slate-200" />
-              <div className="h-40 w-full rounded-xl bg-slate-200" />
+              <div className="h-48 md:h-56 w-full rounded-xl bg-slate-200" />
             </div>
+            {/* KANAN SKELETON */}
             <div className="space-y-6 lg:col-span-2">
-              <div className="h-96 w-full rounded-xl bg-slate-200" />
+              <div className="h-24 md:h-28 w-full rounded-xl bg-slate-200" />
+              <div className="h-[300px] md:h-80 w-full rounded-xl bg-slate-200" />
             </div>
           </div>
         </div>
@@ -105,10 +107,12 @@ export default function PaymentPage() {
       {/* HEADER */}
       <CatalogNavHeader backHref={`/${catalogSlug}/${productSlug}`} />
 
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <h1 className="mb-8 text-3xl font-bold text-slate-800">Selesaikan Pembayaran</h1>
+      <div className="mx-auto max-w-6xl px-4 py-8 md:py-10">
+        <h1 className="mb-6 md:mb-8 text-2xl md:text-3xl font-bold text-slate-800">
+          Pembayaran
+        </h1>
 
-        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-5">
+        <div className="grid grid-cols-1 items-start gap-6 md:gap-8 lg:grid-cols-5">
           {/* KIRI */}
           <div className="w-full min-w-0 space-y-6 lg:col-span-3 lg:pb-12">
             <PaymentDetailsCard
@@ -116,11 +120,11 @@ export default function PaymentPage() {
               buyerEmail={purchase.buyerEmail}
               buyerPhone={purchase.buyerPhone}
             />
-            <PaymentMethodInfoCard />
           </div>
 
           {/* KANAN */}
           <div className="w-full min-w-0 space-y-6 lg:sticky lg:top-24 lg:col-span-2 lg:h-fit lg:self-start">
+            <PaymentMethodInfoCard />
             <OrderSummaryCard
               price={price}
               fee={fee}

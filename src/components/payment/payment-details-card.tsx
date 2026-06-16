@@ -17,9 +17,9 @@ export function PaymentDetailsCard({
     <CardContainer>
       <div className="flex flex-col gap-3 pb-2 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-2">
-          <div className="text-lg font-semibold text-slate-700">Informasi Pelanggan</div>
+          <div className="text-lg font-semibold text-slate-700">Data Diri</div>
           <p className="text-sm text-slate-700">
-            Berikut adalah detail data diri yang digunakan untuk pembelian ini.
+            Berikut adalah data diri yang digunakan untuk pembelian ini.
           </p>
         </div>
       </div>

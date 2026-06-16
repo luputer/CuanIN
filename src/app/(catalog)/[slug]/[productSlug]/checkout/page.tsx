@@ -39,16 +39,15 @@ export default function CheckoutPage() {
     return (
       <div className="min-h-screen bg-slate-50 animate-pulse">
         <CatalogNavHeaderSkeleton />
-        <div className="mx-auto max-w-6xl px-4 py-10">
-          <div className="mb-8 h-9 w-36 rounded-xl bg-slate-200" />
-          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-5">
+        <div className="mx-auto max-w-6xl px-4 py-8 md:py-10">
+          <div className="mb-6 md:mb-8 h-8 md:h-9 w-32 md:w-36 rounded-xl bg-slate-200" />
+          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-5 md:gap-8">
             <div className="space-y-6 lg:col-span-3">
-              <div className="h-40 w-full rounded-xl bg-slate-200" />
-              <div className="h-96 w-full rounded-xl bg-slate-200" />
+              <div className="h-32 md:h-40 w-full rounded-xl bg-slate-200" />
+              <div className="h-[400px] md:h-96 w-full rounded-xl bg-slate-200" />
             </div>
             <div className="space-y-6 lg:col-span-2">
-              <div className="h-24 w-full rounded-xl bg-slate-200" />
-              <div className="h-64 w-full rounded-xl bg-slate-200" />
+              <div className="h-[300px] md:h-80 w-full rounded-xl bg-slate-200" />
             </div>
           </div>
         </div>
@@ -69,10 +68,10 @@ export default function CheckoutPage() {
       {/* HEADER */}
       <CatalogNavHeader backHref={`/${slug}/${productSlug}`} />
 
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <h1 className="mb-8 text-3xl font-bold text-slate-800">Checkout</h1>
+      <div className="mx-auto max-w-6xl px-4 py-8 md:py-10">
+        <h1 className="mb-6 md:mb-8 text-2xl md:text-3xl font-bold text-slate-800">Checkout</h1>
 
-        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-5">
+        <div className="grid grid-cols-1 items-start gap-6 md:gap-8 lg:grid-cols-5">
           {/* LEFT */}
           <div className="w-full min-w-0 space-y-6 lg:col-span-3 lg:pb-12">
             <CheckoutProductCard 

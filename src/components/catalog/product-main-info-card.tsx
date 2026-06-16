@@ -34,7 +34,7 @@ export function ProductMainInfoCard({
         <p className="text-sm font-medium text-slate-700">{creatorName}</p>
       </div>
 
-      <p className="text-sm text-slate-600 mt-4">{description}</p>
+      <p className="text-sm text-slate-600 mt-4 break-words whitespace-pre-wrap">{description}</p>
 
       {infoItems.length > 0 && (
         <div className="flex flex-wrap gap-6 py-4 text-sm text-slate-700">

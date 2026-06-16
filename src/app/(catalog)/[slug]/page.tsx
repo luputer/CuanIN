@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { api } from "~/trpc/react";
 import Link from "next/link";
 import SearchInput from "~/components/ui/search";
-import { ImagesIcon, ArrowLeftIcon, Funnel } from "@phosphor-icons/react";
+import { ShoppingBagIcon, ArrowLeftIcon, Funnel } from "@phosphor-icons/react";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { cn } from "~/lib/utils";
 import { getVisitorId } from "~/lib/visitor";
@@ -47,14 +47,14 @@ function CatalogPageSkeleton() {
           <div className="h-24 w-24 rounded-full border-4 border-white bg-slate-200 shadow-md md:h-32 md:w-32" />
           <div className="mt-3 h-5 w-40 rounded-full bg-slate-200" />
           <div className="mt-2 h-3.5 w-64 rounded-full bg-slate-200" />
-          <div className="mt-4 flex items-center gap-6 rounded-full border border-slate-200 bg-white px-10 py-4 shadow-xs">
+          <div className="mt-4 flex items-center gap-4 md:gap-6 rounded-full border border-slate-200 bg-white px-6 md:px-10 py-3 md:py-4 shadow-xs">
             <div className="h-4 w-20 rounded-full bg-slate-200" />
             <div className="h-4 w-px bg-slate-200" />
             <div className="h-4 w-20 rounded-full bg-slate-200" />
           </div>
         </div>
 
-        <div className="mt-8 rounded-xl border border-slate-200 bg-white px-6 pt-8 pb-10 shadow-sm md:px-10">
+        <div className="mt-8 rounded-xl border border-slate-200 bg-white px-4 py-8 md:px-10 md:pt-10 md:pb-12 shadow-sm">
           {/* Search + filter */}
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex w-full items-center gap-3 md:w-auto">
@@ -71,7 +71,7 @@ function CatalogPageSkeleton() {
           <div className="mt-8 mb-4 h-5 w-32 rounded-full bg-slate-200" />
 
           {/* Product grid */}
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
               <CatalogProductCardSkeleton key={i} />
             ))}
@@ -90,7 +90,7 @@ export default function CatalogSlugPage() {
 
   const [activeTab, setActiveTab] = useState<TabFilter>("Semua");
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<"terbaru" | "terlaris">("terbaru");
+  const [priceFilter, setPriceFilter] = useState<"semua" | "gratis" | "berbayar">("semua");
   const recordedCatalogIdRef = useRef<string | null>(null);
 
   const { data: session } = useSession();
@@ -136,7 +136,17 @@ export default function CatalogSlugPage() {
       const matchesSearch = p.name
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
-      return matchesTab && matchesSearch;
+
+      const price = Number(p.price);
+      const discountPrice = p.discountPrice != null ? Number(p.discountPrice) : null;
+      const finalPrice = discountPrice !== null && discountPrice < price ? discountPrice : price;
+
+      const matchesPrice =
+        priceFilter === "semua" ||
+        (priceFilter === "gratis" && finalPrice === 0) ||
+        (priceFilter === "berbayar" && finalPrice > 0);
+
+      return matchesTab && matchesSearch && matchesPrice;
     })
     .sort((a, b) => {
       const isCompletedA =
@@ -150,16 +160,8 @@ export default function CatalogSlugPage() {
 
       if (isCompletedA !== isCompletedB) return isCompletedA ? 1 : -1;
 
-      if (sortBy === "terbaru") {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      }
-      if (sortBy === "terlaris") {
-        const salesA = (a as any)._count?.purchases ?? 0;
-        const salesB = (b as any)._count?.purchases ?? 0;
-        if (salesA !== salesB) return salesB - salesA;
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      }
-      return 0;
+      // Default sort by terbaru
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
   return (
@@ -188,15 +190,15 @@ export default function CatalogSlugPage() {
             </AvatarFallback>
           </Avatar>
 
-          <h1 className="mt-1 text-lg font-semibold text-slate-800">
+          <h1 className="mt-1 text-md md:text-lg font-semibold text-slate-800">
             {creator.name ?? slug}
           </h1>
 
-          {bio && <p className="max-w-2xl text-sm text-slate-600">{bio}</p>}
+          {bio && <p className="max-w-2xl text-xs md:text-sm text-slate-600">{bio}</p>}
 
-          <div className="mt-4 flex items-center gap-6 rounded-full border border-slate-200 bg-white px-10 py-4 text-sm shadow-xs">
-            <span className="flex items-center gap-3">
-              <span className="text-xl font-semibold text-cyan-600">
+          <div className="mt-4 flex items-center gap-4 md:gap-6 rounded-full border border-slate-200 bg-white px-6 md:px-10 py-3 md:py-4 text-xs md:text-sm shadow-xs">
+            <span className="flex items-center gap-2 md:gap-3">
+              <span className="text-lg md:text-xl font-semibold text-cyan-600">
                 {products.length}
               </span>
               <span className="text-slate-600">Produk</span>
@@ -204,8 +206,8 @@ export default function CatalogSlugPage() {
 
             <div className="h-4 border-r border-slate-300" />
 
-            <span className="flex items-center gap-3">
-              <span className="text-xl font-semibold text-cyan-600">
+            <span className="flex items-center gap-2 md:gap-3">
+              <span className="text-lg md:text-xl font-semibold text-cyan-600">
                 {products.length}
               </span>
               <span className="text-slate-600">Terjual</span>
@@ -214,7 +216,7 @@ export default function CatalogSlugPage() {
         </div>
 
         {/* ── Product Panel ── */}
-        <div className="mt-8 rounded-xl border border-slate-200 bg-white px-10 pt-10 pb-12 shadow-sm">
+        <div className="mt-8 rounded-xl border border-slate-200 bg-white px-4 py-8 md:px-10 md:pt-10 md:pb-12 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex w-full items-center gap-3 md:w-auto">
               <div className="w-full flex-1 md:w-104 md:flex-initial">
@@ -226,7 +228,7 @@ export default function CatalogSlugPage() {
                 />
               </div>
 
-              {/* Sort Popover */}
+              {/* Filter Popover */}
               <Popover>
                 <PopoverTrigger asChild>
                   <button className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full border border-slate-400 bg-white text-slate-600 transition-all duration-200 ease-out hover:bg-slate-50 hover:text-slate-800 hover:translate-x-[1px] hover:translate-y-[1px] !shadow-none m-0 p-0 box-border">
@@ -236,20 +238,20 @@ export default function CatalogSlugPage() {
                 <PopoverContent className="w-48 p-2" align="end">
                   <div className="flex flex-col gap-1">
                     <p className="px-2.5 py-1.5 text-xs font-semibold text-slate-400">
-                      Urutkan Berdasarkan
+                      Filter Berdasarkan:
                     </p>
-                    {(["terbaru", "terlaris"] as const).map((opt) => (
+                    {(["semua", "gratis", "berbayar"] as const).map((opt) => (
                       <button
                         key={opt}
-                        onClick={() => setSortBy(opt)}
+                        onClick={() => setPriceFilter(opt)}
                         className={cn(
                           "w-full cursor-pointer rounded-lg px-2.5 py-2 text-left text-sm font-medium transition-all hover:bg-slate-100",
-                          sortBy === opt
+                          priceFilter === opt
                             ? "bg-cyan-50 text-cyan-600"
                             : "text-slate-700",
                         )}
                       >
-                        {opt === "terbaru" ? "Terbaru" : "Terlaris"}
+                        {opt === "semua" ? "Semua" : opt === "gratis" ? "Gratis" : "Berbayar"}
                       </button>
                     ))}
                   </div>
@@ -263,7 +265,7 @@ export default function CatalogSlugPage() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`h-10 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${activeTab === tab
+                  className={`h-9 md:h-10 cursor-pointer rounded-full px-3 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-200 ${activeTab === tab
                     ? "border border-cyan-600 bg-cyan-600 text-white"
                     : "border border-slate-400 bg-white text-slate-600 hover:bg-cyan-50"
                     }`}
@@ -275,7 +277,7 @@ export default function CatalogSlugPage() {
           </div>
 
           <div className="mt-8 mb-4 flex items-center justify-start">
-            <p className="text-lg font-medium text-slate-800">
+            <p className="text-md md:text-lg font-medium text-slate-800">
               {TAB_TITLE[activeTab]}
             </p>
           </div>
@@ -283,7 +285,7 @@ export default function CatalogSlugPage() {
           {/* ── Product Grid ── */}
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-2 py-24 text-slate-400">
-              <ImagesIcon className="h-12 w-12" strokeWidth={1} />
+              <ShoppingBagIcon className="h-12 w-12" strokeWidth={1} />
               <p className="text-sm">
                 {searchQuery
                   ? `Produk "${searchQuery}" tidak ditemukan.`
@@ -291,7 +293,7 @@ export default function CatalogSlugPage() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {filtered.map((product) => (
                 <CatalogProductCard
                   key={product.id}

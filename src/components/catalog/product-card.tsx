@@ -117,15 +117,6 @@ export function CatalogProductCard({
       <div className="group relative h-full flex flex-col cursor-pointer overflow-hidden rounded-xl border border-slate-300 bg-white px-4 py-4 transition-all duration-300 hover:scale-[1.01] hover:-translate-y-0.5 hover:border-slate-400">
         {/* Thumbnail */}
         <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-slate-100">
-          {/* Category badge */}
-          {categoryLabel && (
-            <span
-              className={`absolute top-2 left-2 z-10 rounded-full border px-4 py-0.5 text-[10px] font-medium ${CATEGORY_STYLE[type] ?? CATEGORY_STYLE_DEFAULT}`}
-            >
-              {categoryLabel}
-            </span>
-          )}
-
           {image ? (
             <Image
               src={image}
@@ -142,12 +133,19 @@ export function CatalogProductCard({
         {/* Info */}
         <div className="flex-1 flex flex-col justify-between space-y-1.5 pt-4">
           <div>
-            <p className="mb-2 line-clamp-2 text-sm leading-snug font-semibold text-slate-800">
+            <p className="mb-1 line-clamp-2 text-sm leading-snug font-semibold text-slate-800">
               {name}
             </p>
-            <p className="font-regular mb-2 line-clamp-2 min-h-[2rem] text-xs leading-snug text-slate-600">
-              {shortDescription}
-            </p>
+            {/* Category badge moved here */}
+            {categoryLabel && (
+              <div className="mb-2">
+                <span
+                  className={`inline-block rounded-full border px-2 py-0.5 text-[9px] font-medium ${CATEGORY_STYLE[type] ?? CATEGORY_STYLE_DEFAULT}`}
+                >
+                  {categoryLabel}
+                </span>
+              </div>
+            )}
             <ExtraInfo
               type={type}
               startDate={startDate}

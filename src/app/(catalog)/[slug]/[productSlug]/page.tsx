@@ -34,44 +34,34 @@ function ProductDetailSkeleton() {
       <CatalogNavHeaderSkeleton withShare />
 
       <div className="mx-auto max-w-6xl px-4 pt-10 pb-16">
-        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-5">
+        <div className="flex flex-col gap-8 lg:grid lg:grid-cols-5 lg:items-start">
           {/* LEFT */}
           <div className="flex flex-col gap-4 lg:col-span-3">
             {/* Main info card */}
             <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-6 md:p-8">
               <div className="h-6 w-24 rounded-full bg-slate-200" />
-              <div className="h-9 w-3/4 rounded-xl bg-slate-200" />
-              <div className="h-5 w-full rounded-xl bg-slate-200 md:hidden" />
+              <div className="h-7 md:h-9 w-3/4 rounded-xl bg-slate-200" />
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-full bg-slate-200" />
                 <div className="h-4 w-32 rounded-full bg-slate-200" />
               </div>
               <div className="space-y-2">
-                <div className="h-3.5 w-full rounded-full bg-slate-200" />
-                <div className="h-3.5 w-5/6 rounded-full bg-slate-200" />
-                <div className="h-3.5 w-4/6 rounded-full bg-slate-200" />
-              </div>
-              <div className="flex flex-wrap gap-4 py-2">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <div className="h-10 w-10 rounded-full bg-slate-200" />
-                    <div className="space-y-1">
-                      <div className="h-3 w-16 rounded-full bg-slate-200" />
-                      <div className="h-4 w-24 rounded-full bg-slate-200" />
-                    </div>
-                  </div>
-                ))}
+                <div className="h-3 w-full rounded-full bg-slate-200" />
+                <div className="h-3 w-5/6 rounded-full bg-slate-200" />
               </div>
             </div>
+
+            {/* Image Placeholder (Mobile only) */}
+            <div className="aspect-4/3 w-full rounded-2xl bg-slate-200 lg:hidden" />
 
             {/* Description card */}
             <div className="rounded-xl border border-slate-200 bg-white p-6">
               <div className="mb-4 h-5 w-40 rounded-full bg-slate-200" />
               <div className="space-y-2">
-                {[1, 2, 3, 4, 5].map((i) => (
+                {[1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className={`h-3.5 rounded-full bg-slate-200 ${i % 3 === 0 ? "w-3/5" : i % 2 === 0 ? "w-4/5" : "w-full"}`}
+                    className={`h-3 rounded-full bg-slate-200 ${i === 3 ? "w-3/5" : "w-full"}`}
                   />
                 ))}
               </div>
@@ -80,20 +70,16 @@ function ProductDetailSkeleton() {
 
           {/* RIGHT */}
           <div className="flex flex-col gap-6 lg:col-span-2">
-            <div className="aspect-4/3 w-full rounded-2xl bg-slate-200 lg:aspect-square lg:max-h-95" />
+            <div className="hidden lg:block aspect-square w-full rounded-2xl bg-slate-200" />
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
               <div className="mb-4 h-5 w-3/4 rounded-full bg-slate-200" />
               <div className="mb-4 rounded-xl border border-slate-100 bg-slate-50 p-4 space-y-2">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="flex items-center gap-2">
                     <div className="h-5 w-5 rounded-full bg-slate-200" />
-                    <div className="h-3.5 w-3/4 rounded-full bg-slate-200" />
+                    <div className="h-3 w-3/4 rounded-full bg-slate-200" />
                   </div>
                 ))}
-              </div>
-              <div className="flex justify-between border-t pt-3">
-                <div className="h-4 w-12 rounded-full bg-slate-200" />
-                <div className="h-4 w-20 rounded-full bg-slate-200" />
               </div>
               <div className="mt-4 h-7 w-1/3 rounded-full bg-slate-200" />
               <div className="mt-5 h-12 w-full rounded-xl bg-slate-200" />
@@ -193,8 +179,7 @@ export default function ProductDetailPage() {
       />
 
       <div className="mx-auto max-w-6xl px-4 pt-10 pb-16">
-        {/* GRID */}
-        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-5">
+        <div className="flex flex-col gap-8 lg:grid lg:grid-cols-5 lg:items-start">
           {/* ───── LEFT ───── */}
           <div className="flex flex-col gap-4 lg:col-span-3">
             {/* MAIN INFO CARD */}
@@ -270,21 +255,66 @@ export default function ProductDetailPage() {
               ]}
             />
 
+            {/* IMAGE & CAROUSEL (Mobile only - visible above description) */}
+            <div className="flex flex-col gap-2.5 lg:hidden">
+              <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-slate-300 bg-slate-100 shadow-sm">
+                {currentImage ? (
+                  <Image
+                    src={currentImage}
+                    alt={product.name}
+                    fill
+                    unoptimized
+                    className="object-cover transition-all duration-300"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-slate-400">
+                    <ImagesIcon className="h-12 w-12 text-slate-300" />
+                  </div>
+                )}
+              </div>
+
+              {/* Thumbnails (Mobile) */}
+              {allImages.length > 1 && (
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {allImages.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveImageIndex(idx)}
+                      className={`relative h-14 w-14 overflow-hidden rounded-xl border-2 transition-all duration-200 cursor-pointer ${activeImageIndex === idx
+                        ? "border-cyan-600 ring-2 ring-cyan-100"
+                        : "border-slate-200 hover:border-slate-300"
+                        }`}
+                    >
+                      <Image
+                        src={img}
+                        alt={`${product.name} preview ${idx + 1}`}
+                        fill
+                        unoptimized
+                        className="object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {/* DESCRIPTION CARD */}
             {product.description && (
               <CardContainer shadow={false}>
-                <h2 className="mb-2 text-lg font-semibold text-slate-600">
+                <h2 className="mb-2 text-md md:text-lg font-semibold text-slate-600">
                   Deskripsi Produk
                 </h2>
-                <MarkdownPreview content={product.description} />
+                <div className="break-words text-sm md:text-base">
+                  <MarkdownPreview content={product.description} />
+                </div>
               </CardContainer>
             )}
           </div>
 
           {/* ───── RIGHT SIDEBAR ───── */}
           <div className="flex flex-col gap-6 lg:col-span-2 lg:sticky lg:top-20 lg:self-start">
-            {/* IMAGE & CAROUSEL */}
-            <div className="flex flex-col gap-2.5">
+            {/* IMAGE & CAROUSEL (Desktop only) */}
+            <div className="hidden lg:flex lg:flex-col lg:gap-2.5">
               <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-slate-300 bg-slate-100 shadow-sm lg:aspect-square lg:max-h-95">
                 {currentImage ? (
                   <Image
@@ -301,7 +331,7 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
-              {/* Thumbnails */}
+              {/* Thumbnails (Desktop) */}
               {allImages.length > 1 && (
                 <div className="flex flex-wrap gap-2 mt-1">
                   {allImages.map((img, idx) => (
@@ -328,21 +358,21 @@ export default function ProductDetailPage() {
 
             {/* CTA CARD */}
             <div className="rounded-2xl border border-slate-300 bg-white p-6 shadow-sm">
-              <h3 className="mb-4 text-md font-medium wrap-break-word text-slate-600">
+              <h3 className="mb-4 text-sm md:text-md font-medium wrap-break-word text-slate-600">
                 {product.name}
               </h3>
 
               {/* Benefits */}
               {((product.benefit as string[])?.length ?? 0) > 0 && (
                 <div className="mb-5 rounded-xl border border-cyan-100 bg-cyan-50 p-4">
-                  <div className="mb-3 text-sm font-semibold text-cyan-600">
+                  <div className="mb-3 text-xs md:text-sm font-semibold text-cyan-600">
                     Yang akan Kamu dapatkan:
                   </div>
                   <div className="space-y-3">
                     {(product.benefit as string[]).map((item, idx) => (
                       <div
                         key={idx}
-                        className="flex items-start gap-2.5 text-sm text-slate-700"
+                        className="flex items-start gap-2.5 text-xs md:text-sm text-slate-700"
                       >
                         <CheckCircleIcon
                           className="h-5 w-5 shrink-0 text-cyan-600 mt-0.5"

@@ -17,31 +17,38 @@ export function OrderSummaryCard({
   handlePay,
   isPending,
 }: OrderSummaryCardProps) {
+  const finalPrice = price + fee;
+
   return (
-    <CardContainer>
-      <h3 className="mb-4 border-b border-slate-300 pb-3 font-semibold text-slate-800">
+    <CardContainer shadow={false}>
+      <h3 className="mb-4 font-semibold text-slate-800">
         Detail Pembayaran
       </h3>
 
-      <DataList
-        items={[
-          {
-            label: "Harga Produk",
-            value: `Rp ${price.toLocaleString("id-ID")}`,
-          },
-          ...(fee > 0
-            ? [{ label: "Biaya Layanan", value: `Rp ${fee.toLocaleString("id-ID")}` }]
-            : []),
-          {
-            label: "Total Bayar",
-            value: (
-              <span className="font-bold text-cyan-600">
-                Rp {(price + fee).toLocaleString("id-ID")}
-              </span>
-            ),
-          },
-        ]}
-      />
+      <div className="space-y-2 text-sm">
+        <div className="flex justify-between items-center">
+          <span className="text-slate-600">Harga Produk</span>
+          <span className="font-medium text-slate-700">
+            Rp {price.toLocaleString("id-ID")}
+          </span>
+        </div>
+
+        {fee > 0 && (
+          <div className="flex justify-between items-center">
+            <span className="text-slate-600">Biaya Layanan</span>
+            <span className="font-medium text-slate-700">
+              Rp {fee.toLocaleString("id-ID")}
+            </span>
+          </div>
+        )}
+
+        <div className="flex justify-between items-center border-t border-slate-200 pt-2">
+          <span className="font-semibold text-slate-800">Total Bayar</span>
+          <span className="font-bold text-cyan-600">
+            Rp {finalPrice.toLocaleString("id-ID")}
+          </span>
+        </div>
+      </div>
 
       {/* CTA Button */}
       <button

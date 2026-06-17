@@ -2,6 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { sendProductEmail } from "../../../lib/email";
+import { nanoid } from "nanoid";
 import { env } from "~/env";
 import { createInvoice as createXenditInvoice } from "~/lib/xendit";
 import { createSnapTransaction } from "~/lib/midtrans";
@@ -105,6 +106,7 @@ export const purchasesRouter = createTRPCRouter({
           link: true,
           links: true,
           notes: true,
+          portalEnabled: true,
           userId: true,
           capacity: true,
           user: {
@@ -229,6 +231,7 @@ export const purchasesRouter = createTRPCRouter({
 
       // Produk gratis (atau menjadi gratis setelah diskon) → langsung completed + kredit ledger creator
       if (finalPrice === 0) {
+        const portalToken = product.portalEnabled ? nanoid(16) : null;
         const purchaseResult = await ctx.db.$transaction(async (tx) => {
           const newPurchase = await tx.purchase.create({
             data: {
@@ -239,6 +242,7 @@ export const purchasesRouter = createTRPCRouter({
               amount: 0,
               status: "completed",
               voucherId: voucherId,
+              portalToken: portalToken,
             },
           });
 
@@ -281,6 +285,7 @@ export const purchasesRouter = createTRPCRouter({
             links: product.links as string[] | null,
             creatorName: product.user?.name ?? "Tim CuanIN",
             notes: product.notes,
+            portalUrl: portalToken ? `${env.NEXT_PUBLIC_APP_URL}/portal/${portalToken}` : null,
           });
         }
 
@@ -901,5 +906,39 @@ export const purchasesRouter = createTRPCRouter({
         },
         purchases,
       };
+    }),
+
+  getByPortalToken: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const purchase = await ctx.db.purchase.findUnique({
+        where: { portalToken: input.token },
+        select: {
+          id: true,
+          buyerName: true,
+          buyerEmail: true,
+          buyerPhone: true,
+          createdAt: true,
+          product: {
+            select: {
+              name: true,
+              image: true,
+              link: true,
+              links: true,
+              notes: true,
+              contentType: true,
+            },
+          },
+        },
+      });
+
+      if (!purchase) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Portal tidak ditemukan",
+        });
+      }
+
+      return purchase;
     }),
 });

@@ -54,6 +54,7 @@ model Product {
   capacity         Int?
   duration         String?
   notes            String?       @db.Text
+  portalEnabled    Boolean       @default(false)
   formFields       FormField[]
   user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   views            ProductView[]
@@ -112,12 +113,14 @@ model Purchase {
   paidAt              DateTime?
   xenditPaymentMethod String?
   voucherId           String?
+  portalToken         String?      @unique
   answers             FormAnswer[]
   product             Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
   voucher             Voucher?     @relation(fields: [voucherId], references: [id], onDelete: SetNull)
 
   @@index([xenditInvoiceId])
   @@index([voucherId])
+  @@index([portalToken])
 }
 
 model FormAnswer {

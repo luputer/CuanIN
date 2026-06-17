@@ -3,6 +3,7 @@ import { db } from "~/server/db";
 import { sendProductEmail } from "~/lib/email";
 import { env } from "~/env";
 import crypto from "crypto";
+import { nanoid } from "nanoid";
 
 export async function GET() {
   return NextResponse.json({ message: "Midtrans Webhook endpoint is active" });
@@ -79,8 +80,9 @@ export async function POST(req: NextRequest) {
             links: true,
             notes: true,
             userId: true,
+            portalEnabled: true,
             user: { select: { name: true } },
-          },
+            },
         },
       },
     });
@@ -91,6 +93,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ─── UPDATE DATABASE (ATOMIC) ─────────────────────────────────────────────
+    let portalToken: string | null = null;
     try {
       await db.$transaction(async (tx) => {
         await tx.purchase.update({
@@ -111,6 +114,15 @@ export async function POST(req: NextRequest) {
             note: `Pembelian (Midtrans) dari ${purchase.buyerName} (${purchase.buyerEmail})`,
           },
         });
+
+        // Generate portal token if product has portal enabled
+        if (purchase.product.portalEnabled) {
+          portalToken = nanoid(16);
+          await tx.purchase.update({
+            where: { id: purchase.id },
+            data: { portalToken },
+          });
+        }
       });
       console.log("[Midtrans Webhook] Success update purchase:", purchase.id);
     } catch {
@@ -128,6 +140,7 @@ export async function POST(req: NextRequest) {
           links: purchase.product.links as string[] | null,
           notes: purchase.product.notes,
           creatorName: purchase.product.user?.name ?? "Tim CuanIN",
+          portalUrl: portalToken ? `${env.NEXT_PUBLIC_APP_URL}/portal/${portalToken}` : null,
         });
       } catch (error) {
         console.error("📧 Failed to send product email (Midtrans):", error);

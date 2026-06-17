@@ -277,6 +277,7 @@ export const productsRouter = createTRPCRouter({
                 discountPrice: z.number().optional(),
                 status: z.string().optional(),
                 notes: z.string().optional(),
+                portalEnabled: z.boolean().optional(),
             })
         )
         .mutation(async ({ ctx, input }) => {
@@ -334,6 +335,7 @@ export const productsRouter = createTRPCRouter({
                 discountPrice: z.number().nullish(),
                 notes: z.string().nullish(),
                 status: z.string().optional(),
+                portalEnabled: z.boolean().optional(),
             })
         )
         .mutation(async ({ ctx, input }) => {

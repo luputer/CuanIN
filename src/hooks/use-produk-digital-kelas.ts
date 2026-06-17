@@ -42,6 +42,7 @@ export function useProdukDigitalKelas({ id, isEdit = false }: UseProdukDigitalKe
             vouchers: [],
             enableDiscount: false,
             discountPrice: 0,
+            enablePortal: false,
             image: "",
             images: [],
         },
@@ -89,6 +90,7 @@ export function useProdukDigitalKelas({ id, isEdit = false }: UseProdukDigitalKe
                 enableVoucher: true,
                 enableDiscount: discVal > 0,
                 discountPrice: discVal,
+                enablePortal: product.portalEnabled ?? false,
             });
         }
     }, [product, reset, isEdit]);
@@ -165,6 +167,7 @@ export function useProdukDigitalKelas({ id, isEdit = false }: UseProdukDigitalKe
                 notes: data.enableNotes ? data.notes : null,
                 vouchers: data.enableVoucher ? data.vouchers : [],
                 discountPrice: data.enableDiscount ? data.discountPrice : undefined,
+                portalEnabled: data.enablePortal,
             });
         } else {
             createMutation.mutate({
@@ -183,6 +186,7 @@ export function useProdukDigitalKelas({ id, isEdit = false }: UseProdukDigitalKe
                 notes: data.enableNotes ? data.notes : undefined,
                 vouchers: data.enableVoucher ? data.vouchers : [],
                 discountPrice: data.enableDiscount ? data.discountPrice : undefined,
+                portalEnabled: data.enablePortal,
             });
         }
     });

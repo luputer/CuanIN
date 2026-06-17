@@ -27,14 +27,10 @@ type SendProductEmailParams = {
   buyerEmail: string;
   productName: string;
   productLink: string;
-  links: string[] | null;
+  links?: string[] | null;
   creatorName: string;
   notes?: string | null;
-};
-
-type SendWelcomeEmailParams = {
-  email: string;
-  name: string;
+  portalUrl?: string | null;
 };
 
 export const sendProductEmail = async ({
@@ -44,6 +40,7 @@ export const sendProductEmail = async ({
   links,
   creatorName,
   notes,
+  portalUrl,
 }: SendProductEmailParams) => {
   const html = await render(
     React.createElement(ProductAccessEmail, {
@@ -51,13 +48,16 @@ export const sendProductEmail = async ({
       productLink,
       links,
       notes,
+      portalUrl,
       year: new Date().getFullYear(),
     })
   );
 
   try {
     const linksText = links && links.length > 0 ? `\n\nLink Tambahan:\n${links.map((l, i) => `${i + 1}. ${l}`).join("\n")}` : "";
-    const textContent = `Terima kasih atas pembelian Anda!\n\nBerikut adalah link untuk mengakses produk Anda:\n${productLink}${linksText}${notes ? `\n\nCatatan Tambahan:\n${notes}` : ''}\n\nSalam,\nTim CuanIN`;
+    const textContent = portalUrl
+      ? `Terima kasih atas pembelian Anda!\n\nBuka portal akses pribadi Anda:\n${portalUrl}\n\nLink produk: ${productLink}${linksText}${notes ? `\n\nCatatan Tambahan:\n${notes}` : ''}\n\nSalam,\nTim CuanIN`
+      : `Terima kasih atas pembelian Anda!\n\nBerikut adalah link untuk mengakses produk Anda:\n${productLink}${linksText}${notes ? `\n\nCatatan Tambahan:\n${notes}` : ''}\n\nSalam,\nTim CuanIN`;
 
     const info = await transporter.sendMail({
       from: `"${creatorName}" <${env.SMTP_FROM}>`,
@@ -126,6 +126,11 @@ export const sendWithdrawalEmail = async ({
     console.error("Error sending withdrawal email:", error);
     return { success: false, error };
   }
+};
+
+type SendWelcomeEmailParams = {
+  email: string;
+  name: string;
 };
 
 // saat register email

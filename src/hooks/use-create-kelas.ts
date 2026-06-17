@@ -28,6 +28,7 @@ type KelasOnlineFormValues = z.infer<typeof productKelasOnlineSchema> & {
     enableNotes?: boolean;
     enableDiscount?: boolean;
     discountPrice?: number;
+    enablePortal?: boolean;
 };
 
 export function useCreateKelas() {
@@ -62,6 +63,7 @@ export function useCreateKelas() {
             discountPrice: 0,
             image: "",
             images: [],
+            enablePortal: false,
         },
     });
 
@@ -178,6 +180,7 @@ export function useCreateKelas() {
             images: data.images,
             vouchers: data.enableVoucher ? data.vouchers : [],
             discountPrice: data.enableDiscount ? data.discountPrice : undefined,
+            portalEnabled: data.enablePortal,
         });
     };
 

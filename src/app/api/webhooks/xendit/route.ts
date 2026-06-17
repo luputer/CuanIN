@@ -5,6 +5,7 @@ import { db } from "~/server/db";
 import { sendProductEmail, sendWithdrawalEmail } from "~/lib/email";
 import { env } from "~/env";
 import { WithdrawalStatus } from "../../../../../prisma/generated/prisma";
+import { nanoid } from "nanoid";
 
 export async function POST(req: NextRequest) {
   const token = req.headers.get("x-callback-token");
@@ -209,6 +210,7 @@ export async function POST(req: NextRequest) {
           links: true,
           notes: true,
           userId: true,
+          portalEnabled: true,
           user: {
             select: { name: true },
           },
@@ -224,6 +226,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  let portalToken: string | null = null;
   try {
     await db.$transaction(async (tx) => {
       // Atomic Update: Hanya update jika status masih pending
@@ -249,6 +252,15 @@ export async function POST(req: NextRequest) {
           note: `Pembelian dari ${purchase.buyerName} (${purchase.buyerEmail})`,
         },
       });
+
+      // Generate portal token if product has portal enabled
+      if (purchase.product.portalEnabled) {
+        portalToken = nanoid(16);
+        await tx.purchase.update({
+          where: { id: purchase.id },
+          data: { portalToken },
+        });
+      }
     });
   } catch {
     // Jika error karena record tidak ditemukan (berarti sudah bukan pending)
@@ -265,6 +277,7 @@ export async function POST(req: NextRequest) {
         links: purchase.product.links as string[] | null, // ← fix cast
         creatorName: purchase.product.user?.name ?? "Tim CuanIN",
         notes: purchase.product.notes,
+        portalUrl: portalToken ? `${env.NEXT_PUBLIC_APP_URL}/portal/${portalToken}` : null,
       });
     } catch (err) {
       console.error("📧 Failed to send product email:", err);

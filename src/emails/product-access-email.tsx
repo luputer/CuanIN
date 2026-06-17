@@ -29,6 +29,7 @@ export type ProductAccessEmailProps = {
   productLink: string;
   notes?: string | null;
   links?: string[] | null;
+  portalUrl?: string | null;
   year: number;
 };
 
@@ -37,6 +38,7 @@ export function ProductAccessEmail({
   productLink,
   links,
   notes,
+  portalUrl,
   year,
 }: ProductAccessEmailProps) {
   return (
@@ -51,18 +53,47 @@ export function ProductAccessEmail({
             Terima kasih telah membeli produk <strong>{productName}</strong>.
             Pembayaran kamu telah kami terima.
           </Text>
-          <Text style={paragraph}>
-            Kamu dapat mengakses produk melalui tombol di bawah ini:
-          </Text>
-          <Section style={actionSection}>
-            <Button href={productLink} style={button}>
-              Masuk ke Produk Kamu
-            </Button>
-          </Section>
-          <Text style={paragraph}>
-            Atau copy dan paste link berikut ke browser kamu:
-          </Text>
-          <Text style={linkText}>{productLink}</Text>
+          {portalUrl ? (
+            <>
+              <Text style={paragraph}>
+                Akses semua link, catatan, dan materi produk kamu melalui portal pribadi:
+              </Text>
+              <Section style={actionSection}>
+                <Button href={portalUrl} style={button}>
+                  Buka Portal Akses
+                </Button>
+              </Section>
+              <Text style={paragraph}>
+                Link Portal: <Link href={portalUrl} style={linkText}>{portalUrl}</Link>
+              </Text>
+
+              {productLink && (
+                <>
+                  <Text style={{ ...paragraph, fontSize: "13px", color: "#64748b" }}>
+                    Atau akses langsung link produk:
+                  </Text>
+                  <Text style={{ ...linkText, fontSize: "13px" }}>
+                    <Link href={productLink} style={{ color: "#64748b", wordBreak: "break-all" }}>{productLink}</Link>
+                  </Text>
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <Text style={paragraph}>
+                Kamu dapat mengakses produk melalui tombol di bawah ini:
+              </Text>
+              <Section style={actionSection}>
+                <Button href={productLink} style={button}>
+                  Masuk ke Produk Kamu
+                </Button>
+              </Section>
+              <Text style={paragraph}>
+                Atau copy dan paste link berikut ke browser kamu:
+              </Text>
+              <Text style={linkText}>{productLink}</Text>
+            </>
+          )}
 
           {links && links.length > 0 && (
             <>

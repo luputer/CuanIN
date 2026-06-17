@@ -479,6 +479,24 @@ export const SidebarMetadataSection = ({
                             </div>
                         )}
                     </div>
+
+                    {/* Portal Toggle */}
+                    <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                            <div className="flex flex-col">
+                                <label className="text-sm font-medium text-slate-700">Portal Akses</label>
+                                <span className="text-xs text-slate-400">Buyer bisa akses semua link via 1 halaman portal</span>
+                            </div>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    className="sr-only peer"
+                                    {...register("enablePortal")}
+                                />
+                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

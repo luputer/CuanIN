@@ -327,4 +327,14 @@ html {
   .animate-caret-blink {
     animation: caret-blink 1.2s ease-out infinite;
   }
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      transform: translateX(100%);
+    }
+  }
 }

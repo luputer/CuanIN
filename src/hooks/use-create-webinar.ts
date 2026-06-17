@@ -41,6 +41,7 @@ export function useCreateWebinar() {
             enableQuota: false,
             image: "",
             images: [],
+            enablePortal: false,
         },
     });
 
@@ -156,6 +157,7 @@ export function useCreateWebinar() {
             images: data.images,
             vouchers: data.enableVoucher ? data.vouchers : [],
             discountPrice: data.enableDiscount ? data.discountPrice : undefined,
+            portalEnabled: data.enablePortal,
         });
     };
 

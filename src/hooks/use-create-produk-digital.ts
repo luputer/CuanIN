@@ -28,6 +28,7 @@ type DigitalProductFormValues = {
     notes?: string;
     enableDiscount?: boolean;
     discountPrice?: number;
+    enablePortal?: boolean;
 };
 
 export function useCreateProdukDigital() {
@@ -59,6 +60,7 @@ export function useCreateProdukDigital() {
             vouchers: [],
             enableDiscount: false,
             discountPrice: 0,
+            enablePortal: false,
             image: "",
             images: [],
         },
@@ -165,6 +167,7 @@ export function useCreateProdukDigital() {
             notes: data.enableNotes ? data.notes : undefined,
             vouchers: data.enableVoucher ? data.vouchers : [],
             discountPrice: data.enableDiscount ? data.discountPrice : undefined,
+            portalEnabled: data.enablePortal,
         });
     };
 

@@ -981,6 +981,8 @@ export const purchasesRouter = createTRPCRouter({
           buyerName: true,
           buyerEmail: true,
           buyerPhone: true,
+          amount: true,
+          status: true,
           createdAt: true,
           product: {
             select: {
@@ -990,6 +992,7 @@ export const purchasesRouter = createTRPCRouter({
               links: true,
               notes: true,
               contentType: true,
+              type: true,
             },
           },
         },

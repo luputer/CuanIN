@@ -12,16 +12,28 @@ import {
   StorefrontIcon,
   EnvelopeSimpleIcon,
   ArrowCounterClockwiseIcon,
-  PackageIcon,
   SignOutIcon,
   MagnifyingGlassIcon,
-  FolderIcon,
-  BellIcon,
   CreditCardIcon,
   LockIcon,
+  CurrencyCircleDollarIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  DeviceTabletIcon,
+  PresentationChartIcon,
+  GraduationCapIcon,
 } from "@phosphor-icons/react";
 
 const PORTAL_TOKEN_KEY = "portal_token_";
+
+type TabType = "DIGITAL_PRODUCT" | "WEBINAR" | "KELAS_ONLINE" | "payment";
+
+const TABS: { key: TabType; label: string; icon: typeof DeviceTabletIcon }[] = [
+  { key: "DIGITAL_PRODUCT", label: "Digital", icon: DeviceTabletIcon },
+  { key: "WEBINAR", label: "Webinar", icon: PresentationChartIcon },
+  { key: "KELAS_ONLINE", label: "Kelas", icon: GraduationCapIcon },
+  { key: "payment", label: "Payment", icon: CreditCardIcon },
+];
 
 function getPortalTokenKey(creatorSlug: string) {
   return `${PORTAL_TOKEN_KEY}${creatorSlug}`;
@@ -143,22 +155,29 @@ function PortalRequestForm({ creatorSlug }: { creatorSlug: string }) {
   );
 }
 
-function BottomNav() {
+function BottomNav({ activeTab, onTabChange }: { activeTab: TabType; onTabChange: (tab: TabType) => void }) {
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50">
       <div className="max-w-lg mx-auto flex items-center justify-around py-2">
-        <button className="flex flex-col items-center gap-0.5 px-4 py-1">
-          <FolderIcon size={22} weight="bold" className="text-blue-500" />
-          <span className="text-xs font-medium text-blue-500">Product</span>
-        </button>
-        <button className="flex flex-col items-center gap-0.5 px-4 py-1">
-          <BellIcon size={22} className="text-slate-400" />
-          <span className="text-xs text-slate-400">Membership</span>
-        </button>
-        <button className="flex flex-col items-center gap-0.5 px-4 py-1">
-          <CreditCardIcon size={22} className="text-slate-400" />
-          <span className="text-xs text-slate-400">Payment</span>
-        </button>
+        {TABS.map(({ key, label, icon: Icon }) => {
+          const isActive = activeTab === key;
+          return (
+            <button
+              key={key}
+              onClick={() => onTabChange(key)}
+              className="flex flex-col items-center gap-0.5 px-3 py-1"
+            >
+              <Icon
+                size={22}
+                weight={isActive ? "bold" : "regular"}
+                className={isActive ? "text-blue-500" : "text-slate-400"}
+              />
+              <span className={`text-xs ${isActive ? "font-medium text-blue-500" : "text-slate-400"}`}>
+                {label}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -184,6 +203,7 @@ export default function CreatorPortalPage() {
   const params = useParams<{ creatorSlug: string }>();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<TabType>("DIGITAL_PRODUCT");
   const [search, setSearch] = useState("");
 
   const urlToken = searchParams.get("token") ?? "";
@@ -215,14 +235,22 @@ export default function CreatorPortalPage() {
     router.replace(`/portal/${params.creatorSlug}`);
   };
 
+  const isProductTab = activeTab !== "payment";
+
   const filteredPurchases = useMemo(() => {
     if (!data?.purchases) return [];
-    if (!search.trim()) return data.purchases;
-    const q = search.toLowerCase();
-    return data.purchases.filter((p) =>
-      p.product.name.toLowerCase().includes(q)
-    );
-  }, [data?.purchases, search]);
+
+    let filtered = data.purchases.filter((p) => p.product.type === activeTab);
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      filtered = filtered.filter((p) =>
+        p.product.name.toLowerCase().includes(q)
+      );
+    }
+
+    return filtered;
+  }, [data?.purchases, search, activeTab]);
 
   if (isLoading) {
     return (
@@ -240,6 +268,8 @@ export default function CreatorPortalPage() {
   }
 
   const { creator, buyerName, buyerEmail } = data;
+
+  const currentTabInfo = TABS.find((t) => t.key === activeTab);
 
   return (
     <div className="min-h-screen bg-white pb-20">
@@ -269,111 +299,177 @@ export default function CreatorPortalPage() {
             </button>
           </div>
 
-          {/* Search Bar */}
-          <div className="mt-3 relative">
-            <MagnifyingGlassIcon
-              size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by name product..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 outline-none transition-all text-sm placeholder:text-slate-400"
-            />
-          </div>
+          {/* Search Bar (only for product tabs) */}
+          {isProductTab && (
+            <div className="mt-3 relative">
+              <MagnifyingGlassIcon
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by name product..."
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 outline-none transition-all text-sm placeholder:text-slate-400"
+              />
+            </div>
+          )}
         </div>
 
-        {/* Products */}
+        {/* Content */}
         <div className="space-y-4 py-2">
-          {filteredPurchases.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <p className="text-slate-400 text-base font-medium">
-                {search.trim() ? "No products match your search" : "Product Not Available"}
-              </p>
-            </div>
-          ) : (
-            filteredPurchases.map((purchase) => {
-              const product = purchase.product;
-              const links = Array.isArray(product.links)
-                ? (product.links as string[]).filter((l) => l && l.trim().length > 0)
-                : [];
+          {isProductTab ? (
+            <>
+              {/* Tab Title */}
+              <div className="flex items-center gap-2">
+                {currentTabInfo && <currentTabInfo.icon size={18} weight="bold" className="text-cyan-600" />}
+                <h2 className="text-sm font-bold text-slate-700">
+                  {currentTabInfo?.label} ({filteredPurchases.length})
+                </h2>
+              </div>
 
-              return (
-                <div
-                  key={purchase.id}
-                  className="rounded-xl border-2 border-slate-800 bg-white shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] overflow-hidden"
-                >
-                  {product.image && (
-                    <div className="relative w-full aspect-video bg-slate-100">
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        fill
-                        className="object-cover"
-                        unoptimized
-                      />
-                    </div>
-                  )}
-                  <div className="p-5 space-y-3">
-                    <div className="space-y-1">
-                      {product.contentType && (
-                        <span className="inline-block text-xs font-medium bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded-full">
-                          {product.contentType}
-                        </span>
+              {filteredPurchases.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20">
+                  <p className="text-slate-400 text-base font-medium">
+                    {search.trim()
+                      ? "No products match your search"
+                      : "Product Not Available"}
+                  </p>
+                </div>
+              ) : (
+                filteredPurchases.map((purchase) => {
+                  const product = purchase.product;
+                  const links = Array.isArray(product.links)
+                    ? (product.links as string[]).filter((l) => l && l.trim().length > 0)
+                    : [];
+
+                  return (
+                    <div
+                      key={purchase.id}
+                      className="rounded-xl border-2 border-slate-800 bg-white shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] overflow-hidden"
+                    >
+                      {product.image && (
+                        <div className="relative w-full aspect-video bg-slate-100">
+                          <Image
+                            src={product.image}
+                            alt={product.name}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        </div>
                       )}
-                      <h3 className="text-base font-bold text-slate-800">{product.name}</h3>
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <CalendarCheckIcon size={14} />
-                        <span>Dibeli {new Date(purchase.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
-                      </div>
-                    </div>
+                      <div className="p-5 space-y-3">
+                        <div className="space-y-1">
+                          {product.contentType && (
+                            <span className="inline-block text-xs font-medium bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded-full">
+                              {product.contentType}
+                            </span>
+                          )}
+                          <h3 className="text-base font-bold text-slate-800">{product.name}</h3>
+                          <div className="flex items-center gap-2 text-xs text-slate-500">
+                            <CalendarCheckIcon size={14} />
+                            <span>Dibeli {new Date(purchase.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
+                          </div>
+                        </div>
 
-                    {product.link && (
-                      <a
-                        href={product.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full text-center bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2.5 px-6 rounded-xl border-2 border-slate-800 shadow-[3px_3px_0px_0px_rgba(30,41,59,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all text-sm"
-                      >
-                        Masuk ke Produk
-                      </a>
-                    )}
-
-                    {links.length > 0 && (
-                      <div className="space-y-2">
-                        <p className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
-                          <LinkIcon size={14} weight="bold" className="text-slate-500" />
-                          Link Tambahan
-                        </p>
-                        {links.map((link, index) => (
+                        {product.link && (
                           <a
-                            key={index}
-                            href={link}
+                            href={product.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block p-2.5 rounded-lg bg-slate-50 border border-slate-200 hover:bg-cyan-50 hover:border-cyan-200 transition-colors"
+                            className="block w-full text-center bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2.5 px-6 rounded-xl border-2 border-slate-800 shadow-[3px_3px_0px_0px_rgba(30,41,59,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all text-sm"
                           >
-                            <p className="text-xs text-cyan-700 break-all truncate">{link}</p>
+                            Masuk ke Produk
                           </a>
-                        ))}
-                      </div>
-                    )}
+                        )}
 
-                    {product.notes && (
-                      <div className="space-y-1">
-                        <p className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
-                          <NoteIcon size={14} weight="bold" className="text-amber-500" />
-                          Catatan
-                        </p>
-                        <p className="text-xs text-slate-600 whitespace-pre-wrap">{product.notes}</p>
+                        {links.length > 0 && (
+                          <div className="space-y-2">
+                            <p className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+                              <LinkIcon size={14} weight="bold" className="text-slate-500" />
+                              Link Tambahan
+                            </p>
+                            {links.map((link, index) => (
+                              <a
+                                key={index}
+                                href={link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block p-2.5 rounded-lg bg-slate-50 border border-slate-200 hover:bg-cyan-50 hover:border-cyan-200 transition-colors"
+                              >
+                                <p className="text-xs text-cyan-700 break-all truncate">{link}</p>
+                              </a>
+                            ))}
+                          </div>
+                        )}
+
+                        {product.notes && (
+                          <div className="space-y-1">
+                            <p className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+                              <NoteIcon size={14} weight="bold" className="text-amber-500" />
+                              Catatan
+                            </p>
+                            <p className="text-xs text-slate-600 whitespace-pre-wrap">{product.notes}</p>
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </div>
+                  );
+                })
+              )}
+            </>
+          ) : (
+            <>
+              {/* Payment History */}
+              <div className="space-y-3">
+                <h2 className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <CurrencyCircleDollarIcon size={18} weight="bold" className="text-cyan-600" />
+                  Riwayat Pembayaran ({data.purchases.length})
+                </h2>
+
+                {data.purchases.map((purchase) => (
+                  <div
+                    key={purchase.id}
+                    className="rounded-xl border-2 border-slate-800 bg-white shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] p-4 space-y-2"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="text-sm font-bold text-slate-800">{purchase.product.name}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {new Date(purchase.createdAt).toLocaleDateString("id-ID", {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          })}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        {purchase.status === "completed" ? (
+                          <>
+                            <CheckCircleIcon size={16} weight="fill" className="text-green-500" />
+                            <span className="text-xs font-medium text-green-600">Lunas</span>
+                          </>
+                        ) : (
+                          <>
+                            <ClockIcon size={16} className="text-amber-500" />
+                            <span className="text-xs font-medium text-amber-600">Pending</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="border-t border-slate-200 pt-2 flex items-center justify-between">
+                      <span className="text-xs text-slate-500">Total Pembayaran</span>
+                      <span className="text-sm font-bold text-slate-800">
+                        Rp {Number(purchase.amount).toLocaleString("id-ID")}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              );
-            })
+                ))}
+              </div>
+            </>
           )}
         </div>
 
@@ -382,7 +478,7 @@ export default function CreatorPortalPage() {
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNav />
+      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
 }

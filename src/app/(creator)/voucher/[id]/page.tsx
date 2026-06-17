@@ -354,30 +354,22 @@ export default function VoucherDetailPage() {
                         </div>
 
                         {/* Footer Action Buttons */}
-                        <div className="flex flex-col sm:flex-row justify-between sm:items-center mt-4 pt-4 border-t border-slate-200 gap-4 w-full">
-                            <div className="flex flex-col gap-1">
-                                <p className="text-slate-500 text-sm text-left w-full sm:w-auto">
-                                    Ditambahkan pada {format(new Date(voucher.createdAt), "d MMMM yyyy, HH:mm", { locale: idLocale })}
-                                </p>
-                                <p className="text-slate-500 text-sm text-left w-full sm:w-auto">
-                                    Terakhir diperbarui {format(new Date(voucher.updatedAt), "d MMMM yyyy, HH:mm", { locale: idLocale })}
-                                </p>
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mt-8 pt-6 border-t border-slate-200 gap-4">
+                            {/* Timestamp section */}
+                            <div className="text-sm text-slate-500">
+                                <p>Ditambahkan pada {format(new Date(voucher.createdAt), "d MMMM yyyy, HH:mm", { locale: idLocale })}</p>
+                                <p>Terakhir diperbarui {format(new Date(voucher.updatedAt), "d MMMM yyyy, HH:mm", { locale: idLocale })}</p>
                             </div>
-                            <div className="w-full sm:w-auto flex justify-end gap-4">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => setShowDeleteConfirm(true)}
-                                    className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
-                                >
-                                    Hapus
-                                </Button>
+
+                            {/* Buttons section */}
+                            <div className="flex items-center gap-3 w-full md:w-auto">
                                 <ButtonSave
                                     onClick={onSubmit}
                                     isLoading={isPending}
                                     disabled={!isDirty}
                                     label="Simpan Perubahan"
                                     loadingLabel="Menyimpan..."
+                                    className="w-full md:w-auto"
                                     weight="bold"
                                 />
                             </div>

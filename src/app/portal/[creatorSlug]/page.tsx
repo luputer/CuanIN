@@ -22,15 +22,17 @@ import {
   DeviceTabletIcon,
   PresentationChartIcon,
   GraduationCapIcon,
+  SquaresFourIcon,
 } from "@phosphor-icons/react";
 
 const PORTAL_TOKEN_KEY = "portal_token_";
 
-type TabType = "DIGITAL_PRODUCT" | "WEBINAR" | "KELAS_ONLINE" | "payment";
+type TabType = "DIGITAL_PRODUCT" | "WEBINAR" | "ALL" | "KELAS_ONLINE" | "payment";
 
 const TABS: { key: TabType; label: string; icon: typeof DeviceTabletIcon }[] = [
   { key: "DIGITAL_PRODUCT", label: "Digital", icon: DeviceTabletIcon },
   { key: "WEBINAR", label: "Webinar", icon: PresentationChartIcon },
+  { key: "ALL", label: "Semua", icon: SquaresFourIcon },
   { key: "KELAS_ONLINE", label: "Kelas", icon: GraduationCapIcon },
   { key: "payment", label: "Payment", icon: CreditCardIcon },
 ];
@@ -203,7 +205,7 @@ export default function CreatorPortalPage() {
   const params = useParams<{ creatorSlug: string }>();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<TabType>("DIGITAL_PRODUCT");
+  const [activeTab, setActiveTab] = useState<TabType>("ALL");
   const [search, setSearch] = useState("");
 
   const urlToken = searchParams.get("token") ?? "";
@@ -240,7 +242,9 @@ export default function CreatorPortalPage() {
   const filteredPurchases = useMemo(() => {
     if (!data?.purchases) return [];
 
-    let filtered = data.purchases.filter((p) => p.product.type === activeTab);
+    let filtered = activeTab === "ALL"
+      ? data.purchases
+      : data.purchases.filter((p) => p.product.type === activeTab);
 
     if (search.trim()) {
       const q = search.toLowerCase();
@@ -362,11 +366,16 @@ export default function CreatorPortalPage() {
                       )}
                       <div className="p-5 space-y-3">
                         <div className="space-y-1">
-                          {product.contentType && (
-                            <span className="inline-block text-xs font-medium bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded-full">
-                              {product.contentType}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {product.contentType && (
+                              <span className="inline-block text-xs font-medium bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded-full">
+                                {product.contentType}
+                              </span>
+                            )}
+                            <span className="inline-block text-xs font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
+                              {product.type === "DIGITAL_PRODUCT" ? "Digital" : product.type === "WEBINAR" ? "Webinar" : "Kelas"}
                             </span>
-                          )}
+                          </div>
                           <h3 className="text-base font-bold text-slate-800">{product.name}</h3>
                           <div className="flex items-center gap-2 text-xs text-slate-500">
                             <CalendarCheckIcon size={14} />

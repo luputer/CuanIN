@@ -258,7 +258,10 @@ export async function POST(req: NextRequest) {
         portalToken = nanoid(16);
         await tx.purchase.update({
           where: { id: purchase.id },
-          data: { portalToken },
+          data: {
+            portalToken,
+            portalTokenExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          },
         });
       }
     });

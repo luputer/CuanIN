@@ -114,6 +114,7 @@ model Purchase {
   xenditPaymentMethod String?
   voucherId           String?
   portalToken         String?      @unique
+  portalTokenExpiresAt DateTime?
   answers             FormAnswer[]
   product             Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
   voucher             Voucher?     @relation(fields: [voucherId], references: [id], onDelete: SetNull)

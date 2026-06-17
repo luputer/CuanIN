@@ -7,6 +7,7 @@ import { WithdrawalSuccessEmail } from "~/emails/withdrawal-success-email";
 import { WelcomeEmail } from "~/emails/welcome-email";
 import { VerifyEmail } from "~/emails/verify-email";
 import { ResetPasswordEmail } from "~/emails/reset-password-email";
+import { PortalLinkEmail } from "~/emails/portal-link-email";
 
 const transporter = nodemailer.createTransport({
   host: env.SMTP_HOST,
@@ -227,6 +228,43 @@ export const sendPasswordResetEmail = async ({
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error("Error sending password reset email:", error);
+    return { success: false, error };
+  }
+};
+
+type SendPortalLinkEmailParams = {
+  email: string;
+  buyerName: string;
+  productName: string;
+  portalUrl: string;
+};
+
+export const sendPortalLinkEmail = async ({
+  email,
+  buyerName,
+  productName,
+  portalUrl,
+}: SendPortalLinkEmailParams) => {
+  const html = await render(
+    PortalLinkEmail({
+      buyerName,
+      productName,
+      portalUrl,
+      year: new Date().getFullYear(),
+    })
+  );
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
+      to: email,
+      subject: `Link Portal Akses: ${productName}`,
+      text: `Halo ${buyerName}, berikut link portal akses kamu untuk produk ${productName}: ${portalUrl}`,
+      html,
+    });
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("Error sending portal link email:", error);
     return { success: false, error };
   }
 };

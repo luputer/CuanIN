@@ -66,6 +66,9 @@ export function ProductAccessEmail({
               <Text style={paragraph}>
                 Link Portal: <Link href={portalUrl} style={linkText}>{portalUrl}</Link>
               </Text>
+              <Text style={{ ...paragraph, fontSize: "13px", color: "#64748b" }}>
+                Link portal berlaku selama 24 jam. Jika sudah kedaluwarsa, kamu bisa minta link baru di halaman portal.
+              </Text>
 
               {productLink && (
                 <>

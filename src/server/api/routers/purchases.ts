@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { sendProductEmail } from "../../../lib/email";
+import { sendProductEmail, sendPortalLinkEmail } from "../../../lib/email";
 import { nanoid } from "nanoid";
 import { env } from "~/env";
 import { createInvoice as createXenditInvoice } from "~/lib/xendit";
@@ -232,6 +232,9 @@ export const purchasesRouter = createTRPCRouter({
       // Produk gratis (atau menjadi gratis setelah diskon) → langsung completed + kredit ledger creator
       if (finalPrice === 0) {
         const portalToken = product.portalEnabled ? nanoid(16) : null;
+        const portalTokenExpiresAt = portalToken
+          ? new Date(Date.now() + 24 * 60 * 60 * 1000)
+          : null;
         const purchaseResult = await ctx.db.$transaction(async (tx) => {
           const newPurchase = await tx.purchase.create({
             data: {
@@ -243,6 +246,7 @@ export const purchasesRouter = createTRPCRouter({
               status: "completed",
               voucherId: voucherId,
               portalToken: portalToken,
+              portalTokenExpiresAt: portalTokenExpiresAt,
             },
           });
 
@@ -919,6 +923,7 @@ export const purchasesRouter = createTRPCRouter({
           buyerEmail: true,
           buyerPhone: true,
           createdAt: true,
+          portalTokenExpiresAt: true,
           product: {
             select: {
               name: true,
@@ -939,6 +944,63 @@ export const purchasesRouter = createTRPCRouter({
         });
       }
 
+      if (
+        purchase.portalTokenExpiresAt &&
+        new Date() > purchase.portalTokenExpiresAt
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Link portal sudah kedaluwarsa. Silakan minta link baru melalui email.",
+        });
+      }
+
       return purchase;
+    }),
+
+  requestPortalLink: publicProcedure
+    .input(z.object({ email: z.string().email() }))
+    .mutation(async ({ ctx, input }) => {
+      const email = input.email.toLowerCase();
+
+      const purchases = await ctx.db.purchase.findMany({
+        where: {
+          buyerEmail: { equals: email, mode: "insensitive" },
+          status: "completed",
+          product: { portalEnabled: true },
+        },
+        include: {
+          product: {
+            select: { name: true, portalEnabled: true },
+          },
+        },
+      });
+
+      if (purchases.length === 0) {
+        return { success: true };
+      }
+
+      for (const purchase of purchases) {
+        const newToken = nanoid(16);
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+        await ctx.db.purchase.update({
+          where: { id: purchase.id },
+          data: {
+            portalToken: newToken,
+            portalTokenExpiresAt: expiresAt,
+          },
+        });
+
+        const portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/${newToken}`;
+
+        void sendPortalLinkEmail({
+          email: purchase.buyerEmail,
+          buyerName: purchase.buyerName,
+          productName: purchase.product.name,
+          portalUrl,
+        });
+      }
+
+      return { success: true };
     }),
 });

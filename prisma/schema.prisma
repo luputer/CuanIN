@@ -113,15 +113,12 @@ model Purchase {
   paidAt              DateTime?
   xenditPaymentMethod String?
   voucherId           String?
-  portalToken         String?      @unique
-  portalTokenExpiresAt DateTime?
   answers             FormAnswer[]
   product             Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
   voucher             Voucher?     @relation(fields: [voucherId], references: [id], onDelete: SetNull)
 
   @@index([xenditInvoiceId])
   @@index([voucherId])
-  @@index([portalToken])
 }
 
 model FormAnswer {
@@ -186,6 +183,7 @@ model User {
   withdrawals    Withdrawal[]
   balanceEntries BalanceEntry[]
   vouchers       Voucher[]
+  portalAccesses PortalAccess[]
 }
 
 model VerificationToken {
@@ -335,4 +333,19 @@ model Voucher {
   updatedAt      DateTime    @updatedAt
 
   @@index([userId])
+}
+
+model PortalAccess {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  buyerEmail String
+  creatorId String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  creator   User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@unique([buyerEmail, creatorId])
+  @@index([token])
+  @@index([buyerEmail])
+  @@index([creatorId])
 }

@@ -81,8 +81,15 @@ export async function POST(req: NextRequest) {
             notes: true,
             userId: true,
             portalEnabled: true,
-            user: { select: { name: true } },
+            user: {
+              select: {
+                name: true,
+                catalog: {
+                  select: { slug: true },
+                },
+              },
             },
+          },
         },
       },
     });
@@ -93,7 +100,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ─── UPDATE DATABASE (ATOMIC) ─────────────────────────────────────────────
-    let portalToken: string | null = null;
+    let portalUrl: string | null = null;
     try {
       await db.$transaction(async (tx) => {
         await tx.purchase.update({
@@ -115,16 +122,26 @@ export async function POST(req: NextRequest) {
           },
         });
 
-        // Generate portal token if product has portal enabled
-        if (purchase.product.portalEnabled) {
-          portalToken = nanoid(16);
-          await tx.purchase.update({
-            where: { id: purchase.id },
-            data: {
-              portalToken,
-              portalTokenExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        // Create portal access if product has portal enabled
+        if (purchase.product.portalEnabled && purchase.product.user?.catalog?.slug) {
+          const token = nanoid(16);
+          const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+          await tx.portalAccess.upsert({
+            where: {
+              buyerEmail_creatorId: {
+                buyerEmail: purchase.buyerEmail.toLowerCase(),
+                creatorId: purchase.product.userId,
+              },
+            },
+            update: { token, expiresAt },
+            create: {
+              token,
+              buyerEmail: purchase.buyerEmail.toLowerCase(),
+              creatorId: purchase.product.userId,
+              expiresAt,
             },
           });
+          portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/${purchase.product.user.catalog.slug}?token=${token}`;
         }
       });
       console.log("[Midtrans Webhook] Success update purchase:", purchase.id);
@@ -143,7 +160,7 @@ export async function POST(req: NextRequest) {
           links: purchase.product.links as string[] | null,
           notes: purchase.product.notes,
           creatorName: purchase.product.user?.name ?? "Tim CuanIN",
-          portalUrl: portalToken ? `${env.NEXT_PUBLIC_APP_URL}/portal/${portalToken}` : null,
+          portalUrl,
         });
       } catch (error) {
         console.error("📧 Failed to send product email (Midtrans):", error);

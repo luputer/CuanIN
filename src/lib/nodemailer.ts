@@ -235,20 +235,20 @@ export const sendPasswordResetEmail = async ({
 type SendPortalLinkEmailParams = {
   email: string;
   buyerName: string;
-  productName: string;
+  creatorName: string;
   portalUrl: string;
 };
 
 export const sendPortalLinkEmail = async ({
   email,
   buyerName,
-  productName,
+  creatorName,
   portalUrl,
 }: SendPortalLinkEmailParams) => {
   const html = await render(
     PortalLinkEmail({
       buyerName,
-      productName,
+      productName: creatorName,
       portalUrl,
       year: new Date().getFullYear(),
     })
@@ -258,8 +258,8 @@ export const sendPortalLinkEmail = async ({
     const info = await transporter.sendMail({
       from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
       to: email,
-      subject: `Link Portal Akses: ${productName}`,
-      text: `Halo ${buyerName}, berikut link portal akses kamu untuk produk ${productName}: ${portalUrl}`,
+      subject: `Link Portal Akses dari ${creatorName}`,
+      text: `Halo ${buyerName}, berikut link portal akses kamu untuk semua produk dari ${creatorName}: ${portalUrl}`,
       html,
     });
     return { success: true, messageId: info.messageId };

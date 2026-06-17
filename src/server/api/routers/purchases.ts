@@ -110,7 +110,12 @@ export const purchasesRouter = createTRPCRouter({
           userId: true,
           capacity: true,
           user: {
-            select: { name: true },
+            select: {
+              name: true,
+              catalog: {
+                select: { slug: true },
+              },
+            },
           },
           _count: {
             select: {
@@ -231,10 +236,8 @@ export const purchasesRouter = createTRPCRouter({
 
       // Produk gratis (atau menjadi gratis setelah diskon) → langsung completed + kredit ledger creator
       if (finalPrice === 0) {
-        const portalToken = product.portalEnabled ? nanoid(16) : null;
-        const portalTokenExpiresAt = portalToken
-          ? new Date(Date.now() + 24 * 60 * 60 * 1000)
-          : null;
+        let portalUrl: string | null = null;
+
         const purchaseResult = await ctx.db.$transaction(async (tx) => {
           const newPurchase = await tx.purchase.create({
             data: {
@@ -245,8 +248,6 @@ export const purchasesRouter = createTRPCRouter({
               amount: 0,
               status: "completed",
               voucherId: voucherId,
-              portalToken: portalToken,
-              portalTokenExpiresAt: portalTokenExpiresAt,
             },
           });
 
@@ -267,7 +268,6 @@ export const purchasesRouter = createTRPCRouter({
             });
           }
 
-          // Produk gratis: kredit Rp 0 ke ledger (untuk audit trail tetap ada)
           await tx.balanceEntry.create({
             data: {
               userId: product.userId,
@@ -277,6 +277,28 @@ export const purchasesRouter = createTRPCRouter({
               note: `Produk gratis — ${input.buyerName}`,
             },
           });
+
+          // Create portal access if product has portal enabled
+          if (product.portalEnabled && product.user?.catalog?.slug) {
+            const token = nanoid(16);
+            const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+            await tx.portalAccess.upsert({
+              where: {
+                buyerEmail_creatorId: {
+                  buyerEmail: input.buyerEmail.toLowerCase(),
+                  creatorId: product.userId,
+                },
+              },
+              update: { token, expiresAt },
+              create: {
+                token,
+                buyerEmail: input.buyerEmail.toLowerCase(),
+                creatorId: product.userId,
+                expiresAt,
+              },
+            });
+            portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/${product.user.catalog.slug}?token=${token}`;
+          }
 
           return newPurchase;
         });
@@ -289,7 +311,7 @@ export const purchasesRouter = createTRPCRouter({
             links: product.links as string[] | null,
             creatorName: product.user?.name ?? "Tim CuanIN",
             notes: product.notes,
-            portalUrl: portalToken ? `${env.NEXT_PUBLIC_APP_URL}/portal/${portalToken}` : null,
+            portalUrl,
           });
         }
 
@@ -912,18 +934,54 @@ export const purchasesRouter = createTRPCRouter({
       };
     }),
 
-  getByPortalToken: publicProcedure
+  getCreatorPortal: publicProcedure
     .input(z.object({ token: z.string() }))
     .query(async ({ ctx, input }) => {
-      const purchase = await ctx.db.purchase.findUnique({
-        where: { portalToken: input.token },
+      const portalAccess = await ctx.db.portalAccess.findUnique({
+        where: { token: input.token },
+        include: {
+          creator: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              catalog: {
+                select: { slug: true },
+              },
+            },
+          },
+        },
+      });
+
+      if (!portalAccess) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Portal tidak ditemukan",
+        });
+      }
+
+      if (new Date() > portalAccess.expiresAt) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Link portal sudah kedaluwarsa. Silakan minta link baru melalui email.",
+        });
+      }
+
+      const purchases = await ctx.db.purchase.findMany({
+        where: {
+          buyerEmail: { equals: portalAccess.buyerEmail, mode: "insensitive" },
+          status: "completed",
+          product: {
+            userId: portalAccess.creatorId,
+            portalEnabled: true,
+          },
+        },
         select: {
           id: true,
           buyerName: true,
           buyerEmail: true,
           buyerPhone: true,
           createdAt: true,
-          portalTokenExpiresAt: true,
           product: {
             select: {
               name: true,
@@ -935,71 +993,96 @@ export const purchasesRouter = createTRPCRouter({
             },
           },
         },
+        orderBy: { createdAt: "desc" },
       });
 
-      if (!purchase) {
+      if (purchases.length === 0) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Portal tidak ditemukan",
+          message: "Tidak ada pembelian yang ditemukan",
         });
       }
 
-      if (
-        purchase.portalTokenExpiresAt &&
-        new Date() > purchase.portalTokenExpiresAt
-      ) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Link portal sudah kedaluwarsa. Silakan minta link baru melalui email.",
-        });
-      }
-
-      return purchase;
+      return {
+        creator: {
+          id: portalAccess.creator.id,
+          name: portalAccess.creator.name,
+          image: portalAccess.creator.image,
+          slug: portalAccess.creator.catalog?.slug ?? null,
+        },
+        buyerEmail: portalAccess.buyerEmail,
+        buyerName: purchases[0]!.buyerName,
+        purchases,
+      };
     }),
 
-  requestPortalLink: publicProcedure
-    .input(z.object({ email: z.string().email() }))
+  requestCreatorPortalLink: publicProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        creatorSlug: z.string(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const email = input.email.toLowerCase();
+
+      const catalog = await ctx.db.catalog.findUnique({
+        where: { slug: input.creatorSlug },
+        include: {
+          user: {
+            select: { id: true, name: true },
+          },
+        },
+      });
+
+      if (!catalog) {
+        return { success: true };
+      }
 
       const purchases = await ctx.db.purchase.findMany({
         where: {
           buyerEmail: { equals: email, mode: "insensitive" },
           status: "completed",
-          product: { portalEnabled: true },
-        },
-        include: {
           product: {
-            select: { name: true, portalEnabled: true },
+            userId: catalog.userId,
+            portalEnabled: true,
           },
         },
+        take: 1,
       });
 
       if (purchases.length === 0) {
         return { success: true };
       }
 
-      for (const purchase of purchases) {
-        const newToken = nanoid(16);
-        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      const token = nanoid(16);
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-        await ctx.db.purchase.update({
-          where: { id: purchase.id },
-          data: {
-            portalToken: newToken,
-            portalTokenExpiresAt: expiresAt,
+      await ctx.db.portalAccess.upsert({
+        where: {
+          buyerEmail_creatorId: {
+            buyerEmail: email,
+            creatorId: catalog.userId,
           },
-        });
+        },
+        update: { token, expiresAt },
+        create: {
+          token,
+          buyerEmail: email,
+          creatorId: catalog.userId,
+          expiresAt,
+        },
+      });
 
-        const portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/${newToken}`;
+      const portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/${input.creatorSlug}?token=${token}`;
+      const buyerName = purchases[0]!.buyerName;
 
-        void sendPortalLinkEmail({
-          email: purchase.buyerEmail,
-          buyerName: purchase.buyerName,
-          productName: purchase.product.name,
-          portalUrl,
-        });
-      }
+      void sendPortalLinkEmail({
+        email,
+        buyerName,
+        creatorName: catalog.user.name ?? "Kreator",
+        portalUrl,
+      });
 
       return { success: true };
     }),

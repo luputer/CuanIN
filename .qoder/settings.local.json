@@ -37,7 +37,29 @@
       "Bash(ls /home/luputer/Dokumen/TA/CuanIN/src/app/\\\\\\(creator\\\\\\)/kelas/ && echo \"---\" && ls /home/luputer/Dokumen/TA/CuanIN/src/app/\\\\\\(creator\\\\\\)/voucher/ && echo \"---\" && ls /home/luputer/Dokumen/TA/CuanIN/src/app/\\\\\\(creator\\\\\\)/pembayaran/)",
       "Bash(ls:*)",
       "Bash(ls /home/luputer/Dokumen/TA/CuanIN/src/app/\\\\\\(creator\\\\\\)/peserta/ && echo \"---\" && ls /home/luputer/Dokumen/TA/CuanIN/src/app/\\\\\\(creator\\\\\\)/profile/)",
-      "Bash(ls /home/luputer/Dokumen/TA/CuanIN/src/components/email/ 2>/dev/null || echo \"No email components\")"
+      "Bash(ls /home/luputer/Dokumen/TA/CuanIN/src/components/email/ 2>/dev/null || echo \"No email components\")",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && git status --short src/app/portal/ src/server/api/routers/purchases.ts)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && git stash push -u -m \"portal feature: untracked portal pages \\(WIP\\)\" -- src/app/portal/)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && git stash list && echo \"---\" && git status --short src/app/portal/ src/server/api/routers/purchases.ts)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && git status --short src/app/portal/ src/server/api/routers/purchases.ts prisma/schema.prisma)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && npm install --silent 2>&1 | tail -5)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && npx tsc --noEmit 2>&1 | tail -20)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && npx prisma generate --quiet 2>&1)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && ls prisma/migrations/ 2>&1 | grep -i portal)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && npx prisma db push 2>&1)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && npx tsc --noEmit 2>&1 | tail -5)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && grep -n \"portalEnabled\" src/app/api/webhooks/midtrans/route.ts src/app/api/webhooks/xendit/route.ts src/server/api/routers/purchases.ts 2>&1)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && git add package-lock.json package.json prisma/schema.prisma src/app/api/webhooks/midtrans/route.ts src/app/api/webhooks/xendit/route.ts src/components/creator/product-form-sections.tsx src/components/dashboard/dashboard-card.tsx src/components/dashboard/dashboard-skeletons.tsx src/emails/product-access-email.tsx src/hooks/use-create-kelas.ts src/hooks/use-create-produk-digital.ts src/hooks/use-create-webinar.ts src/hooks/use-edit-kelas.ts src/hooks/use-produk-digital-kelas.ts src/hooks/use-webinar.ts src/lib/email.ts src/lib/nodemailer.ts src/lib/validation.ts src/server/api/routers/products.ts src/server/api/routers/purchases.ts src/styles/globals.css src/app/portal/ docs/ 2>&1)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && git commit -m \"$\\(cat <<'EOF'\nfeat\\(portal\\): add buyer portal access feature\n\n- Add portalEnabled field to Product and portalToken to Purchase schema\n- Generate portal token via nanoid on payment completion \\(Midtrans/Xendit/free\\)\n- Add portal toggle UI in product creation/edit forms\n- Add getByPortalToken public query for portal page access\n- Create portal page with product info, links, and notes\n- Make portal button primary CTA in email when enabled\n- Refactor email to support portal URL and improved link filtering\nEOF\n\\)\")",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && git push origin user-fortal 2>&1)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && git --no-pager status)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && npx prisma generate 2>&1 | tail -10)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && npx prisma db push --accept-data-loss 2>&1 | tail -15)",
+      "Bash(mkdir:*)",
+      "Bash(rm:*)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && npx tsc --noEmit 2>&1 | head -30)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && rm -rf .next/types/app/portal/\\\\[token\\\\] && npx tsc --noEmit 2>&1 | head -20)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && grep -n \"portal/\\\\[token\\\\]\" .next/types/validator.ts)"
     ]
   }
 }

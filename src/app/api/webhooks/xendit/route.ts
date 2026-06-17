@@ -212,7 +212,12 @@ export async function POST(req: NextRequest) {
           userId: true,
           portalEnabled: true,
           user: {
-            select: { name: true },
+            select: {
+              name: true,
+              catalog: {
+                select: { slug: true },
+              },
+            },
           },
         },
       },
@@ -226,10 +231,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let portalToken: string | null = null;
+  let portalUrl: string | null = null;
   try {
     await db.$transaction(async (tx) => {
-      // Atomic Update: Hanya update jika status masih pending
       await tx.purchase.update({
         where: {
           id: purchase.id,
@@ -242,7 +246,6 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Jika update berhasil, baru buat balanceEntry
       await tx.balanceEntry.create({
         data: {
           userId: purchase.product.userId,
@@ -253,20 +256,29 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Generate portal token if product has portal enabled
-      if (purchase.product.portalEnabled) {
-        portalToken = nanoid(16);
-        await tx.purchase.update({
-          where: { id: purchase.id },
-          data: {
-            portalToken,
-            portalTokenExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      // Create portal access if product has portal enabled
+      if (purchase.product.portalEnabled && purchase.product.user?.catalog?.slug) {
+        const token = nanoid(16);
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        await tx.portalAccess.upsert({
+          where: {
+            buyerEmail_creatorId: {
+              buyerEmail: purchase.buyerEmail.toLowerCase(),
+              creatorId: purchase.product.userId,
+            },
+          },
+          update: { token, expiresAt },
+          create: {
+            token,
+            buyerEmail: purchase.buyerEmail.toLowerCase(),
+            creatorId: purchase.product.userId,
+            expiresAt,
           },
         });
+        portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/${purchase.product.user.catalog.slug}?token=${token}`;
       }
     });
   } catch {
-    // Jika error karena record tidak ditemukan (berarti sudah bukan pending)
     console.log("[Webhook] Purchase already completed or failed to update:", purchase.id);
     return NextResponse.json({ message: "Already processed" });
   }
@@ -277,10 +289,10 @@ export async function POST(req: NextRequest) {
         buyerEmail: purchase.buyerEmail,
         productName: purchase.product.name,
         productLink: purchase.product.link,
-        links: purchase.product.links as string[] | null, // ← fix cast
+        links: purchase.product.links as string[] | null,
         creatorName: purchase.product.user?.name ?? "Tim CuanIN",
         notes: purchase.product.notes,
-        portalUrl: portalToken ? `${env.NEXT_PUBLIC_APP_URL}/portal/${portalToken}` : null,
+        portalUrl,
       });
     } catch (err) {
       console.error("📧 Failed to send product email:", err);

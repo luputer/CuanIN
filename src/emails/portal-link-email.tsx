@@ -39,7 +39,7 @@ export function PortalLinkEmail({
   return (
     <Html>
       <Head />
-      <Preview>Link portal akses produk kamu sudah siap.</Preview>
+      <Preview>Link portal akses kamu sudah siap.</Preview>
       <Body style={main}>
         <Container style={container}>
           <Text style={heading}>Akses Portal Kamu</Text>
@@ -47,7 +47,7 @@ export function PortalLinkEmail({
             Halo <strong>{buyerName}</strong>,
           </Text>
           <Text style={paragraph}>
-            Berikut link portal pribadi kamu untuk mengakses produk{" "}
+            Berikut link portal pribadi kamu untuk mengakses semua produk dari{" "}
             <strong>{productName}</strong>. Klik tombol di bawah untuk membuka
             portal.
           </Text>
@@ -71,9 +71,9 @@ export function PortalLinkEmail({
               color: "#64748b",
             }}
           >
-            Link ini bersifat pribadi dan hanya berlaku untuk satu kali akses.
-            Jika link sudah tidak berlaku, kamu bisa meminta link baru melalui
-            halaman portal.
+            Link ini bersifat pribadi dan berlaku selama 24 jam. Jika link
+            sudah tidak berlaku, kamu bisa meminta link baru melalui halaman
+            portal.
           </Text>
           <Hr style={hr} />
           <Text style={footer}>

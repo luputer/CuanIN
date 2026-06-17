@@ -48,11 +48,10 @@ export function DashboardCard({
                 <span>30 hari terakhir</span>
                 {change !== undefined && (
                     <span
-                        className={`px-2 py-1 rounded-full text-xs font-regular ${
-                            isPositive
-                                ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
-                        }`}
+                        className={`px-2 py-0.5 rounded-full text-md font-medium border ${isPositive
+                            ? "bg-green-50 text-green-600 border-green-100"
+                            : "bg-red-50 text-red-600 border-red-100"
+                            }`}
                     >
                         {change === null
                             ? "Baru"

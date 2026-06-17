@@ -121,17 +121,17 @@ export default function AdminTransactionPage() {
                         <SearchInput
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Cari ID, Nama Kreator, atau Email"
+                            placeholder="Cari ID Transaksi atau Nama Kreator"
                             className="w-full sm:flex-1 min-w-[280px]"
                         />
                     }
                     actions={
                         <SelectFilter
-                            label={`Status: ${getStatusLabel(status)}`}
+                            label={`Status: ${status === "ALL" ? "Semua" : getStatusLabel(status)}`}
                             value={status}
                             onValueChange={setStatus}
                             options={[
-                                { value: "ALL", label: "Semua Status" },
+                                { value: "ALL", label: "Semua" },
                                 { value: "SUCCEEDED", label: "Berhasil" },
                                 { value: "PENDING", label: "Menunggu" },
                                 { value: "FAILED", label: "Gagal" },
@@ -144,14 +144,16 @@ export default function AdminTransactionPage() {
                 <div className="hidden sm:block w-full pb-2">
                     <Table
                         pagination={
-                            <TablePagination
-                                page={page}
-                                totalPages={totalPages}
-                                limit={limit}
-                                total={totalItems}
-                                onPageChange={setPage}
-                                onLimitChange={setLimit}
-                            />
+                            <div className="hidden sm:block">
+                                <TablePagination
+                                    page={page}
+                                    totalPages={totalPages}
+                                    limit={limit}
+                                    total={totalItems}
+                                    onPageChange={setPage}
+                                    onLimitChange={setLimit}
+                                />
+                            </div>
                         }
                     >
                         <TableHeader>
@@ -159,12 +161,12 @@ export default function AdminTransactionPage() {
                                 <TableHead className="w-[5%] text-center">No</TableHead>
                                 <TableHead className="w-[8%] whitespace-nowrap">ID</TableHead>
                                 <TableHead className="w-[12%] whitespace-nowrap">Kreator</TableHead>
-                                <TableHead className="w-[12%] whitespace-nowrap">Nominal Bersih</TableHead>
+                                <TableHead className="w-[12%] whitespace-nowrap">Nominal</TableHead>
                                 <TableHead className="w-[10%] whitespace-nowrap">Bank</TableHead>
                                 <TableHead className="w-[14%] whitespace-nowrap">No. Rek / Nama</TableHead>
                                 <TableHead className="w-[14%] whitespace-nowrap">Tanggal</TableHead>
                                 <TableHead className="w-[12%] text-center whitespace-nowrap">Status</TableHead>
-                                <TableHead className="w-[8%] text-right whitespace-nowrap">Aksi</TableHead>
+                                <TableHead className="w-[8%] text-center whitespace-nowrap">Aksi</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -214,8 +216,15 @@ export default function AdminTransactionPage() {
                                                 </Tooltip>
                                             </TableCell>
                                             <TableCell className="whitespace-nowrap">
-                                                <div className="flex min-h-[48px] items-center font-semibold text-slate-800">
-                                                    {formatCurrency(nominalBersih)}
+                                                <div className="flex flex-col min-h-[48px] justify-center">
+                                                    <div className="font-medium text-slate-800">
+                                                        {formatCurrency(nominalBersih)}
+                                                    </div>
+                                                    {Number(item.feeAmount) > 0 && (
+                                                        <div className="mt-1 text-[12px] text-slate-600">
+                                                            Fee: {formatCurrency(item.feeAmount)}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </TableCell>
                                             <TableCell>
@@ -235,23 +244,16 @@ export default function AdminTransactionPage() {
                                                 </div>
                                             </TableCell>
                                             <TableCell className="whitespace-nowrap">
-                                                <div className="flex min-h-[48px] items-center justify-center">
-                                                    <span className={`px-3 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.status)}`}>
-                                                        {getStatusLabel(item.status)}
-                                                    </span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="px-4 py-4 text-right">
-                                                <div className="flex justify-end items-center gap-2">
-                                                    {isPending(item.status) && (
-                                                        <>
+                                                <div className="flex min-h-[48px] items-center justify-center gap-2">
+                                                    {isPending(item.status) ? (
+                                                        <div className="flex items-center gap-2">
                                                             <Tooltip>
                                                                 <TooltipTrigger asChild>
                                                                     <button
                                                                         onClick={() => { setConfirmTx(item); setIsConfirmPaidOpen(true); }}
-                                                                        className="p-1.5 rounded-md text-green-600 border border-slate-200 hover:bg-green-50 transition"
+                                                                        className="text-green-600 hover:text-green-700 transition cursor-pointer"
                                                                     >
-                                                                        <CheckCircleIcon className="w-4 h-4" weight="fill" />
+                                                                        <CheckCircleIcon className="w-[26px] h-[26px]" />
                                                                     </button>
                                                                 </TooltipTrigger>
                                                                 <TooltipContent>Sudah Ditransfer</TooltipContent>
@@ -260,19 +262,27 @@ export default function AdminTransactionPage() {
                                                                 <TooltipTrigger asChild>
                                                                     <button
                                                                         onClick={() => { setConfirmTx(item); setIsConfirmFailOpen(true); }}
-                                                                        className="p-1.5 rounded-md text-red-500 border border-slate-200 hover:bg-red-50 transition"
+                                                                        className="text-red-600 hover:text-red-700 transition cursor-pointer"
                                                                     >
-                                                                        <XCircleIcon className="w-4 h-4" weight="fill" />
+                                                                        <XCircleIcon className="w-[26px] h-[26px]" />
                                                                     </button>
                                                                 </TooltipTrigger>
                                                                 <TooltipContent>Tolak / Gagalkan</TooltipContent>
                                                             </Tooltip>
-                                                        </>
+                                                        </div>
+                                                    ) : (
+                                                        <span className={`px-3 py-1 rounded-full text-[13px] font-medium leading-tight ${getStatusColor(item.status)}`}>
+                                                            {getStatusLabel(item.status)}
+                                                        </span>
                                                     )}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="px-4 py-4 text-center">
+                                                <div className="flex justify-center items-center gap-2">
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
-                                                            <button onClick={() => { setSelectedTx(item); setIsDetailOpen(true); }}>
-                                                                <EyeIcon className="w-[22px] h-[22px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
+                                                            <button onClick={() => { setSelectedTx(item); setIsDetailOpen(true); }} className="text-cyan-600 hover:text-cyan-700 transition cursor-pointer">
+                                                                <EyeIcon className="w-[22px] h-[22px]" />
                                                             </button>
                                                         </TooltipTrigger>
                                                         <TooltipContent>Lihat Detail</TooltipContent>
@@ -333,32 +343,35 @@ export default function AdminTransactionPage() {
                                         </div>
 
                                         <div className="flex items-center justify-between pt-2 border-t border-slate-100 mt-1">
-                                            <div>
-                                                <span className="font-medium text-slate-400 text-xs">Nominal Bersih: </span>
+                                            <div className="flex flex-col">
+                                                <span className="font-medium text-slate-400 text-xs">Nominal</span>
                                                 <span className="font-bold text-sm text-slate-800">{formatCurrency(nominalBersih)}</span>
+                                                {Number(item.feeAmount) > 0 && (
+                                                    <span className="text-[10px] text-slate-400">Fee: {formatCurrency(item.feeAmount)}</span>
+                                                )}
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 {isPending(item.status) && (
                                                     <>
                                                         <button
                                                             onClick={() => { setConfirmTx(item); setIsConfirmPaidOpen(true); }}
-                                                            className="p-1.5 rounded-md text-green-600 border border-slate-200 hover:bg-green-50 transition"
+                                                            className="text-green-600 hover:text-green-700 transition"
                                                         >
-                                                            <CheckCircleIcon className="w-4 h-4" weight="fill" />
+                                                            <CheckCircleIcon className="w-5 h-5" />
                                                         </button>
                                                         <button
                                                             onClick={() => { setConfirmTx(item); setIsConfirmFailOpen(true); }}
-                                                            className="p-1.5 rounded-md text-red-500 border border-slate-200 hover:bg-red-50 transition"
+                                                            className="text-red-600 hover:text-red-700 transition"
                                                         >
-                                                            <XCircleIcon className="w-4 h-4" weight="fill" />
+                                                            <XCircleIcon className="w-5 h-5" />
                                                         </button>
                                                     </>
                                                 )}
                                                 <button
                                                     onClick={() => { setSelectedTx(item); setIsDetailOpen(true); }}
-                                                    className="p-1.5 rounded-md text-cyan-600 border border-slate-200 hover:bg-slate-50 transition"
+                                                    className="text-cyan-600 hover:text-cyan-700 transition"
                                                 >
-                                                    <EyeIcon className="w-[18px] h-[18px]" />
+                                                    <EyeIcon className="w-5 h-5" />
                                                 </button>
                                             </div>
                                         </div>

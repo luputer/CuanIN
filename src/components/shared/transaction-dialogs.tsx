@@ -1,5 +1,5 @@
 import { useState, type FormEvent, useEffect } from "react";
-import { CreditCardIcon, XIcon } from "@phosphor-icons/react";
+import { CheckCircleIcon, CreditCardIcon, XCircleIcon, XIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 
@@ -18,10 +18,12 @@ import ButtonCancel from "~/components/shared/button-cancel";
 import { StatusBadge } from "~/components/ui/status-badge";
 import { formatCurrency, formatNumberInput } from "~/lib/utils";
 import { withdrawalSchema, type WithdrawalFormData } from "~/lib/validation";
+import ConfirmDialog from "./confirm-dialog";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────
 
-export const getStatusColor = (status: string) => {
+export const getStatusColor = (status: string | null | undefined) => {
+    if (!status) return "bg-slate-100 text-slate-600";
     switch (status.toUpperCase()) {
         case "SUCCEEDED":
         case "COMPLETED":
@@ -41,7 +43,8 @@ export const getStatusColor = (status: string) => {
     }
 };
 
-export const getStatusLabel = (status: string) => {
+export const getStatusLabel = (status: string | null | undefined) => {
+    if (!status) return "-";
     switch (status.toUpperCase()) {
         case "ALL":
             return "Semua Status";
@@ -270,6 +273,10 @@ export interface TransactionDetailDialogProps {
     onOpenChange: (open: boolean) => void;
     selectedTx: any;
     viewMode: "creator" | "admin";
+    onMarkPaid?: () => void;
+    onMarkFailed?: () => void;
+    isPendingPaid?: boolean;
+    isPendingFailed?: boolean;
 }
 
 export function TransactionDetailDialog({
@@ -277,6 +284,10 @@ export function TransactionDetailDialog({
     onOpenChange,
     selectedTx,
     viewMode,
+    onMarkPaid,
+    onMarkFailed,
+    isPendingPaid,
+    isPendingFailed,
 }: TransactionDetailDialogProps) {
     if (!selectedTx) {
         return (
@@ -286,6 +297,9 @@ export function TransactionDetailDialog({
         );
     }
 
+    const isPending = (status: string | null | undefined) =>
+        status && ["PENDING", "REQUESTED", "ACCEPTED"].includes(status.toUpperCase());
+
     if (viewMode === "admin") {
         return (
             <Dialog open={open} onOpenChange={onOpenChange}>
@@ -293,7 +307,7 @@ export function TransactionDetailDialog({
                     <DialogHeader className="flex flex-row justify-between items-center text-left pr-4 pl-6 py-4">
                         <DialogTitle className="text-lg">Detail Transaksi</DialogTitle>
                         <DialogClose asChild>
-                            <button className="text-slate-400 hover:text-cyan-600 transition-colors p-1 cursor-pointer">
+                            <button className="text-slate-300 hover:text-cyan-600 transition-colors p-1 cursor-pointer">
                                 <XIcon size={20} weight="bold" />
                             </button>
                         </DialogClose>
@@ -305,7 +319,7 @@ export function TransactionDetailDialog({
                             </span>
                             <div className="flex items-center gap-3 pt-1">
                                 <span className="text-2xl font-semibold text-slate-800 tracking-tight">
-                                    {formatCurrency(Number(selectedTx.amount) - Number(selectedTx.feeAmount ?? 0) - 4000)}
+                                    {formatCurrency(Number(selectedTx.amount ?? 0) - Number(selectedTx.feeAmount ?? 0) - 4000)}
                                 </span>
                                 <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusColor(selectedTx.status)}`}>
                                     {getStatusLabel(selectedTx.status)}
@@ -371,6 +385,26 @@ export function TransactionDetailDialog({
                                 </span>
                             </div>
                         </div>
+
+                        {/* Action Buttons inside Dialog */}
+                        {isPending(selectedTx.status) && onMarkPaid && onMarkFailed && (
+                            <div className="flex gap-3 pt-4 border-t border-slate-100">
+                                <ButtonSave
+                                    onClick={onMarkFailed}
+                                    isLoading={isPendingFailed}
+                                    label="Tolak"
+                                    className="flex-1 bg-red-600 hover:bg-red-700 h-11"
+                                    weight="bold"
+                                />
+                                <ButtonSave
+                                    onClick={onMarkPaid}
+                                    isLoading={isPendingPaid}
+                                    label="Setuju"
+                                    className="flex-1 bg-green-600 hover:bg-green-700 h-11"
+                                    weight="bold"
+                                />
+                            </div>
+                        )}
                     </DialogBody>
                 </DialogContent>
             </Dialog>
@@ -384,7 +418,7 @@ export function TransactionDetailDialog({
                 <DialogHeader className="flex flex-row justify-between items-center text-left pr-4 pl-6 py-4">
                     <DialogTitle className="text-lg">Detail Transaksi</DialogTitle>
                     <DialogClose asChild>
-                        <button className="text-slate-400 hover:text-cyan-600 transition-colors p-1 cursor-pointer">
+                        <button className="text-slate-300 hover:text-cyan-600 transition-colors p-1 cursor-pointer">
                             <XIcon size={20} weight="bold" />
                         </button>
                     </DialogClose>
@@ -474,7 +508,7 @@ export function TransactionDetailDialog({
                                 </div>
                                 <div className="flex justify-between text-sm text-slate-600">
                                     <span>Biaya Aplikasi (2%)</span>
-                                    <span className="font-medium text-slate-800">-Rp{selectedTx.feeAmount ? formatCurrency(Number(selectedTx.feeAmount)) : "0"}</span>
+                                    <span className="font-medium text-slate-800">-{selectedTx.feeAmount ? formatCurrency(Number(selectedTx.feeAmount)) : "Rp0"}</span>
                                 </div>
                                 <div className="flex justify-between border-t border-dashed border-slate-200 pt-3 mt-1 font-bold text-[15px] text-slate-900">
                                     <span>Total Diterima</span>
@@ -504,113 +538,109 @@ export interface ConfirmDialogProps {
 export function ConfirmPaidDialog({ open, onOpenChange, confirmTx, onConfirm, isPending }: ConfirmDialogProps) {
     if (!confirmTx) return null;
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent size="default" showCloseButton={false}>
-                <DialogHeader className="flex flex-row justify-between items-center text-left pr-4 pl-6 py-4">
-                    <DialogTitle className="text-lg">Konfirmasi Transfer</DialogTitle>
-                    <DialogClose asChild>
-                        <button className="text-slate-400 hover:text-cyan-600 transition-colors p-1 cursor-pointer">
-                            <XIcon size={20} weight="bold" />
-                        </button>
-                    </DialogClose>
-                </DialogHeader>
-                <DialogBody className="px-6 py-4 space-y-4">
-                    <div className="rounded-xl bg-green-50 border border-green-200 p-4 space-y-2">
-                        <p className="text-sm font-semibold text-green-700">Tandai sebagai sudah ditransfer?</p>
-                        <p className="text-xs text-green-600">Pastikan dana sudah benar-benar dikirim ke rekening kreator sebelum konfirmasi.</p>
-                    </div>
+        <ConfirmDialog
+            open={open}
+            onOpenChange={onOpenChange}
+            icon={<CheckCircleIcon size={56} className="bg-green-100 rounded-full p-3.5 text-green-500" weight="fill" />}
+            title="Konfirmasi Transfer"
+            description={
+                <div className="space-y-4 pt-1">
+                    <p>Tandai sebagai sudah ditransfer ke <span className="font-semibold text-slate-800">{confirmTx.user?.name || confirmTx.user?.email || "-"}</span>?</p>
                     <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 space-y-2 text-sm">
                         <div className="flex justify-between">
-                            <span className="text-slate-500">Kreator</span>
-                            <span className="font-medium text-slate-800">{confirmTx.user?.name || confirmTx.user?.email || "-"}</span>
-                        </div>
-                        <div className="flex justify-between">
                             <span className="text-slate-500">Bank</span>
-                            <span className="font-medium text-slate-800">{confirmTx.bankName}</span>
+                            <span className="font-medium text-slate-800">{confirmTx.bankName ?? "-"}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-slate-500">No. Rekening</span>
-                            <span className="font-medium text-slate-800">{confirmTx.accountNumber}</span>
+                            <span className="font-medium text-slate-800">{confirmTx.accountNumber ?? "-"}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-slate-500">Atas Nama</span>
                             <span className="font-medium text-slate-800">{confirmTx.accountHolderName ?? "-"}</span>
                         </div>
-                        <div className="flex justify-between border-t border-slate-200 pt-2 mt-1">
-                            <span className="text-slate-500 font-semibold">Nominal Dikirim</span>
-                            <span className="font-bold text-slate-900">
+                        <div className="flex justify-between border-t border-slate-200 pt-2">
+                            <span className="text-slate-500">Nominal Penarikan</span>
+                            <span className="font-medium text-slate-800">
+                                {formatCurrency(Number(confirmTx.amount) - Number(confirmTx.feeAmount ?? 0) - 4000)}
+                            </span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-slate-500">Biaya Transfer Bank</span>
+                            <span className="font-medium text-slate-800">-Rp4.000</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-slate-500">Fee Platform</span>
+                            <span className="font-medium text-slate-800">-{formatCurrency(Number(confirmTx.feeAmount ?? 0))}</span>
+                        </div>
+                        <div className="flex justify-between border-t border-slate-200 pt-2">
+                            <span className="font-bold text-slate-900 text-slate-600">Total Ditransfer</span>
+                            <span className="text-green-600 font-semibold text-md">
                                 {formatCurrency(Number(confirmTx.amount) - Number(confirmTx.feeAmount ?? 0) - 4000)}
                             </span>
                         </div>
                     </div>
-                </DialogBody>
-                <DialogFooter className="px-6 py-4 border-t border-slate-100 bg-slate-50 rounded-b-lg flex justify-end gap-3">
-                    <DialogClose asChild>
-                        <ButtonCancel label="Batal" className="text-sm h-10" />
-                    </DialogClose>
-                    <ButtonSave
-                        type="button"
-                        isLoading={isPending}
-                        label="Ya, Sudah Ditransfer"
-                        icon={null}
-                        className="text-sm h-10 bg-green-600 hover:bg-green-700"
-                        onClick={onConfirm}
-                    />
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+                </div>
+            }
+            confirmText="Ya, Sudah Ditransfer"
+            confirmClassName="bg-green-600 hover:bg-green-700 text-white"
+            loading={isPending}
+            onConfirm={onConfirm}
+        />
     );
 }
 
 export function ConfirmFailedDialog({ open, onOpenChange, confirmTx, onConfirm, isPending }: ConfirmDialogProps) {
     if (!confirmTx) return null;
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent size="default" showCloseButton={false}>
-                <DialogHeader className="flex flex-row justify-between items-center text-left pr-4 pl-6 py-4">
-                    <DialogTitle className="text-lg">Tolak Penarikan</DialogTitle>
-                    <DialogClose asChild>
-                        <button className="text-slate-400 hover:text-cyan-600 transition-colors p-1 cursor-pointer">
-                            <XIcon size={20} weight="bold" />
-                        </button>
-                    </DialogClose>
-                </DialogHeader>
-                <DialogBody className="px-6 py-4 space-y-4">
-                    <div className="rounded-xl bg-red-50 border border-red-200 p-4 space-y-2">
-                        <p className="text-sm font-semibold text-red-700">Tolak permintaan penarikan ini?</p>
-                        <p className="text-xs text-red-500">Saldo kreator akan dikembalikan secara otomatis.</p>
-                    </div>
+        <ConfirmDialog
+            open={open}
+            onOpenChange={onOpenChange}
+            icon={<XCircleIcon size={56} className="bg-red-100 rounded-full p-3.5 text-red-500" weight="fill" />}
+            title="Tolak Penarikan"
+            description={
+                <div className="space-y-4 pt-1">
+                    <p>Tolak permintaan penarikan <span className="font-semibold text-slate-800">{confirmTx.user?.name || confirmTx.user?.email || "-"}</span>?</p>
                     <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 space-y-2 text-sm">
                         <div className="flex justify-between">
-                            <span className="text-slate-500">Kreator</span>
-                            <span className="font-medium text-slate-800">{confirmTx.user?.name || confirmTx.user?.email || "-"}</span>
+                            <span className="text-slate-500">Bank</span>
+                            <span className="font-medium text-slate-800">{confirmTx.bankName ?? "-"}</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-slate-500">Bank</span>
-                            <span className="font-medium text-slate-800">{confirmTx.bankName}</span>
+                            <span className="text-slate-500">No. Rekening</span>
+                            <span className="font-medium text-slate-800">{confirmTx.accountNumber ?? "-"}</span>
                         </div>
-                        <div className="flex justify-between border-t border-slate-200 pt-2 mt-1">
-                            <span className="text-slate-500 font-semibold">Saldo Dikembalikan</span>
-                            <span className="font-bold text-slate-900">
+                        <div className="flex justify-between">
+                            <span className="text-slate-500">Atas Nama</span>
+                            <span className="font-medium text-slate-800">{confirmTx.accountHolderName ?? "-"}</span>
+                        </div>
+                        <div className="flex justify-between border-t border-slate-200 pt-2 font-semibold">
+                            <span className="text-slate-500">Nominal Penarikan</span>
+                            <span className="font-medium text-slate-800">
+                                {formatCurrency(Number(confirmTx.amount) - Number(confirmTx.feeAmount ?? 0) - 4000)}
+                            </span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-slate-500">Biaya Transfer Bank</span>
+                            <span className="font-medium text-slate-800">-Rp4.000</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-slate-500">Fee Platform (Admin)</span>
+                            <span className="font-medium text-slate-800">-{formatCurrency(Number(confirmTx.feeAmount ?? 0))}</span>
+                        </div>
+                        <div className="flex justify-between border-t border-slate-200 pt-2 font-bold text-slate-900">
+                            <span className="text-slate-600">Saldo Dikembalikan</span>
+                            <span className="text-slate-900">
                                 {formatCurrency(Number(confirmTx.amount))}
                             </span>
                         </div>
                     </div>
-                </DialogBody>
-                <DialogFooter className="px-6 py-4 border-t border-slate-100 bg-slate-50 rounded-b-lg flex justify-end gap-3">
-                    <DialogClose asChild>
-                        <ButtonCancel label="Batal" className="text-sm h-10" />
-                    </DialogClose>
-                    <ButtonSave
-                        type="button"
-                        isLoading={isPending}
-                        label="Ya, Tolak & Kembalikan Saldo"
-                        icon={null}
-                        className="text-sm h-10 bg-red-600 hover:bg-red-700"
-                        onClick={onConfirm}
-                    />
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+                </div>
+            }
+            confirmText="Ya, Tolak Penarikan"
+            confirmClassName="bg-red-600 hover:bg-red-700 text-white"
+            loading={isPending}
+            onConfirm={onConfirm}
+        />
     );
 }

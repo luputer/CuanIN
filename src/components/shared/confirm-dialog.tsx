@@ -75,8 +75,8 @@ export default function ConfirmDialog({
 
                         {/* DESCRIPTION */}
                         {description && (
-                            <AlertDialogDescription className="text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
-                                {description}
+                            <AlertDialogDescription asChild className="text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
+                                <div>{description}</div>
                             </AlertDialogDescription>
                         )}
                     </div>
@@ -86,13 +86,13 @@ export default function ConfirmDialog({
                 <AlertDialogFooter className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
 
                     <AlertDialogPrimitive.Cancel
-                        className={cn(baseBtnStyle, "w-full sm:w-28 rounded-lg outline-none cursor-pointer", cancelClassName)}
+                        className={cn(baseBtnStyle, "w-full sm:w-fit rounded-lg outline-none cursor-pointer", cancelClassName)}
                     >
                         {cancelText}
                     </AlertDialogPrimitive.Cancel>
 
                     <AlertDialogPrimitive.Action
-                        className={cn(baseBtnStyle, "w-full sm:w-28 rounded-lg outline-none cursor-pointer", confirmClassName)}
+                        className={cn(baseBtnStyle, "w-full sm:w-fit rounded-lg outline-none cursor-pointer", confirmClassName)}
                         onClick={onConfirm}
                         disabled={loading}
                     >

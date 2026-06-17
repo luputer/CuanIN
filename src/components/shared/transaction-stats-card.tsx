@@ -64,14 +64,13 @@ export function TransactionStatsCard({
         <div className="flex items-center justify-between text-xs">
           <span className="text-slate-400">30 hari terakhir</span>
           <span
-            className={`rounded-full px-2 py-1 font-medium ${
-              stats.incomeChange >= 0
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
+            className={`rounded-full px-2 py-0.5 text-md font-medium border ${stats.incomeChange >= 0
+              ? "bg-green-50 text-green-600 border-green-100"
+              : "bg-red-50 text-red-600 border-red-100"
+              }`}
           >
-            {stats.incomeChange >= 0 ? "+" : ""}
-            {Math.min(100, Math.abs(stats.incomeChange)).toFixed(0)}%
+            {stats.incomeChange >= 0 ? "+" : "-"}
+            {Math.min(100, Math.abs(stats.incomeChange)).toFixed(1)}%
           </span>
         </div>
       </div>
@@ -91,14 +90,13 @@ export function TransactionStatsCard({
         <div className="flex items-center justify-between text-xs">
           <span className="text-slate-400">30 hari terakhir</span>
           <span
-            className={`rounded-full px-2 py-1 font-medium ${
-              stats.transactionsChange >= 0
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
+            className={`rounded-full px-2 py-0.5 font-semibold border ${stats.transactionsChange >= 0
+              ? "bg-green-50 text-green-600 border-green-100"
+              : "bg-red-50 text-red-600 border-red-100"
+              }`}
           >
-            {stats.transactionsChange >= 0 ? "+" : ""}
-            {Math.min(100, Math.abs(stats.transactionsChange)).toFixed(0)}%
+            {stats.transactionsChange >= 0 ? "+" : "-"}
+            {Math.min(100, Math.abs(stats.transactionsChange)).toFixed(1)}%
           </span>
         </div>
       </div>

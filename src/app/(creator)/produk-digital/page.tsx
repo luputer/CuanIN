@@ -290,6 +290,7 @@ export default function DigitalProductPage() {
                                                     editUrl={`/produk-digital/${item.id}`}
                                                     onDelete={() => setDeleteId(item.id)}
                                                     onCopy={() => handleCopyLink(item.id, item.slug ?? null)}
+                                                    isCopyDisabled={item.status !== "published"}
                                                     deleteTooltip="Hapus Produk Digital"
                                                 />
                                             </TableCell>
@@ -368,6 +369,7 @@ export default function DigitalProductPage() {
                                         editUrl={`/produk-digital/${item.id}`}
                                         onDelete={() => setDeleteId(item.id)}
                                         onCopy={() => handleCopyLink(item.id, item.slug ?? null)}
+                                        isCopyDisabled={item.status !== "published"}
                                         deleteTooltip="Hapus Produk Digital"
                                     />
                                 </div>

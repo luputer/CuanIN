@@ -314,6 +314,7 @@ export default function WebinarPage() {
                                                     editUrl={`/webinar/${item.id}`}
                                                     onDelete={() => setDeleteId(item.id)}
                                                     onCopy={() => handleCopyLink(item.id, item.slug ?? null)}
+                                                    isCopyDisabled={item.status !== "published"}
                                                     deleteTooltip="Hapus Webinar"
                                                 />
                                             </TableCell>
@@ -394,6 +395,7 @@ export default function WebinarPage() {
                                         editUrl={`/webinar/${item.id}`}
                                         onDelete={() => setDeleteId(item.id)}
                                         onCopy={() => handleCopyLink(item.id, item.slug ?? null)}
+                                        isCopyDisabled={item.status !== "published"}
                                         deleteTooltip="Hapus Webinar"
                                     />
                                 </div>

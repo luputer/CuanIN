@@ -103,7 +103,7 @@ export default function HeaderAdmin({
                             {/* Logout */}
                             <button
                                 onClick={() => signOut({ callbackUrl: "/sign-in" })}
-                                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition cursor-pointer"
+                                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-red-50 hover:text-red-600 transition cursor-pointer"
                             >
                                 <SignOutIcon size={20} />
                                 <span>Logout</span>

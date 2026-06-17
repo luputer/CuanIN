@@ -42,9 +42,10 @@ interface ProductActionsProps {
     onCopy: () => void;
     deleteTooltip?: string;
     isMobile?: boolean;
+    isCopyDisabled?: boolean; // New prop
 }
 
-export function ProductActions({ editUrl, onDelete, onCopy, deleteTooltip = "Hapus Produk", isMobile = false }: ProductActionsProps) {
+export function ProductActions({ editUrl, onDelete, onCopy, deleteTooltip = "Hapus Produk", isMobile = false, isCopyDisabled = false }: ProductActionsProps) {
     if (isMobile) {
         return (
             <div className="flex justify-between items-center pt-2.5 border-t border-slate-100 gap-2">
@@ -68,10 +69,11 @@ export function ProductActions({ editUrl, onDelete, onCopy, deleteTooltip = "Hap
 
                 <button
                     onClick={onCopy}
-                    className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-yellow-600 border border-yellow-600 rounded-lg hover:bg-yellow-50 transition cursor-pointer"
+                    disabled={isCopyDisabled}
+                    className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border rounded-lg transition cursor-pointer ${isCopyDisabled ? "text-slate-400 border-slate-200 bg-slate-50 cursor-not-allowed" : "text-yellow-600 border-yellow-600 hover:bg-yellow-50"}`}
                 >
                     <CopyIcon className="w-4 h-4" />
-                    <span>Salin Link Produk</span>
+                    <span>{isCopyDisabled ? "Tidak tersedia" : "Salin Link Produk"}</span>
                 </button>
             </div>
         );
@@ -99,11 +101,11 @@ export function ProductActions({ editUrl, onDelete, onCopy, deleteTooltip = "Hap
 
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <button onClick={onCopy}>
-                        <CopyIcon className="w-[22px] h-[22px] text-yellow-500 cursor-pointer hover:text-yellow-600" />
+                    <button onClick={onCopy} disabled={isCopyDisabled}>
+                        <CopyIcon className={`w-[22px] h-[22px] cursor-pointer ${isCopyDisabled ? "text-slate-300 cursor-not-allowed" : "text-yellow-500 hover:text-yellow-600"}`} />
                     </button>
                 </TooltipTrigger>
-                <TooltipContent>Salin Link Produk</TooltipContent>
+                <TooltipContent>{isCopyDisabled ? "Produk tidak dipublikasikan" : "Salin Link Produk"}</TooltipContent>
             </Tooltip>
         </div>
     );

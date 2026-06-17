@@ -10,6 +10,7 @@ import { Prisma, WithdrawalStatus } from "../../../../prisma/generated/prisma";
 import { getCreatorBalance } from "~/lib/balance";
 import { generateHistoryToken, verifyHistoryToken } from "~/lib/purchase-history-token";
 import crypto from "crypto";
+import { startOfDay, endOfDay } from "date-fns";
 
 const XENDIT_PAYMENT_METHODS = {
   qris: "QRIS",
@@ -149,8 +150,11 @@ export const purchasesRouter = createTRPCRouter({
       let voucherId: string | undefined = undefined;
 
       if (input.promoCode) {
-        const now = new Date();
-        const voucher = await ctx.db.voucher.findUnique({
+        if (!input.buyerEmail) {
+          throw new Error("Silakan isi Email terlebih dahulu untuk menggunakan voucher");
+        }
+
+        const voucher = await ctx.db.voucher.findFirst({
           where: { code: input.promoCode },
           include: {
             products: {
@@ -167,13 +171,21 @@ export const purchasesRouter = createTRPCRouter({
           throw new Error("Voucher tidak aktif");
         }
 
-        const adjustedStartDate = new Date(voucher.startDate);
-        adjustedStartDate.setUTCHours(0, 0, 0, 0);
+        if (!voucher.startDate || !voucher.endDate) {
+          throw new Error("Tanggal voucher tidak valid");
+        }
 
-        const adjustedEndDate = new Date(voucher.endDate);
-        adjustedEndDate.setUTCHours(23, 59, 59, 999);
+        // Bandingkan timestamp secara langsung
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        
+        const voucherStart = new Date(voucher.startDate);
+        voucherStart.setHours(0, 0, 0, 0);
+        
+        const voucherEnd = new Date(voucher.endDate);
+        voucherEnd.setHours(23, 59, 59, 999);
 
-        if (now < adjustedStartDate || now > adjustedEndDate) {
+        if (now < voucherStart || now > voucherEnd) {
           throw new Error("Voucher sudah kedaluwarsa atau belum berlaku");
         }
 
@@ -197,10 +209,6 @@ export const purchasesRouter = createTRPCRouter({
         }
 
         if (voucher.isLimitPerUser) {
-          if (!input.buyerEmail) {
-            throw new Error("Silakan isi form Email terlebih dahulu untuk memvalidasi voucher ini");
-          }
-
           const userUsageCount = await ctx.db.purchase.count({
             where: {
               voucherId: voucher.id,
@@ -216,6 +224,7 @@ export const purchasesRouter = createTRPCRouter({
             throw new Error("Email ini sudah pernah menggunakan kode voucher ini");
           }
         }
+
 
         const discountVal = Number(voucher.discount);
         let discountAmount = 0;
@@ -700,6 +709,7 @@ export const purchasesRouter = createTRPCRouter({
         limit: z.number().min(1).max(100).default(7),
         search: z.string().optional(),
         status: z.string().optional().default("ALL"),
+        type: z.enum(["INCOME", "WITHDRAWAL"]).optional(),
       }),
     )
     .query(async ({ ctx, input }) => {

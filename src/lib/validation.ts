@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { startOfDay } from "date-fns";
 
 export const signupSchema = z
   .object({
@@ -331,7 +332,7 @@ export const voucherSchema = z.object({
   isLimitPerUser: z.boolean(),
   productIds: z.array(z.string()),
 })
-.refine((data) => data.endDate >= data.startDate, {
+.refine((data) => startOfDay(data.endDate) >= startOfDay(data.startDate), {
   message: "Tanggal berakhir harus setelah atau sama dengan tanggal mulai",
   path: ["endDate"],
 })

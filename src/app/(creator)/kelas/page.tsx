@@ -290,6 +290,7 @@ export default function KelasOnlinePage() {
                                                     editUrl={`/kelas/${item.id}`}
                                                     onDelete={() => setDeleteId(item.id)}
                                                     onCopy={() => handleCopyLink(item.id, item.slug ?? null)}
+                                                    isCopyDisabled={item.status !== "published"}
                                                     deleteTooltip="Hapus Kelas"
                                                 />
                                             </TableCell>
@@ -364,10 +365,11 @@ export default function KelasOnlinePage() {
                                     </div>
 
                                     <ProductActions
-                                        isMobile
                                         editUrl={`/kelas/${item.id}`}
                                         onDelete={() => setDeleteId(item.id)}
                                         onCopy={() => handleCopyLink(item.id, item.slug ?? null)}
+                                        isMobile
+                                        isCopyDisabled={item.status !== "published"}
                                         deleteTooltip="Hapus Kelas"
                                     />
                                 </div>

@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import {
     PencilSimpleIcon,
     TrashIcon,
+    CopyIcon,
 } from "@phosphor-icons/react";
 
 // Internal & Utils
@@ -31,7 +32,7 @@ import {
     TableCell,
     TablePagination,
 } from "~/components/ui/table";
-import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/table/skeleton";
+import { DataTableBodySkeleton, DataTableMobileSkeleton, TableSkeleton } from "~/components/table/skeleton";
 import SearchInput from "~/components/ui/search";
 import ActionButton from "~/components/shared/button-add";
 import DeleteConfirmDialog from "~/components/shared/delete-confirm-dialog";
@@ -102,6 +103,11 @@ export default function VoucherPage() {
         if (deleteId) {
             deleteMutation.mutate({ id: deleteId });
         }
+    };
+
+    const handleCopyCode = (code: string) => {
+        void navigator.clipboard.writeText(code);
+        toast.success("Kode voucher berhasil disalin!");
     };
 
     // ─── Render ──────────────────────────────────────────────────────────────
@@ -182,26 +188,27 @@ export default function VoucherPage() {
                                 />
                                 <TableHead className="w-[17%] whitespace-nowrap">Nama</TableHead>
                                 <TableHead className="w-[10%] whitespace-nowrap">Tipe</TableHead>
-                                <TableHead className="w-[13%] whitespace-nowrap">Diskon</TableHead>
+                                <TableHead className="w-[10%] whitespace-nowrap">Diskon</TableHead>
+                                <TableHead className="w-[10%] whitespace-nowrap">Digunakan</TableHead>
                                 <SortableTableHead
                                     title="Waktu Berlaku"
                                     sortKey="startDate"
                                     isActive={sortBy === "startDate"}
                                     sortOrder={sortOrder}
                                     onClick={() => handleSort("startDate")}
-                                    className="w-[25%] whitespace-nowrap"
+                                    className="w-[20%] whitespace-nowrap"
                                 />
-                                <TableHead className="w-[15%] whitespace-nowrap">Status</TableHead>
+                                <TableHead className="w-[13%] whitespace-nowrap">Status</TableHead>
                                 <TableHead className="text-right w-[10%] whitespace-nowrap">Aksi</TableHead>
                             </TableRow>
                         </TableHeader>
 
                         <TableBody>
                             {isLoading ? (
-                                <DataTableBodySkeleton columns={8} rows={5} />
+                                <DataTableBodySkeleton columns={9} rows={5} />
                             ) : paginatedVouchers.length === 0 ? (
                                 <TableEmptyState
-                                    colSpan={8}
+                                    colSpan={9}
                                     description={
                                         isFiltered ? (
                                             "Hasil pencarian atau filter tidak ditemukan."
@@ -218,6 +225,9 @@ export default function VoucherPage() {
                             ) : (
                                 paginatedVouchers.map((item, index) => {
                                     const rowNumber = (page - 1) * limit + index + 1;
+                                    const usageCount = (item as any).usageCount || 0;
+                                    const limitCount = (item as any).usageLimit;
+
                                     return (
                                         <TableRow key={item.id} data-type="body">
                                             <TableCell className="text-center font-medium">
@@ -245,6 +255,13 @@ export default function VoucherPage() {
                                             <TableCell className="whitespace-nowrap">
                                                 <div className="flex items-center min-h-[48px] font-medium text-cyan-600">
                                                     {item.type === "PERSEN" ? `${item.discount}%` : `Rp ${Number(item.discount).toLocaleString("id-ID")}`}
+                                                </div>
+                                            </TableCell>
+
+                                            <TableCell className="whitespace-nowrap">
+                                                <div className="flex items-center min-h-[48px] font-medium text-slate-600">
+                                                    <span className="text-slate-900">{usageCount}</span>
+                                                    {limitCount && <span className="text-slate-400 font-normal"> / {limitCount}</span>}
                                                 </div>
                                             </TableCell>
 
@@ -278,6 +295,15 @@ export default function VoucherPage() {
                                                             </button>
                                                         </TooltipTrigger>
                                                         <TooltipContent>Hapus Voucher</TooltipContent>
+                                                    </Tooltip>
+
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <button onClick={() => handleCopyCode(item.code)}>
+                                                                <CopyIcon className="w-[24px] h-[24px] text-yellow-500 cursor-pointer hover:text-yellow-600" />
+                                                            </button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>Salin Kode Voucher</TooltipContent>
                                                     </Tooltip>
                                                 </div>
                                             </TableCell>
@@ -334,6 +360,12 @@ export default function VoucherPage() {
                                         </div>
 
                                         <div className="text-xs text-slate-500">
+                                            <span className="font-medium text-slate-400">Digunakan: </span>
+                                            <span className="font-medium text-slate-900">{(item as any).usageCount || 0}</span>
+                                            {(item as any).usageLimit && <span className="text-slate-400"> / {(item as any).usageLimit}</span>}
+                                        </div>
+
+                                        <div className="text-xs text-slate-500">
                                             <span className="font-medium text-slate-400">Periode: </span>
                                             <span className="text-slate-600">
                                                 {format(item.startDate, "d MMM yyyy", { locale: idLocale })} - {format(item.endDate, "d MMM yyyy", { locale: idLocale })}
@@ -341,15 +373,23 @@ export default function VoucherPage() {
                                         </div>
 
                                         {/* Actions */}
-                                        <div className="flex justify-end items-center gap-4 pt-2 border-t border-slate-100">
-                                            <Link href={`/voucher/${item.id}`} className="flex items-center gap-1 text-cyan-600 hover:text-cyan-700 font-medium text-xs">
-                                                <PencilSimpleIcon className="w-5 h-5" />
-                                                <span>Edit</span>
-                                            </Link>
+                                        <div className="flex justify-between items-center pt-2.5 border-t border-slate-100 gap-2">
+                                            <div className="flex items-center gap-3">
+                                                <Link href={`/voucher/${item.id}`} className="p-2 rounded-lg text-cyan-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer">
+                                                    <PencilSimpleIcon className="w-5 h-5" />
+                                                </Link>
 
-                                            <button onClick={() => setDeleteId(item.id)} className="flex items-center gap-1 text-red-600 hover:text-red-700 font-medium text-xs">
-                                                <TrashIcon className="w-5 h-5" />
-                                                <span>Hapus</span>
+                                                <button onClick={() => setDeleteId(item.id)} className="p-2 rounded-lg text-red-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer">
+                                                    <TrashIcon className="w-5 h-5" />
+                                                </button>
+                                            </div>
+
+                                            <button
+                                                onClick={() => handleCopyCode(item.code)}
+                                                className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-yellow-600 border border-yellow-600 rounded-lg hover:bg-yellow-50 transition cursor-pointer"
+                                            >
+                                                <CopyIcon className="w-4 h-4" />
+                                                <span>Salin Kode</span>
                                             </button>
                                         </div>
                                     </div>

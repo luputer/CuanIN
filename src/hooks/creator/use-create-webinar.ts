@@ -26,7 +26,7 @@ export function useCreateWebinar() {
     const { uploading, handleFileUpload } = useImageUpload("products");
 
     const form = useForm<WebinarFormValues>({
-        resolver: zodResolver(webinarSchema) as any,
+        resolver: zodResolver(webinarSchema),
         defaultValues: {
             contentType: "zoom",
             status: "published",

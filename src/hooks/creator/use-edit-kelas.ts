@@ -27,7 +27,7 @@ export function useEditKelas({ id, isEdit = false }: UseEditKelasProps = {}) {
     );
 
     const form = useForm<KelasOnlineFormValues>({
-        resolver: zodResolver(productKelasOnlineSchema) as any,
+        resolver: zodResolver(productKelasOnlineSchema),
         defaultValues: {
             status: "published",
             price: 0,

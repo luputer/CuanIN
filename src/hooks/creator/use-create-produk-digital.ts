@@ -17,7 +17,7 @@ export function useCreateProdukDigital() {
     const [customFields, setCustomFields] = useState<FormField[]>([]);
 
     const form = useForm<DigitalProductFormValues>({
-        resolver: zodResolver(productDigitalSchema) as any,
+        resolver: zodResolver(productDigitalSchema),
         defaultValues: {
             status: "published",
             price: 0,

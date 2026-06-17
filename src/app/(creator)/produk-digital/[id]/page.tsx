@@ -103,6 +103,7 @@ export default function ProdukDigitalDetailPage() {
                 backLabel="Kembali ke Daftar"
                 buyerCount={buyerCount ?? 0}
                 createdAt={product.createdAt}
+                updatedAt={product.updatedAt}
                 onSubmit={onSubmit}
                 onCancel={() => router.push("/produk-digital")}
                 isPending={isPending}

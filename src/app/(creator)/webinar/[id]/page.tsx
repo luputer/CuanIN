@@ -113,6 +113,7 @@ export default function WebinarDetailPage() {
                 backLabel="Kembali ke Daftar"
                 buyerCount={buyerCount ?? 0}
                 createdAt={product.createdAt}
+                updatedAt={product.updatedAt}
                 onSubmit={onSubmit}
                 onCancel={() => router.push("/webinar")}
                 isPending={isPending}

@@ -28,7 +28,7 @@ export function useEditWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
     );
 
     const form = useForm<WebinarFormValues>({
-        resolver: zodResolver(webinarSchema) as any,
+        resolver: zodResolver(webinarSchema),
         defaultValues: {
             contentType: "zoom",
             status: "unpublished",

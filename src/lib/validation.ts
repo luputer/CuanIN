@@ -55,11 +55,11 @@ export const webinarSchema = z
     benefit: z.array(z.string({ required_error: "Benefit wajib diisi" })).optional(),
     image: z.string({ required_error: "Gambar wajib diunggah" }).optional(),
     images: z.array(z.string({ required_error: "Gambar wajib diunggah" })).max(4).optional(),
-    enableVoucher: z.boolean({ required_error: "Voucher wajib dipilih" }).default(false),
+    enableVoucher: z.boolean({ required_error: "Voucher wajib dipilih" }),
     vouchers: z.array(z.string({ required_error: "Voucher wajib dipilih" })).optional(),
-    enableNotes: z.boolean().default(false),
-    enableDiscount: z.boolean().default(false),
-    enableQuota: z.boolean().default(false),
+    enableNotes: z.boolean(),
+    enableDiscount: z.boolean(),
+    enableQuota: z.boolean(),
     discountPrice: z.number().min(0).optional(),
   })
 
@@ -146,11 +146,11 @@ export const baseProductDigitalSchema = z.object({
     benefit: z.array(z.string({ required_error: "Benefit wajib diisi" })).optional(),
     links: z.array(z.string({ required_error: "Link wajib diisi" })).optional(),
     capacity: z.number({ required_error: "Stok wajib diisi", invalid_type_error: "Stok tidak valid" }).min(0, "Stok tidak boleh negatif").optional(),
-  enableQuota: z.boolean({ required_error: "Batas stok wajib dipilih" }).default(false),
-  enableVoucher: z.boolean({ required_error: "Voucher wajib dipilih" }).default(false),
+  enableQuota: z.boolean({ required_error: "Batas stok wajib dipilih" }),
+  enableVoucher: z.boolean({ required_error: "Voucher wajib dipilih" }),
   vouchers: z.array(z.string({ required_error: "Voucher wajib dipilih" })).optional(),
-  enableNotes: z.boolean({ required_error: "Catatan wajib dipilih" }).default(false),
-  enableDiscount: z.boolean({ required_error: "Diskon wajib dipilih" }).default(false),
+  enableNotes: z.boolean({ required_error: "Catatan wajib dipilih" }),
+  enableDiscount: z.boolean({ required_error: "Diskon wajib dipilih" }),
   discountPrice: z.number({ required_error: "Harga diskon wajib diisi", invalid_type_error: "Harga diskon tidak valid" }).min(0).optional(),
 });
 
@@ -218,11 +218,11 @@ export const productKelasOnlineSchema = z
     benefit: z.array(z.string({ required_error: "Benefit wajib diisi" })).optional(),
     links: z.array(z.string({ required_error: "Link wajib diisi" })).optional(),
     capacity: z.number({ required_error: "Kuota wajib diisi", invalid_type_error: "Kuota tidak valid" }).min(0, "Kuota tidak boleh negatif").optional(),
-    enableQuota: z.boolean({ required_error: "Batas kuota wajib dipilih" }).default(false),
-    enableVoucher: z.boolean({ required_error: "Voucher wajib dipilih" }).default(false),
+    enableQuota: z.boolean({ required_error: "Batas kuota wajib dipilih" }),
+    enableVoucher: z.boolean({ required_error: "Voucher wajib dipilih" }),
     vouchers: z.array(z.string({ required_error: "Voucher wajib dipilih" })).optional(),
-    enableNotes: z.boolean({ required_error: "Catatan wajib dipilih" }).default(false),
-    enableDiscount: z.boolean({ required_error: "Diskon wajib dipilih" }).default(false),
+    enableNotes: z.boolean({ required_error: "Catatan wajib dipilih" }),
+    enableDiscount: z.boolean({ required_error: "Diskon wajib dipilih" }),
     discountPrice: z.number({ required_error: "Harga diskon wajib diisi", invalid_type_error: "Harga diskon tidak valid" }).min(0).optional(),
   })
 
@@ -315,3 +315,33 @@ export const creatorSchema = z.object({
 });
 
 export type CreatorFormValues = z.infer<typeof creatorSchema>;
+
+export const voucherSchema = z.object({
+  name: z.string({ required_error: "Nama voucher wajib diisi" }).min(1, "Nama voucher wajib diisi"),
+  code: z.string({ required_error: "Kode voucher wajib diisi" })
+    .min(5, "Kode voucher minimal 5 karakter")
+    .regex(/^[a-zA-Z0-9]+$/, "Kode voucher hanya boleh berisi huruf dan angka"),
+  type: z.enum(["PERSEN", "NOMINAL"], { required_error: "Tipe voucher wajib dipilih" }),
+  discount: z.number({ required_error: "Jumlah diskon wajib diisi" }).min(1, "Diskon harus lebih dari 0"),
+  startDate: z.date({ required_error: "Tanggal mulai wajib diisi" }),
+  endDate: z.date({ required_error: "Tanggal berakhir wajib diisi" }),
+  status: z.enum(["aktif", "nonaktif", "expired"], { required_error: "Status wajib dipilih" }),
+  usageType: z.enum(["ALL_PRODUCTS", "SELECTED_PRODUCTS"], { required_error: "Jenis penggunaan wajib dipilih" }),
+  usageLimit: z.number().min(1, "Batas penggunaan minimal 1").optional().nullable(),
+  isLimitPerUser: z.boolean(),
+  productIds: z.array(z.string()),
+})
+.refine((data) => data.endDate >= data.startDate, {
+  message: "Tanggal berakhir harus setelah atau sama dengan tanggal mulai",
+  path: ["endDate"],
+})
+.refine((data) => {
+  if (data.type === "PERSEN") {
+    return data.discount <= 100;
+  }
+  return true;
+}, {
+  message: "Diskon persen tidak boleh lebih dari 100%",
+  path: ["discount"],
+});
+

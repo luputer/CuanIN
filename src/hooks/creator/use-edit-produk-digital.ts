@@ -25,7 +25,7 @@ export function useEditProdukDigital({ id, isEdit = false }: UseProdukDigitalKel
     );
 
     const form = useForm<DigitalProductFormValues>({
-        resolver: zodResolver(productDigitalSchema) as any,
+        resolver: zodResolver(productDigitalSchema),
         defaultValues: {
             status: "published",
             price: 0,

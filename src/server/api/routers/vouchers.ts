@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { type Prisma } from "../../../../prisma/generated/prisma";
 
@@ -51,12 +52,26 @@ export const vouchersRouter = createTRPCRouter({
                     skip,
                     take: limit,
                     orderBy,
+                    include: {
+                        _count: {
+                            select: {
+                                purchases: {
+                                    where: {
+                                        status: { in: ["completed", "pending"] }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }),
                 ctx.db.voucher.count({ where }),
             ]);
 
             return {
-                items,
+                items: items.map(item => ({
+                    ...item,
+                    usageCount: item._count.purchases
+                })),
                 total,
                 totalPages: Math.ceil(total / limit) || 1,
             };
@@ -79,24 +94,54 @@ export const vouchersRouter = createTRPCRouter({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            return await ctx.db.voucher.create({
-                data: {
-                    code: input.code,
-                    name: input.name,
-                    type: input.type,
-                    discount: input.discount,
-                    startDate: new Date(input.startDate),
-                    endDate: new Date(input.endDate),
-                    status: input.status,
-                    usageType: input.usageType || "ALL_PRODUCTS",
-                    usageLimit: input.usageLimit,
-                    isLimitPerUser: input.isLimitPerUser || false,
-                    userId: ctx.session.user.id,
-                    products: input.productIds ? {
-                        connect: input.productIds.map(id => ({ id }))
-                    } : undefined,
-                },
-            });
+            try {
+                const existing = await ctx.db.voucher.findFirst({
+                    where: {
+                        userId: ctx.session.user.id,
+                        code: input.code
+                    }
+                });
+
+                if (existing) {
+                    throw new TRPCError({
+                        code: "CONFLICT",
+                        message: "Kode voucher sudah digunakan"
+                    });
+                }
+
+                return await ctx.db.voucher.create({
+                    data: {
+                        code: input.code,
+                        name: input.name,
+                        type: input.type,
+                        discount: input.discount,
+                        startDate: new Date(input.startDate),
+                        endDate: new Date(input.endDate),
+                        status: input.status,
+                        usageType: input.usageType || "ALL_PRODUCTS",
+                        usageLimit: input.usageLimit,
+                        isLimitPerUser: input.isLimitPerUser || false,
+                        userId: ctx.session.user.id,
+                        products: input.productIds ? {
+                            connect: input.productIds.map(id => ({ id }))
+                        } : undefined,
+                    },
+                });
+            } catch (error: any) {
+                if (error instanceof TRPCError) throw error;
+                
+                if (error.code === "P2002") {
+                    throw new TRPCError({
+                        code: "CONFLICT",
+                        message: "Kode voucher sudah digunakan"
+                    });
+                }
+                
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Terjadi kesalahan saat memproses data voucher"
+                });
+            }
         }),
 
     getById: protectedProcedure
@@ -106,6 +151,15 @@ export const vouchersRouter = createTRPCRouter({
                 where: { id: input.id },
                 include: {
                     products: true,
+                    _count: {
+                        select: {
+                            purchases: {
+                                where: {
+                                    status: { in: ["completed", "pending"] }
+                                }
+                            }
+                        }
+                    }
                 },
             });
 
@@ -113,7 +167,10 @@ export const vouchersRouter = createTRPCRouter({
                 throw new Error("Voucher tidak ditemukan atau Anda tidak memiliki akses");
             }
 
-            return voucher;
+            return {
+                ...voucher,
+                usageCount: voucher._count.purchases
+            };
         }),
 
     update: protectedProcedure
@@ -134,34 +191,50 @@ export const vouchersRouter = createTRPCRouter({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const voucher = await ctx.db.voucher.findUnique({
-                where: { id: input.id },
-            });
+            try {
+                const voucher = await ctx.db.voucher.findUnique({
+                    where: { id: input.id },
+                });
 
-            if (voucher?.userId !== ctx.session.user.id) {
-                throw new Error("Voucher tidak ditemukan atau Anda tidak memiliki akses");
+                if (voucher?.userId !== ctx.session.user.id) {
+                    throw new Error("Voucher tidak ditemukan atau Anda tidak memiliki akses");
+                }
+
+                const updated = await ctx.db.voucher.update({
+                    where: { id: input.id },
+                    data: {
+                        code: input.code,
+                        name: input.name,
+                        type: input.type,
+                        discount: input.discount,
+                        startDate: new Date(input.startDate),
+                        endDate: new Date(input.endDate),
+                        status: input.status,
+                        ...(input.usageType && { usageType: input.usageType }),
+                        ...(input.usageLimit !== undefined && { usageLimit: input.usageLimit }),
+                        isLimitPerUser: input.isLimitPerUser ?? voucher.isLimitPerUser,
+                        products: input.productIds ? {
+                            set: input.productIds.map(id => ({ id }))
+                        } : undefined,
+                    },
+                });
+
+                return updated;
+            } catch (error: any) {
+                if (error instanceof TRPCError) throw error;
+
+                if (error.code === "P2002") {
+                    throw new TRPCError({
+                        code: "CONFLICT",
+                        message: "Kode voucher sudah digunakan"
+                    });
+                }
+                
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Terjadi kesalahan saat memproses data voucher"
+                });
             }
-
-            const updated = await ctx.db.voucher.update({
-                where: { id: input.id },
-                data: {
-                    code: input.code,
-                    name: input.name,
-                    type: input.type,
-                    discount: input.discount,
-                    startDate: new Date(input.startDate),
-                    endDate: new Date(input.endDate),
-                    status: input.status,
-                    ...(input.usageType && { usageType: input.usageType }),
-                    ...(input.usageLimit !== undefined && { usageLimit: input.usageLimit }),
-                    isLimitPerUser: input.isLimitPerUser ?? voucher.isLimitPerUser,
-                    products: input.productIds ? {
-                        set: input.productIds.map(id => ({ id }))
-                    } : undefined,
-                },
-            });
-
-            return updated;
         }),
 
     delete: protectedProcedure
@@ -194,8 +267,20 @@ export const vouchersRouter = createTRPCRouter({
             const { code, productId, buyerEmail } = input;
             const now = new Date();
 
-            const voucher = await ctx.db.voucher.findUnique({
-                where: { code },
+            const product = await ctx.db.product.findUnique({
+                where: { id: productId },
+                select: { userId: true }
+            });
+
+            if (!product) {
+                throw new Error("Produk tidak ditemukan");
+            }
+
+            const voucher = await ctx.db.voucher.findFirst({
+                where: { 
+                    code,
+                    userId: product.userId
+                },
                 include: {
                     products: {
                         select: { id: true }

@@ -109,6 +109,7 @@ export default function KelasDetailPage() {
                 backLabel="Kembali ke Daftar"
                 buyerCount={buyerCount ?? 0}
                 createdAt={product.createdAt}
+                updatedAt={product.updatedAt}
                 onSubmit={onSubmit}
                 onCancel={() => router.push("/kelas")}
                 isPending={isPending}

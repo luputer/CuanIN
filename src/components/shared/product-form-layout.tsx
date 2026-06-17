@@ -22,6 +22,7 @@ interface ProductFormLayoutProps {
     isLoading?: boolean;
     buyerCount?: number;
     createdAt?: Date | string;
+    updatedAt?: Date | string;
     onSubmit: () => void;
     onCancel: () => void;
     isPending: boolean;
@@ -51,6 +52,7 @@ export function ProductFormLayout({
     isEdit = false,
     buyerCount = 0,
     createdAt,
+    updatedAt,
     onSubmit,
     onCancel,
     isPending,
@@ -119,9 +121,16 @@ export function ProductFormLayout({
 
                                 <div className="flex flex-col sm:flex-row justify-between sm:items-center mt-4 pt-4 border-t border-slate-200 gap-4 w-full">
                                     {isEdit && createdAt ? (
-                                        <p className="text-slate-500 text-sm text-left w-full sm:w-auto">
-                                            Ditambahkan pada {format(new Date(createdAt), "d MMMM yyyy, HH:mm", { locale: idLocale })}
-                                        </p>
+                                        <div className="flex flex-col gap-1">
+                                            <p className="text-slate-500 text-sm text-left w-full sm:w-auto">
+                                                Ditambahkan pada {format(new Date(createdAt), "d MMMM yyyy, HH:mm", { locale: idLocale })}
+                                            </p>
+                                            {updatedAt && (
+                                                <p className="text-slate-500 text-sm text-left w-full sm:w-auto">
+                                                    Terakhir diperbarui {format(new Date(updatedAt), "d MMMM yyyy, HH:mm", { locale: idLocale })}
+                                                </p>
+                                            )}
+                                        </div>
                                     ) : <div />}
                                     
                                     <div className="w-full sm:w-auto flex justify-end gap-4">

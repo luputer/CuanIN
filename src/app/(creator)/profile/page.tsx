@@ -1,22 +1,22 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import Image from "next/image";
 import {
     CircleNotchIcon,
     EyeIcon,
     EyeSlashIcon,
     ImageIcon,
     PencilSimpleIcon,
-    TrashIcon,
+    TrashIcon
 } from "@phosphor-icons/react";
-import { api } from "~/trpc/react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { useImageUpload } from "~/hooks/shared/use-upload";
-import { FormInput, FormRow, FormTextarea, SectionHeader } from "~/components/shared/form-layout";
 import ButtonSave from "~/components/shared/button-save";
-import { CreatorProfileSkeleton } from "~/components/shared/detail-skeletons";
 import { DetailHeader } from "~/components/shared/detail-header";
+import { CreatorProfileSkeleton } from "~/components/shared/detail-skeletons";
+import { FormInput, FormRow, FormTextarea, SectionHeader } from "~/components/shared/form-layout";
+import { useImageUpload } from "~/hooks/shared/use-upload";
+import { api } from "~/trpc/react";
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 

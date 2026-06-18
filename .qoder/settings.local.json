@@ -37,7 +37,11 @@
       "Bash(ls /home/luputer/Dokumen/TA/CuanIN/src/app/\\\\\\(creator\\\\\\)/kelas/ && echo \"---\" && ls /home/luputer/Dokumen/TA/CuanIN/src/app/\\\\\\(creator\\\\\\)/voucher/ && echo \"---\" && ls /home/luputer/Dokumen/TA/CuanIN/src/app/\\\\\\(creator\\\\\\)/pembayaran/)",
       "Bash(ls:*)",
       "Bash(ls /home/luputer/Dokumen/TA/CuanIN/src/app/\\\\\\(creator\\\\\\)/peserta/ && echo \"---\" && ls /home/luputer/Dokumen/TA/CuanIN/src/app/\\\\\\(creator\\\\\\)/profile/)",
-      "Bash(ls /home/luputer/Dokumen/TA/CuanIN/src/components/email/ 2>/dev/null || echo \"No email components\")"
+      "Bash(ls /home/luputer/Dokumen/TA/CuanIN/src/components/email/ 2>/dev/null || echo \"No email components\")",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && pnpm build 2>&1 | tail -20)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && git status)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && git diff)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && git add \\\\\n  InputStream \\\\\n  fix_imports.js \\\\\n  src/app/\\\\\\(catalog\\\\\\)/\\\\[slug\\\\]/\\\\[productSlug\\\\]/page.tsx \\\\\n  src/app/\\\\\\(catalog\\\\\\)/\\\\[slug\\\\]/page.tsx \\\\\n  src/app/\\\\\\(catalog\\\\\\)/riwayat-pembelian/\\\\[id\\\\]/page.tsx \\\\\n  src/app/\\\\\\(catalog\\\\\\)/riwayat-pembelian/page.tsx \\\\\n  src/app/\\\\\\(creator\\\\\\)/voucher/\\\\[id\\\\]/page.tsx \\\\\n  src/app/\\\\\\(creator\\\\\\)/voucher/create/page.tsx \\\\\n  src/app/\\\\\\(creator\\\\\\)/voucher/page.tsx \\\\\n  src/components/catalog/product-card.tsx \\\\\n  src/components/catalog/product-main-info-card.tsx \\\\\n  src/components/creator/sidebar.tsx \\\\\n  src/components/creator/voucher-sidebar-metadata.tsx \\\\\n  src/components/payment/order-summary-card.tsx \\\\\n  src/hooks/creator/use-create-produk-digital.ts \\\\\n  src/hooks/creator/use-create-webinar.ts \\\\\n  src/server/api/routers/purchases.ts \\\\\n  src/trpc/provider.tsx)"
     ]
   }
 }

@@ -43,6 +43,7 @@ export function useEditWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
             discountPrice: 0,
             image: "",
             images: [],
+            enablePortal: false,
         },
     });
 
@@ -83,6 +84,7 @@ export function useEditWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
                 enableDiscount: Number(product.discountPrice) > 0,
                 enableQuota: (product.capacity ?? 0) > 0,
                 image: product.image ?? "",
+                enablePortal: product.portalEnabled ?? false,
             });
             if (product.image) setPreviewUrl(product.image);
         }
@@ -175,6 +177,7 @@ export function useEditWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
                 image: data.image,
                 images: data.images,
                 benefit: data.benefit?.filter((b: string) => b.trim() !== ""),
+                portalEnabled: data.enablePortal,
             });
         }
     });

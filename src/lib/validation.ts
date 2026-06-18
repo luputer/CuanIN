@@ -61,6 +61,7 @@ export const webinarSchema = z
     enableNotes: z.boolean(),
     enableDiscount: z.boolean(),
     enableQuota: z.boolean(),
+    enablePortal: z.boolean(),
     discountPrice: z.number().min(0).optional(),
   })
 
@@ -152,6 +153,7 @@ export const baseProductDigitalSchema = z.object({
   vouchers: z.array(z.string({ required_error: "Voucher wajib dipilih" })).optional(),
   enableNotes: z.boolean({ required_error: "Catatan wajib dipilih" }),
   enableDiscount: z.boolean({ required_error: "Diskon wajib dipilih" }),
+  enablePortal: z.boolean(),
   discountPrice: z.number({ required_error: "Harga diskon wajib diisi", invalid_type_error: "Harga diskon tidak valid" }).min(0).optional(),
 });
 
@@ -224,6 +226,7 @@ export const productKelasOnlineSchema = z
     vouchers: z.array(z.string({ required_error: "Voucher wajib dipilih" })).optional(),
     enableNotes: z.boolean({ required_error: "Catatan wajib dipilih" }),
     enableDiscount: z.boolean({ required_error: "Diskon wajib dipilih" }),
+    enablePortal: z.boolean(),
     discountPrice: z.number({ required_error: "Harga diskon wajib diisi", invalid_type_error: "Harga diskon tidak valid" }).min(0).optional(),
   })
 

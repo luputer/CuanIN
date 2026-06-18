@@ -54,6 +54,7 @@ model Product {
   capacity         Int?
   duration         String?
   notes            String?       @db.Text
+  portalEnabled    Boolean       @default(false)
   formFields       FormField[]
   user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   views            ProductView[]
@@ -182,6 +183,7 @@ model User {
   withdrawals    Withdrawal[]
   balanceEntries BalanceEntry[]
   vouchers       Voucher[]
+  portalAccesses PortalAccess[]
 }
 
 model VerificationToken {
@@ -332,4 +334,19 @@ model Voucher {
 
   @@unique([userId, code])
   @@index([userId])
+}
+
+model PortalAccess {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  buyerEmail String
+  creatorId String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  creator   User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@unique([buyerEmail, creatorId])
+  @@index([token])
+  @@index([buyerEmail])
+  @@index([creatorId])
 }

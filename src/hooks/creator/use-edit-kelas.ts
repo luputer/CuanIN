@@ -45,6 +45,7 @@ export function useEditKelas({ id, isEdit = false }: UseEditKelasProps = {}) {
             discountPrice: 0,
             image: "",
             images: [],
+            enablePortal: false,
         },
     });
 
@@ -93,6 +94,7 @@ export function useEditKelas({ id, isEdit = false }: UseEditKelasProps = {}) {
                 enableVoucher: true,
                 enableDiscount: discVal > 0,
                 discountPrice: discVal,
+                enablePortal: product.portalEnabled ?? false,
             });
         }
     }, [product, reset, isEdit]);
@@ -155,7 +157,8 @@ export function useEditKelas({ id, isEdit = false }: UseEditKelasProps = {}) {
                 notes: data.enableNotes ? data.notes : null,
                 vouchers: data.enableVoucher ? data.vouchers : [],
                 discountPrice: data.enableDiscount ? data.discountPrice : undefined,
-            } as any);
+                portalEnabled: data.enablePortal,
+            });
         }
     });
 

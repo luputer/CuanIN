@@ -7,6 +7,7 @@ import { WithdrawalSuccessEmail } from "~/emails/withdrawal-success-email";
 import { WelcomeEmail } from "~/emails/welcome-email";
 import { VerifyEmail } from "~/emails/verify-email";
 import { ResetPasswordEmail } from "~/emails/reset-password-email";
+import { PortalLinkEmail } from "~/emails/portal-link-email";
 
 const transporter = nodemailer.createTransport({
   host: env.SMTP_HOST,
@@ -27,14 +28,10 @@ type SendProductEmailParams = {
   buyerEmail: string;
   productName: string;
   productLink: string;
-  links: string[] | null;
+  links?: string[] | null;
   creatorName: string;
   notes?: string | null;
-};
-
-type SendWelcomeEmailParams = {
-  email: string;
-  name: string;
+  portalUrl?: string | null;
 };
 
 export const sendProductEmail = async ({
@@ -44,6 +41,7 @@ export const sendProductEmail = async ({
   links,
   creatorName,
   notes,
+  portalUrl,
 }: SendProductEmailParams) => {
   const html = await render(
     React.createElement(ProductAccessEmail, {
@@ -51,13 +49,16 @@ export const sendProductEmail = async ({
       productLink,
       links,
       notes,
+      portalUrl,
       year: new Date().getFullYear(),
     })
   );
 
   try {
     const linksText = links && links.length > 0 ? `\n\nLink Tambahan:\n${links.map((l, i) => `${i + 1}. ${l}`).join("\n")}` : "";
-    const textContent = `Terima kasih atas pembelian Anda!\n\nBerikut adalah link untuk mengakses produk Anda:\n${productLink}${linksText}${notes ? `\n\nCatatan Tambahan:\n${notes}` : ''}\n\nSalam,\nTim CuanIN`;
+    const textContent = portalUrl
+      ? `Terima kasih atas pembelian Anda!\n\nBuka portal akses pribadi Anda:\n${portalUrl}\n\nLink produk: ${productLink}${linksText}${notes ? `\n\nCatatan Tambahan:\n${notes}` : ''}\n\nSalam,\nTim CuanIN`
+      : `Terima kasih atas pembelian Anda!\n\nBerikut adalah link untuk mengakses produk Anda:\n${productLink}${linksText}${notes ? `\n\nCatatan Tambahan:\n${notes}` : ''}\n\nSalam,\nTim CuanIN`;
 
     const info = await transporter.sendMail({
       from: `"${creatorName}" <${env.SMTP_FROM}>`,
@@ -126,6 +127,11 @@ export const sendWithdrawalEmail = async ({
     console.error("Error sending withdrawal email:", error);
     return { success: false, error };
   }
+};
+
+type SendWelcomeEmailParams = {
+  email: string;
+  name: string;
 };
 
 // saat register email
@@ -222,6 +228,43 @@ export const sendPasswordResetEmail = async ({
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error("Error sending password reset email:", error);
+    return { success: false, error };
+  }
+};
+
+type SendPortalLinkEmailParams = {
+  email: string;
+  buyerName: string;
+  creatorName: string;
+  portalUrl: string;
+};
+
+export const sendPortalLinkEmail = async ({
+  email,
+  buyerName,
+  creatorName,
+  portalUrl,
+}: SendPortalLinkEmailParams) => {
+  const html = await render(
+    PortalLinkEmail({
+      buyerName,
+      productName: creatorName,
+      portalUrl,
+      year: new Date().getFullYear(),
+    })
+  );
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
+      to: email,
+      subject: `Link Portal Akses dari ${creatorName}`,
+      text: `Halo ${buyerName}, berikut link portal akses kamu untuk semua produk dari ${creatorName}: ${portalUrl}`,
+      html,
+    });
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("Error sending portal link email:", error);
     return { success: false, error };
   }
 };

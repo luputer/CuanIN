@@ -42,6 +42,7 @@ export function useEditProdukDigital({ id, isEdit = false }: UseProdukDigitalKel
             vouchers: [],
             enableDiscount: false,
             discountPrice: 0,
+            enablePortal: false,
             image: "",
             images: [],
         },
@@ -89,6 +90,7 @@ export function useEditProdukDigital({ id, isEdit = false }: UseProdukDigitalKel
                 enableVoucher: true,
                 enableDiscount: discVal > 0,
                 discountPrice: discVal,
+                enablePortal: product.portalEnabled ?? false,
             });
         }
     }, [product, reset, isEdit]);
@@ -154,6 +156,7 @@ export function useEditProdukDigital({ id, isEdit = false }: UseProdukDigitalKel
                 notes: data.enableNotes ? data.notes : null,
                 vouchers: data.enableVoucher ? data.vouchers : [],
                 discountPrice: data.enableDiscount ? data.discountPrice : undefined,
+                portalEnabled: data.enablePortal,
             });
         }
     });

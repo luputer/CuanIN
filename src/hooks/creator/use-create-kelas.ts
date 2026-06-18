@@ -9,26 +9,7 @@ import { useImageUpload } from "~/hooks/shared/use-upload";
 import type { FormField } from "~/components/creator/form-customizer";
 import type { z } from "zod";
 
-type KelasOnlineFormValues = z.infer<typeof productKelasOnlineSchema> & {
-    description: string;
-    price?: number;
-    link: string;
-    contentType?: string;
-    platformCustom?: string;
-    duration: string;
-    notes?: string;
-    status: string;
-    image?: string;
-    images?: string[];
-    benefit?: string[];
-    capacity?: number;
-    enableQuota?: boolean;
-    enableVoucher?: boolean;
-    vouchers?: string[];
-    enableNotes?: boolean;
-    enableDiscount?: boolean;
-    discountPrice?: number;
-};
+type KelasOnlineFormValues = z.infer<typeof productKelasOnlineSchema>;
 
 export function useCreateKelas() {
     const router = useRouter();
@@ -62,6 +43,7 @@ export function useCreateKelas() {
             discountPrice: 0,
             image: "",
             images: [],
+            enablePortal: false,
         },
     });
 
@@ -178,6 +160,7 @@ export function useCreateKelas() {
             images: data.images,
             vouchers: data.enableVoucher ? data.vouchers : [],
             discountPrice: data.enableDiscount ? data.discountPrice : undefined,
+            portalEnabled: data.enablePortal,
         });
     };
 

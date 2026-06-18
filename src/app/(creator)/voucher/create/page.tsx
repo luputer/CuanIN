@@ -25,9 +25,6 @@ export default function VoucherCreatePage() {
     const type = watch("type");
     const discount = watch("discount");
     const usageType = watch("usageType");
-    const isLimitEnabled = watch("usageLimit") !== undefined && watch("usageLimit") !== null;
-    const usageLimit = watch("usageLimit");
-    const isLimitPerUser = watch("isLimitPerUser");
     const selectedProductIds = watch("productIds") || [];
     const startDate = watch("startDate");
     const endDate = watch("endDate");

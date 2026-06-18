@@ -10,7 +10,6 @@ import { Prisma, WithdrawalStatus } from "../../../../prisma/generated/prisma";
 import { getCreatorBalance } from "~/lib/balance";
 import { generateHistoryToken, verifyHistoryToken } from "~/lib/purchase-history-token";
 import crypto from "crypto";
-import { startOfDay, endOfDay } from "date-fns";
 
 const XENDIT_PAYMENT_METHODS = {
   qris: "QRIS",

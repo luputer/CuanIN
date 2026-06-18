@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
@@ -31,7 +31,7 @@ const deleteCookie = (name: string) => {
   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 };
 
-export default function PurchaseHistoryPage() {
+function PurchaseHistoryPageInner() {
   const [step, setStep] = useState<"EMAIL" | "OTP" | "HISTORY">("EMAIL");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -214,5 +214,13 @@ export default function PurchaseHistoryPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function PurchaseHistoryPage() {
+  return (
+    <Suspense>
+      <PurchaseHistoryPageInner />
+    </Suspense>
   );
 }

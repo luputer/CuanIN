@@ -1,13 +1,13 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import {
   CalendarBlankIcon,
   ClockIcon,
   FileIcon,
   ImagesIcon,
 } from "@phosphor-icons/react";
+import Image from "next/image";
+import Link from "next/link";
 import { CATEGORY_STYLE, CATEGORY_STYLE_DEFAULT, getProductTypeLabel } from "~/lib/constants";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -86,7 +86,6 @@ export function CatalogProductCard({
   productSlug,
   id,
   name,
-  shortDescription,
   type,
   price,
   discountPrice,

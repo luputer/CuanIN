@@ -2,7 +2,6 @@
 import React from "react";
 import { ShieldCheckIcon } from "@phosphor-icons/react";
 import { CardContainer } from "~/components/ui/card-container";
-import { DataList } from "~/components/ui/data-list";
 
 interface OrderSummaryCardProps {
   price: number;

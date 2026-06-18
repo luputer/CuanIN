@@ -12,7 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover
 import { cn } from "~/lib/utils";
 import { getVisitorId } from "~/lib/visitor";
 import { CatalogProductCard, CatalogProductCardSkeleton } from "~/components/catalog/product-card";
-import { PRODUCT_TYPE_MAP } from "~/lib/constants";
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

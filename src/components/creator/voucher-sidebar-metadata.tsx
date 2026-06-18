@@ -1,5 +1,5 @@
 import type { UseFormReturn } from "react-hook-form";
-import { FormSelect, FormInput, FormRow } from "~/components/shared/form-layout";
+import { FormSelect, FormInput } from "~/components/shared/form-layout";
 import { CaretDownIcon, CaretUpIcon } from "@phosphor-icons/react";
 
 interface VoucherSidebarMetadataProps {

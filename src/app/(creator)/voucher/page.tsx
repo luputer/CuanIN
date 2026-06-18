@@ -32,7 +32,7 @@ import {
     TableCell,
     TablePagination,
 } from "~/components/ui/table";
-import { DataTableBodySkeleton, DataTableMobileSkeleton, TableSkeleton } from "~/components/table/skeleton";
+import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/table/skeleton";
 import SearchInput from "~/components/ui/search";
 import ActionButton from "~/components/shared/button-add";
 import DeleteConfirmDialog from "~/components/shared/delete-confirm-dialog";

@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  CalendarBlankIcon,
   CalendarIcon,
   CheckCircleIcon,
   ClockIcon,

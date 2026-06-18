@@ -1,6 +1,5 @@
 import React from "react";
 import { CardContainer } from "~/components/ui/card-container";
-import { InfoItem } from "./info-item";
 
 export function ProductMainInfoCard({
   categoryLabel,

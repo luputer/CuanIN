@@ -1,60 +1,38 @@
 "use client"
 
-import { useParams } from "next/navigation";
-import { useState } from "react";
 import {
     CaretDownIcon,
     CaretUpIcon,
+    CheckIcon,
     CopyIcon,
-    TrashIcon,
-    CheckIcon
+    TrashIcon
 } from "@phosphor-icons/react";
 import { format, isBefore, startOfDay } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { api } from "~/trpc/react";
-import { Button } from "~/components/ui/button";
-import { FormInput, FormSelect, SectionHeader, FormRow } from "~/components/shared/form-layout";
+import ButtonSave from "~/components/shared/button-save";
 import { DateRangeOnlyPicker } from "~/components/shared/date-range-only-picker";
 import DeleteConfirmDialog from "~/components/shared/delete-confirm-dialog";
 import { DetailHeader } from "~/components/shared/detail-header";
-import { VoucherSidebarMetadata } from "~/components/creator/voucher-sidebar-metadata";
+import { FormInput, FormRow, FormSelect, SectionHeader } from "~/components/shared/form-layout";
+import { Button } from "~/components/ui/button";
+
 import { Skeleton } from "~/components/ui/skeleton";
 import { cn, formatNumberInput } from "~/lib/utils";
-import ButtonSave from "~/components/shared/button-save";
-import { useEditVoucher } from "~/hooks/creator/use-edit-voucher";
+import { api } from "~/trpc/react";
 
 export default function VoucherDetailPage() {
     const params = useParams();
+    const router = useRouter();
     const id = params?.id as string;
+    const utils = api.useUtils();
 
-    const {
-        form,
-        voucher,
-        isLoading,
-        isPending,
-        isDeleting,
-        isDirty,
-        onSubmit,
-        handleDelete
-    } = useEditVoucher({ id });
-
-    const { register, watch, setValue, formState: { errors } } = form;
-
-    const [copiedCode, setCopiedCode] = useState(false);
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-    // Watch values
-    const type = watch("type");
-    const discount = watch("discount");
-    const usageType = watch("usageType");
-    const isLimitEnabled = watch("usageLimit") !== undefined && watch("usageLimit") !== null;
-    const usageLimit = watch("usageLimit");
-    const isLimitPerUser = watch("isLimitPerUser");
-    const selectedProductIds = watch("productIds") || [];
-    const startDate = watch("startDate");
-    const endDate = watch("endDate");
-    const code = watch("code");
+    const { data: voucher, isLoading } = api.vouchers.getById.useQuery(
+        { id },
+        { enabled: !!id }
+    );
 
     // Fetch creator's products list
     const { data: productsData } = api.products.getAll.useQuery(
@@ -62,12 +40,137 @@ export default function VoucherDetailPage() {
     );
     const productsList = productsData?.items ?? [];
 
+    const [name, setName] = useState("");
+    const [code, setCode] = useState("");
+    const [type, setType] = useState<"PERSEN" | "NOMINAL">("PERSEN");
+    const [discount, setDiscount] = useState(0);
+    const [startDate, setStartDate] = useState<Date | undefined>();
+    const [endDate, setEndDate] = useState<Date | undefined>();
+    const [status, setStatus] = useState<"aktif" | "nonaktif" | "expired">("aktif");
+    const [usageType, setUsageType] = useState<"ALL_PRODUCTS" | "SELECTED_PRODUCTS">("ALL_PRODUCTS");
+    const [usageLimit, setUsageLimit] = useState<number | undefined>();
+    const [isLimitEnabled, setIsLimitEnabled] = useState(false);
+    const [isLimitPerUser, setIsLimitPerUser] = useState(false);
+
+    // Multi-selected products list state
+    const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+
+    const [copiedCode, setCopiedCode] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+    useEffect(() => {
+        if (voucher) {
+            setName(voucher.name ?? "");
+            setCode(voucher.code);
+            setType(voucher.type);
+            setDiscount(Number(voucher.discount));
+            setStartDate(new Date(voucher.startDate));
+            setEndDate(new Date(voucher.endDate));
+            setStatus(voucher.status as "aktif" | "nonaktif" | "expired");
+            const validUsageTypes = ["ALL_PRODUCTS", "SELECTED_PRODUCTS"];
+            setUsageType(
+                validUsageTypes.includes(voucher.usageType)
+                    ? (voucher.usageType as "ALL_PRODUCTS" | "SELECTED_PRODUCTS")
+                    : "ALL_PRODUCTS"
+            );
+            setUsageLimit(voucher.usageLimit ?? undefined);
+            setIsLimitEnabled(!!voucher.usageLimit);
+            setIsLimitPerUser(voucher.isLimitPerUser ?? false);
+            if (voucher.products) {
+                setSelectedProductIds(voucher.products.map((p: any) => p.id));
+            }
+        }
+    }, [voucher]);
+
+    const isDirty = voucher ? (
+        name !== (voucher.name ?? "") ||
+        code !== voucher.code ||
+        type !== voucher.type ||
+        discount !== Number(voucher.discount) ||
+        startDate?.getTime() !== new Date(voucher.startDate).getTime() ||
+        endDate?.getTime() !== new Date(voucher.endDate).getTime() ||
+        status !== voucher.status ||
+        usageType !== (voucher.usageType || "ALL_PRODUCTS") ||
+        usageLimit !== (voucher.usageLimit ?? undefined) ||
+        isLimitPerUser !== (voucher.isLimitPerUser ?? false) ||
+
+        JSON.stringify(selectedProductIds.slice().sort()) !== JSON.stringify((voucher.products || []).map((p: any) => p.id).slice().sort())
+    ) : false;
+
+    const updateMutation = api.vouchers.update.useMutation({
+        onSuccess: () => {
+            toast.success("Voucher berhasil diperbarui");
+            void utils.vouchers.getAll.invalidate();
+            router.push("/voucher");
+        },
+        onError: (error) => {
+            toast.error(error.message || "Gagal menyimpan voucher");
+        },
+    });
+
+    const deleteMutation = api.vouchers.delete.useMutation({
+        onSuccess: () => {
+            toast.success("Voucher berhasil dihapus");
+            void utils.vouchers.getAll.invalidate();
+            router.push("/voucher");
+        },
+        onError: (error) => {
+            toast.error(error.message || "Gagal menghapus voucher");
+            setShowDeleteConfirm(false);
+        }
+    });
+
     const handleCopyCode = () => {
-        if (!code) return;
         navigator.clipboard.writeText(code);
         setCopiedCode(true);
         setTimeout(() => setCopiedCode(false), 2000);
         toast.success("Kode voucher disalin");
+    };
+
+    const handleDelete = () => {
+        deleteMutation.mutate({ id });
+    };
+
+    const handleSubmit = async () => {
+        if (!name.trim()) {
+            toast.error("Nama voucher wajib diisi");
+            return;
+        }
+
+        if (!code.trim()) {
+            toast.error("Kode voucher wajib diisi");
+            return;
+        }
+
+        if (!startDate || !endDate) {
+            toast.error("Periode mulai dan berakhir wajib diisi");
+            return;
+        }
+
+        if (startDate > endDate) {
+            toast.error("Tanggal selesai harus sama atau lebih besar dari tanggal mulai");
+            return;
+        }
+
+        if (isLimitEnabled && (!usageLimit || usageLimit < 1)) {
+            toast.error("Batas kuota voucher harus lebih dari 0");
+            return;
+        }
+
+        updateMutation.mutate({
+            id,
+            name: name.trim(),
+            code: code.trim(),
+            type,
+            discount,
+            startDate: startDate.toISOString(),
+            endDate: endDate.toISOString(),
+            status,
+            usageType,
+            usageLimit: isLimitEnabled ? usageLimit : null,
+            isLimitPerUser,
+            productIds: usageType === "SELECTED_PRODUCTS" ? selectedProductIds : [],
+        });
     };
 
     if (isLoading || !voucher) {
@@ -97,43 +200,40 @@ export default function VoucherDetailPage() {
                     <div className="flex-1 min-w-0 bg-white rounded-xl px-4 py-2 sm:px-8 sm:py-8">
                         <Skeleton className="h-6 w-44" />
                         <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start pt-6">
-                            {/* Kiri: Form Skeleton */}
-                            <div className="flex-1 min-w-0 w-full space-y-5">
-                                <div className="space-y-1">
-                                    <Skeleton className="h-4 w-24" />
-                                    <Skeleton className="h-10 w-full rounded-lg" />
-                                </div>
-                                <div className="space-y-1">
-                                    <Skeleton className="h-4 w-24" />
-                                    <Skeleton className="h-10 w-full rounded-lg" />
-                                </div>
-                                <div className="grid gap-4 md:grid-cols-2">
+                            <div className="flex-1 min-w-0 w-full space-y-0">
+                                <div className="space-y-5">
                                     <div className="space-y-1">
-                                        <Skeleton className="h-4 w-16" />
+                                        <Skeleton className="h-4 w-24" />
                                         <Skeleton className="h-10 w-full rounded-lg" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Skeleton className="h-4 w-24" />
+                                        <Skeleton className="h-10 w-full rounded-lg" />
+                                    </div>
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                        <div className="space-y-1">
+                                            <Skeleton className="h-4 w-16" />
+                                            <Skeleton className="h-10 w-full rounded-lg" />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <Skeleton className="h-4 w-16" />
+                                            <Skeleton className="h-10 w-full rounded-lg" />
+                                        </div>
                                     </div>
                                     <div className="space-y-1">
                                         <Skeleton className="h-4 w-16" />
                                         <Skeleton className="h-10 w-full rounded-lg" />
                                     </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <Skeleton className="h-4 w-24" />
-                                    <Skeleton className="h-10 w-full rounded-lg" />
-                                </div>
-                                <div className="space-y-1">
-                                    <Skeleton className="h-4 w-28" />
-                                    <Skeleton className="h-20 w-full rounded-lg" />
+                                    <div className="space-y-1">
+                                        <Skeleton className="h-4 w-28" />
+                                        <Skeleton className="h-20 w-full rounded-lg" />
+                                    </div>
                                 </div>
                             </div>
-                            {/* Kanan: Sidebar Skeleton */}
                             <div className="shrink-0 w-full lg:w-[400px] space-y-6">
                                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
                                     <Skeleton className="h-4 w-28" />
                                     <Skeleton className="h-10 w-full rounded-lg" />
-                                </div>
-                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-                                    <Skeleton className="h-4 w-20" />
                                     <Skeleton className="h-10 w-full rounded-lg" />
                                 </div>
                                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
@@ -187,7 +287,7 @@ export default function VoucherDetailPage() {
                                     <CopyIcon className="w-4 h-4 text-cyan-600" />
                                 )}
                                 <span className="text-sm font-regular text-cyan-600 whitespace-nowrap">
-                                    Salin Kode Voucher
+                                    Copy Code
                                 </span>
                             </Button>
                             <Button
@@ -211,47 +311,49 @@ export default function VoucherDetailPage() {
                             {/* Kiri: Informasi Voucher */}
                             <div className="flex-1 min-w-0 w-full space-y-0">
                                 {/* Nama Voucher */}
-                                <FormRow label="Nama Voucher" error={errors.name?.message}>
+                                <FormRow label="Nama Voucher">
                                     <FormInput
-                                        {...register("name")}
+                                        value={name}
+                                        onChange={(event) => setName(event.target.value)}
                                         placeholder="Masukkan nama voucher"
                                     />
                                 </FormRow>
 
                                 {/* Kode Voucher */}
-                                <FormRow label="Kode Voucher" error={errors.code?.message}>
+                                <FormRow label="Kode Voucher">
                                     <FormInput
-                                        {...register("code")}
+                                        value={code}
+                                        onChange={(event) => setCode(event.target.value)}
                                         placeholder="Masukkan kode voucher"
                                     />
                                 </FormRow>
 
                                 {/* Tipe & Diskon */}
                                 <div className="grid gap-4 md:grid-cols-2">
-                                    <FormRow label="Tipe" error={errors.type?.message}>
-                                        <FormSelect {...register("type")}>
+                                    <FormRow label="Tipe">
+                                        <FormSelect value={type} onChange={(event) => setType(event.target.value as "PERSEN" | "NOMINAL")}>
                                             <option value="PERSEN">Persen</option>
                                             <option value="NOMINAL">Nominal</option>
                                         </FormSelect>
                                     </FormRow>
 
-                                    <FormRow label="Diskon" error={errors.discount?.message}>
+                                    <FormRow label="Diskon">
                                         <FormInput
                                             type="text"
                                             inputMode="numeric"
                                             value={discount === 0 ? "" : formatNumberInput(discount.toString())}
                                             onChange={(event) => {
                                                 const val = event.target.value.replace(/[^0-9]/g, "");
-                                                setValue("discount", val ? Number(val) : 0, { shouldValidate: true, shouldDirty: true });
+                                                setDiscount(val ? Number(val) : 0);
                                             }}
                                             placeholder="0"
                                             prefix={type === "PERSEN" ? "%" : "Rp"}
                                             suffix={
                                                 <div className="flex flex-col">
-                                                    <button type="button" onClick={() => setValue("discount", discount + (type === "PERSEN" ? 1 : 1000), { shouldValidate: true, shouldDirty: true })} className="cursor-pointer">
+                                                    <button type="button" onClick={() => setDiscount((prev) => prev + (type === "PERSEN" ? 1 : 1000))} className="cursor-pointer">
                                                         <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
                                                     </button>
-                                                    <button type="button" onClick={() => setValue("discount", Math.max(0, discount - (type === "PERSEN" ? 1 : 1000)), { shouldValidate: true, shouldDirty: true })} className="cursor-pointer">
+                                                    <button type="button" onClick={() => setDiscount((prev) => Math.max(0, prev - (type === "PERSEN" ? 1 : 1000)))} className="cursor-pointer">
                                                         <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
                                                     </button>
                                                 </div>
@@ -260,32 +362,25 @@ export default function VoucherDetailPage() {
                                     </FormRow>
                                 </div>
 
-                                {/* Periode Berlaku */}
-                                <FormRow label="Periode Berlaku" error={errors.startDate?.message || errors.endDate?.message}>
-                                    <DateRangeOnlyPicker
-                                        startDate={startDate}
-                                        endDate={endDate}
-                                        onChange={({ startDate: s, endDate: e }) => {
-                                            if (s) setValue("startDate", s, { shouldValidate: true, shouldDirty: true });
-                                            if (e) setValue("endDate", e, { shouldValidate: true, shouldDirty: true });
-                                        }}
-                                        placeholder="Pilih Masa Berlaku"
-                                        disabled={(date) => {
-                                            const now = new Date();
-                                            return isBefore(date, startOfDay(now));
-                                        }}
-                                    />
+                                {/* Status */}
+                                <FormRow label="Status">
+                                    <FormSelect value={status} onChange={(event) => setStatus(event.target.value as "aktif" | "nonaktif" | "expired")}>
+                                        <option value="aktif">Aktif</option>
+                                        <option value="nonaktif">Nonaktif</option>
+                                        <option value="expired">Expired</option>
+                                    </FormSelect>
                                 </FormRow>
 
                                 {/* Penggunaan */}
-                                <FormRow label="Jenis Penggunaan" error={errors.usageType?.message}>
+                                <FormRow label="Jenis Penggunaan">
                                     <div className="flex flex-col gap-3 w-full border border-slate-300 rounded-lg bg-white p-3">
                                         <label className="flex items-center gap-2 cursor-pointer">
                                             <input
                                                 type="radio"
+                                                name="usageType"
                                                 value="ALL_PRODUCTS"
                                                 checked={usageType === "ALL_PRODUCTS"}
-                                                onChange={() => setValue("usageType", "ALL_PRODUCTS", { shouldValidate: true, shouldDirty: true })}
+                                                onChange={() => setUsageType("ALL_PRODUCTS")}
                                                 className="w-4 h-4 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 border-slate-300"
                                             />
                                             <span className={cn("text-base transition-colors", usageType === "ALL_PRODUCTS" ? "font-medium text-cyan-600" : "font-normal text-slate-700")}>Terapkan ke Semua Produk</span>
@@ -294,9 +389,10 @@ export default function VoucherDetailPage() {
                                         <label className="flex items-center gap-2 cursor-pointer">
                                             <input
                                                 type="radio"
+                                                name="usageType"
                                                 value="SELECTED_PRODUCTS"
                                                 checked={usageType === "SELECTED_PRODUCTS"}
-                                                onChange={() => setValue("usageType", "SELECTED_PRODUCTS", { shouldValidate: true, shouldDirty: true })}
+                                                onChange={() => setUsageType("SELECTED_PRODUCTS")}
                                                 className="w-4 h-4 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 border-slate-300"
                                             />
                                             <span className={cn("text-base transition-colors", usageType === "SELECTED_PRODUCTS" ? "font-medium text-cyan-600" : "font-normal text-slate-700")}>Terapkan ke Produk Pilihan</span>
@@ -328,9 +424,9 @@ export default function VoucherDetailPage() {
                                                                         checked={isChecked}
                                                                         onChange={() => {
                                                                             if (isChecked) {
-                                                                                setValue("productIds", selectedProductIds.filter(id => id !== prod.id), { shouldDirty: true });
+                                                                                setSelectedProductIds(selectedProductIds.filter(id => id !== prod.id));
                                                                             } else {
-                                                                                setValue("productIds", [...selectedProductIds, prod.id], { shouldDirty: true });
+                                                                                setSelectedProductIds([...selectedProductIds, prod.id]);
                                                                             }
                                                                         }}
                                                                         className="w-3.5 h-3.5 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 rounded border-slate-300"
@@ -348,28 +444,110 @@ export default function VoucherDetailPage() {
                                         </div>
                                     )}
                                 </FormRow>
+
+
                             </div>
 
-                            <VoucherSidebarMetadata form={form} usageCount={(voucher as any).usageCount} />
+                            {/* Kanan: Sidebar Metadata */}
+                            <div className="shrink-0 w-full lg:w-[400px] space-y-6">
+                                {/* Periode Berlaku */}
+                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <p className="text-slate-700 text-sm font-semibold mb-3">Periode Berlaku</p>
+                                    <DateRangeOnlyPicker
+                                        startDate={startDate}
+                                        endDate={endDate}
+                                        onChange={({ startDate, endDate }) => {
+                                            setStartDate(startDate);
+                                            setEndDate(endDate);
+                                        }}
+                                        placeholder="Pilih Masa Berlaku"
+                                        disabled={(date) => {
+                                            const now = new Date();
+                                            return isBefore(date, startOfDay(now));
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Batasan */}
+                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <p className="text-slate-700 text-sm font-semibold mb-3">Batasan</p>
+                                    <div className="space-y-4 pt-2">
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-sm font-medium text-slate-700">Batasi Jumlah Voucher</label>
+                                                <label className="relative inline-flex items-center cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="sr-only peer"
+                                                        checked={isLimitEnabled}
+                                                        onChange={() => {
+                                                            if (isLimitEnabled) {
+                                                                setUsageLimit(undefined);
+                                                            } else {
+                                                                setUsageLimit(voucher.usageLimit ?? 10);
+                                                            }
+                                                            setIsLimitEnabled(!isLimitEnabled);
+                                                        }}
+                                                    />
+                                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                                </label>
+                                            </div>
+
+                                            {isLimitEnabled && (
+                                                <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+                                                    <FormInput
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        value={usageLimit ?? ""}
+                                                        onChange={(event) => {
+                                                            const val = event.target.value.replace(/[^0-9]/g, "");
+                                                            setUsageLimit(val ? Number(val) : undefined);
+                                                        }}
+                                                        placeholder="Masukkan batas kuota voucher"
+                                                        suffix={
+                                                            <div className="flex flex-col">
+                                                                <button type="button" onClick={() => setUsageLimit((prev) => (prev ?? 0) + 1)} className="cursor-pointer">
+                                                                    <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                                </button>
+                                                                <button type="button" onClick={() => setUsageLimit((prev) => Math.max(1, (prev ?? 0) - 1))} className="cursor-pointer">
+                                                                    <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                                </button>
+                                                            </div>
+                                                        }
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="flex items-center justify-between border-t border-slate-200 pt-3">
+                                            <label className="text-sm font-medium text-slate-700">Batasi 1x per Pembeli (Email)</label>
+                                            <label className="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    className="sr-only peer"
+                                                    checked={isLimitPerUser}
+                                                    onChange={() => setIsLimitPerUser(!isLimitPerUser)}
+                                                />
+                                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Footer Action Buttons */}
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mt-8 pt-6 border-t border-slate-200 gap-4">
-                            {/* Timestamp section */}
-                            <div className="text-sm text-slate-500">
-                                <p>Ditambahkan pada {format(new Date(voucher.createdAt), "d MMMM yyyy, HH:mm", { locale: idLocale })}</p>
-                                <p>Terakhir diperbarui {format(new Date(voucher.updatedAt), "d MMMM yyyy, HH:mm", { locale: idLocale })}</p>
-                            </div>
-
-                            {/* Buttons section */}
-                            <div className="flex items-center gap-3 w-full md:w-auto">
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-center mt-4 pt-4 border-t border-slate-200 gap-4 w-full">
+                            <p className="text-slate-500 text-sm text-left w-full sm:w-auto">
+                                Terakhir diperbarui {format(new Date(voucher.updatedAt), "d MMMM yyyy, HH:mm", { locale: idLocale })}
+                            </p>
+                            <div className="w-full sm:w-auto flex justify-end">
                                 <ButtonSave
-                                    onClick={onSubmit}
-                                    isLoading={isPending}
+                                    onClick={handleSubmit}
+                                    isLoading={updateMutation.isPending}
                                     disabled={!isDirty}
                                     label="Simpan Perubahan"
                                     loadingLabel="Menyimpan..."
-                                    className="w-full md:w-auto"
                                     weight="bold"
                                 />
                             </div>
@@ -383,7 +561,7 @@ export default function VoucherDetailPage() {
                     onOpenChange={(open) => !open && setShowDeleteConfirm(false)}
                     title="Hapus Voucher?"
                     itemName={`voucher ${voucher?.code || ""}`.trim()}
-                    loading={isDeleting}
+                    loading={deleteMutation.isPending}
                     onConfirm={handleDelete}
                 />
             </div>

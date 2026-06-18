@@ -3,13 +3,8 @@
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import {
-  CalendarBlankIcon,
-  CheckCircleIcon,
-  ClockIcon,
   CreditCardIcon,
   ImagesIcon,
-  ReceiptIcon,
-  TagIcon,
 } from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
 import { CatalogNavHeader } from "~/components/layout/catalog-nav-header";

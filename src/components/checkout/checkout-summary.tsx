@@ -74,8 +74,8 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
                   <input
                     {...register("promo")}
                     className={`w-full rounded-xl border py-2.5 pr-4 pl-10 focus:ring-1 ${voucherError
-                        ? "border-red-400 focus:border-red-500 focus:ring-red-100"
-                        : "border-slate-300 focus:border-cyan-600 focus:ring-cyan-100"
+                      ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+                      : "border-slate-300 focus:border-cyan-600 focus:ring-cyan-100"
                       }`}
                     placeholder="Masukkan kode voucher"
                   />
@@ -106,7 +106,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
 
       {/* SUMMARY */}
       <div className="rounded-xl border border-slate-300 bg-white p-6">
-        <h3 className="mb-4 border-b border-slate-300 pb-3 font-semibold text-slate-800">
+        <h3 className="mb-4 pb-3 font-semibold text-slate-800">
           Detail Pembayaran
         </h3>
         {isBuyingOwnProduct && (

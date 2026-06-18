@@ -28,9 +28,9 @@ import {
   TableCell,
 } from "~/components/ui/table";
 import { Skeleton } from "~/components/ui/skeleton";
-import { FormGroup, SectionHeader } from "~/components/ui/form-layout";
+import { FormGroup, SectionHeader } from "~/components/shared/form-layout";
 import { TooltipProvider } from "~/components/ui/tooltip";
-import { DetailHeader } from "~/components/layout/detail-header";
+import { DetailHeader } from "~/components/shared/detail-header";
 import { StatusBadge } from "~/components/ui/status-badge";
 
 export default function ParticipantDetailPage() {

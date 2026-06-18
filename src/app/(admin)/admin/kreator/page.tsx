@@ -32,12 +32,12 @@ import {
     TooltipProvider,
 } from "~/components/ui/tooltip";
 import SearchInput from "~/components/ui/search";
-import ActionButton from "~/components/ui/button-add";
-import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
-import { PageHeader } from "~/components/layout/page-header";
-import { DataTableToolbar } from "~/components/layout/data-table-toolbar";
-import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
-import { TableEmptyState, MobileEmptyState } from "~/components/layout/empty-state";
+import ActionButton from "~/components/shared/button-add";
+import DeleteConfirmDialog from "~/components/shared/delete-confirm-dialog";
+import { PageHeader } from "~/components/shared/page-header";
+import { DataTableToolbar } from "~/components/table/toolbar";
+import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/table/skeleton";
+import { TableEmptyState, MobileEmptyState } from "~/components/shared/empty-state";
 
 export default function AdminCreatorsPage() {
     const router = useRouter();

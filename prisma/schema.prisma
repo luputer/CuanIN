@@ -315,7 +315,7 @@ enum VoucherType {
 
 model Voucher {
   id             String      @id @default(uuid())
-  code           String      @unique
+  code           String
   name           String?
   type           VoucherType @default(PERSEN)
   discount       Decimal
@@ -332,6 +332,7 @@ model Voucher {
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 
+  @@unique([userId, code])
   @@index([userId])
 }
 

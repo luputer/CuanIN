@@ -11,8 +11,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
-import { useDataTable } from "~/hooks/use-data-table";
-import { useCopyProductLink } from "~/hooks/use-copy-product-link";
+import { useDataTable } from "~/hooks/shared/use-data-table";
+import { useCopyProductLink } from "~/hooks/shared/use-copy-product-link";
 
 // Components
 import {
@@ -24,18 +24,18 @@ import {
     TableCell,
     TablePagination,
 } from "~/components/ui/table";
-import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
-import { ProductThumbnail, ProductActions } from "~/components/layout/product-list-components";
+import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/table/skeleton";
+import { ProductThumbnail, ProductActions } from "~/components/shared/product-list-components";
 import SearchInput from "~/components/ui/search";
-import ButtonFilter from "~/components/ui/filter";
-import ActionButton from "~/components/ui/button-add";
-import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
-import { PageHeader } from "~/components/layout/page-header";
-import { SortableTableHead } from "~/components/layout/sortable-table-head";
-import { TableEmptyState, MobileEmptyState } from "~/components/layout/empty-state";
-import { MobilePaginationWrapper } from "~/components/layout/mobile-pagination-wrapper";
+import ButtonFilter from "~/components/shared/filter";
+import ActionButton from "~/components/shared/button-add";
+import DeleteConfirmDialog from "~/components/shared/delete-confirm-dialog";
+import { PageHeader } from "~/components/shared/page-header";
+import { SortableTableHead } from "~/components/table/head";
+import { TableEmptyState, MobileEmptyState } from "~/components/shared/empty-state";
+import { MobilePaginationWrapper } from "~/components/shared/mobile-pagination-wrapper";
 import { StatusBadge } from "~/components/ui/status-badge";
-import { DataTableToolbar } from "~/components/layout/data-table-toolbar";
+import { DataTableToolbar } from "~/components/table/toolbar";
 import {
     TooltipProvider,
 } from "~/components/ui/tooltip";
@@ -290,6 +290,7 @@ export default function DigitalProductPage() {
                                                     editUrl={`/produk-digital/${item.id}`}
                                                     onDelete={() => setDeleteId(item.id)}
                                                     onCopy={() => handleCopyLink(item.id, item.slug ?? null)}
+                                                    isCopyDisabled={item.status !== "published"}
                                                     deleteTooltip="Hapus Produk Digital"
                                                 />
                                             </TableCell>
@@ -368,6 +369,7 @@ export default function DigitalProductPage() {
                                         editUrl={`/produk-digital/${item.id}`}
                                         onDelete={() => setDeleteId(item.id)}
                                         onCopy={() => handleCopyLink(item.id, item.slug ?? null)}
+                                        isCopyDisabled={item.status !== "published"}
                                         deleteTooltip="Hapus Produk Digital"
                                     />
                                 </div>
@@ -404,3 +406,4 @@ export default function DigitalProductPage() {
         </TooltipProvider>
     );
 }
+

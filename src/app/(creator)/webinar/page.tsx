@@ -12,20 +12,26 @@ import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { toast } from "sonner";
 
-import { useCopyProductLink } from "~/hooks/use-copy-product-link";
-import { useDataTable } from "~/hooks/use-data-table";
+import { useCopyProductLink } from "~/hooks/shared/use-copy-product-link";
+import { useDataTable } from "~/hooks/shared/use-data-table";
 import { api } from "~/trpc/react";
 
 // Components
-import { DataTableToolbar } from "~/components/layout/data-table-toolbar";
-import { MobileEmptyState, TableEmptyState } from "~/components/layout/empty-state";
-import { MobilePaginationWrapper } from "~/components/layout/mobile-pagination-wrapper";
-import { PageHeader } from "~/components/layout/page-header";
-import { ProductActions, ProductThumbnail } from "~/components/layout/product-list-components";
-import { SortableTableHead } from "~/components/layout/sortable-table-head";
-import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
-import ActionButton from "~/components/ui/button-add";
-import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
+import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/table/skeleton";
+import { ProductThumbnail, ProductActions } from "~/components/shared/product-list-components";
+import SearchInput from "~/components/ui/search";
+import ButtonFilter from "~/components/shared/filter";
+import ActionButton from "~/components/shared/button-add";
+import DeleteConfirmDialog from "~/components/shared/delete-confirm-dialog";
+import { PageHeader } from "~/components/shared/page-header";
+import { SortableTableHead } from "~/components/table/head";
+import { TableEmptyState, MobileEmptyState } from "~/components/shared/empty-state";
+import { MobilePaginationWrapper } from "~/components/shared/mobile-pagination-wrapper";
+import { StatusBadge } from "~/components/ui/status-badge";
+import { DataTableToolbar } from "~/components/table/toolbar";
+import {
+    TooltipProvider,
+} from "~/components/ui/tooltip";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -33,9 +39,6 @@ import {
     DropdownMenuRadioItem,
     DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import ButtonFilter from "~/components/ui/filter";
-import SearchInput from "~/components/ui/search";
-import { StatusBadge } from "~/components/ui/status-badge";
 import {
     Table,
     TableBody,
@@ -45,9 +48,6 @@ import {
     TablePagination,
     TableRow,
 } from "~/components/ui/table";
-import {
-    TooltipProvider
-} from "~/components/ui/tooltip";
 
 export default function WebinarPage() {
     // ─── States & Hooks ──────────────────────────────────────────────────────
@@ -314,6 +314,7 @@ export default function WebinarPage() {
                                                     editUrl={`/webinar/${item.id}`}
                                                     onDelete={() => setDeleteId(item.id)}
                                                     onCopy={() => handleCopyLink(item.id, item.slug ?? null)}
+                                                    isCopyDisabled={item.status !== "published"}
                                                     deleteTooltip="Hapus Webinar"
                                                 />
                                             </TableCell>
@@ -394,6 +395,7 @@ export default function WebinarPage() {
                                         editUrl={`/webinar/${item.id}`}
                                         onDelete={() => setDeleteId(item.id)}
                                         onCopy={() => handleCopyLink(item.id, item.slug ?? null)}
+                                        isCopyDisabled={item.status !== "published"}
                                         deleteTooltip="Hapus Webinar"
                                     />
                                 </div>
@@ -430,3 +432,4 @@ export default function WebinarPage() {
         </TooltipProvider>
     );
 }
+

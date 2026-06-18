@@ -1,4 +1,4 @@
-import { CreatorDetailSkeleton } from "~/components/layout/detail-skeletons";
+import { CreatorDetailSkeleton } from "~/components/shared/detail-skeletons";
 
 export default function Loading() {
     return <CreatorDetailSkeleton />;

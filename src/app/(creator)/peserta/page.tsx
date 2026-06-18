@@ -14,7 +14,7 @@ import {
 
 // Internal & Utils
 import { api } from "~/trpc/react";
-import { useDataTable } from "~/hooks/use-data-table";
+import { useDataTable } from "~/hooks/shared/use-data-table";
 
 // Components
 import {
@@ -27,12 +27,12 @@ import {
 	TablePagination,
 } from "~/components/ui/table";
 import SearchInput from "~/components/ui/search";
-import { PageHeader } from "~/components/layout/page-header";
-import { DataTableToolbar } from "~/components/layout/data-table-toolbar";
-import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
-import { TableEmptyState, MobileEmptyState } from "~/components/layout/empty-state";
-import { MobilePaginationWrapper } from "~/components/layout/mobile-pagination-wrapper";
-import { SortableTableHead } from "~/components/layout/sortable-table-head";
+import { PageHeader } from "~/components/shared/page-header";
+import { DataTableToolbar } from "~/components/table/toolbar";
+import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/table/skeleton";
+import { TableEmptyState, MobileEmptyState } from "~/components/shared/empty-state";
+import { MobilePaginationWrapper } from "~/components/shared/mobile-pagination-wrapper";
+import { SortableTableHead } from "~/components/table/head";
 import {
 	Tooltip,
 	TooltipContent,
@@ -270,3 +270,4 @@ export default function UserPage() {
 		</TooltipProvider>
 	);
 }
+

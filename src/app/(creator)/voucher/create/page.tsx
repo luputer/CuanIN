@@ -6,88 +6,66 @@ import {
     PlusIcon
 } from "@phosphor-icons/react";
 import { isBefore, startOfDay } from "date-fns";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
-import { DetailHeader } from "~/components/layout/detail-header";
-import ButtonCancel from "~/components/ui/button-cancel";
-import ButtonSave from "~/components/ui/button-save";
-import { DateRangeOnlyPicker } from "~/components/ui/date-range-only-picker";
-import { FormInput, FormRow, FormSelect, SectionHeader } from "~/components/ui/form-layout";
-import { cn, formatNumberInput } from "~/lib/utils";
 import { api } from "~/trpc/react";
+import { FormInput, FormSelect, SectionHeader, FormRow } from "~/components/shared/form-layout";
+import { DateRangeOnlyPicker } from "~/components/shared/date-range-only-picker";
+import { cn, formatNumberInput } from "~/lib/utils";
+import { Skeleton } from "~/components/ui/skeleton";
+import ButtonSave from "~/components/shared/button-save";
+import ButtonCancel from "~/components/shared/button-cancel";
+import { DetailHeader } from "~/components/shared/detail-header";
+import { VoucherSidebarMetadata } from "~/components/creator/voucher-sidebar-metadata";
+import { useCreateVoucher } from "~/hooks/creator/use-create-voucher";
 
 export default function VoucherCreatePage() {
-    const router = useRouter();
-    const utils = api.useUtils();
+    const { form, router, isPending, onSubmit } = useCreateVoucher();
+    const { register, watch, setValue, formState: { errors } } = form;
 
-    // Fetch creator's products list
-    const { data: productsData } = api.products.getAll.useQuery(
+    // Watch values for conditional rendering and logic
+    const type = watch("type");
+    const discount = watch("discount");
+    const usageType = watch("usageType");
+    const isLimitEnabled = watch("usageLimit") !== undefined && watch("usageLimit") !== null;
+    const usageLimit = watch("usageLimit");
+    const isLimitPerUser = watch("isLimitPerUser");
+    const selectedProductIds = watch("productIds") || [];
+    const startDate = watch("startDate");
+    const endDate = watch("endDate");
+
+    const { data: productsData, isLoading: isProductsLoading } = api.products.getAll.useQuery(
         { limit: 100 }
     );
     const productsList = productsData?.items ?? [];
 
-    const [name, setName] = useState("");
-    const [code, setCode] = useState("");
-    const [type, setType] = useState<"PERSEN" | "NOMINAL">("PERSEN");
-    const [discount, setDiscount] = useState(0);
-    const [startDate, setStartDate] = useState<Date | undefined>();
-    const [endDate, setEndDate] = useState<Date | undefined>();
-    const [status, setStatus] = useState<"aktif" | "nonaktif" | "expired">("aktif");
-    const [usageType, setUsageType] = useState<"ALL_PRODUCTS" | "SELECTED_PRODUCTS">("ALL_PRODUCTS");
-    const [usageLimit, setUsageLimit] = useState<number | undefined>();
-    const [isLimitEnabled, setIsLimitEnabled] = useState(false);
-    const [isLimitPerUser, setIsLimitPerUser] = useState(false);
-
-    // Multi-selected products list state
-    const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-
-    const createMutation = api.vouchers.create.useMutation({
-        onSuccess: () => {
-            toast.success("Voucher berhasil dibuat");
-            void utils.vouchers.getAll.invalidate();
-            router.push("/voucher");
-        },
-        onError: (error) => {
-            toast.error(error.message || "Gagal membuat voucher");
-        },
-    });
-
-    const handleSubmit = async () => {
-        if (!name.trim()) {
-            toast.error("Nama voucher wajib diisi");
-            return;
-        }
-
-        if (!code.trim()) {
-            toast.error("Kode voucher wajib diisi");
-            return;
-        }
-
-        if (!startDate || !endDate) {
-            toast.error("Periode mulai dan berakhir wajib diisi");
-            return;
-        }
-
-        if (startDate > endDate) {
-            toast.error("Tanggal selesai harus sama atau lebih besar dari tanggal mulai");
-            return;
-        }
-
-        createMutation.mutate({
-            name: name.trim(),
-            code: code.trim(),
-            type,
-            discount,
-            startDate: startDate.toISOString(),
-            endDate: endDate.toISOString(),
-            status,
-            usageType,
-            usageLimit: isLimitEnabled ? usageLimit : null,
-            isLimitPerUser,
-            productIds: usageType === "SELECTED_PRODUCTS" ? selectedProductIds : [],
-        });
-    };
+    if (isProductsLoading) {
+        return (
+            <div className="w-full max-w-7xl mx-auto space-y-6">
+                <Skeleton className="h-10 w-48" />
+                <div className="rounded-xl border border-slate-800 overflow-hidden bg-white px-4 py-4 sm:px-8 sm:py-8 space-y-6">
+                    <Skeleton className="h-6 w-44" />
+                    <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start pt-6">
+                        {/* Kiri: Form Skeleton */}
+                        <div className="flex-1 min-w-0 w-full space-y-5">
+                            <Skeleton className="h-16 w-full" />
+                            <Skeleton className="h-16 w-full" />
+                            <div className="grid grid-cols-2 gap-4">
+                                <Skeleton className="h-16 w-full" />
+                                <Skeleton className="h-16 w-full" />
+                            </div>
+                            <Skeleton className="h-16 w-full" />
+                            <Skeleton className="h-20 w-full" />
+                        </div>
+                        {/* Kanan: Sidebar Skeleton */}
+                        <div className="shrink-0 w-full lg:w-[400px] space-y-6">
+                            <Skeleton className="h-24 w-full" />
+                            <Skeleton className="h-24 w-full" />
+                            <Skeleton className="h-32 w-full" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full max-w-7xl mx-auto">
@@ -108,49 +86,47 @@ export default function VoucherCreatePage() {
                             {/* Kiri: Informasi Voucher */}
                             <div className="flex-1 min-w-0 w-full space-y-0">
                                 {/* Nama Voucher */}
-                                <FormRow label="Nama Voucher">
+                                <FormRow label="Nama Voucher" error={errors.name?.message}>
                                     <FormInput
-                                        value={name}
-                                        onChange={(event) => setName(event.target.value)}
+                                        {...register("name")}
                                         placeholder="Masukkan nama voucher"
                                     />
                                 </FormRow>
 
                                 {/* Kode Voucher */}
-                                <FormRow label="Kode Voucher">
+                                <FormRow label="Kode Voucher" error={errors.code?.message}>
                                     <FormInput
-                                        value={code}
-                                        onChange={(event) => setCode(event.target.value)}
+                                        {...register("code")}
                                         placeholder="Masukkan kode voucher"
                                     />
                                 </FormRow>
 
                                 {/* Tipe & Diskon */}
                                 <div className="grid gap-4 md:grid-cols-2">
-                                    <FormRow label="Tipe">
-                                        <FormSelect value={type} onChange={(event) => setType(event.target.value as "PERSEN" | "NOMINAL")}>
+                                    <FormRow label="Tipe" error={errors.type?.message}>
+                                        <FormSelect {...register("type")}>
                                             <option value="PERSEN">Persen</option>
                                             <option value="NOMINAL">Nominal</option>
                                         </FormSelect>
                                     </FormRow>
 
-                                    <FormRow label="Diskon">
+                                    <FormRow label="Diskon" error={errors.discount?.message}>
                                         <FormInput
                                             type="text"
                                             inputMode="numeric"
                                             value={discount === 0 ? "" : formatNumberInput(discount.toString())}
                                             onChange={(event) => {
                                                 const val = event.target.value.replace(/[^0-9]/g, "");
-                                                setDiscount(val ? Number(val) : 0);
+                                                setValue("discount", val ? Number(val) : 0, { shouldValidate: true, shouldDirty: true });
                                             }}
                                             placeholder="0"
                                             prefix={type === "PERSEN" ? "%" : "Rp"}
                                             suffix={
                                                 <div className="flex flex-col">
-                                                    <button type="button" onClick={() => setDiscount((prev) => prev + (type === "PERSEN" ? 1 : 1000))} className="cursor-pointer">
+                                                    <button type="button" onClick={() => setValue("discount", discount + (type === "PERSEN" ? 1 : 1000), { shouldValidate: true, shouldDirty: true })} className="cursor-pointer">
                                                         <CaretUpIcon weight="fill" className="size-3 text-slate-400 hover:text-cyan-600 transition-colors" />
                                                     </button>
-                                                    <button type="button" onClick={() => setDiscount((prev) => Math.max(0, prev - (type === "PERSEN" ? 1 : 1000)))} className="cursor-pointer">
+                                                    <button type="button" onClick={() => setValue("discount", Math.max(0, discount - (type === "PERSEN" ? 1 : 1000)), { shouldValidate: true, shouldDirty: true })} className="cursor-pointer">
                                                         <CaretDownIcon weight="fill" className="size-3 text-slate-400 hover:text-cyan-600 transition-colors" />
                                                     </button>
                                                 </div>
@@ -159,25 +135,32 @@ export default function VoucherCreatePage() {
                                     </FormRow>
                                 </div>
 
-                                {/* Status */}
-                                <FormRow label="Status">
-                                    <FormSelect value={status} onChange={(event) => setStatus(event.target.value as "aktif" | "nonaktif" | "expired")}>
-                                        <option value="aktif">Aktif</option>
-                                        <option value="nonaktif">Nonaktif</option>
-                                        <option value="expired">Expired</option>
-                                    </FormSelect>
+                                {/* Periode Berlaku */}
+                                <FormRow label="Periode Berlaku" error={errors.startDate?.message || errors.endDate?.message}>
+                                    <DateRangeOnlyPicker
+                                        startDate={startDate}
+                                        endDate={endDate}
+                                        onChange={({ startDate: s, endDate: e }) => {
+                                            if (s) setValue("startDate", s, { shouldValidate: true, shouldDirty: true });
+                                            if (e) setValue("endDate", e, { shouldValidate: true, shouldDirty: true });
+                                        }}
+                                        placeholder="Pilih Masa Berlaku"
+                                        disabled={(date) => {
+                                            const now = new Date();
+                                            return isBefore(date, startOfDay(now));
+                                        }}
+                                    />
                                 </FormRow>
 
                                 {/* Penggunaan */}
-                                <FormRow label="Jenis Penggunaan">
+                                <FormRow label="Jenis Penggunaan" error={errors.usageType?.message}>
                                     <div className="flex flex-col gap-3 w-full border border-slate-300 rounded-lg bg-white p-3">
                                         <label className="flex items-center gap-2 cursor-pointer">
                                             <input
                                                 type="radio"
-                                                name="usageType"
                                                 value="ALL_PRODUCTS"
                                                 checked={usageType === "ALL_PRODUCTS"}
-                                                onChange={() => setUsageType("ALL_PRODUCTS")}
+                                                onChange={() => setValue("usageType", "ALL_PRODUCTS", { shouldValidate: true, shouldDirty: true })}
                                                 className="size-4 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 border-slate-300"
                                             />
                                             <span className={cn("text-base transition-colors", usageType === "ALL_PRODUCTS" ? "font-medium text-cyan-600" : "font-normal text-slate-700")}>Terapkan ke Semua Produk</span>
@@ -186,10 +169,9 @@ export default function VoucherCreatePage() {
                                         <label className="flex items-center gap-2 cursor-pointer">
                                             <input
                                                 type="radio"
-                                                name="usageType"
                                                 value="SELECTED_PRODUCTS"
                                                 checked={usageType === "SELECTED_PRODUCTS"}
-                                                onChange={() => setUsageType("SELECTED_PRODUCTS")}
+                                                onChange={() => setValue("usageType", "SELECTED_PRODUCTS", { shouldValidate: true, shouldDirty: true })}
                                                 className="size-4 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 border-slate-300"
                                             />
                                             <span className={cn("text-base transition-colors", usageType === "SELECTED_PRODUCTS" ? "font-medium text-cyan-600" : "font-normal text-slate-700")}>Terapkan ke Produk Pilihan</span>
@@ -221,9 +203,9 @@ export default function VoucherCreatePage() {
                                                                         checked={isChecked}
                                                                         onChange={() => {
                                                                             if (isChecked) {
-                                                                                setSelectedProductIds(selectedProductIds.filter(id => id !== prod.id));
+                                                                                setValue("productIds", selectedProductIds.filter(id => id !== prod.id), { shouldDirty: true });
                                                                             } else {
-                                                                                setSelectedProductIds([...selectedProductIds, prod.id]);
+                                                                                setValue("productIds", [...selectedProductIds, prod.id], { shouldDirty: true });
                                                                             }
                                                                         }}
                                                                         className="size-3.5 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 rounded border-slate-300"
@@ -243,92 +225,7 @@ export default function VoucherCreatePage() {
                                 </FormRow>
                             </div>
 
-                            {/* Kanan: Sidebar Metadata */}
-                            <div className="shrink-0 w-full lg:w-[400px] space-y-6">
-                                {/* Periode Berlaku */}
-                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                    <p className="text-slate-700 text-sm font-semibold mb-3">Periode Berlaku</p>
-                                    <DateRangeOnlyPicker
-                                        startDate={startDate}
-                                        endDate={endDate}
-                                        onChange={({ startDate, endDate }) => {
-                                            setStartDate(startDate);
-                                            setEndDate(endDate);
-                                        }}
-                                        placeholder="Pilih Masa Berlaku"
-                                        disabled={(date) => {
-                                            const now = new Date();
-                                            return isBefore(date, startOfDay(now));
-                                        }}
-                                    />
-                                </div>
-
-                                {/* Batasan */}
-                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                    <p className="text-slate-700 text-sm font-semibold mb-3">Batasan</p>
-                                    <div className="space-y-4">
-                                        <div className="space-y-2">
-                                            <div className="flex items-center justify-between">
-                                                <label className="text-sm font-medium text-slate-700">Batasi Jumlah Voucher</label>
-                                                <label className="relative inline-flex items-center cursor-pointer">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="sr-only peer"
-                                                        checked={isLimitEnabled}
-                                                        onChange={() => {
-                                                            if (isLimitEnabled) {
-                                                                setUsageLimit(undefined);
-                                                            } else {
-                                                                setUsageLimit(10);
-                                                            }
-                                                            setIsLimitEnabled(!isLimitEnabled);
-                                                        }}
-                                                    />
-                                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:size-5 after:transition-all peer-checked:bg-cyan-600"></div>
-                                                </label>
-                                            </div>
-
-                                            {isLimitEnabled && (
-                                                <div className="animate-in fade-in slide-in-from-top-2 duration-200">
-                                                    <FormInput
-                                                        type="text"
-                                                        inputMode="numeric"
-                                                        value={usageLimit ?? ""}
-                                                        onChange={(event) => {
-                                                            const val = event.target.value.replace(/[^0-9]/g, "");
-                                                            setUsageLimit(val ? Number(val) : undefined);
-                                                        }}
-                                                        placeholder="Masukkan batas kuota voucher"
-                                                        suffix={
-                                                            <div className="flex flex-col">
-                                                                <button type="button" onClick={() => setUsageLimit((prev) => (prev ?? 0) + 1)} className="cursor-pointer">
-                                                                    <CaretUpIcon weight="fill" className="size-3 text-slate-400 hover:text-cyan-600 transition-colors" />
-                                                                </button>
-                                                                <button type="button" onClick={() => setUsageLimit((prev) => Math.max(1, (prev ?? 0) - 1))} className="cursor-pointer">
-                                                                    <CaretDownIcon weight="fill" className="size-3 text-slate-400 hover:text-cyan-600 transition-colors" />
-                                                                </button>
-                                                            </div>
-                                                        }
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <div className="flex items-center justify-between border-t border-slate-200 pt-3">
-                                            <label className="text-sm font-medium text-slate-700">Batasi 1x per Pembeli (Email)</label>
-                                            <label className="relative inline-flex items-center cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    className="sr-only peer"
-                                                    checked={isLimitPerUser}
-                                                    onChange={() => setIsLimitPerUser(!isLimitPerUser)}
-                                                />
-                                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:size-5 after:transition-all peer-checked:bg-cyan-600"></div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <VoucherSidebarMetadata form={form} />
                         </div>
 
                         {/* Footer Action Buttons */}
@@ -339,8 +236,8 @@ export default function VoucherCreatePage() {
                                     onClick={() => router.push("/voucher")}
                                 />
                                 <ButtonSave
-                                    onClick={handleSubmit}
-                                    isLoading={createMutation.isPending}
+                                    onClick={onSubmit}
+                                    isLoading={isPending}
                                     label="Tambah Voucher"
                                     loadingLabel="Menambah..."
                                     icon={PlusIcon}

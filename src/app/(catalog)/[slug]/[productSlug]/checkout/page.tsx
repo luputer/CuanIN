@@ -1,12 +1,11 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { useCheckout } from "~/hooks/checkout/use-checkout";
 import { CheckoutProductCard } from "~/components/checkout/product-card";
 import { CheckoutForm } from "~/components/checkout/checkout-form";
 import { CheckoutSummary } from "~/components/checkout/checkout-summary";
+import { CatalogNavHeader, CatalogNavHeaderSkeleton } from "~/components/layout/catalog-nav-header";
 
 export default function CheckoutPage() {
   const {
@@ -39,21 +38,16 @@ export default function CheckoutPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-50 animate-pulse">
-        <div className="sticky top-0 z-10 border-b border-slate-200 bg-white">
-          <div className="mx-auto flex h-16 max-w-6xl items-center px-4">
-            <div className="h-10 w-10 rounded-full bg-slate-200" />
-          </div>
-        </div>
-        <div className="mx-auto max-w-6xl px-4 py-10">
-          <div className="mb-8 h-9 w-36 rounded-xl bg-slate-200" />
-          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-5">
+        <CatalogNavHeaderSkeleton />
+        <div className="mx-auto max-w-6xl px-4 py-8 md:py-10">
+          <div className="mb-6 md:mb-8 h-8 md:h-9 w-32 md:w-36 rounded-xl bg-slate-200" />
+          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-5 md:gap-8">
             <div className="space-y-6 lg:col-span-3">
-              <div className="h-40 w-full rounded-xl bg-slate-200" />
-              <div className="h-96 w-full rounded-xl bg-slate-200" />
+              <div className="h-32 md:h-40 w-full rounded-xl bg-slate-200" />
+              <div className="h-[400px] md:h-96 w-full rounded-xl bg-slate-200" />
             </div>
             <div className="space-y-6 lg:col-span-2">
-              <div className="h-24 w-full rounded-xl bg-slate-200" />
-              <div className="h-64 w-full rounded-xl bg-slate-200" />
+              <div className="h-[300px] md:h-80 w-full rounded-xl bg-slate-200" />
             </div>
           </div>
         </div>
@@ -72,23 +66,14 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* HEADER */}
-      <div className="sticky top-0 z-10 border-b border-slate-200 bg-white">
-        <div className="mx-auto flex h-16 max-w-6xl items-center px-4">
-          <Link
-            href={`/${slug}/${productSlug}`}
-            className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-slate-100"
-          >
-            <ArrowLeftIcon className="h-5 w-5 text-slate-600" />
-          </Link>
-        </div>
-      </div>
+      <CatalogNavHeader backHref={`/${slug}/${productSlug}`} />
 
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <h1 className="mb-8 text-3xl font-bold text-slate-800">Checkout</h1>
+      <div className="mx-auto max-w-6xl px-4 py-8 md:py-10">
+        <h1 className="mb-6 md:mb-8 text-2xl md:text-3xl font-bold text-slate-800">Checkout</h1>
 
-        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-5">
+        <div className="grid grid-cols-1 items-start gap-6 md:gap-8 lg:grid-cols-5">
           {/* LEFT */}
-          <div className="space-y-6 lg:col-span-3 lg:pb-12">
+          <div className="w-full min-w-0 space-y-6 lg:col-span-3 lg:pb-12">
             <CheckoutProductCard 
               product={product} 
               price={price} 
@@ -108,22 +93,24 @@ export default function CheckoutPage() {
           </div>
 
           {/* RIGHT */}
-          <CheckoutSummary
-            form={form}
-            appliedVoucher={appliedVoucher}
-            isValidatingVoucher={isValidatingVoucher}
-            voucherError={voucherError}
-            handleApplyVoucher={handleApplyVoucher}
-            handleRemoveVoucher={handleRemoveVoucher}
-            isBuyingOwnProduct={isBuyingOwnProduct}
-            price={price}
-            originalPrice={originalPrice}
-            hasDiscount={hasDiscount}
-            discountAmount={discountAmount}
-            finalPrice={finalPrice}
-            isGratis={isGratis}
-            isPending={purchaseMutation.isPending}
-          />
+          <div className="w-full min-w-0 lg:sticky lg:top-24 lg:col-span-2 lg:h-fit lg:self-start">
+            <CheckoutSummary
+              form={form}
+              appliedVoucher={appliedVoucher}
+              isValidatingVoucher={isValidatingVoucher}
+              voucherError={voucherError}
+              handleApplyVoucher={handleApplyVoucher}
+              handleRemoveVoucher={handleRemoveVoucher}
+              isBuyingOwnProduct={isBuyingOwnProduct}
+              price={price}
+              originalPrice={originalPrice}
+              hasDiscount={hasDiscount}
+              discountAmount={discountAmount}
+              finalPrice={finalPrice}
+              isGratis={isGratis}
+              isPending={purchaseMutation.isPending}
+            />
+          </div>
         </div>
       </div>
     </div>

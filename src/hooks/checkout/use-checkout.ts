@@ -101,7 +101,19 @@ export function useCheckout() {
     defaultValues: { name: "", email: "", phone: "", promo: "", custom: {} },
   });
 
-  const { getValues, setValue } = form;
+  const { getValues, setValue, watch } = form;
+  const watchedEmail = watch("email");
+  const prevEmailRef = React.useRef(watchedEmail);
+
+  React.useEffect(() => {
+    // Hanya hapus jika email sudah pernah diisi dan sekarang berbeda
+    if (prevEmailRef.current !== undefined && prevEmailRef.current !== watchedEmail && appliedVoucher) {
+      setAppliedVoucher(null);
+      setVoucherError("Email diubah, silakan terapkan kembali kode voucher.");
+      toast.warning("Voucher dihapus karena email diubah.");
+    }
+    prevEmailRef.current = watchedEmail;
+  }, [watchedEmail, appliedVoucher]);
 
   React.useEffect(() => {
     if (status !== "authenticated") return;
@@ -123,6 +135,16 @@ export function useCheckout() {
 
   const handleApplyVoucher = async () => {
     const promoValue = form.getValues("promo");
+    const email = form.getValues("email");
+    
+    // Validate email presence and format
+    const emailResult = z.string().email().safeParse(email);
+    if (!emailResult.success) {
+        setVoucherError("Silakan isi Email dengan benar terlebih dahulu untuk menggunakan voucher");
+        form.setError("email", { message: "Email wajib diisi untuk menggunakan voucher" });
+        return;
+    }
+
     if (!promoValue?.trim()) {
       setVoucherError("Silakan masukkan kode voucher terlebih dahulu");
       return;
@@ -135,7 +157,7 @@ export function useCheckout() {
       const data = await apiUtils.vouchers.validatePromoCode.fetch({
         code: promoValue.trim(),
         productId: product.id,
-        buyerEmail: form.getValues("email"),
+        buyerEmail: email,
       });
       setAppliedVoucher(data as AppliedVoucher);
       setVoucherError(null);

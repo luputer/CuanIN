@@ -5,7 +5,7 @@ import { PhoneIcon, EnvelopeIcon, MapPinIcon } from "@phosphor-icons/react";
 export default function Footer() {
     return (
         <footer id="footer" className="w-full bg-cyan-950 text-white mt-auto">
-            <div className="container mx-auto px-6 md:px-20 py-10 md:py-12">
+            <div className="max-w-6xl mx-auto px-4 md:px-6 py-10 md:py-12">
                 <div className="flex flex-col md:flex-row justify-between items-start gap-10 md:gap-8">
                     <div className="max-w-xs">
                         <h3 className="text-2xl font-bold text-yellow-200 mb-2">CuanIN</h3>

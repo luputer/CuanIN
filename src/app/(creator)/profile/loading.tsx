@@ -1,4 +1,4 @@
-import { CreatorProfileSkeleton } from "~/components/layout/detail-skeletons";
+import { CreatorProfileSkeleton } from "~/components/shared/detail-skeletons";
 
 export default function Loading() {
     return <CreatorProfileSkeleton />;

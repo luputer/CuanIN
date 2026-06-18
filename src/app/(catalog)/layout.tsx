@@ -1,11 +1,17 @@
 import { type Metadata } from "next";
+import { PurchaseHistoryButton } from "~/components/catalog/purchase-history-button";
 
 export const metadata: Metadata = {
-  title: "Katalog Produk - CuanIN",
+  title: "Katalog Kreator - CuanIN",
   description:
-    "Temukan dan beli webinar, kelas online, serta produk digital dari kreator CuanIN.",
+    "Jelajahi dan beli produk digital, webinar, serta kelas online dari kreator di platform CuanIN.",
 };
 
 export default function CatalogLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      {children}
+      <PurchaseHistoryButton />
+    </>
+  );
 }

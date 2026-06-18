@@ -9,19 +9,19 @@ import { CopyIcon, TrashIcon } from "@phosphor-icons/react";
 
 import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
-import { useWebinar } from "~/hooks/use-webinar";
+import { useEditWebinar } from "~/hooks/creator/use-edit-webinar";
 import { Button } from "~/components/ui/button";
-import { SectionHeader, FormInput, FormRow } from "~/components/ui/form-layout";
-import { DateRangePicker } from "~/components/ui/date-range-picker";
-import DeleteConfirmDialog from "~/components/ui/delete-confirm-dialog";
-import { CreatorDetailSkeleton } from "~/components/layout/detail-skeletons";
+import { SectionHeader, FormInput, FormRow } from "~/components/shared/form-layout";
+import { DateRangePicker } from "~/components/shared/date-range-picker";
+import DeleteConfirmDialog from "~/components/shared/delete-confirm-dialog";
+import { CreatorDetailSkeleton } from "~/components/shared/detail-skeletons";
 import { 
     BasicInfoSection, 
     PricingSection, 
     QuotaSection, 
     PlatformSelector 
 } from "~/components/creator/product-form-sections";
-import { ProductFormLayout } from "~/components/layout/product-form-layout";
+import { ProductFormLayout } from "~/components/shared/product-form-layout";
 
 /**
  * WebinarDetailPage
@@ -48,7 +48,7 @@ export default function WebinarDetailPage() {
         isPending,
         isLoadingProduct,
         product,
-    } = useWebinar({ id, isEdit: true });
+    } = useEditWebinar({ id, isEdit: true });
 
     const { register, watch, setValue, formState: { errors } } = form;
 
@@ -113,6 +113,7 @@ export default function WebinarDetailPage() {
                 backLabel="Kembali ke Daftar"
                 buyerCount={buyerCount ?? 0}
                 createdAt={product.createdAt}
+                updatedAt={product.updatedAt}
                 onSubmit={onSubmit}
                 onCancel={() => router.push("/webinar")}
                 isPending={isPending}
@@ -140,11 +141,16 @@ export default function WebinarDetailPage() {
                         <Button
                             variant="outline"
                             size="sm"
-                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border-cyan-600 hover:bg-cyan-50 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
-                            onClick={handleCopyLink}
+                            className={cn(
+                                "flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border-cyan-600 hover:bg-cyan-50 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer",
+                                product.status !== "published" && "opacity-50 cursor-not-allowed border-slate-300 text-slate-400 hover:bg-white hover:shadow-none"
+                            )}
+                            onClick={product.status === "published" ? handleCopyLink : undefined}
+                            disabled={product.status !== "published"}
+                            title={product.status !== "published" ? "Produk belum dipublikasikan" : "Salin Link Produk"}
                         >
-                            <CopyIcon className="w-4 h-4 text-cyan-600" />
-                            <span className="text-sm font-regular text-cyan-600 whitespace-nowrap">
+                            <CopyIcon className={cn("w-4 h-4", product.status === "published" ? "text-cyan-600" : "text-slate-400")} />
+                            <span className={cn("text-sm font-regular whitespace-nowrap", product.status === "published" ? "text-cyan-600" : "text-slate-400")}>
                                 Salin Link Produk
                             </span>
                         </Button>

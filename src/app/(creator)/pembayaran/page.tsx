@@ -15,17 +15,17 @@ import {
 
 // Internal & Utils
 import { api } from "~/trpc/react";
-import { useDebounce } from "~/hooks/use-debounce";
+import { useDebounce } from "~/hooks/shared/use-debounce";
 import { type WithdrawalFormData } from "~/lib/validation";
 import { formatCurrency } from "~/lib/utils";
 
 // Components
 import SearchInput from "~/components/ui/search";
-import { PageHeader } from "~/components/layout/page-header";
-import { DataTableToolbar, SelectFilter } from "~/components/layout/data-table-toolbar";
-import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/layout/table-skeleton";
-import { TableEmptyState, MobileEmptyState } from "~/components/layout/empty-state";
-import { MobilePaginationWrapper } from "~/components/layout/mobile-pagination-wrapper";
+import { PageHeader } from "~/components/shared/page-header";
+import { DataTableToolbar, SelectFilter } from "~/components/table/toolbar";
+import { DataTableBodySkeleton, DataTableMobileSkeleton } from "~/components/table/skeleton";
+import { TableEmptyState, MobileEmptyState } from "~/components/shared/empty-state";
+import { MobilePaginationWrapper } from "~/components/shared/mobile-pagination-wrapper";
 import { StatusBadge } from "~/components/ui/status-badge";
 import {
   Table,
@@ -46,8 +46,8 @@ import {
   WithdrawalDialog,
   TransactionDetailDialog,
   getStatusLabel,
-} from "~/components/layout/transaction-dialogs";
-import { TransactionStatsCard } from "~/components/layout/transaction-stats-card";
+} from "~/components/shared/transaction-dialogs";
+import { TransactionStatsCard } from "~/components/shared/transaction-stats-card";
 
 export default function TransactionPage() {
   // ─── States & Hooks ──────────────────────────────────────────────────────
@@ -56,6 +56,7 @@ export default function TransactionPage() {
   const [limit, setLimit] = useState(7);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("ALL");
+  const [type, setType] = useState<"ALL" | "INCOME" | "WITHDRAWAL">("ALL");
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedTx, setSelectedTx] = useState<any>(null);
@@ -70,6 +71,7 @@ export default function TransactionPage() {
       limit,
       search: debouncedSearch,
       status,
+      type: type === "ALL" ? undefined : type,
     },
     {
       placeholderData: (prev) => prev,
@@ -140,23 +142,35 @@ export default function TransactionPage() {
             <SearchInput
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Cari ID, Email, Rekening, dll"
+              placeholder="Cari ID Transaksi atau Nama"
               className="w-full"
             />
           }
           actions={
-            <SelectFilter
-              label={`Status: ${getStatusLabel(status)}`}
-              value={status}
-              onValueChange={setStatus}
-              options={[
-                { value: "ALL", label: "Semua Status" },
-                { value: "SUCCEEDED", label: "Berhasil" },
-                { value: "PENDING", label: "Menunggu" },
-                { value: "FAILED", label: "Gagal" },
-                { value: "EXPIRED", label: "Kedaluwarsa" },
-              ]}
-            />
+            <>
+              <SelectFilter
+                label={`Tipe: ${type === "ALL" ? "Semua" : type === "INCOME" ? "Masuk" : "Tarik"}`}
+                value={type}
+                onValueChange={(v) => setType(v as "ALL" | "INCOME" | "WITHDRAWAL")}
+                options={[
+                  { value: "ALL", label: "Semua" },
+                  { value: "INCOME", label: "Masuk" },
+                  { value: "WITHDRAWAL", label: "Tarik" },
+                ]}
+              />
+              <SelectFilter
+                label={`Status: ${status === "ALL" ? "Semua" : getStatusLabel(status)}`}
+                value={status}
+                onValueChange={setStatus}
+                options={[
+                  { value: "ALL", label: "Semua" },
+                  { value: "SUCCEEDED", label: "Berhasil" },
+                  { value: "PENDING", label: "Menunggu" },
+                  { value: "FAILED", label: "Gagal" },
+                  { value: "EXPIRED", label: "Kedaluwarsa" },
+                ]}
+              />
+            </>
           }
         />
 

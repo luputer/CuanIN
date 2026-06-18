@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { EyeIcon, UserCircleIcon } from "@phosphor-icons/react";
 import { TableRow, TableCell } from "~/components/ui/table";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";   
 import { StatusBadge } from "~/components/ui/status-badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
 import { getProductTypeLabel } from "~/lib/constants";
@@ -36,7 +36,7 @@ export function AdminProductTableRow({ item, index, page, limit, showCreatorColu
 
             {showCreatorColumn && (
                 <TableCell className="whitespace-nowrap">
-                    <div className="flex items-center gap-3 min-h-[48px]">
+                    <div className="flex items-center gap-3 min-h-[48px]">      
                         <Avatar className="h-8 w-8">
                             <AvatarImage src={item.user?.image ?? undefined} alt={item.user?.name ?? ""} />
                             <AvatarFallback>
@@ -70,7 +70,7 @@ export function AdminProductTableRow({ item, index, page, limit, showCreatorColu
 
             <TableCell className="whitespace-nowrap">
                 <div className="flex items-center min-h-[48px]">
-                    <StatusBadge status={currentStatus} className="px-4" />
+                    <StatusBadge status={currentStatus} className="px-4" />     
                 </div>
             </TableCell>
 
@@ -78,7 +78,7 @@ export function AdminProductTableRow({ item, index, page, limit, showCreatorColu
                 <div className="flex justify-start items-center gap-3">
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Link href={viewHref} className="cursor-pointer">
+                            <Link href={viewHref} className="cursor-pointer">   
                                 <EyeIcon className="w-[22px] h-[22px] text-cyan-600 hover:text-cyan-700" />
                             </Link>
                         </TooltipTrigger>
@@ -122,12 +122,12 @@ export function AdminProductMobileCard({ item, showCreatorColumn, viewHref }: Ad
                         </div>
                     )}
                 </div>
-                <StatusBadge status={currentStatus} className="shrink-0" />
+                <StatusBadge status={currentStatus} className="shrink-0" />     
             </div>
 
             <div className="flex flex-col gap-3 rounded-lg bg-slate-50 border border-slate-100 p-3">
-                <div className="flex justify-between items-center text-xs">
-                    <span className="font-medium text-slate-400">Harga: </span>
+                <div className="flex justify-between items-center text-xs">     
+                    <span className="font-medium text-slate-400">Harga: </span> 
                     <span className="font-semibold text-slate-800">
                         {priceNum === 0 ? "Gratis" : `Rp ${priceNum.toLocaleString("id-ID")}`}
                     </span>

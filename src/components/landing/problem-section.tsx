@@ -6,7 +6,7 @@ export default function ProblemSection() {
   return (
     <section className="py-20 md:py-40 bg-white w-full mt-10 md:mt-0">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
-        <h2 className="text-3xl md:text-4xl font-semibold text-slate-800 mb-12 md:mb-20">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-800 mb-12 md:mb-20">
           Masalah yang Sering Terjadi
         </h2>
 

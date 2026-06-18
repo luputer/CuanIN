@@ -17,7 +17,7 @@ import {
     WeeklyBarChart,
     formatRupiah,
 } from "~/components/dashboard/dashboard-charts";
-import { PageHeader } from "~/components/layout/page-header";
+import { PageHeader } from "~/components/shared/page-header";
 
 export default function DashboardPage() {
     const { data, isLoading, isError } = api.analytics.getDashboardStats.useQuery();

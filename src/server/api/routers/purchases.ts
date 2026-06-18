@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { sendProductEmail, sendPortalLinkEmail } from "../../../lib/email";
+import { sendProductEmail, sendPortalLinkEmail, sendPurchaseHistoryOtpEmail } from "../../../lib/email";
 import { nanoid } from "nanoid";
 import { env } from "~/env";
 import { createInvoice as createXenditInvoice } from "~/lib/xendit";
@@ -9,6 +9,9 @@ import { createSnapTransaction } from "~/lib/midtrans";
 import { calculatePaymentFee } from "~/lib/utils";
 import { Prisma, WithdrawalStatus } from "../../../../prisma/generated/prisma";
 import { getCreatorBalance } from "~/lib/balance";
+import { generateHistoryToken, verifyHistoryToken } from "~/lib/purchase-history-token";
+import crypto from "crypto";
+import { startOfDay, endOfDay } from "date-fns";
 
 const XENDIT_PAYMENT_METHODS = {
   qris: "QRIS",
@@ -154,8 +157,11 @@ export const purchasesRouter = createTRPCRouter({
       let voucherId: string | undefined = undefined;
 
       if (input.promoCode) {
-        const now = new Date();
-        const voucher = await ctx.db.voucher.findUnique({
+        if (!input.buyerEmail) {
+          throw new Error("Silakan isi Email terlebih dahulu untuk menggunakan voucher");
+        }
+
+        const voucher = await ctx.db.voucher.findFirst({
           where: { code: input.promoCode },
           include: {
             products: {
@@ -172,13 +178,21 @@ export const purchasesRouter = createTRPCRouter({
           throw new Error("Voucher tidak aktif");
         }
 
-        const adjustedStartDate = new Date(voucher.startDate);
-        adjustedStartDate.setUTCHours(0, 0, 0, 0);
+        if (!voucher.startDate || !voucher.endDate) {
+          throw new Error("Tanggal voucher tidak valid");
+        }
 
-        const adjustedEndDate = new Date(voucher.endDate);
-        adjustedEndDate.setUTCHours(23, 59, 59, 999);
+        // Bandingkan timestamp secara langsung
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        
+        const voucherStart = new Date(voucher.startDate);
+        voucherStart.setHours(0, 0, 0, 0);
+        
+        const voucherEnd = new Date(voucher.endDate);
+        voucherEnd.setHours(23, 59, 59, 999);
 
-        if (now < adjustedStartDate || now > adjustedEndDate) {
+        if (now < voucherStart || now > voucherEnd) {
           throw new Error("Voucher sudah kedaluwarsa atau belum berlaku");
         }
 
@@ -202,10 +216,6 @@ export const purchasesRouter = createTRPCRouter({
         }
 
         if (voucher.isLimitPerUser) {
-          if (!input.buyerEmail) {
-            throw new Error("Silakan isi form Email terlebih dahulu untuk memvalidasi voucher ini");
-          }
-
           const userUsageCount = await ctx.db.purchase.count({
             where: {
               voucherId: voucher.id,
@@ -221,6 +231,7 @@ export const purchasesRouter = createTRPCRouter({
             throw new Error("Email ini sudah pernah menggunakan kode voucher ini");
           }
         }
+
 
         const discountVal = Number(voucher.discount);
         let discountAmount = 0;
@@ -729,6 +740,7 @@ export const purchasesRouter = createTRPCRouter({
         limit: z.number().min(1).max(100).default(7),
         search: z.string().optional(),
         status: z.string().optional().default("ALL"),
+        type: z.enum(["INCOME", "WITHDRAWAL"]).optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -1088,5 +1100,178 @@ export const purchasesRouter = createTRPCRouter({
       });
 
       return { success: true };
+    }),
+
+  // ─── SEND OTP RIWAYAT PEMBELIAN ──────────────────────────────────────────────
+  sendPurchaseHistoryOtp: publicProcedure
+    .input(z.object({ email: z.string().email("Format email tidak valid") }))
+    .mutation(async ({ ctx, input }) => {
+      const email = input.email.toLowerCase();
+
+      const existingPurchase = await ctx.db.purchase.findFirst({
+        where: {
+          buyerEmail: { equals: email, mode: "insensitive" },
+          status: "completed",
+        },
+        select: { id: true },
+      });
+
+      if (!existingPurchase) {
+        return { success: true };
+      }
+
+      const otp = crypto.randomInt(100000, 999999).toString();
+      const expires = new Date(Date.now() + 10 * 60 * 1000);
+      const identifier = `HISTORY:${email}`;
+
+      await ctx.db.verificationToken.deleteMany({
+        where: { identifier },
+      });
+
+      await ctx.db.verificationToken.create({
+        data: { identifier, token: otp, expires },
+      });
+
+      await sendPurchaseHistoryOtpEmail({ email, otp });
+
+      return { success: true };
+    }),
+
+  // ─── VERIFY OTP RIWAYAT PEMBELIAN ───────────────────────────────────────────
+  verifyPurchaseHistoryOtp: publicProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        otp: z.string().length(6, "OTP harus 6 digit"),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const email = input.email.toLowerCase();
+      const identifier = `HISTORY:${email}`;
+
+      const verificationToken = await ctx.db.verificationToken.findFirst({
+        where: { identifier },
+      });
+
+      if (!verificationToken) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Kode OTP tidak ditemukan. Silakan kirim ulang.",
+        });
+      }
+
+      if (new Date() > verificationToken.expires) {
+        await ctx.db.verificationToken.deleteMany({ where: { identifier } });
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Kode OTP sudah kedaluwarsa.",
+        });
+      }
+
+      if (verificationToken.token !== input.otp) {
+        const updated = await ctx.db.verificationToken.update({
+          where: { token: verificationToken.token },
+          data: { attempts: { increment: 1 } },
+        });
+
+        if (updated.attempts >= 3) {
+          await ctx.db.verificationToken.deleteMany({ where: { identifier } });
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Terlalu banyak percobaan salah. Silakan minta kode OTP baru.",
+          });
+        }
+
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Kode OTP salah. Sisa percobaan: ${3 - updated.attempts}`,
+        });
+      }
+
+      await ctx.db.verificationToken.deleteMany({ where: { identifier } });
+
+      const accessToken = generateHistoryToken(email);
+      return { success: true, accessToken };
+    }),
+
+  // ─── GET PURCHASE HISTORY BY TOKEN (guest) ──────────────────────────────
+  getPurchaseHistoryByToken: publicProcedure
+    .input(z.object({ accessToken: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const payload = verifyHistoryToken(input.accessToken);
+
+      if (!payload) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Token tidak valid atau sudah kedaluwarsa.",
+        });
+      }
+
+      const purchases = await ctx.db.purchase.findMany({
+        where: {
+          buyerEmail: { equals: payload.email, mode: "insensitive" },
+          status: "completed",
+        },
+        include: {
+          product: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              type: true,
+              slug: true,
+              user: {
+                select: {
+                  name: true,
+                  catalog: { select: { slug: true } },
+                },
+              },
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return { email: payload.email, purchases };
+    }),
+
+  // ─── GET PURCHASE HISTORY FOR CREATOR (logged in) ───────────────────────
+  getPurchaseHistoryForCreator: protectedProcedure
+    .query(async ({ ctx }) => {
+      const email = ctx.session.user.email;
+
+      if (!email) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Email tidak ditemukan di akun Anda.",
+        });
+      }
+
+      const purchases = await ctx.db.purchase.findMany({
+        where: {
+          buyerEmail: { equals: email, mode: "insensitive" },
+          status: "completed",
+        },
+        include: {
+          product: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              type: true,
+              slug: true,
+              user: {
+                select: {
+                  name: true,
+                  catalog: { select: { slug: true } },
+                },
+              },
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return { email, purchases };
     }),
 });

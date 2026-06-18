@@ -11,11 +11,11 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import { useState, useRef, useEffect } from "react";
-import { SectionHeader, FormRow } from "~/components/ui/form-layout";
+import { SectionHeader, FormRow } from "~/components/shared/form-layout";
 import React from "react";
 import { cn } from "~/lib/utils";
-import { DetailHeader } from "~/components/layout/detail-header";
-import { AdminDetailSkeleton } from "~/components/layout/detail-skeletons";
+import { DetailHeader } from "~/components/shared/detail-header";
+import { AdminDetailSkeleton } from "~/components/shared/detail-skeletons";
 import { StatusBadge } from "~/components/ui/status-badge";
 
 
@@ -125,13 +125,13 @@ export default function AdminProductDetailPage() {
                             {/* Left: detail fields */}
                             <div className="flex-1 min-w-0 w-full space-y-0">
                                 <FormRow label="Nama">
-                                    <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full text-slate-800 font-medium">
+                                    <div className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full text-slate-800 font-medium break-words">
                                         {product.name}
                                     </div>
                                 </FormRow>
 
                                 <FormRow label="Kreator">
-                                    <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full">
+                                    <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full min-w-0">
                                         {(product as any).user?.image ? (
                                             <Image
                                                 src={(product as any).user.image}
@@ -139,7 +139,7 @@ export default function AdminProductDetailPage() {
                                                 width={32}
                                                 height={32}
                                                 unoptimized
-                                                className="rounded-full w-8 h-8 object-cover border border-slate-200"
+                                                className="rounded-full w-8 h-8 object-cover border border-slate-200 shrink-0"
                                             />
                                         ) : (
                                             <div className="w-8 h-8 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-600 text-xs font-bold shrink-0">
@@ -148,7 +148,7 @@ export default function AdminProductDetailPage() {
                                         )}
                                         <Link
                                             href={`/admin/kreator/${product.userId}`}
-                                            className="text-cyan-600 hover:underline font-semibold text-sm"
+                                            className="text-cyan-600 hover:underline font-semibold text-sm truncate"
                                         >
                                             {(product as any).user?.name ?? "-"}
                                         </Link>
@@ -156,19 +156,19 @@ export default function AdminProductDetailPage() {
                                 </FormRow>
 
                                 <FormRow label="Ringkasan">
-                                    <div className="bg-white border border-slate-200 rounded-lg px-4 py-3 w-full text-slate-700 leading-relaxed">
+                                    <div className="bg-white border border-slate-200 rounded-lg px-4 py-3 w-full text-slate-700 leading-relaxed break-words">
                                         {product.shortDescription ?? "-"}
                                     </div>
                                 </FormRow>
 
                                 <FormRow label="Deskripsi Lengkap">
-                                    <div className="bg-white border border-slate-200 rounded-lg p-4 w-full">
+                                    <div className="bg-white border border-slate-200 rounded-lg p-4 w-full overflow-hidden">
                                         {product.description ? (
                                             <>
                                                 <div
                                                     ref={descriptionRef}
                                                     className={`
-                                                        prose prose-sm prose-slate max-w-none text-slate-800 leading-relaxed
+                                                        prose prose-sm prose-slate max-w-none text-slate-800 leading-relaxed break-words
                                                         [&>*:first-child]:mt-0
                                                         ${!expanded ? "line-clamp-4" : ""}
                                                     `}
@@ -195,7 +195,7 @@ export default function AdminProductDetailPage() {
                                 <FormRow label="Keuntungan">
                                     <div className="bg-white border border-slate-200 rounded-lg p-4 w-full">
                                         {Array.isArray(product.benefit) && product.benefit.length > 0 ? (
-                                            <ul className="list-disc list-inside space-y-1">
+                                            <ul className="list-disc list-inside space-y-1 break-words">
                                                 {(product.benefit as string[]).map((item, index) => (
                                                     <li key={index} className="text-slate-800 font-medium">
                                                         {item}
@@ -374,12 +374,15 @@ export default function AdminProductDetailPage() {
                                         {buyerCount} Orang
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div className="pt-4 border-t border-slate-200 text-right">
-                                    <p className="text-slate-400 text-xs italic">
-                                        Ditambahkan pada {format(new Date(product.createdAt), "d MMMM yyyy HH:mm", { locale: idLocale })}
-                                    </p>
-                                </div>
+                        {/* Footer timestamps */}
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-center mt-8 pt-6 border-t border-slate-200 gap-4 w-full">
+                            <div className="flex flex-col gap-1">
+                                <p className="text-slate-500 text-sm">
+                                    Ditambahkan pada {format(new Date(product.createdAt), "d MMMM yyyy, HH:mm", { locale: idLocale })}
+                                </p>
                             </div>
                         </div>
                     </div>

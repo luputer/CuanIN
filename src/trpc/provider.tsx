@@ -19,6 +19,12 @@ export function TRPCReactProvider({ children }: { children: React.ReactNode }) {
             new QueryClient({
                 defaultOptions: {
                     queries: { staleTime: 30 * 1000 },
+                    mutations: {
+                        throwOnError: false,
+                        onError: () => {
+                            // Suppress console error to prevent Next.js overlay in dev
+                        },
+                    },
                 },
             })
     );
@@ -26,10 +32,6 @@ export function TRPCReactProvider({ children }: { children: React.ReactNode }) {
     const [trpcClient] = useState(() =>
         api.createClient({
             links: [    
-                loggerLink({
-                    enabled: (op) =>
-                        op.direction === "down" && op.result instanceof Error,
-                }),
                 httpBatchLink({
                     transformer: superjson,
                     url: `${getBaseUrl()}/api/trpc`,

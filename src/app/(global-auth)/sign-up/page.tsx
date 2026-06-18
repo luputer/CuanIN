@@ -200,13 +200,15 @@ function SignupPageInner() {
   );
 }
 
-// useSearchParams() requires a Suspense boundary in Next.js App Router
 export default function SignupPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-blue-50">
-          <div className="text-blue-500">Memuat...</div>
+        <div className="flex min-h-screen items-center justify-center bg-white">
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-cyan-200 border-t-cyan-600"></div>
+            <p className="text-sm font-medium text-slate-600">Memuat...</p>
+          </div>
         </div>
       }
     >

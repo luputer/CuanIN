@@ -154,7 +154,14 @@ function LoginPageInner() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-white text-cyan-600">Memuat...</div>}>
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-cyan-200 border-t-cyan-600"></div>
+          <p className="text-sm font-medium text-slate-600">Memuat...</p>
+        </div>
+      </div>
+    }>
       <LoginPageInner />
     </Suspense>
   );

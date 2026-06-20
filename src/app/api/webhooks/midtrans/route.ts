@@ -11,9 +11,9 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    let body;
+    let body: Record<string, unknown>;
     try {
-      body = await req.json();
+      body = await req.json() as Record<string, unknown>;
     } catch {
       console.log("[Midtrans Webhook] Received empty or invalid JSON body");
       return NextResponse.json({ message: "Empty body" }, { status: 200 });
@@ -21,21 +21,48 @@ export async function POST(req: NextRequest) {
 
     console.log("[Midtrans Webhook] Received:", JSON.stringify(body, null, 2));
 
-    const {
-      transaction_status,
-      order_id,
-      gross_amount,
-      signature_key,
-      status_code,
-      payment_type,
-    } = body as {
-      transaction_status: string;
-      order_id: string;
-      gross_amount: string;
-      signature_key: string;
-      status_code: string;
-      payment_type: string;
+    const transaction_status = body.transaction_status as string;
+    const order_id = body.order_id as string;
+    const gross_amount = body.gross_amount as string;
+    const signature_key = body.signature_key as string;
+    const status_code = body.status_code as string;
+    const payment_type = body.payment_type as string;
+    const bank = body.bank as string | undefined;
+    const va_number = body.va_number as string | undefined;
+
+    const bankLabelMap: Record<string, string> = {
+      bca: "BCA",
+      bni: "BNI",
+      bri: "BRI",
+      mandiri: "Mandiri",
+      permata: "Permata",
+      bsi: "BSI",
+      cimb: "CIMB",
+      danamon: "Danamon",
+      mega: "Mega",
+      bukopin: "Bukopin",
+      hanabank: "Hana",
+      akulaku: "Akulaku",
+      mybank: "MyBank",
+      uob: "UOB",
     };
+
+    function buildPaymentLabel() {
+      if (payment_type === "bank_transfer" && bank) {
+        const bankName = bankLabelMap[bank] ?? bank.toUpperCase();
+        return va_number ? `Midtrans: ${bankName} VA (${va_number})` : `Midtrans: ${bankName} Virtual Account`;
+      }
+      if (payment_type === "echannel" && va_number) {
+        return `Midtrans: Mandiri Bill (${va_number})`;
+      }
+      if (payment_type === "credit_card") {
+        return "Midtrans: Kartu Kredit";
+      }
+      if (payment_type === "gopay") return "Midtrans: GoPay";
+      if (payment_type === "shopeepay") return "Midtrans: ShopeePay";
+      if (payment_type === "qris") return "Midtrans: QRIS";
+      return `Midtrans: ${payment_type}`;
+    }
 
     if (!signature_key || !order_id) {
       console.log("[Midtrans Webhook] Ping detected (no signature or order_id)");
@@ -108,7 +135,7 @@ export async function POST(req: NextRequest) {
           data: {
             status: "completed",
             paidAt: new Date(),
-            xenditPaymentMethod: `Midtrans: ${payment_type}`,
+            xenditPaymentMethod: buildPaymentLabel(),
           },
         });
 

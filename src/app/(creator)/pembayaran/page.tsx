@@ -71,7 +71,7 @@ export default function TransactionPage() {
       limit,
       search: debouncedSearch,
       status,
-      type: type === "ALL" ? undefined : type,
+      type: type === "ALL" ? undefined : (type as "INCOME" | "WITHDRAWAL"),
     },
     {
       placeholderData: (prev) => prev,

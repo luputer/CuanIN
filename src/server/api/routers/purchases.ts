@@ -404,7 +404,7 @@ export const purchasesRouter = createTRPCRouter({
         callbacks: {
           finish: `${env.NEXT_PUBLIC_APP_URL}/payment/success?id=${purchase.id}`,
           error: `${env.NEXT_PUBLIC_APP_URL}/payment/failed?id=${purchase.id}`,
-          pending: `${env.NEXT_PUBLIC_APP_URL}/payment/success?id=${purchase.id}`,
+          pending: `${env.NEXT_PUBLIC_APP_URL}/payment/pending?id=${purchase.id}`,
         },
       });
 

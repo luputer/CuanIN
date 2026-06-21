@@ -55,8 +55,8 @@ interface SectionHeaderProps {
 }
 
 export const SectionHeader = ({ title, children, className }: SectionHeaderProps) => (
-    <div className={cn("flex items-center justify-between border-b border-cyan-600 pb-2 mb-2", className)}>
-        <h2 className="text-md font-semibold text-cyan-600">{title}</h2>
+    <div className={cn("flex items-center justify-between border-b border-cuan-cyan pb-2 mb-2", className)}>
+        <h2 className="text-md font-semibold text-cuan-cyan">{title}</h2>
         {children}
     </div>
 );
@@ -78,7 +78,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
         if (prefix || Icon || suffix) {
             return (
                 <div className={cn(
-                    "w-full flex items-center bg-white h-[52px] rounded-lg border border-slate-400 focus-within:ring-2 focus-within:ring-cyan-600/50 transition-all px-4 gap-2",
+                    "w-full flex items-center bg-white h-[52px] rounded-lg border border-slate-400 focus-within:ring-2 focus-within:ring-cuan-cyan/50 transition-all px-4 gap-2",
                     className
                 )}>
                     {Icon && (
@@ -107,7 +107,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             <input
                 ref={ref}
                 className={cn(
-                    "w-full px-4 bg-white h-[52px] rounded-lg border border-slate-400 text-slate-800 font-regular focus:outline-none focus:ring-2 focus:ring-cyan-600/50 text-sm placeholder:text-slate-400 placeholder:text-sm transition-all",
+                    "w-full px-4 bg-white h-[52px] rounded-lg border border-slate-400 text-slate-800 font-regular focus:outline-none focus:ring-2 focus:ring-cuan-cyan/50 text-sm placeholder:text-slate-400 placeholder:text-sm transition-all",
                     className
                 )}
                 {...props}
@@ -127,7 +127,7 @@ export const FormTextarea = React.forwardRef<HTMLTextAreaElement, React.Componen
             <textarea
                 ref={ref}
                 className={cn(
-                    "w-full px-4 py-3 min-h-[100px] bg-white rounded-lg text-slate-800 font-regular border border-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-600/50 text-sm placeholder:text-slate-400 placeholder:text-sm leading-relaxed transition-all",
+                    "w-full px-4 py-3 min-h-[100px] bg-white rounded-lg text-slate-800 font-regular border border-slate-400 focus:outline-none focus:ring-2 focus:ring-cuan-cyan/50 text-sm placeholder:text-slate-400 placeholder:text-sm leading-relaxed transition-all",
                     className
                 )}
                 {...props}
@@ -147,14 +147,14 @@ export const FormSelect = React.forwardRef<HTMLSelectElement, React.ComponentPro
             <select
                 ref={ref}
                 className={cn(
-                    "w-full px-4 bg-white h-[52px] rounded-lg text-slate-800 font-regular border border-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-600/50 text-sm appearance-none cursor-pointer transition-all",
+                    "w-full px-4 bg-white h-[52px] rounded-lg text-slate-800 font-regular border border-slate-400 focus:outline-none focus:ring-2 focus:ring-cuan-cyan/50 text-sm appearance-none cursor-pointer transition-all",
                     className
                 )}
                 {...props}
             >
                 {children}
             </select>
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-800 group-focus-within:text-cyan-600 transition-colors">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-800 group-focus-within:text-cuan-cyan transition-colors">
                 <CaretDownIcon size={18} weight="regular" />
             </div>
         </div>
@@ -224,7 +224,7 @@ export const FormCombobox = React.forwardRef<HTMLInputElement, FormComboboxProps
                     <div className="relative group w-full">
                         <select
                             className={cn(
-                                "w-full px-4 bg-white h-[52px] rounded-lg text-slate-800 font-regular border border-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-600/50 text-sm appearance-none cursor-pointer transition-all",
+                                "w-full px-4 bg-white h-[52px] rounded-lg text-slate-800 font-regular border border-slate-400 focus:outline-none focus:ring-2 focus:ring-cuan-cyan/50 text-sm appearance-none cursor-pointer transition-all",
                                 className
                             )}
                             value={options.includes(inputValue) ? inputValue : ""}
@@ -234,9 +234,9 @@ export const FormCombobox = React.forwardRef<HTMLInputElement, FormComboboxProps
                             {options.map((opt) => (
                                 <option key={opt} value={opt}>{opt}</option>
                             ))}
-                            <option value="custom" className="font-semibold text-cyan-600">+ Input Custom...</option>
+                            <option value="custom" className="font-semibold text-cuan-cyan">+ Input Custom...</option>
                         </select>
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-800 group-focus-within:text-cyan-600 transition-colors">
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-800 group-focus-within:text-cuan-cyan transition-colors">
                             <CaretDownIcon size={18} weight="regular" />
                         </div>
                     </div>

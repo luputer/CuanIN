@@ -135,7 +135,7 @@ function PurchaseRow({ purchase }: { purchase: PurchaseItem }) {
           <Link
             href={productUrl}
             target="_blank"
-            className="inline-flex items-center gap-1 text-xs text-cyan-600 hover:text-cyan-800 transition-colors font-medium"
+            className="inline-flex items-center gap-1 text-xs text-cuan-cyan hover:text-cyan-800 transition-colors font-medium"
           >
             Buka <ArrowSquareOutIcon size={11} />
           </Link>
@@ -166,7 +166,7 @@ export default function RiwayatSayaPage() {
       {/* Page Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-          <ShoppingBagIcon size={26} weight="fill" className="text-cyan-600" />
+          <ShoppingBagIcon size={26} weight="fill" className="text-cuan-cyan" />
           Riwayat Pembelian Saya
         </h1>
         <p className="text-slate-500 text-sm mt-1">
@@ -210,7 +210,7 @@ export default function RiwayatSayaPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Cari nama produk atau kreator..."
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-800 placeholder-slate-400 focus:outline-none focus:border-cyan-500 transition-all text-sm"
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-800 placeholder-slate-400 focus:outline-none focus:border-cuan-cyan/100 transition-all text-sm"
           />
         </div>
       )}
@@ -257,7 +257,7 @@ export default function RiwayatSayaPage() {
               </p>
               <Link
                 href="/"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-slate-800 bg-yellow-300 font-semibold text-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all text-sm"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-slate-800 bg-yellow-300 font-semibold text-slate-800 shadow-[0px_2px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all text-sm"
               >
                 Jelajahi Produk
               </Link>

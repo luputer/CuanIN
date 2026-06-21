@@ -31,7 +31,7 @@ export function DashboardCard({
                     {icon}
                 </div>
                 {showArrow && (
-                    <div className="flex items-center justify-center p-2 rounded-lg border border-slate-800 bg-cuan-cyan/20 text-slate-800 cursor-pointer hover:bg-cyan-200 active:translate-y-px active:shadow-none transition-all">
+                    <div className="flex items-center justify-center p-2 rounded-lg border border-slate-800 bg-cuan-cyan/20 text-slate-800 cursor-pointer hover:bg-cuan-cyan/30 active:translate-y-px active:shadow-none transition-all">
                         <ArrowUpRightIcon size={16} weight="bold" />
                     </div>
                 )}

@@ -28,15 +28,13 @@ export function AuthInput({ label, icon, registration, error, type, ...props }: 
 
         <input
           type={currentType}
-          className={`w-full rounded-lg border py-2.5 pl-12 text-sm transition-all outline-none placeholder:text-sm focus:ring-2 ${
-            isPassword ? "pr-10 text-slate-500 placeholder:text-slate-400" : "pr-6 placeholder:text-slate-400"
-          } ${
-            props.readOnly
+          className={`w-full rounded-lg border py-2.5 pl-12 text-sm transition-all focus:outline-none placeholder:text-sm focus:ring-1 ${isPassword ? "pr-10 text-slate-500 placeholder:text-slate-400" : "pr-6 placeholder:text-slate-400"
+            } ${props.readOnly
               ? "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-500 focus:border-gray-200 focus:ring-0"
               : error
-              ? "border-red-400 focus:border-red-400 focus:ring-red-100 bg-white"
-              : "border-slate-300 bg-slate-100 focus:border-cyan-600 focus:ring-cyan-100"
-          }`}
+                ? "border-red-400 focus:border-red-400 focus:ring-red-100 bg-white"
+                : "border-slate-300 bg-slate-100 focus:border-cuan-cyan focus:ring-cuan-cyan/20"
+            }`}
           {...registration}
           {...props}
         />
@@ -88,11 +86,11 @@ export function GoogleAuthButton({ text, disabled, onError }: GoogleAuthButtonPr
       onClick={handleGoogleSignIn}
       disabled={isDisabled}
       aria-busy={isBusy}
-      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-400 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-cyan-50 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
+      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-400 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-cuan-cyan/10 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
     >
       {isBusy ? (
         <>
-          <span className="size-5 animate-spin rounded-full border-2 border-slate-300 border-t-cyan-600" />
+          <span className="size-5 animate-spin rounded-full border-2 border-slate-300 border-t-cuan-cyan" />
           Menghubungkan...
         </>
       ) : (

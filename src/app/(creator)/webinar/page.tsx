@@ -230,7 +230,7 @@ export default function WebinarPage() {
                                         ) : (
                                             <div className="flex flex-col items-center gap-1">
                                                 <span>Belum ada webinar.</span>
-                                                <Link href="/webinar/create" className="text-cyan-600 font-medium hover:underline">
+                                                <Link href="/webinar/create" className="text-cuan-cyan font-medium hover:underline">
                                                     Yuk, buat webinar pertamamu!
                                                 </Link>
                                             </div>
@@ -249,7 +249,7 @@ export default function WebinarPage() {
 
                                             <TableCell className="max-w-[360px] leading-normal">
                                                 <div className="flex items-center min-h-[48px] py-1">
-                                                    <Link href={`/webinar/${item.id}`} className="hover:text-cyan-600 transition-colors font-medium text-slate-800 line-clamp-2 break-words leading-normal">
+                                                    <Link href={`/webinar/${item.id}`} className="hover:text-cuan-cyan transition-colors font-medium text-slate-800 line-clamp-2 break-words leading-normal">
                                                         {item.name}
                                                     </Link>
                                                 </div>
@@ -290,7 +290,7 @@ export default function WebinarPage() {
                                                     <span>{buyerCounts?.[item.id] ?? 0}</span>
                                                     <button
                                                         onClick={() => router.push(`/webinar/${item.id}?tab=user`)}
-                                                        className="text-sm text-cyan-600 px-4 py-1 border border-cyan-600 rounded-lg hover:bg-cyan-50 font-medium transition-colors cursor-pointer"
+                                                        className="text-sm text-cuan-cyan px-4 py-1 border border-cuan-cyan rounded-lg hover:bg-cuan-cyan/10 font-medium transition-colors cursor-pointer"
                                                     >
                                                         Lihat
                                                     </button>
@@ -338,7 +338,7 @@ export default function WebinarPage() {
                                 ) : (
                                     <div className="flex flex-col items-center gap-1">
                                         <span>Belum ada webinar.</span>
-                                        <Link href="/webinar/create" className="text-cyan-600 font-medium hover:underline mt-1 inline-block">
+                                        <Link href="/webinar/create" className="text-cuan-cyan font-medium hover:underline mt-1 inline-block">
                                             Yuk, buat webinar pertamamu!
                                         </Link>
                                     </div>
@@ -364,7 +364,7 @@ export default function WebinarPage() {
 
                                         {/* Content info */}
                                         <div className="space-y-1.5 flex-1 min-w-0">
-                                            <Link href={`/webinar/${item.id}`} className="font-semibold text-slate-800 hover:text-cyan-600 break-words line-clamp-2">
+                                            <Link href={`/webinar/${item.id}`} className="font-semibold text-slate-800 hover:text-cuan-cyan break-words line-clamp-2">
                                                 {item.name}
                                             </Link>
 

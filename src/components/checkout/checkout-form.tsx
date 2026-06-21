@@ -17,10 +17,10 @@ type CheckoutFormProps = {
 };
 
 const inputClass = (err?: boolean) =>
-  `w-full px-4 py-2.5 rounded-xl border transition bg-white
+  `w-full px-4 py-2.5 rounded-xl border transition bg-white focus:outline-none
         ${err
     ? "border-red-400 focus:border-red-500 bg-red-50"
-    : "border-slate-300 focus:border-cyan-600 focus:ring-1 focus:ring-cyan-100"
+    : "border-slate-300 focus:border-cuan-cyan focus:ring-1 focus:ring-cuan-cyan/20"
   }`;
 
 export const CheckoutForm: React.FC<CheckoutFormProps> = ({
@@ -91,8 +91,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
         return (
           <div className="space-y-2">
             {options.map((opt, _i) => (
-              <label key={opt} className="flex items-center gap-2 text-sm text-slate-700">
-                <input type="radio" value={opt} {...register(`custom.${field.id}` as any)} />
+              <label key={opt} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+                <input type="radio" value={opt} {...register(`custom.${field.id}` as any)} className="accent-cuan-cyan w-4 h-4 cursor-pointer" />
                 {opt}
               </label>
             ))}
@@ -106,10 +106,11 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
               const values = current.split(",").filter(Boolean);
               const checked = values.includes(opt);
               return (
-                <label key={opt} className="flex items-center gap-2 text-sm text-slate-700">
+                <label key={opt} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={checked}
+                    className="accent-cuan-cyan w-4 h-4 rounded cursor-pointer"
                     onChange={() => {
                       const newValues = checked
                         ? values.filter((v: string) => v !== opt)
@@ -147,12 +148,12 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
     <form
       id="checkout-form"
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-5 rounded-xl border border-slate-300 bg-white p-6 shadow-[0_-4px_0px_0px_rgba(0,146,184,100)]"
+      className="space-y-5 rounded-xl border border-slate-300 bg-white p-6 shadow-[0_-4px_0px_0px_#00B3E9]"
     >
       {status === "authenticated" && (
-        <div className="mb-4 flex items-center justify-between rounded-lg border border-cyan-100 bg-cyan-50 px-3 py-2">
+        <div className="mb-4 flex items-center justify-between rounded-lg border border-cuan-cyan/20 bg-cuan-cyan/10 px-3 py-2">
           <div className="flex flex-col">
-            <div className="text-xs text-cyan-700">Login sebagai</div>
+            <div className="text-xs text-007EA5">Login sebagai</div>
             <div className="max-w-[220px] truncate text-sm font-medium text-cyan-800">
               {session.user.email}
             </div>

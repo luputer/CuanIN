@@ -191,65 +191,65 @@ export default function ProductDetailPage() {
               infoItems={[
                 ...(metaLabel
                   ? [
-                      <InfoItem
-                        key="meta"
-                        icon={
-                          product.type === "KELAS_ONLINE" ? (
-                            <ClockIcon className="h-5 w-5" />
-                          ) : (
-                            <FileIcon className="h-5 w-5" />
-                          )
-                        }
-                        label={
-                          product.type === "KELAS_ONLINE"
-                            ? "Durasi"
-                            : "Tipe Konten"
-                        }
-                        value={metaLabel}
-                      />,
-                    ]
+                    <InfoItem
+                      key="meta"
+                      icon={
+                        product.type === "KELAS_ONLINE" ? (
+                          <ClockIcon className="h-5 w-5" />
+                        ) : (
+                          <FileIcon className="h-5 w-5" />
+                        )
+                      }
+                      label={
+                        product.type === "KELAS_ONLINE"
+                          ? "Durasi"
+                          : "Tipe Konten"
+                      }
+                      value={metaLabel}
+                    />,
+                  ]
                   : []),
                 ...(isWebinarOrClass
                   ? [
-                      <InfoItem
-                        key="platform"
-                        icon={<MapPinIcon className="h-5 w-5" />}
-                        label="Platform"
-                        value={
-                          product.contentType
-                            ? (PLATFORM_MAP[product.contentType.toLowerCase()] ??
-                              product.contentType)
-                            : "Online"
-                        }
-                      />,
-                    ]
+                    <InfoItem
+                      key="platform"
+                      icon={<MapPinIcon className="h-5 w-5" />}
+                      label="Platform"
+                      value={
+                        product.contentType
+                          ? (PLATFORM_MAP[product.contentType.toLowerCase()] ??
+                            product.contentType)
+                          : "Online"
+                      }
+                    />,
+                  ]
                   : []),
                 ...(start
                   ? [
-                      <InfoItem
-                        key="date"
-                        icon={<CalendarIcon className="h-5 w-5" />}
-                        label="Tanggal"
-                        value={
-                          isSameDay
-                            ? format(start, "dd MMMM yyyy", { locale: idLocale })
-                            : `${format(start, "dd MMM yyyy", { locale: idLocale })} - ${end
-                              ? format(end, "dd MMM yyyy", { locale: idLocale })
-                              : ""
-                            }`
-                        }
-                      />,
-                    ]
+                    <InfoItem
+                      key="date"
+                      icon={<CalendarIcon className="h-5 w-5" />}
+                      label="Tanggal"
+                      value={
+                        isSameDay
+                          ? format(start, "dd MMMM yyyy", { locale: idLocale })
+                          : `${format(start, "dd MMM yyyy", { locale: idLocale })} - ${end
+                            ? format(end, "dd MMM yyyy", { locale: idLocale })
+                            : ""
+                          }`
+                      }
+                    />,
+                  ]
                   : []),
                 ...(product.type === "WEBINAR" && start && end
                   ? [
-                      <InfoItem
-                        key="time"
-                        icon={<ClockIcon className="h-5 w-5" />}
-                        label="Waktu"
-                        value={`${format(start, "HH:mm")} - ${format(end, "HH:mm")}`}
-                      />,
-                    ]
+                    <InfoItem
+                      key="time"
+                      icon={<ClockIcon className="h-5 w-5" />}
+                      label="Waktu"
+                      value={`${format(start, "HH:mm")} - ${format(end, "HH:mm")}`}
+                    />,
+                  ]
                   : []),
               ]}
             />
@@ -280,7 +280,7 @@ export default function ProductDetailPage() {
                       key={idx}
                       onClick={() => setActiveImageIndex(idx)}
                       className={`relative h-14 w-14 overflow-hidden rounded-xl border-2 transition-all duration-200 cursor-pointer ${activeImageIndex === idx
-                        ? "border-cyan-600 ring-2 ring-cyan-100"
+                        ? "border-cuan-cyan ring-2 ring-cuan-cyan/20"
                         : "border-slate-200 hover:border-slate-300"
                         }`}
                     >
@@ -311,7 +311,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* ───── RIGHT SIDEBAR ───── */}
-          <div className="flex flex-col gap-6 lg:col-span-2 lg:sticky lg:top-20 lg:self-start">
+          <div className="flex flex-col gap-6 lg:col-span-2">
             {/* IMAGE & CAROUSEL (Desktop only) */}
             <div className="hidden lg:flex lg:flex-col lg:gap-2.5">
               <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-slate-300 bg-slate-100 shadow-sm lg:aspect-square lg:max-h-95">
@@ -338,7 +338,7 @@ export default function ProductDetailPage() {
                       key={idx}
                       onClick={() => setActiveImageIndex(idx)}
                       className={`relative h-16 w-16 overflow-hidden rounded-xl border-2 transition-all duration-200 cursor-pointer ${activeImageIndex === idx
-                        ? "border-cyan-600 ring-2 ring-cyan-100"
+                        ? "border-cuan-cyan ring-2 ring-cuan-cyan/20"
                         : "border-slate-200 hover:border-slate-300"
                         }`}
                     >
@@ -363,8 +363,8 @@ export default function ProductDetailPage() {
 
               {/* Benefits */}
               {((product.benefit as string[])?.length ?? 0) > 0 && (
-                <div className="mb-5 rounded-xl border border-cyan-100 bg-cyan-50 p-4">
-                  <div className="mb-3 text-xs md:text-sm font-semibold text-cyan-600">
+                <div className="mb-5 rounded-xl border border-cuan-cyan/20 bg-cuan-cyan/10 p-4">
+                  <div className="mb-3 text-xs md:text-sm font-semibold text-cuan-cyan">
                     Yang akan Kamu dapatkan:
                   </div>
                   <div className="space-y-3">
@@ -374,7 +374,7 @@ export default function ProductDetailPage() {
                         className="flex items-start gap-2.5 text-xs md:text-sm text-slate-700"
                       >
                         <CheckCircleIcon
-                          className="h-5 w-5 shrink-0 text-cyan-600 mt-0.5"
+                          className="h-5 w-5 shrink-0 text-cuan-cyan mt-0.5"
                           weight="fill"
                         />
                         <span className="min-w-0 wrap-break-word leading-relaxed">
@@ -447,7 +447,7 @@ export default function ProductDetailPage() {
                   </div>
                 ) : hasDiscount ? (
                   <div className="flex flex-col">
-                    <div className="text-xl font-bold text-cyan-600">
+                    <div className="text-xl font-bold text-cuan-cyan">
                       Rp {discountPrice!.toLocaleString("id-ID")}
                     </div>
                     <div className="text-sm font-medium text-slate-400 line-through">
@@ -455,7 +455,7 @@ export default function ProductDetailPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-xl font-bold text-cyan-600">
+                  <div className="text-xl font-bold text-cuan-cyan">
                     Rp {price.toLocaleString("id-ID")}
                   </div>
                 )}
@@ -482,7 +482,7 @@ export default function ProductDetailPage() {
                 </button>
               ) : (
                 <Link href={`/${slug}/${productSlug}/checkout`}>
-                  <button className="mt-5 w-full cursor-pointer rounded-xl bg-cyan-600 py-3 text-lg font-semibold text-white shadow-sm hover:bg-cyan-700">
+                  <button className="mt-5 w-full cursor-pointer rounded-xl bg-cuan-cyan py-3 text-lg font-semibold text-white transition-colors duration-200 hover:bg-[#008BB5]">
                     Beli Sekarang
                   </button>
                 </Link>

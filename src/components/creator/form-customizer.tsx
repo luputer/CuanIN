@@ -97,7 +97,7 @@ function SortableFieldItem({
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-2 rounded-lg border border-slate-800 bg-white p-3.5 sm:gap-4 sm:p-5 ${isDragging ? "z-50 shadow-lg ring-2 ring-cyan-500" : ""}`}
+      className={`flex items-center gap-2 rounded-lg border border-slate-800 bg-white p-3.5 sm:gap-4 sm:p-5 ${isDragging ? "z-50 shadow-lg ring-2 ring-cuan-cyan/100" : ""}`}
     >
       {/* HANDLE DRAG */}
       <div
@@ -191,7 +191,7 @@ function SortableFieldItem({
               <button
                 type="button"
                 onClick={() => addOption(field.id)}
-                className="cursor-pointer text-[14px] sm:text-[15px] font-medium text-cyan-600 transition-colors hover:text-cyan-700"
+                className="cursor-pointer text-[14px] sm:text-[15px] font-medium text-cuan-cyan transition-colors hover:text-007EA5"
               >
                 + Tambah Opsi
               </button>
@@ -209,7 +209,7 @@ function SortableFieldItem({
                 updateField(field.id, { required: e.target.checked })
               }
             />
-            <div className="peer h-6 w-11 rounded-full bg-slate-200 peer-checked:bg-[#00B4D8] after:absolute after:top-0.5 after:left-0.5 after:size-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
+            <div className="peer h-6 w-11 rounded-full bg-slate-200 peer-checked:bg-cuan-cyan after:absolute after:top-0.5 after:left-0.5 after:size-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
             <span className="ml-2 text-[14px] sm:text-[15px] font-medium text-slate-600">
               Wajib diisi
             </span>

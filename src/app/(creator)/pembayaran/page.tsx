@@ -247,7 +247,7 @@ export default function TransactionPage() {
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
                         <div className="flex min-h-[48px] items-center">
-                          <span className={`font-semibold ${item.type === "INCOME" ? "text-green-600" : "text-slate-900"}`}>
+                          <span className={`font-semibold ${item.type === "INCOME" ? "text-green-600" : "text-slate-800"}`}>
                             {item.type === "INCOME" ? "+" : ""} {formatCurrency(nominal)}
                           </span>
                         </div>
@@ -282,7 +282,7 @@ export default function TransactionPage() {
                                 setSelectedTx(item);
                                 setIsDetailOpen(true);
                               }}>
-                                <EyeIcon className="w-[22px] h-[22px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
+                                <EyeIcon className="w-[22px] h-[22px] text-cuan-cyan cursor-pointer hover:text-007EA5" />
                               </button>
                             </TooltipTrigger>
                             <TooltipContent>Lihat Detail</TooltipContent>
@@ -321,7 +321,7 @@ export default function TransactionPage() {
                       <span className="truncate pr-2">
                         {item.type === "INCOME" ? item.buyerName : (item.accountHolderName ?? "-")}
                       </span>
-                      <span className={`text-[12px] font-medium whitespace-nowrap ${item.type === "INCOME" ? "text-green-600" : "text-slate-900"}`}>
+                      <span className={`text-[12px] font-medium whitespace-nowrap ${item.type === "INCOME" ? "text-green-600" : "text-slate-800"}`}>
                         {typeLabel}
                       </span>
                     </div>
@@ -356,7 +356,7 @@ export default function TransactionPage() {
                     <div className="flex items-center justify-between pt-1 border-t border-slate-50 mt-2">
                       <div>
                         <span className="font-medium text-slate-400">Nominal: </span>
-                        <span className={`font-bold text-sm ${item.type === "INCOME" ? "text-green-600" : "text-slate-900"}`}>
+                        <span className={`font-bold text-sm ${item.type === "INCOME" ? "text-green-600" : "text-slate-800"}`}>
                           {item.type === "INCOME" ? "+" : ""} {formatCurrency(nominal)}
                         </span>
                       </div>
@@ -365,7 +365,7 @@ export default function TransactionPage() {
                           setSelectedTx(item);
                           setIsDetailOpen(true);
                         }}
-                        className="p-1.5 rounded-md text-cyan-600 border border-slate-200 hover:bg-slate-50 transition"
+                        className="p-1.5 rounded-md text-cuan-cyan border border-slate-200 hover:bg-slate-50 transition"
                       >
                         <EyeIcon className="w-4 h-4" />
                       </button>

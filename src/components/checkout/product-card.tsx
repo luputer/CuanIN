@@ -18,7 +18,7 @@ type CheckoutProductCardProps = {
 };
 
 const CATEGORY_STYLE: Record<string, string> = {
-  WEBINAR: "bg-cyan-100 text-cyan-700 border-cyan-200",
+  WEBINAR: "bg-cuan-cyan/20 text-007EA5 border-cuan-cyan/30",
   KELAS_ONLINE: "bg-amber-100 text-amber-700 border-amber-200",
   DIGITAL_PRODUCT: "bg-emerald-100 text-emerald-700 border-emerald-200",
 };
@@ -63,34 +63,14 @@ export const CheckoutProductCard: React.FC<CheckoutProductCardProps> = ({
           {product.name}
         </h2>
 
-        {((product.benefit as string[])?.length ?? 0) > 0 && (
-          <div className="my-2 rounded-lg border border-cyan-100 bg-cyan-50 p-3">
-            <div className="mb-2 text-xs font-semibold text-cyan-600">
-              Yang akan Kamu dapatkan:
-            </div>
-            <div className="space-y-1.5">
-              {(product.benefit as string[]).map((item, _idx) => (
-                <div
-                  key={item}
-                  className="flex items-start gap-2 text-xs text-slate-700"
-                >
-                  <CheckCircleIcon
-                    className="size-4 shrink-0 text-cyan-600 mt-0"
-                    weight="fill"
-                  />
-                  <span className="min-w-0 wrap-break-word leading-relaxed">{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+
 
         <div className="mt-1">
           {isGratis ? (
             <div className="text-lg font-semibold text-green-600">Gratis</div>
           ) : hasDiscount ? (
             <div className="flex flex-col">
-              <div className="text-lg font-bold text-cyan-600">
+              <div className="text-lg font-bold text-cuan-cyan">
                 Rp {price.toLocaleString("id-ID")}
               </div>
               <div className="text-xs font-medium text-slate-400 line-through">
@@ -98,7 +78,7 @@ export const CheckoutProductCard: React.FC<CheckoutProductCardProps> = ({
               </div>
             </div>
           ) : (
-            <div className="text-lg font-bold text-cyan-600">
+            <div className="text-lg font-bold text-cuan-cyan">
               Rp {price.toLocaleString("id-ID")}
             </div>
           )}

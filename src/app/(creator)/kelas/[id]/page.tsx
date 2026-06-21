@@ -133,15 +133,15 @@ export default function KelasDetailPage() {
                             variant="outline"
                             size="sm"
                             className={cn(
-                                "flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border-cyan-600 hover:bg-cyan-50 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer",
+                                "flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border-cuan-cyan hover:bg-cuan-cyan/10 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer",
                                 product.status !== "published" && "opacity-50 cursor-not-allowed border-slate-300 text-slate-400 hover:bg-white hover:shadow-none"
                             )}
                             onClick={product.status === "published" ? handleCopyLink : undefined}
                             disabled={product.status !== "published"}
                             title={product.status !== "published" ? "Produk belum dipublikasikan" : "Salin Link Produk"}
                         >
-                            <CopyIcon className={cn("w-4 h-4", product.status === "published" ? "text-cyan-600" : "text-slate-400")} />
-                            <span className={cn("text-sm font-regular whitespace-nowrap", product.status === "published" ? "text-cyan-600" : "text-slate-400")}>
+                            <CopyIcon className={cn("w-4 h-4", product.status === "published" ? "text-cuan-cyan" : "text-slate-400")} />
+                            <span className={cn("text-sm font-regular whitespace-nowrap", product.status === "published" ? "text-cuan-cyan" : "text-slate-400")}>
                                 Salin Link Produk
                             </span>
                         </Button>

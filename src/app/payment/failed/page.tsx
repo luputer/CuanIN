@@ -73,48 +73,48 @@ function PaymentFailedContent() {
 
                 {/* BRAND */}
                 <PaymentBrandHeader
-                  userImage={purchase?.product?.user?.image}
-                  userName={purchase?.product?.user?.name}
+                    userImage={purchase?.product?.user?.image}
+                    userName={purchase?.product?.user?.name}
                 />
 
                 {/* FAILED ICON */}
                 <PaymentStatusSection
-                  icon={
-                    <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-4">
-                      <XCircleIcon className="w-10 h-10 text-red-500" weight="fill" />
-                    </div>
-                  }
-                  title="Pembayaran Gagal"
-                  message="Transaksi tidak dapat diproses. Silakan coba lagi atau hubungi kami."
+                    icon={
+                        <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-4">
+                            <XCircleIcon className="w-10 h-10 text-red-500" weight="fill" />
+                        </div>
+                    }
+                    title="Pembayaran Gagal"
+                    message="Transaksi tidak dapat diproses. Silakan coba lagi atau hubungi kami."
                 >
-                  {/* REASON BOX */}
-                  <div className="bg-red-50 border border-red-200 rounded-xl p-4 w-full text-left mt-2">
-                      <p className="text-sm font-semibold text-red-700">Kemungkinan penyebab:</p>
-                      <ul className="text-xs text-red-600 mt-2 space-y-1 list-disc list-inside">
-                          <li>Saldo tidak mencukupi</li>
-                          <li>Koneksi terputus saat pembayaran</li>
-                          <li>Waktu pembayaran habis</li>
-                          <li>Kartu/rekening ditolak</li>
-                      </ul>
-                  </div>
+                    {/* REASON BOX */}
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 w-full text-left mt-2">
+                        <p className="text-sm font-semibold text-red-700">Kemungkinan penyebab:</p>
+                        <ul className="text-xs text-red-600 mt-2 space-y-1 list-disc list-inside">
+                            <li>Saldo tidak mencukupi</li>
+                            <li>Koneksi terputus saat pembayaran</li>
+                            <li>Waktu pembayaran habis</li>
+                            <li>Kartu/rekening ditolak</li>
+                        </ul>
+                    </div>
                 </PaymentStatusSection>
 
                 {/* ORDER INFO */}
                 {purchase && (
                     <TransactionDetailsCard
-                      purchase={purchase}
-                      TYPE_MAP={{
-                        WEBINAR: "Webinar",
-                        KELAS_ONLINE: "Kelas",
-                        DIGITAL_PRODUCT: "Produk Digital",
-                      }}
-                      statusMessage={<span className="text-red-500 font-medium">✗ Gagal</span>}
+                        purchase={purchase}
+                        TYPE_MAP={{
+                            WEBINAR: "Webinar",
+                            KELAS_ONLINE: "Kelas",
+                            DIGITAL_PRODUCT: "Produk Digital",
+                        }}
+                        statusMessage={<span className="text-red-500 font-medium">✗ Gagal</span>}
                     />
                 )}
 
                 <PaymentActionAndSecurity
-                  xenditInvoiceUrl={purchase?.xenditInvoiceUrl}
-                  hasFailed={true}
+                    xenditInvoiceUrl={purchase?.xenditInvoiceUrl}
+                    hasFailed={true}
                 />
 
             </div>
@@ -126,7 +126,7 @@ export default function PaymentFailedPage() {
     return (
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                <SpinnerIcon className="w-8 h-8 animate-spin text-cyan-600" />
+                <SpinnerIcon className="w-8 h-8 animate-spin text-cuan-cyan" />
             </div>
         }>
             <PaymentFailedContent />

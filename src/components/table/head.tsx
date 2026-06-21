@@ -14,7 +14,7 @@ interface SortableTableHeadProps {
 export function SortableTableHead({ title, isActive = false, sortOrder = "asc", onClick, className }: SortableTableHeadProps) {
     return (
         <TableHead
-            className={cn("whitespace-nowrap transition-colors group", onClick ? "cursor-pointer select-none hover:text-slate-900" : "", className)}
+            className={cn("whitespace-nowrap transition-colors group", onClick ? "cursor-pointer select-none hover:text-slate-800" : "", className)}
             onClick={onClick}
         >
             <div className="flex items-center gap-2">

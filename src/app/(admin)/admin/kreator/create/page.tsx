@@ -123,7 +123,7 @@ export default function CreateCreatorPage() {
                                             className="relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer"
                                             onClick={() => fileInputRef.current?.click()}
                                         >
-                                            <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-500 group-hover:bg-cyan-50 relative">
+                                            <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10 relative">
                                                 {avatarUpload.previewUrl ? (
                                                     <>
                                                         <Image
@@ -183,7 +183,7 @@ export default function CreateCreatorPage() {
                                             className="relative group w-full aspect-[6/1] md:aspect-[8/1] cursor-pointer"
                                             onClick={() => bannerInputRef.current?.click()}
                                         >
-                                            <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-500 group-hover:bg-cyan-50 relative">
+                                            <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10 relative">
                                                 {bannerUpload.previewUrl ? (
                                                     <>
                                                         <Image
@@ -283,7 +283,7 @@ export default function CreateCreatorPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => setShowPassword(!showPassword)}
-                                                    className="text-slate-400 hover:text-cyan-600 transition-colors px-2"
+                                                    className="text-slate-400 hover:text-cuan-cyan transition-colors px-2"
                                                 >
                                                     {showPassword ? <EyeSlashIcon size={20} /> : <EyeIcon size={20} />}
                                                 </button>

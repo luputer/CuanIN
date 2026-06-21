@@ -278,15 +278,15 @@ export default function VoucherDetailPage() {
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border-cyan-600 hover:bg-cyan-50 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border-cuan-cyan hover:bg-cuan-cyan/10 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
                                 onClick={handleCopyCode}
                             >
                                 {copiedCode ? (
-                                    <CheckIcon className="w-4 h-4 text-cyan-600" />
+                                    <CheckIcon className="w-4 h-4 text-cuan-cyan" />
                                 ) : (
-                                    <CopyIcon className="w-4 h-4 text-cyan-600" />
+                                    <CopyIcon className="w-4 h-4 text-cuan-cyan" />
                                 )}
-                                <span className="text-sm font-regular text-cyan-600 whitespace-nowrap">
+                                <span className="text-sm font-regular text-cuan-cyan whitespace-nowrap">
                                     Copy Code
                                 </span>
                             </Button>
@@ -351,10 +351,10 @@ export default function VoucherDetailPage() {
                                             suffix={
                                                 <div className="flex flex-col">
                                                     <button type="button" onClick={() => setDiscount((prev) => prev + (type === "PERSEN" ? 1 : 1000))} className="cursor-pointer">
-                                                        <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                        <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cuan-cyan transition-colors" />
                                                     </button>
                                                     <button type="button" onClick={() => setDiscount((prev) => Math.max(0, prev - (type === "PERSEN" ? 1 : 1000)))} className="cursor-pointer">
-                                                        <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                        <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cuan-cyan transition-colors" />
                                                     </button>
                                                 </div>
                                             }
@@ -381,9 +381,9 @@ export default function VoucherDetailPage() {
                                                 value="ALL_PRODUCTS"
                                                 checked={usageType === "ALL_PRODUCTS"}
                                                 onChange={() => setUsageType("ALL_PRODUCTS")}
-                                                className="w-4 h-4 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 border-slate-300"
+                                                className="w-4 h-4 accent-cuan-cyan text-cuan-cyan focus:ring-cuan-cyan border-slate-300"
                                             />
-                                            <span className={cn("text-base transition-colors", usageType === "ALL_PRODUCTS" ? "font-medium text-cyan-600" : "font-normal text-slate-700")}>Terapkan ke Semua Produk</span>
+                                            <span className={cn("text-base transition-colors", usageType === "ALL_PRODUCTS" ? "font-medium text-cuan-cyan" : "font-normal text-slate-700")}>Terapkan ke Semua Produk</span>
                                         </label>
 
                                         <label className="flex items-center gap-2 cursor-pointer">
@@ -393,9 +393,9 @@ export default function VoucherDetailPage() {
                                                 value="SELECTED_PRODUCTS"
                                                 checked={usageType === "SELECTED_PRODUCTS"}
                                                 onChange={() => setUsageType("SELECTED_PRODUCTS")}
-                                                className="w-4 h-4 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 border-slate-300"
+                                                className="w-4 h-4 accent-cuan-cyan text-cuan-cyan focus:ring-cuan-cyan border-slate-300"
                                             />
-                                            <span className={cn("text-base transition-colors", usageType === "SELECTED_PRODUCTS" ? "font-medium text-cyan-600" : "font-normal text-slate-700")}>Terapkan ke Produk Pilihan</span>
+                                            <span className={cn("text-base transition-colors", usageType === "SELECTED_PRODUCTS" ? "font-medium text-cuan-cyan" : "font-normal text-slate-700")}>Terapkan ke Produk Pilihan</span>
                                         </label>
                                     </div>
 
@@ -414,7 +414,7 @@ export default function VoucherDetailPage() {
                                                                 className={cn(
                                                                     "flex items-center justify-between p-2 rounded border cursor-pointer transition-colors text-sm",
                                                                     isChecked
-                                                                        ? "border-cyan-600 bg-cyan-50/50"
+                                                                        ? "border-cuan-cyan bg-cuan-cyan/10/50"
                                                                         : "border-slate-200 hover:bg-slate-50"
                                                                 )}
                                                             >
@@ -429,9 +429,9 @@ export default function VoucherDetailPage() {
                                                                                 setSelectedProductIds([...selectedProductIds, prod.id]);
                                                                             }
                                                                         }}
-                                                                        className="w-3.5 h-3.5 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 rounded border-slate-300"
+                                                                        className="w-3.5 h-3.5 accent-cuan-cyan text-cuan-cyan focus:ring-cuan-cyan rounded border-slate-300"
                                                                     />
-                                                                    <span className={cn("font-medium transition-colors", isChecked ? "text-cyan-600" : "text-slate-700")}>{prod.name}</span>
+                                                                    <span className={cn("font-medium transition-colors", isChecked ? "text-cuan-cyan" : "text-slate-700")}>{prod.name}</span>
                                                                 </div>
                                                                 <span className="text-xs font-regular text-slate-400 bg-slate-100 border px-1 rounded shrink-0">
                                                                     {prod.type === "DIGITAL_PRODUCT" ? "Produk Digital" : prod.type === "WEBINAR" ? "Webinar" : "Kelas"}
@@ -489,7 +489,7 @@ export default function VoucherDetailPage() {
                                                             setIsLimitEnabled(!isLimitEnabled);
                                                         }}
                                                     />
-                                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cuan-cyan"></div>
                                                 </label>
                                             </div>
 
@@ -507,10 +507,10 @@ export default function VoucherDetailPage() {
                                                         suffix={
                                                             <div className="flex flex-col">
                                                                 <button type="button" onClick={() => setUsageLimit((prev) => (prev ?? 0) + 1)} className="cursor-pointer">
-                                                                    <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                                    <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cuan-cyan transition-colors" />
                                                                 </button>
                                                                 <button type="button" onClick={() => setUsageLimit((prev) => Math.max(1, (prev ?? 0) - 1))} className="cursor-pointer">
-                                                                    <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                                    <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cuan-cyan transition-colors" />
                                                                 </button>
                                                             </div>
                                                         }
@@ -528,7 +528,7 @@ export default function VoucherDetailPage() {
                                                     checked={isLimitPerUser}
                                                     onChange={() => setIsLimitPerUser(!isLimitPerUser)}
                                                 />
-                                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cuan-cyan"></div>
                                             </label>
                                         </div>
                                     </div>

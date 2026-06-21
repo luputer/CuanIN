@@ -34,10 +34,10 @@ html {
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  
+
   /* CuanIN Brand Colors */
   --color-cuan-blue: #506CBF;
-  --color-cuan-cyan: #27C3F3;
+  --color-cuan-cyan: #00B3E9;
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);

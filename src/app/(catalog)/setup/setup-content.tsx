@@ -95,17 +95,17 @@ export function CatalogSetupContent() {
             <div className="w-full max-w-md space-y-8">
                 {/* Header */}
                 <div className="text-center">
-                    <div className="inline-flex items-center justify-center size-20 bg-cyan-50 rounded-full mb-4">
-                        <StorefrontIcon className="size-10 text-cyan-600" />
+                    <div className="inline-flex items-center justify-center size-20 bg-cuan-cyan/10 rounded-full mb-4">
+                        <StorefrontIcon className="size-10 text-cuan-cyan" />
                     </div>
-                    <h1 className="pb-3 text-2xl font-semibold text-cyan-600">Buat Halaman Katalog</h1>
+                    <h1 className="pb-3 text-2xl font-semibold text-cuan-cyan">Buat Halaman Katalog</h1>
                     <p className="text-md text-slate-800">
                         Bagikan semua produkmu dalam satu halaman yang bisa diakses siapa saja.
                     </p>
                 </div>
 
                 {/* Form */}
-                <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-6 shadow-[0px_2px_0px_rgba(29,41,61)] sm:p-10 space-y-4">
+                <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-6 shadow-[0px_2px_0px_#000] sm:p-10 space-y-4">
                     {/* Slug */}
                     <div className="space-y-1.5">
                         <Label htmlFor="catalog-url" className="text-sm font-medium text-slate-800">
@@ -113,7 +113,7 @@ export function CatalogSetupContent() {
                         </Label>
                         <div
                             className={`flex items-center rounded-lg border py-1 px-2 text-sm transition-all outline-none placeholder:text-sm placeholder:text-slate-400
-                                    focus-within:ring-2 focus-within:ring-cyan-100 focus-within:border-cyan-600 bg-slate-100
+                                    focus-within:ring-2 focus-within:ring-cuan-cyan/20 focus-within:border-cuan-cyan bg-slate-100
                                     ${showIndicator && slugAvailable === false
                                     ? "border-red-300"
                                     : showIndicator && slugAvailable
@@ -155,7 +155,7 @@ export function CatalogSetupContent() {
                     {/* Bio */}
                     <div className="space-y-1">
                         <label htmlFor="catalog-bio" className="block text-sm font-medium text-slate-800">Bio</label>
-                        <div className="flex items-start rounded-lg border py-1 px-2 bg-slate-100 focus-within:ring-2 focus-within:ring-cyan-100 focus-within:border-cyan-600 border-slate-300">
+                        <div className="flex items-start rounded-lg border py-1 px-2 bg-slate-100 focus-within:ring-2 focus-within:ring-cuan-cyan/20 focus-within:border-cuan-cyan border-slate-300">
                             <textarea
                                 id="catalog-bio"
                                 rows={5}
@@ -170,9 +170,9 @@ export function CatalogSetupContent() {
 
                     {/* URL Preview */}
                     {slug.length >= 3 && (
-                        <div className="flex items-center gap-2 bg-white border border-cyan-600 rounded-lg px-3 py-2.5">
-                            <LinkIcon className="size-4 text-cyan-600 shrink-0" />
-                            <span className="text-sm text-cyan-600 break-all">{previewUrl}</span>
+                        <div className="flex items-center gap-2 bg-white border border-cuan-cyan rounded-lg px-3 py-2.5">
+                            <LinkIcon className="size-4 text-cuan-cyan shrink-0" />
+                            <span className="text-sm text-cuan-cyan break-all">{previewUrl}</span>
                         </div>
                     )}
                 </div>
@@ -182,7 +182,7 @@ export function CatalogSetupContent() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={isPending || slug.length < 3 || slugAvailable === false || isCheckingSlug}
-                    className="w-full mt-4 cursor-pointer rounded-lg border-2 border-slate-800 bg-yellow-200 py-3 text-base font-semibold text-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_rgba(29,41,61)] flex items-center justify-center"
+                    className="w-full mt-4 cursor-pointer rounded-lg border-2 border-slate-800 bg-yellow-200 py-3 text-base font-semibold text-slate-800 shadow-[0px_2px_0px_#000] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_#000] flex items-center justify-center"
                 >
                     {isPending ? (
                         <>

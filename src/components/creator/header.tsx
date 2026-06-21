@@ -86,7 +86,7 @@ export default function HeaderKreator({
 
                     {/* Dropdown */}
                     {open && (
-                        <div className="absolute left-1/2 top-14 -translate-x-1/2 w-56 bg-white border border-slate-800 rounded-xl shadow-[0px_1.5px_0px_rgba(29,41,61)] py-2 px-3">
+                        <div className="absolute left-1/2 top-14 -translate-x-1/2 w-56 bg-white border border-slate-800 rounded-xl shadow-[0px_1.5px_0px_#000] py-2 px-3">
 
                             {/* Akun Saya */}
                             <button type="button"

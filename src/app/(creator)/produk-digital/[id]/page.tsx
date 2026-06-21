@@ -13,11 +13,11 @@ import { Button } from "~/components/ui/button";
 import { SectionHeader, FormInput, FormRow } from "~/components/shared/form-layout";
 import DeleteConfirmDialog from "~/components/shared/delete-confirm-dialog";
 import { CreatorDetailSkeleton } from "~/components/shared/detail-skeletons";
-import { 
-    BasicInfoSection, 
-    PricingSection, 
-    QuotaSection, 
-    PlatformSelector 
+import {
+    BasicInfoSection,
+    PricingSection,
+    QuotaSection,
+    PlatformSelector
 } from "~/components/creator/product-form-sections";
 import { ProductFormLayout } from "~/components/shared/product-form-layout";
 
@@ -26,7 +26,7 @@ export default function ProdukDigitalDetailPage() {
     const id = params.id as string;
     const router = useRouter();
     const utils = api.useUtils();
-    
+
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -127,15 +127,15 @@ export default function ProdukDigitalDetailPage() {
                             variant="outline"
                             size="sm"
                             className={cn(
-                                "flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border-cyan-600 hover:bg-cyan-50 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer",
+                                "flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border-cuan-cyan hover:bg-cuan-cyan/10 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer",
                                 product.status !== "published" && "opacity-50 cursor-not-allowed border-slate-300 text-slate-400 hover:bg-white hover:shadow-none"
                             )}
                             onClick={product.status === "published" ? handleCopyLink : undefined}
                             disabled={product.status !== "published"}
                             title={product.status !== "published" ? "Produk belum dipublikasikan" : "Salin Link Produk"}
                         >
-                            <CopyIcon className={cn("w-4 h-4", product.status === "published" ? "text-cyan-600" : "text-slate-400")} />
-                            <span className={cn("text-sm font-regular whitespace-nowrap", product.status === "published" ? "text-cyan-600" : "text-slate-400")}>
+                            <CopyIcon className={cn("w-4 h-4", product.status === "published" ? "text-cuan-cyan" : "text-slate-400")} />
+                            <span className={cn("text-sm font-regular whitespace-nowrap", product.status === "published" ? "text-cuan-cyan" : "text-slate-400")}>
                                 Salin Link Produk
                             </span>
                         </Button>
@@ -151,11 +151,11 @@ export default function ProdukDigitalDetailPage() {
                 }
             >
                 <BasicInfoSection form={form} />
-                
-                <PricingSection 
-                    form={form} 
-                    onAdjustPrice={handlePriceAdjust} 
-                    onAdjustDiscount={handleDiscountPriceAdjust} 
+
+                <PricingSection
+                    form={form}
+                    onAdjustPrice={handlePriceAdjust}
+                    onAdjustDiscount={handleDiscountPriceAdjust}
                 />
 
                 <div className="pt-8">
@@ -167,9 +167,9 @@ export default function ProdukDigitalDetailPage() {
                             <FormInput placeholder="https://..." {...register("link")} />
                         </FormRow>
 
-                        <QuotaSection 
-                            form={form} 
-                            onAdjustQuota={handleQuotaAdjust} 
+                        <QuotaSection
+                            form={form}
+                            onAdjustQuota={handleQuotaAdjust}
                             label="Batasi Stok"
                             placeholder="Masukkan batas stok"
                         />

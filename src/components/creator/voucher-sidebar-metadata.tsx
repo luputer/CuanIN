@@ -20,7 +20,7 @@ export function VoucherSidebarMetadata({ form, usageCount }: VoucherSidebarMetad
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <p className="text-slate-700 text-sm font-semibold mb-1">Total Digunakan</p>
                     <div className="flex items-baseline gap-1">
-                        <span className="text-2xl font-semibold text-slate-900">{usageCount}</span>
+                        <span className="text-2xl font-semibold text-slate-800">{usageCount}</span>
                         {usageLimit && (
                             <span className="text-sm text-slate-500 font-medium">/ {usageLimit}</span>
                         )}
@@ -58,7 +58,7 @@ export function VoucherSidebarMetadata({ form, usageCount }: VoucherSidebarMetad
                                         }
                                     }}
                                 />
-                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cuan-cyan"></div>
                             </label>
                         </div>
 
@@ -76,10 +76,10 @@ export function VoucherSidebarMetadata({ form, usageCount }: VoucherSidebarMetad
                                     suffix={
                                         <div className="flex flex-col">
                                             <button type="button" onClick={() => setValue("usageLimit", (usageLimit ?? 0) + 1, { shouldValidate: true, shouldDirty: true })} className="cursor-pointer">
-                                                <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cuan-cyan transition-colors" />
                                             </button>
                                             <button type="button" onClick={() => setValue("usageLimit", Math.max(1, (usageLimit ?? 0) - 1), { shouldValidate: true, shouldDirty: true })} className="cursor-pointer">
-                                                <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cuan-cyan transition-colors" />
                                             </button>
                                         </div>
                                     }
@@ -97,7 +97,7 @@ export function VoucherSidebarMetadata({ form, usageCount }: VoucherSidebarMetad
                                 checked={isLimitPerUser}
                                 onChange={() => setValue("isLimitPerUser", !isLimitPerUser, { shouldDirty: true })}
                             />
-                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cuan-cyan"></div>
                         </label>
                     </div>
                 </div>

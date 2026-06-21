@@ -23,7 +23,7 @@ export function PaymentFailedContent() {
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                <SpinnerIcon className="size-8 animate-spin text-cyan-600" />
+                <SpinnerIcon className="size-8 animate-spin text-cuan-cyan" />
             </div>
         );
     }
@@ -34,7 +34,7 @@ export function PaymentFailedContent() {
 
                 {/* BRAND */}
                 <div className="text-center mb-2">
-                    <span className="text-2xl font-bold text-cyan-600">CuanIN</span>
+                    <span className="text-2xl font-bold text-cuan-cyan">CuanIN</span>
                 </div>
 
                 {/* FAILED ICON */}
@@ -91,7 +91,7 @@ export function PaymentFailedContent() {
                 {purchase?.xenditInvoiceUrl && (
                     <a
                         href={purchase.xenditInvoiceUrl}
-                        className="w-full py-3.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition"
+                        className="w-full py-3.5 bg-cuan-cyan hover:bg-007EA5 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition"
                     >
                         <ArrowCounterClockwiseIcon className="size-4" />
                         Coba Bayar Lagi

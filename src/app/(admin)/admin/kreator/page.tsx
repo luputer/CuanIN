@@ -138,7 +138,7 @@ export default function AdminCreatorsPage() {
                                     title={debouncedSearch ? "Hasil pencarian tidak ditemukan." : "Belum ada kreator yang terdaftar."}
                                     action={
                                         !debouncedSearch ? (
-                                            <Link href="/admin/kreator/create" className="text-cyan-600 font-medium hover:underline">
+                                            <Link href="/admin/kreator/create" className="text-cuan-cyan font-medium hover:underline">
                                                 Daftarkan kreator pertama!
                                             </Link>
                                         ) : undefined
@@ -160,7 +160,7 @@ export default function AdminCreatorsPage() {
                                                             <UserCircleIcon size={24} className="text-slate-400" />
                                                         </AvatarFallback>
                                                     </Avatar>
-                                                    <Link href={`/admin/kreator/${item.id}`} className="hover:text-cyan-600 transition-colors">
+                                                    <Link href={`/admin/kreator/${item.id}`} className="hover:text-cuan-cyan transition-colors">
                                                         {item.name || "-"}
                                                     </Link>
                                                 </div>
@@ -176,7 +176,7 @@ export default function AdminCreatorsPage() {
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-center">
-                                                <span className="inline-flex items-center justify-center min-w-[2rem] text-cyan-700 text-sm font-semibold">
+                                                <span className="inline-flex items-center justify-center min-w-[2rem] text-007EA5 text-sm font-semibold">
                                                     {item._count.products}
                                                 </span>
                                             </TableCell>
@@ -185,7 +185,7 @@ export default function AdminCreatorsPage() {
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <button onClick={() => router.push(`/admin/kreator/${item.id}`)}>
-                                                                <EyeIcon className="w-[22px] h-[22px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
+                                                                <EyeIcon className="w-[22px] h-[22px] text-cuan-cyan cursor-pointer hover:text-007EA5" />
                                                             </button>
                                                         </TooltipTrigger>
                                                         <TooltipContent>Lihat Detail</TooltipContent>
@@ -218,7 +218,7 @@ export default function AdminCreatorsPage() {
                             title={debouncedSearch ? "Hasil pencarian tidak ditemukan." : "Belum ada kreator yang terdaftar."}
                             action={
                                 !debouncedSearch ? (
-                                    <Link href="/admin/kreator/create" className="text-cyan-600 font-medium hover:underline mt-1 inline-block">
+                                    <Link href="/admin/kreator/create" className="text-cuan-cyan font-medium hover:underline mt-1 inline-block">
                                         Daftarkan kreator pertama!
                                     </Link>
                                 ) : undefined
@@ -232,7 +232,7 @@ export default function AdminCreatorsPage() {
                                 <div key={item.id} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3">
                                     <div className="flex justify-between items-center border-b border-slate-100 pb-2">
                                         <span className="text-xs font-semibold text-slate-400"># {rowNumber}</span>
-                                        <span className="px-3 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-700">
+                                        <span className="px-3 py-0.5 rounded-full text-xs font-medium bg-cuan-cyan/20 text-007EA5">
                                             {item._count.products} Produk
                                         </span>
                                     </div>
@@ -246,7 +246,7 @@ export default function AdminCreatorsPage() {
                                         </Avatar>
 
                                         <div className="space-y-1.5 flex-1 min-w-0">
-                                            <Link href={`/admin/kreator/${item.id}`} className="font-semibold text-slate-800 hover:text-cyan-600 break-words line-clamp-2">
+                                            <Link href={`/admin/kreator/${item.id}`} className="font-semibold text-slate-800 hover:text-cuan-cyan break-words line-clamp-2">
                                                 {item.name || "-"}
                                             </Link>
 
@@ -266,7 +266,7 @@ export default function AdminCreatorsPage() {
                                         <div className="flex items-center gap-2">
                                             <button
                                                 onClick={() => router.push(`/admin/kreator/${item.id}`)}
-                                                className="p-2 rounded-lg text-cyan-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
+                                                className="p-2 rounded-lg text-cuan-cyan border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
                                                 title="Lihat Detail"
                                             >
                                                 <EyeIcon className="w-5 h-5" />
@@ -287,7 +287,7 @@ export default function AdminCreatorsPage() {
                     )}
 
                     {creators && creators.length > 0 && (
-                        <div className="bg-white border border-slate-800 rounded-xl p-4 shadow-[1.5px_1.5px_0px_rgba(29,41,61)]">
+                        <div className="bg-white border border-slate-800 rounded-xl p-4 shadow-[1.5px_1.5px_0px_#000]">
                             <TablePagination
                                 page={page}
                                 totalPages={totalPages}

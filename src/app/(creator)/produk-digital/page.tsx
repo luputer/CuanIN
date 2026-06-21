@@ -220,7 +220,7 @@ export default function DigitalProductPage() {
                                         ) : (
                                             <div className="flex flex-col items-center gap-1">
                                                 <span>Belum ada produk digital.</span>
-                                                <Link href="/produk-digital/create" className="text-cyan-600 font-medium hover:underline">
+                                                <Link href="/produk-digital/create" className="text-cuan-cyan font-medium hover:underline">
                                                     Yuk, buat produk digital pertamamu!
                                                 </Link>
                                             </div>
@@ -239,7 +239,7 @@ export default function DigitalProductPage() {
 
                                             <TableCell className="max-w-[360px] leading-normal">
                                                 <div className="flex items-center min-h-[48px] py-1">
-                                                    <Link href={`/produk-digital/${item.id}`} className="hover:text-cyan-600 transition-colors font-medium text-slate-800 line-clamp-2 break-words leading-normal">
+                                                    <Link href={`/produk-digital/${item.id}`} className="hover:text-cuan-cyan transition-colors font-medium text-slate-800 line-clamp-2 break-words leading-normal">
                                                         {item.name}
                                                     </Link>
                                                 </div>
@@ -272,7 +272,7 @@ export default function DigitalProductPage() {
                                                     <span>{buyerCounts?.[item.id] ?? 0}</span>
                                                     <button
                                                         onClick={() => router.push(`/produk-digital/${item.id}?tab=user`)}
-                                                        className="text-sm text-cyan-600 px-4 py-1 border border-cyan-600 rounded-lg hover:bg-cyan-50 font-medium transition-colors cursor-pointer"
+                                                        className="text-sm text-cuan-cyan px-4 py-1 border border-cuan-cyan rounded-lg hover:bg-cuan-cyan/10 font-medium transition-colors cursor-pointer"
                                                     >
                                                         Lihat
                                                     </button>
@@ -314,7 +314,7 @@ export default function DigitalProductPage() {
                                 ) : (
                                     <div className="flex flex-col items-center gap-1">
                                         <span>Belum ada produk digital.</span>
-                                        <Link href="/produk-digital/create" className="text-cyan-600 font-medium hover:underline mt-1 inline-block">
+                                        <Link href="/produk-digital/create" className="text-cuan-cyan font-medium hover:underline mt-1 inline-block">
                                             Yuk, buat produk digital pertamamu!
                                         </Link>
                                     </div>
@@ -339,7 +339,7 @@ export default function DigitalProductPage() {
 
                                         {/* Content info */}
                                         <div className="space-y-1.5 flex-1 min-w-0">
-                                            <Link href={`/produk-digital/${item.id}`} className="font-semibold text-slate-800 hover:text-cyan-600 break-words line-clamp-2">
+                                            <Link href={`/produk-digital/${item.id}`} className="font-semibold text-slate-800 hover:text-cuan-cyan break-words line-clamp-2">
                                                 {item.name}
                                             </Link>
 

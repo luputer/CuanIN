@@ -121,10 +121,10 @@ export default function VoucherCreatePage() {
                                             suffix={
                                                 <div className="flex flex-col">
                                                     <button type="button" onClick={() => setValue("discount", discount + (type === "PERSEN" ? 1 : 1000), { shouldValidate: true, shouldDirty: true })} className="cursor-pointer">
-                                                        <CaretUpIcon weight="fill" className="size-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                        <CaretUpIcon weight="fill" className="size-3 text-slate-400 hover:text-cuan-cyan transition-colors" />
                                                     </button>
                                                     <button type="button" onClick={() => setValue("discount", Math.max(0, discount - (type === "PERSEN" ? 1 : 1000)), { shouldValidate: true, shouldDirty: true })} className="cursor-pointer">
-                                                        <CaretDownIcon weight="fill" className="size-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                                        <CaretDownIcon weight="fill" className="size-3 text-slate-400 hover:text-cuan-cyan transition-colors" />
                                                     </button>
                                                 </div>
                                             }
@@ -158,9 +158,9 @@ export default function VoucherCreatePage() {
                                                 value="ALL_PRODUCTS"
                                                 checked={usageType === "ALL_PRODUCTS"}
                                                 onChange={() => setValue("usageType", "ALL_PRODUCTS", { shouldValidate: true, shouldDirty: true })}
-                                                className="size-4 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 border-slate-300"
+                                                className="size-4 accent-cuan-cyan text-cuan-cyan focus:ring-cuan-cyan border-slate-300"
                                             />
-                                            <span className={cn("text-base transition-colors", usageType === "ALL_PRODUCTS" ? "font-medium text-cyan-600" : "font-normal text-slate-700")}>Terapkan ke Semua Produk</span>
+                                            <span className={cn("text-base transition-colors", usageType === "ALL_PRODUCTS" ? "font-medium text-cuan-cyan" : "font-normal text-slate-700")}>Terapkan ke Semua Produk</span>
                                         </label>
 
                                         <label className="flex items-center gap-2 cursor-pointer">
@@ -169,9 +169,9 @@ export default function VoucherCreatePage() {
                                                 value="SELECTED_PRODUCTS"
                                                 checked={usageType === "SELECTED_PRODUCTS"}
                                                 onChange={() => setValue("usageType", "SELECTED_PRODUCTS", { shouldValidate: true, shouldDirty: true })}
-                                                className="size-4 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 border-slate-300"
+                                                className="size-4 accent-cuan-cyan text-cuan-cyan focus:ring-cuan-cyan border-slate-300"
                                             />
-                                            <span className={cn("text-base transition-colors", usageType === "SELECTED_PRODUCTS" ? "font-medium text-cyan-600" : "font-normal text-slate-700")}>Terapkan ke Produk Pilihan</span>
+                                            <span className={cn("text-base transition-colors", usageType === "SELECTED_PRODUCTS" ? "font-medium text-cuan-cyan" : "font-normal text-slate-700")}>Terapkan ke Produk Pilihan</span>
                                         </label>
                                     </div>
 
@@ -190,7 +190,7 @@ export default function VoucherCreatePage() {
                                                                 className={cn(
                                                                     "flex items-center justify-between p-2 rounded border cursor-pointer transition-colors text-sm",
                                                                     isChecked
-                                                                        ? "border-cyan-600 bg-cyan-50/50"
+                                                                        ? "border-cuan-cyan bg-cuan-cyan/10/50"
                                                                         : "border-slate-200 hover:bg-slate-50"
                                                                 )}
                                                             >
@@ -205,9 +205,9 @@ export default function VoucherCreatePage() {
                                                                                 setValue("productIds", [...selectedProductIds, prod.id], { shouldDirty: true });
                                                                             }
                                                                         }}
-                                                                        className="size-3.5 accent-cyan-600 text-cyan-600 focus:ring-cyan-600 rounded border-slate-300"
+                                                                        className="size-3.5 accent-cuan-cyan text-cuan-cyan focus:ring-cuan-cyan rounded border-slate-300"
                                                                     />
-                                                                    <span className={cn("font-medium transition-colors", isChecked ? "text-cyan-600" : "text-slate-700")}>{prod.name}</span>
+                                                                    <span className={cn("font-medium transition-colors", isChecked ? "text-cuan-cyan" : "text-slate-700")}>{prod.name}</span>
                                                                 </div>
                                                                 <span className="text-xs font-regular text-slate-400 bg-slate-100 border px-1 rounded shrink-0">
                                                                     {prod.type === "DIGITAL_PRODUCT" ? "Produk Digital" : prod.type === "WEBINAR" ? "Webinar" : "Kelas"}

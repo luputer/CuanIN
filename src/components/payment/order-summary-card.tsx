@@ -43,7 +43,7 @@ export function OrderSummaryCard({
 
         <div className="flex justify-between items-center border-t border-slate-200 pt-2">
           <span className="font-semibold text-slate-800">Total Bayar</span>
-          <span className="font-bold text-cyan-600">
+          <span className="font-bold text-cuan-cyan">
             Rp {finalPrice.toLocaleString("id-ID")}
           </span>
         </div>
@@ -53,7 +53,7 @@ export function OrderSummaryCard({
       <button
         onClick={handlePay}
         disabled={isPending}
-        className="mt-6 w-full cursor-pointer rounded-xl bg-cyan-600 py-3 text-lg font-semibold text-white shadow-sm hover:bg-cyan-700 transition disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-6 w-full cursor-pointer rounded-xl bg-cuan-cyan py-3 text-lg font-semibold text-white shadow-sm hover:bg-007EA5 transition disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isPending ? "Memproses..." : "Bayar Sekarang"}
       </button>

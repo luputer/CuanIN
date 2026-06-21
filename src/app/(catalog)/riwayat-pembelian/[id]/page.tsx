@@ -10,7 +10,7 @@ import { api } from "~/trpc/react";
 import { CatalogNavHeader } from "~/components/layout/catalog-nav-header";
 
 const CATEGORY_STYLE: Record<string, string> = {
-  WEBINAR: "bg-cyan-100 text-cyan-700 border-cyan-200",
+  WEBINAR: "bg-cuan-cyan/20 text-007EA5 border-cuan-cyan/30",
   KELAS_ONLINE: "bg-amber-100 text-amber-700 border-amber-200",
   DIGITAL_PRODUCT: "bg-emerald-100 text-emerald-700 border-emerald-200",
 };
@@ -93,7 +93,7 @@ export default function PurchaseDetailPage() {
                     {isFree ? (
                       <div className="text-xl font-semibold text-green-600">Gratis</div>
                     ) : (
-                      <div className="text-xl font-bold text-cyan-600">
+                      <div className="text-xl font-bold text-cuan-cyan">
                         {formatIDR(Number(p.amount))}
                       </div>
                     )}
@@ -111,7 +111,7 @@ export default function PurchaseDetailPage() {
           {/* Payment Summary */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24 lg:col-span-2 lg:h-fit">
             <h3 className="mb-6 font-semibold text-slate-800 flex items-center gap-4">
-              <CreditCardIcon size={22} className="text-cyan-600" />
+              <CreditCardIcon size={22} className="text-cuan-cyan" />
               Rincian Pembayaran
             </h3>
 
@@ -134,7 +134,7 @@ export default function PurchaseDetailPage() {
                 {isFree ? (
                   <span className="font-bold text-green-600">Gratis</span>
                 ) : (
-                  <span className="font-bold text-cyan-600">
+                  <span className="font-bold text-cuan-cyan">
                     {formatIDR(Number(p.amount))}
                   </span>
                 )}

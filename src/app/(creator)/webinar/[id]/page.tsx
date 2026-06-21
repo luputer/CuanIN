@@ -15,11 +15,11 @@ import { SectionHeader, FormInput, FormRow } from "~/components/shared/form-layo
 import { DateRangePicker } from "~/components/shared/date-range-picker";
 import DeleteConfirmDialog from "~/components/shared/delete-confirm-dialog";
 import { CreatorDetailSkeleton } from "~/components/shared/detail-skeletons";
-import { 
-    BasicInfoSection, 
-    PricingSection, 
-    QuotaSection, 
-    PlatformSelector 
+import {
+    BasicInfoSection,
+    PricingSection,
+    QuotaSection,
+    PlatformSelector
 } from "~/components/creator/product-form-sections";
 import { ProductFormLayout } from "~/components/shared/product-form-layout";
 
@@ -32,7 +32,7 @@ export default function WebinarDetailPage() {
     const id = params.id as string;
     const router = useRouter();
     const utils = api.useUtils();
-    
+
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -84,7 +84,7 @@ export default function WebinarDetailPage() {
         const host = window.location.origin;
         const productSlug = product.slug ?? product.id;
         const publicUrl = `${host}/${catalog.slug}/${productSlug}`;
-        
+
         void navigator.clipboard.writeText(publicUrl);
         toast.success("Link produk berhasil disalin!");
     };
@@ -142,15 +142,15 @@ export default function WebinarDetailPage() {
                             variant="outline"
                             size="sm"
                             className={cn(
-                                "flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border-cyan-600 hover:bg-cyan-50 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer",
+                                "flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border-cuan-cyan hover:bg-cuan-cyan/10 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer",
                                 product.status !== "published" && "opacity-50 cursor-not-allowed border-slate-300 text-slate-400 hover:bg-white hover:shadow-none"
                             )}
                             onClick={product.status === "published" ? handleCopyLink : undefined}
                             disabled={product.status !== "published"}
                             title={product.status !== "published" ? "Produk belum dipublikasikan" : "Salin Link Produk"}
                         >
-                            <CopyIcon className={cn("w-4 h-4", product.status === "published" ? "text-cyan-600" : "text-slate-400")} />
-                            <span className={cn("text-sm font-regular whitespace-nowrap", product.status === "published" ? "text-cyan-600" : "text-slate-400")}>
+                            <CopyIcon className={cn("w-4 h-4", product.status === "published" ? "text-cuan-cyan" : "text-slate-400")} />
+                            <span className={cn("text-sm font-regular whitespace-nowrap", product.status === "published" ? "text-cuan-cyan" : "text-slate-400")}>
                                 Salin Link Produk
                             </span>
                         </Button>
@@ -166,11 +166,11 @@ export default function WebinarDetailPage() {
                 }
             >
                 <BasicInfoSection form={form} />
-                
-                <PricingSection 
-                    form={form} 
-                    onAdjustPrice={handlePriceAdjust} 
-                    onAdjustDiscount={handleDiscountPriceAdjust} 
+
+                <PricingSection
+                    form={form}
+                    onAdjustPrice={handlePriceAdjust}
+                    onAdjustDiscount={handleDiscountPriceAdjust}
                 />
 
                 <div className="pt-8">
@@ -201,8 +201,8 @@ export default function WebinarDetailPage() {
                         <FormRow label="Batas Pendaftaran" error={errors.dateDeadline?.message as string}>
                             <DateRangePicker
                                 startDate={dateDeadline}
-                                onChange={({ startDate }) => { 
-                                    if (startDate) setValue("dateDeadline", startDate, { shouldValidate: true, shouldDirty: true }); 
+                                onChange={({ startDate }) => {
+                                    if (startDate) setValue("dateDeadline", startDate, { shouldValidate: true, shouldDirty: true });
                                 }}
                                 placeholder="Pilih Batas Waktu Pendaftaran"
                                 showEndTime={false}
@@ -224,9 +224,9 @@ export default function WebinarDetailPage() {
                             />
                         </FormRow>
 
-                        <QuotaSection 
-                            form={form} 
-                            onAdjustQuota={handleQuotaAdjust} 
+                        <QuotaSection
+                            form={form}
+                            onAdjustQuota={handleQuotaAdjust}
                             label="Batasi Kuota"
                             placeholder="Masukkan batas kuota peserta"
                         />

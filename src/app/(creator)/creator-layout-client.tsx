@@ -46,7 +46,7 @@ export default function CreatorLayoutClient({ children }: { children: React.Reac
                 <div className="md:hidden fixed inset-0 z-50 flex">
                     {/* Backdrop overlay */}
                     <div
-                        className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+                        className="fixed inset-0 bg-slate-800/40 backdrop-blur-sm transition-opacity"
                         onClick={() => setIsMobileSidebarOpen(false)}
                     />
 

@@ -54,7 +54,7 @@ export function ProductSuccessDialog({
     const baseBtnStyle =
         "inline-flex items-center justify-center px-4 h-10 text-sm font-semibold " +
         "border-1 border-slate-800 " +
-        "shadow-[1px_1px_0px_rgba(29,41,61)] " +
+        "shadow-[1px_1px_0px_#000] " +
         "transition-all duration-200 ease-out " +
         "hover:translate-x-px hover:translate-y-px hover:shadow-none " +
         "active:translate-x-px active:translate-y-px active:shadow-none " +
@@ -74,7 +74,7 @@ export function ProductSuccessDialog({
                 </div>
 
                 {/* TITLE */}
-                <AlertDialogTitle className="text-lg font-semibold text-slate-900">
+                <AlertDialogTitle className="text-lg font-semibold text-slate-800">
                     Produk Berhasil Dibuat!
                 </AlertDialogTitle>
 
@@ -88,7 +88,7 @@ export function ProductSuccessDialog({
                     <button
                         type="button"
                         onClick={handleCopyLink}
-                        className={cn(baseBtnStyle, "w-full rounded-lg outline-none cursor-pointer", "bg-cyan-600 text-white")}
+                        className={cn(baseBtnStyle, "w-full rounded-lg outline-none cursor-pointer", "bg-cuan-cyan text-white")}
                     >
                         <CopyIcon className="w-4 h-4 mr-2" weight="bold" />
                         Salin Link
@@ -97,7 +97,7 @@ export function ProductSuccessDialog({
                     <button
                         type="button"
                         onClick={handleClose}
-                        className={cn(baseBtnStyle, "w-full rounded-lg outline-none cursor-pointer", "bg-white hover:bg-slate-50 text-slate-900")}
+                        className={cn(baseBtnStyle, "w-full rounded-lg outline-none cursor-pointer", "bg-white hover:bg-slate-50 text-slate-800")}
                     >
                         Tutup
                     </button>

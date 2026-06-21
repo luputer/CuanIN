@@ -38,7 +38,7 @@ export const VoucherSelector = ({ selectedIds, onChange }: VoucherSelectorProps)
                 <button
                     type="button"
                     onClick={handleSelectAll}
-                    className="w-full flex justify-end text-[12px] text-cyan-600 hover:underline font-medium cursor-pointer"
+                    className="w-full flex justify-end text-[12px] text-cuan-cyan hover:underline font-medium cursor-pointer"
                 >
                     {selectedIds.length === vouchers.length && vouchers.length > 0 ? "Hapus Semua" : "Pilih Semua"}
                 </button>
@@ -63,12 +63,12 @@ export const VoucherSelector = ({ selectedIds, onChange }: VoucherSelectorProps)
                                     key={voucher.id}
                                     className={cn(
                                         "flex items-center gap-3 p-2 rounded-md cursor-pointer transition-colors",
-                                        isChecked ? "bg-cyan-50/50" : "hover:bg-slate-50"
+                                        isChecked ? "bg-cuan-cyan/10/50" : "hover:bg-slate-50"
                                     )}
                                 >
                                     <input
                                         type="checkbox"
-                                        className="w-4 h-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-600 disabled:opacity-60 disabled:cursor-not-allowed"
+                                        className="w-4 h-4 accent-cuan-cyan rounded cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                                         checked={isChecked}
                                         disabled={isGlobal}
                                         onChange={() => handleToggle(voucher.id)}
@@ -77,7 +77,7 @@ export const VoucherSelector = ({ selectedIds, onChange }: VoucherSelectorProps)
                                         <div className="flex items-center gap-2">
                                             <span className="text-xs font-semibold text-slate-700">{voucher.code}</span>
                                             {voucher.usageType === "ALL_PRODUCTS" && (
-                                                <span className="text-[9px] bg-cyan-100 text-cyan-700 px-1.5 py-0.5 rounded font-medium">Semua Produk</span>
+                                                <span className="text-[9px] bg-cuan-cyan/20 text-007EA5 px-1.5 py-0.5 rounded font-medium">Semua Produk</span>
                                             )}
                                             {voucher.usageType === "SINGLE_CHECKOUT" && (
                                                 <span className="text-[9px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-medium">1x Checkout</span>

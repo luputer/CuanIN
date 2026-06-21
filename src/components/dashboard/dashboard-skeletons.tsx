@@ -44,7 +44,7 @@ export function ChartSkeleton({ height = 300 }: { height?: number }) {
 
 export function ChartCardSkeleton({ height = 300 }: { height?: number }) {
     return (
-        <div className="bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-5 overflow-hidden">
+        <div className="bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_#000] p-5 overflow-hidden">
             <div className="flex items-center gap-3 mb-5">
                 <Shimmer className="h-4 w-32 rounded" />
                 <Shimmer className="h-3 w-16 rounded" />

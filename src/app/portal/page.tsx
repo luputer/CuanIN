@@ -8,8 +8,8 @@ export default function PortalLandingPage() {
       <div className="flex-1 flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center space-y-4">
           <div className="flex items-center justify-center gap-2">
-            <div className="w-9 h-9 rounded-lg bg-cyan-100 flex items-center justify-center">
-              <StorefrontIcon size={20} weight="bold" className="text-cyan-600" />
+            <div className="w-9 h-9 rounded-lg bg-cuan-cyan/20 flex items-center justify-center">
+              <StorefrontIcon size={20} weight="bold" className="text-cuan-cyan" />
             </div>
             <span className="text-lg font-bold text-slate-800">CuanIN</span>
           </div>

@@ -9,7 +9,7 @@ export default function ProblemSection() {
 
         <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold text-slate-800 mb-12 md:mb-20 relative inline-block">
           Masalah yang Sering Terjadi
-          <svg className="absolute -bottom-6 left-0 w-full h-4 text-cyan-500" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <svg className="absolute -bottom-6 left-0 w-full h-4 text-cuan-cyan/100" viewBox="0 0 200 20" preserveAspectRatio="none">
             <path d="M5 15 C 60 5, 140 5, 195 15" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
           </svg>
         </h2>

@@ -92,13 +92,13 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
             ([theme, prefix]) => `
 ${prefix} [data-chart=${id}] {
 ${colorConfig
-  .map(([key, itemConfig]) => {
-    const color =
-      itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
-      itemConfig.color
-    return color ? `  --color-${key}: ${color};` : null
-  })
-  .join("\n")}
+                .map(([key, itemConfig]) => {
+                  const color =
+                    itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
+                    itemConfig.color
+                  return color ? `  --color-${key}: ${color};` : null
+                })
+                .join("\n")}
 }
 `,
           )
@@ -152,7 +152,7 @@ function ChartTooltipContent({
 
     if (labelFormatter) {
       return (
-        <div className={cn("font-black text-slate-950", labelClassName)}>
+        <div className={cn("font-black text-slate-800", labelClassName)}>
           {labelFormatter(value, payload)}
         </div>
       )
@@ -162,7 +162,7 @@ function ChartTooltipContent({
       return null
     }
 
-    return <div className={cn("font-black text-slate-950", labelClassName)}>{value}</div>
+    return <div className={cn("font-black text-slate-800", labelClassName)}>{value}</div>
   }, [label, labelFormatter, payload, hideLabel, labelClassName, config, labelKey])
 
   if (!active || !payload?.length) {
@@ -174,7 +174,7 @@ function ChartTooltipContent({
   return (
     <div
       className={cn(
-        "grid min-w-[10rem] items-start gap-2 rounded-xl border border-slate-950 bg-white px-3 py-2 text-xs shadow-[0px_1px_0px_rgba(29,41,61)]",
+        "grid min-w-[10rem] items-start gap-2 rounded-xl border border-slate-800 bg-white px-3 py-2 text-xs shadow-[0px_1px_0px_#000]",
         className,
       )}
     >
@@ -205,7 +205,7 @@ function ChartTooltipContent({
                         className={cn(
                           "shrink-0 rounded-[2px] bg-(--color-bg)",
                           {
-                            "size-2.5 border border-slate-950": indicator === "dot",
+                            "size-2.5 border border-slate-800": indicator === "dot",
                             "w-1": indicator === "line",
                             "w-0 border-[1.5px] border-dashed bg-transparent": indicator === "dashed",
                             "my-0.5": nestLabel && indicator === "dashed",
@@ -231,7 +231,7 @@ function ChartTooltipContent({
                       </span>
                     </div>
                     {item.value && (
-                      <span className="font-black tabular-nums text-slate-950 ml-4">
+                      <span className="font-black tabular-nums text-slate-800 ml-4">
                         {item.value.toLocaleString()}
                       </span>
                     )}

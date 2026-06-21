@@ -63,7 +63,7 @@ export function DateRangeOnlyPicker({
                 <Button
                     variant="outline"
                     className={cn(
-                        "w-full justify-between text-left bg-white border-slate-400 hover:bg-slate-50 h-[52px] px-4 rounded-lg focus:ring-2 focus:ring-cyan-600/50 transition-all shadow-none font-normal cursor-pointer",
+                        "w-full justify-between text-left bg-white border-slate-400 hover:bg-slate-50 h-[52px] px-4 rounded-lg focus:ring-2 focus:ring-cuan-cyan/50 transition-all shadow-none font-normal cursor-pointer",
                         !startDate && "text-slate-400",
                         className
                     )}

@@ -67,7 +67,7 @@ function PortalRequestForm({ creatorSlug }: { creatorSlug: string }) {
           </p>
           <button
             onClick={() => { setSent(false); setError(""); }}
-            className="inline-flex items-center gap-1.5 text-sm text-cyan-600 hover:text-cyan-700 font-medium mt-2"
+            className="inline-flex items-center gap-1.5 text-sm text-cuan-cyan hover:text-007EA5 font-medium mt-2"
           >
             <ArrowCounterClockwiseIcon size={16} />
             Kirim ulang
@@ -82,11 +82,11 @@ function PortalRequestForm({ creatorSlug }: { creatorSlug: string }) {
       <div className="max-w-md w-full space-y-6">
         <div className="text-center space-y-3">
           <div className="flex items-center justify-center gap-2">
-            <StorefrontIcon size={24} weight="bold" className="text-cyan-600" />
+            <StorefrontIcon size={24} weight="bold" className="text-cuan-cyan" />
             <span className="text-lg font-bold text-slate-800">CuanIN</span>
           </div>
-          <div className="w-16 h-16 mx-auto rounded-full bg-cyan-100 flex items-center justify-center">
-            <EnvelopeSimpleIcon className="text-cyan-600" size={28} weight="fill" />
+          <div className="w-16 h-16 mx-auto rounded-full bg-cuan-cyan/20 flex items-center justify-center">
+            <EnvelopeSimpleIcon className="text-cuan-cyan" size={28} weight="fill" />
           </div>
           <h1 className="text-xl font-bold text-slate-800">Akses Portal</h1>
           <p className="text-slate-500 text-sm">
@@ -116,7 +116,7 @@ function PortalRequestForm({ creatorSlug }: { creatorSlug: string }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="contoh@email.com"
-              className="w-full px-4 py-3 rounded-xl border-2 border-slate-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-all text-sm"
+              className="w-full px-4 py-3 rounded-xl border-2 border-slate-300 focus:border-cuan-cyan/100 focus:ring-2 focus:ring-cuan-cyan/30 outline-none transition-all text-sm"
               disabled={requestLink.isPending}
               required
             />
@@ -131,7 +131,7 @@ function PortalRequestForm({ creatorSlug }: { creatorSlug: string }) {
           <button
             type="submit"
             disabled={requestLink.isPending}
-            className="w-full bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-300 text-white font-bold py-3 px-6 rounded-xl border-2 border-slate-800 shadow-[3px_3px_0px_0px_rgba(30,41,59,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all disabled:shadow-none disabled:translate-x-0 disabled:translate-y-0 flex items-center justify-center gap-2"
+            className="w-full bg-cuan-cyan hover:bg-007EA5 disabled:bg-slate-300 text-white font-bold py-3 px-6 rounded-xl border-2 border-slate-800 shadow-[3px_3px_0px_0px_#000] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all disabled:shadow-none disabled:translate-x-0 disabled:translate-y-0 flex items-center justify-center gap-2"
           >
             {requestLink.isPending ? (
               <>
@@ -260,7 +260,7 @@ export default function CreatorPortalPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-4">
         <div className="flex flex-col items-center gap-3">
-          <SpinnerIcon className="animate-spin text-cyan-600" size={32} />
+          <SpinnerIcon className="animate-spin text-cuan-cyan" size={32} />
           <p className="text-slate-500 text-sm">Memuat portal...</p>
         </div>
       </div>
@@ -282,8 +282,8 @@ export default function CreatorPortalPage() {
         <div className="py-4">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-cyan-100 flex items-center justify-center shrink-0">
-                <StorefrontIcon size={20} weight="bold" className="text-cyan-600" />
+              <div className="w-9 h-9 rounded-lg bg-cuan-cyan/20 flex items-center justify-center shrink-0">
+                <StorefrontIcon size={20} weight="bold" className="text-cuan-cyan" />
               </div>
               <div>
                 <h1 className="text-base font-bold text-slate-800 leading-tight">
@@ -315,7 +315,7 @@ export default function CreatorPortalPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by name product..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 outline-none transition-all text-sm placeholder:text-slate-400"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-cuan-cyan/50 focus:ring-2 focus:ring-cuan-cyan/20 outline-none transition-all text-sm placeholder:text-slate-400"
               />
             </div>
           )}
@@ -327,7 +327,7 @@ export default function CreatorPortalPage() {
             <>
               {/* Tab Title */}
               <div className="flex items-center gap-2">
-                {currentTabInfo && <currentTabInfo.icon size={18} weight="bold" className="text-cyan-600" />}
+                {currentTabInfo && <currentTabInfo.icon size={18} weight="bold" className="text-cuan-cyan" />}
                 <h2 className="text-sm font-bold text-slate-700">
                   {currentTabInfo?.label} ({filteredPurchases.length})
                 </h2>
@@ -351,7 +351,7 @@ export default function CreatorPortalPage() {
                   return (
                     <div
                       key={purchase.id}
-                      className="rounded-xl border-2 border-slate-800 bg-white shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] overflow-hidden"
+                      className="rounded-xl border-2 border-slate-800 bg-white shadow-[4px_4px_0px_0px_#000] overflow-hidden"
                     >
                       {product.image && (
                         <div className="relative w-full aspect-video bg-slate-100">
@@ -368,7 +368,7 @@ export default function CreatorPortalPage() {
                         <div className="space-y-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             {product.contentType && (
-                              <span className="inline-block text-xs font-medium bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded-full">
+                              <span className="inline-block text-xs font-medium bg-cuan-cyan/20 text-007EA5 px-2 py-0.5 rounded-full">
                                 {product.contentType}
                               </span>
                             )}
@@ -388,7 +388,7 @@ export default function CreatorPortalPage() {
                             href={product.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block w-full text-center bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2.5 px-6 rounded-xl border-2 border-slate-800 shadow-[3px_3px_0px_0px_rgba(30,41,59,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all text-sm"
+                            className="block w-full text-center bg-cuan-cyan hover:bg-007EA5 text-white font-bold py-2.5 px-6 rounded-xl border-2 border-slate-800 shadow-[3px_3px_0px_0px_#000] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all text-sm"
                           >
                             Masuk ke Produk
                           </a>
@@ -406,9 +406,9 @@ export default function CreatorPortalPage() {
                                 href={link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="block p-2.5 rounded-lg bg-slate-50 border border-slate-200 hover:bg-cyan-50 hover:border-cyan-200 transition-colors"
+                                className="block p-2.5 rounded-lg bg-slate-50 border border-slate-200 hover:bg-cuan-cyan/10 hover:border-cuan-cyan/30 transition-colors"
                               >
-                                <p className="text-xs text-cyan-700 break-all truncate">{link}</p>
+                                <p className="text-xs text-007EA5 break-all truncate">{link}</p>
                               </a>
                             ))}
                           </div>
@@ -434,14 +434,14 @@ export default function CreatorPortalPage() {
               {/* Payment History */}
               <div className="space-y-3">
                 <h2 className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                  <CurrencyCircleDollarIcon size={18} weight="bold" className="text-cyan-600" />
+                  <CurrencyCircleDollarIcon size={18} weight="bold" className="text-cuan-cyan" />
                   Riwayat Pembayaran ({data.purchases.length})
                 </h2>
 
                 {data.purchases.map((purchase) => (
                   <div
                     key={purchase.id}
-                    className="rounded-xl border-2 border-slate-800 bg-white shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] p-4 space-y-2"
+                    className="rounded-xl border-2 border-slate-800 bg-white shadow-[4px_4px_0px_0px_#000] p-4 space-y-2"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">

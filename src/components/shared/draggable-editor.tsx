@@ -73,9 +73,9 @@ export const DraggableEditor = ({
             {/* Custom Drag Handler */}
             <div
                 onMouseDown={handleMouseDown}
-                className="absolute bottom-0 left-0 right-0 h-1.5 bg-slate-100 hover:bg-cyan-100 cursor-row-resize flex items-center justify-center transition-colors border-t border-slate-200"
+                className="absolute bottom-0 left-0 right-0 h-1.5 bg-slate-100 hover:bg-cuan-cyan/20 cursor-row-resize flex items-center justify-center transition-colors border-t border-slate-200"
             >
-                <div className="w-12 h-1 bg-slate-300 rounded-full group-hover:bg-cyan-300" />
+                <div className="w-12 h-1 bg-slate-300 rounded-full group-hover:bg-cuan-cyan/30" />
             </div>
         </div>
     );

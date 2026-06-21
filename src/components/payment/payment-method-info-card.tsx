@@ -8,7 +8,7 @@ export function PaymentMethodInfoCard() {
   return (
     <CardContainer shadow={false} className="flex items-center justify-between">
       <div className="flex items-center gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-cyan-50 text-cyan-600">
+        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-cuan-cyan/10 text-cuan-cyan">
           <CreditCardIcon size={24} weight="duotone" />
         </div>
         <div>

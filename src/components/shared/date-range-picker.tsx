@@ -48,7 +48,7 @@ export function DateRangePicker({
 
         // Apply existing times to the new date
         const newStart = setHours(setMinutes(new Date(selectedDate), startDate?.getMinutes() ?? 0), startDate?.getHours() ?? 0);
-        const newEnd = showEndTime 
+        const newEnd = showEndTime
             ? setHours(setMinutes(new Date(selectedDate), endDate?.getMinutes() ?? 0), endDate?.getHours() ?? 0)
             : undefined;
 
@@ -80,7 +80,7 @@ export function DateRangePicker({
                 <Button
                     variant="outline"
                     className={cn(
-                        "w-full justify-between text-left bg-white border-slate-400 hover:bg-slate-50 h-[52px] px-4 rounded-lg focus:ring-2 focus:ring-cyan-600/50 transition-all shadow-none font-normal cursor-pointer",
+                        "w-full justify-between text-left bg-white border-slate-400 hover:bg-slate-50 h-[52px] px-4 rounded-lg focus:ring-2 focus:ring-cuan-cyan/50 transition-all shadow-none font-normal cursor-pointer",
                         !startDate && "text-slate-800",
                         className
                     )}
@@ -122,7 +122,7 @@ export function DateRangePicker({
                                         size="sm"
                                         className={cn(
                                             "text-xs font-normal justify-center h-8",
-                                            startDate && format(startDate, "HH:mm") === time && "bg-cyan-100 text-cyan-700 font-bold"
+                                            startDate && format(startDate, "HH:mm") === time && "bg-cuan-cyan/20 text-007EA5 font-bold"
                                         )}
                                         onClick={() => handleTimeSelect("start", time)}
                                     >
@@ -148,7 +148,7 @@ export function DateRangePicker({
                                             size="sm"
                                             className={cn(
                                                 "text-xs font-normal justify-center h-8",
-                                                endDate && format(endDate, "HH:mm") === time && "bg-cyan-100 text-cyan-700 font-bold"
+                                                endDate && format(endDate, "HH:mm") === time && "bg-cuan-cyan/20 text-007EA5 font-bold"
                                             )}
                                             onClick={() => handleTimeSelect("end", time)}
                                         >

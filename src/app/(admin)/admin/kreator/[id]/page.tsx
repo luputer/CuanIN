@@ -132,7 +132,7 @@ export default function CreatorDetailPage() {
         return (
             <div className="flex flex-col items-center justify-center py-20">
                 <p className="text-slate-500">Kreator tidak ditemukan</p>
-                <Link href="/admin/kreator" className="text-cyan-600 font-bold mt-2 hover:underline">
+                <Link href="/admin/kreator" className="text-cuan-cyan font-bold mt-2 hover:underline">
                     Kembali ke Daftar
                 </Link>
             </div>
@@ -152,9 +152,9 @@ export default function CreatorDetailPage() {
                     actions={
                         <button
                             onClick={() => router.push(`/admin/kreator/${id}/produk`)}
-                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-cyan-600 hover:bg-cyan-50 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
+                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-cuan-cyan hover:bg-cuan-cyan/10 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
                         >
-                            <span className="text-sm font-medium text-cyan-600 whitespace-nowrap">
+                            <span className="text-sm font-medium text-cuan-cyan whitespace-nowrap">
                                 Lihat Produk Kreator
                             </span>
                         </button>
@@ -176,7 +176,7 @@ export default function CreatorDetailPage() {
                                             className="relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer"
                                             onClick={() => fileInputRef.current?.click()}
                                         >
-                                            <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-500 group-hover:bg-cyan-50 relative">
+                                            <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10 relative">
                                                 {avatarUpload.previewUrl ? (
                                                     <>
                                                         <Image
@@ -236,7 +236,7 @@ export default function CreatorDetailPage() {
                                             className="relative group w-full aspect-[6/1] md:aspect-[8/1] cursor-pointer"
                                             onClick={() => bannerInputRef.current?.click()}
                                         >
-                                            <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-500 group-hover:bg-cyan-50 relative">
+                                            <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10 relative">
                                                 {bannerUpload.previewUrl ? (
                                                     <>
                                                         <Image
@@ -336,7 +336,7 @@ export default function CreatorDetailPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => setShowPassword(!showPassword)}
-                                                    className="text-slate-400 hover:text-cyan-600 transition-colors px-2"
+                                                    className="text-slate-400 hover:text-cuan-cyan transition-colors px-2"
                                                 >
                                                     {showPassword ? <EyeSlashIcon size={20} /> : <EyeIcon size={20} />}
                                                 </button>
@@ -369,7 +369,7 @@ export default function CreatorDetailPage() {
                     {/* ─── Right Column: Sidebar Performa ──── */}
                     <div className="w-full lg:w-80 flex flex-col gap-2">
                         <div className="bg-slate-50 rounded-xl border border-slate-800 overflow-hidden p-6 space-y-4">
-                            <div className="text-cyan-600 text-md font-semibold mb-4">Performa</div>
+                            <div className="text-cuan-cyan text-md font-semibold mb-4">Performa</div>
 
                             <div className="space-y-2">
                                 {/* Total Produk */}
@@ -396,7 +396,7 @@ export default function CreatorDetailPage() {
 
                                 {/* Total Pendapatan */}
                                 <div className="p-5 rounded-2xl bg-white border border-slate-200 flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-500 shrink-0">
+                                    <div className="w-12 h-12 rounded-full bg-cuan-cyan/20 flex items-center justify-center text-cuan-cyan/100 shrink-0">
                                         <WalletIcon size={24} weight="fill" />
                                     </div>
                                     <div className="min-w-0 flex-1">

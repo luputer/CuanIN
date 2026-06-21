@@ -176,7 +176,7 @@ export default function CatalogSlugPage() {
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="h-full w-full bg-gradient-to-r from-cyan-500 to-blue-600 opacity-20" />
+          <div className="h-full w-full bg-gradient-to-r from-cuan-cyan/100 to-blue-600 opacity-20" />
         )}
       </div>
 
@@ -198,7 +198,7 @@ export default function CatalogSlugPage() {
 
           <div className="mt-4 flex items-center gap-4 md:gap-6 rounded-full border border-slate-200 bg-white px-6 md:px-10 py-3 md:py-4 text-xs md:text-sm shadow-xs">
             <span className="flex items-center gap-2 md:gap-3">
-              <span className="text-lg md:text-xl font-semibold text-cyan-600">
+              <span className="text-lg md:text-xl font-semibold text-cuan-cyan">
                 {products.length}
               </span>
               <span className="text-slate-600">Produk</span>
@@ -207,7 +207,7 @@ export default function CatalogSlugPage() {
             <div className="h-4 border-r border-slate-300" />
 
             <span className="flex items-center gap-2 md:gap-3">
-              <span className="text-lg md:text-xl font-semibold text-cyan-600">
+              <span className="text-lg md:text-xl font-semibold text-cuan-cyan">
                 {products.length}
               </span>
               <span className="text-slate-600">Terjual</span>
@@ -247,7 +247,7 @@ export default function CatalogSlugPage() {
                         className={cn(
                           "w-full cursor-pointer rounded-lg px-2.5 py-2 text-left text-sm font-medium transition-all hover:bg-slate-100",
                           priceFilter === opt
-                            ? "bg-cyan-50 text-cyan-600"
+                            ? "bg-cuan-cyan/10 text-cuan-cyan"
                             : "text-slate-700",
                         )}
                       >
@@ -266,8 +266,8 @@ export default function CatalogSlugPage() {
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`h-9 md:h-10 cursor-pointer rounded-full px-3 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-200 ${activeTab === tab
-                    ? "border border-cyan-600 bg-cyan-600 text-white"
-                    : "border border-slate-400 bg-white text-slate-600 hover:bg-cyan-50"
+                    ? "border border-cuan-cyan bg-cuan-cyan text-white"
+                    : "border border-slate-400 bg-white text-slate-600 hover:bg-cuan-cyan/10"
                     }`}
                 >
                   {tab}

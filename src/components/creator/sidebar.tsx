@@ -29,14 +29,14 @@ function SidebarItem({
     return (
         <Link href={href} className="block" title={isCollapsed ? label : undefined}>
             <div
-                className={`flex items-center ${isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-2"} rounded-lg cursor-pointer transition-all duration-300 ease-out
+                className={`group flex items-center ${isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-2"} rounded-lg cursor-pointer transition-all duration-300 ease-out
         ${active
                         ? "bg-cuan-blue text-white font-semibold text-base border-1 border-slate-800 shadow-[1px_2px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition duration-200 ease-out"
                         : textClassName ?? "font-semibold text-base text-slate-800 hover:bg-cuan-blue/10 hover:text-cuan-blue"
                     }`}
             >
                 {React.cloneElement(icon, {
-                    className: `w-5 h-5 shrink-0 ${active ? "text-white" : (iconClassName ?? "text-slate-800")}`,
+                    className: `w-5 h-5 shrink-0 transition-colors duration-200 ${active ? "text-white" : (iconClassName ?? "text-slate-800 group-hover:text-cuan-blue")}`,
                 })}
                 {!isCollapsed && <span className="whitespace-nowrap">{label}</span>}
             </div>
@@ -172,13 +172,13 @@ export default function SidebarKreator({
                         isCollapsed={isCollapsed}
                     />
                 </div>
-                <div className={`mt-6 w-full flex flex-col items-center rounded-lg bg-white border-1 border-[#00B8F1] shadow-[0px_2px_0px_#00B8F1] transition duration-200 ease-out hover:translate-y-[2px] hover:shadow-none`}>
+                <div className={`mt-6 w-full flex flex-col items-center rounded-lg bg-white border-1 border-cuan-cyan shadow-[0px_2px_0px_#00B8F1] transition duration-200 ease-out hover:translate-y-[2px] hover:shadow-none`}>
                     <SidebarItem
                         icon={<StorefrontIcon size={20} weight="fill" />}
                         label="Katalog Saya"
                         href={catalogHref}
-                        iconClassName="text-[#00B8F1]"
-                        textClassName="text-[#00B8F1] font-semibold text-base"
+                        iconClassName="text-cuan-cyan"
+                        textClassName="text-cuan-cyan font-semibold text-base"
                         isCollapsed={isCollapsed}
                     />
                 </div>

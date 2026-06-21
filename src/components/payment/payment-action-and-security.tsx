@@ -19,7 +19,7 @@ export function PaymentActionAndSecurity({
       {xenditInvoiceUrl && hasFailed && (
         <a
           href={xenditInvoiceUrl}
-          className="w-full py-3.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition"
+          className="w-full py-3.5 bg-cuan-cyan hover:bg-007EA5 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition"
         >
           <ArrowCounterClockwiseIcon className="w-4 h-4" />
           Coba Bayar Lagi

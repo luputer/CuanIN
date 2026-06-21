@@ -104,8 +104,8 @@ export default function Pembeli({ productId }: { productId: string }) {
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <ButtonFilter 
-                                label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "completed" ? "Sudah Bayar" : statusFilter === "pending" ? "Pending" : statusFilter}`} 
+                            <ButtonFilter
+                                label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "completed" ? "Sudah Bayar" : statusFilter === "pending" ? "Pending" : statusFilter}`}
                                 className="w-full sm:w-auto flex-none"
                             />
                         </DropdownMenuTrigger>
@@ -207,7 +207,7 @@ export default function Pembeli({ productId }: { productId: string }) {
                                                         setSelectedPurchaseId(item.id);
                                                         setView("detail");
                                                     }}
-                                                    className="hover:text-cyan-600 transition-colors"
+                                                    className="hover:text-cuan-cyan transition-colors"
                                                 >
                                                     <div className="flex items-center min-h-12">
                                                         {item.buyerName}
@@ -250,7 +250,7 @@ export default function Pembeli({ productId }: { productId: string }) {
                                                                 setSelectedPurchaseId(item.id);
                                                                 setView("detail");
                                                             }}>
-                                                                <EyeIcon className="size-6 text-cyan-600 cursor-pointer hover:text-cyan-700" />
+                                                                <EyeIcon className="size-6 text-cuan-cyan cursor-pointer hover:text-007EA5" />
                                                             </button>
                                                         </TooltipTrigger>
                                                         <TooltipContent>Detail</TooltipContent>
@@ -305,7 +305,7 @@ export default function Pembeli({ productId }: { productId: string }) {
                                                     setSelectedPurchaseId(item.id);
                                                     setView("detail");
                                                 }}
-                                                className="font-semibold text-cyan-600 hover:text-cyan-700 text-right hover:underline"
+                                                className="font-semibold text-cuan-cyan hover:text-007EA5 text-right hover:underline"
                                             >
                                                 {item.buyerName}
                                             </button>
@@ -331,7 +331,7 @@ export default function Pembeli({ productId }: { productId: string }) {
                                                 setSelectedPurchaseId(item.id);
                                                 setView("detail");
                                             }}
-                                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-cyan-600 border border-cyan-600 rounded-md hover:bg-cyan-50 transition-colors"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-cuan-cyan border border-cuan-cyan rounded-md hover:bg-cuan-cyan/10 transition-colors"
                                         >
                                             <EyeIcon className="size-4" />
                                             Detail Pembeli
@@ -344,7 +344,7 @@ export default function Pembeli({ productId }: { productId: string }) {
 
                     {/* Mobile Pagination */}
                     {items.length > 0 && (
-                        <div className="bg-white border border-slate-800 rounded-xl p-4 shadow-[0px_1.5px_0px_rgba(29,41,61)]">
+                        <div className="bg-white border border-slate-800 rounded-xl p-4 shadow-[0px_1.5px_0px_#000]">
                             <TablePagination
                                 page={page}
                                 totalPages={totalPages}

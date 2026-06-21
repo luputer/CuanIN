@@ -215,7 +215,7 @@ export default function VoucherPage() {
                                         ) : (
                                             <div className="flex flex-col items-center gap-1">
                                                 <span>Belum ada voucher.</span>
-                                                <Link href="/voucher/create" className="text-cyan-600 font-medium hover:underline">
+                                                <Link href="/voucher/create" className="text-cuan-cyan font-medium hover:underline">
                                                     Yuk, buat voucher diskon pertamamu!
                                                 </Link>
                                             </div>
@@ -253,14 +253,14 @@ export default function VoucherPage() {
                                             </TableCell>
 
                                             <TableCell className="whitespace-nowrap">
-                                                <div className="flex items-center min-h-[48px] font-medium text-cyan-600">
+                                                <div className="flex items-center min-h-[48px] font-medium text-cuan-cyan">
                                                     {item.type === "PERSEN" ? `${item.discount}%` : `Rp ${Number(item.discount).toLocaleString("id-ID")}`}
                                                 </div>
                                             </TableCell>
 
                                             <TableCell className="whitespace-nowrap">
                                                 <div className="flex items-center min-h-[48px] font-medium text-slate-600">
-                                                    <span className="text-slate-900">{usageCount}</span>
+                                                    <span className="text-slate-800">{usageCount}</span>
                                                     {limitCount && <span className="text-slate-400 font-normal"> / {limitCount}</span>}
                                                 </div>
                                             </TableCell>
@@ -282,7 +282,7 @@ export default function VoucherPage() {
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <Link href={`/voucher/${item.id}`}>
-                                                                <PencilSimpleIcon className="w-[24px] h-[24px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
+                                                                <PencilSimpleIcon className="w-[24px] h-[24px] text-cuan-cyan cursor-pointer hover:text-007EA5" />
                                                             </Link>
                                                         </TooltipTrigger>
                                                         <TooltipContent>Detail & Edit</TooltipContent>
@@ -333,7 +333,7 @@ export default function VoucherPage() {
                         paginatedVouchers.map((item, index) => {
                             const rowNumber = (page - 1) * limit + index + 1;
                             return (
-                                <div key={item.id} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3 shadow-[1.5px_1.5px_0px_rgba(29,41,61)]">
+                                <div key={item.id} className="bg-white border border-slate-800 rounded-xl p-4 space-y-3 shadow-[1.5px_1.5px_0px_#000]">
                                     <div className="flex justify-between items-center border-b border-slate-100 pb-2">
                                         <span className="text-xs font-semibold text-slate-400"># {rowNumber}</span>
                                         <StatusBadge status={item.status} />
@@ -341,10 +341,10 @@ export default function VoucherPage() {
 
                                     <div className="space-y-2 flex-1 min-w-0">
                                         <div className="font-semibold text-slate-800 break-words leading-normal text-base flex justify-between items-center">
-                                            <span className="font-mono text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded border border-cyan-200 text-sm">
+                                            <span className="font-mono text-cuan-cyan bg-cuan-cyan/10 px-2 py-0.5 rounded border border-cuan-cyan/30 text-sm">
                                                 {item.code}
                                             </span>
-                                            <span className="font-bold text-cyan-700 text-sm">
+                                            <span className="font-bold text-007EA5 text-sm">
                                                 {item.type === "PERSEN" ? `${item.discount}%` : `Rp ${Number(item.discount).toLocaleString("id-ID")}`}
                                             </span>
                                         </div>
@@ -361,7 +361,7 @@ export default function VoucherPage() {
 
                                         <div className="text-xs text-slate-500">
                                             <span className="font-medium text-slate-400">Digunakan: </span>
-                                            <span className="font-medium text-slate-900">{(item as any).usageCount || 0}</span>
+                                            <span className="font-medium text-slate-800">{(item as any).usageCount || 0}</span>
                                             {(item as any).usageLimit && <span className="text-slate-400"> / {(item as any).usageLimit}</span>}
                                         </div>
 
@@ -375,7 +375,7 @@ export default function VoucherPage() {
                                         {/* Actions */}
                                         <div className="flex justify-between items-center pt-2.5 border-t border-slate-100 gap-2">
                                             <div className="flex items-center gap-3">
-                                                <Link href={`/voucher/${item.id}`} className="p-2 rounded-lg text-cyan-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer">
+                                                <Link href={`/voucher/${item.id}`} className="p-2 rounded-lg text-cuan-cyan border border-slate-200 hover:bg-slate-50 transition cursor-pointer">
                                                     <PencilSimpleIcon className="w-5 h-5" />
                                                 </Link>
 

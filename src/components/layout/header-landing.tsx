@@ -119,7 +119,7 @@ export default function HeaderLandingPage({ buttonText, buttonHref }: HeaderProp
                                 key={link.href}
                                 href={link.href}
                                 onClick={() => setIsMenuOpen(false)}
-                                className={`py-3 px-2 text-sm font-medium rounded-lg transition-colors duration-200 ${isActive ? "text-cuan-cyan bg-cyan-50" : "text-slate-700 hover:text-cuan-cyan hover:bg-slate-50"}`}
+                                className={`py-3 px-2 text-sm font-medium rounded-lg transition-colors duration-200 ${isActive ? "text-cuan-cyan bg-cuan-cyan/10" : "text-slate-700 hover:text-cuan-cyan hover:bg-slate-50"}`}
                             >
                                 {link.label}
                             </Link>

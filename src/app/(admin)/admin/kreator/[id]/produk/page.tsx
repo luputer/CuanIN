@@ -208,7 +208,7 @@ export default function CreatorProductsPage() {
 
                     {/* Mobile Pagination */}
                     {products && products.length > 0 && (
-                        <div className="bg-white border border-slate-800 rounded-xl p-4 shadow-[1.5px_1.5px_0px_rgba(29,41,61)]">
+                        <div className="bg-white border border-slate-800 rounded-xl p-4 shadow-[1.5px_1.5px_0px_#000]">
                             <TablePagination
                                 page={page}
                                 totalPages={totalPages}

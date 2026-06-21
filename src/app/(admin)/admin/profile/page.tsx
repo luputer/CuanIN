@@ -125,7 +125,7 @@ export default function AdminProfilePage() {
                                             <button
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className="text-slate-400 hover:text-cyan-600 transition-colors px-2"
+                                                className="text-slate-400 hover:text-cuan-cyan transition-colors px-2"
                                             >
                                                 {showPassword ? <EyeSlashIcon size={20} /> : <EyeIcon size={20} />}
                                             </button>

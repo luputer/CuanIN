@@ -82,44 +82,44 @@ function PaymentSuccessContent() {
 
                 {/* BRAND */}
                 <PaymentBrandHeader
-                  userImage={purchase?.product?.user?.image}
-                  userName={purchase?.product?.user?.name}
+                    userImage={purchase?.product?.user?.image}
+                    userName={purchase?.product?.user?.name}
                 />
 
                 {/* SUCCESS ICON */}
                 <PaymentStatusSection
-                  icon={
-                    <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                      <CheckCircleIcon className="w-10 h-10 text-green-500" weight="fill" />
-                    </div>
-                  }
-                  title={isFree ? "Pendaftaran Berhasil!" : "Pembayaran Berhasil!"}
-                  message={isFree ? "Pendaftaranmu telah dikonfirmasi." : "Terima kasih! Pesananmu telah dikonfirmasi."}
+                    icon={
+                        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
+                            <CheckCircleIcon className="w-10 h-10 text-green-500" weight="fill" />
+                        </div>
+                    }
+                    title={isFree ? "Pendaftaran Berhasil!" : "Pembayaran Berhasil!"}
+                    message={isFree ? "Pendaftaranmu telah dikonfirmasi." : "Terima kasih! Pesananmu telah dikonfirmasi."}
                 >
-                  {/* EMAIL NOTICE */}
-                  <div className="bg-cyan-50 border border-cyan-200 rounded-xl p-4 w-full flex gap-3 items-start text-left mt-2">
-                      <EnvelopeIcon className="w-5 h-5 text-cyan-600 shrink-0 mt-0.5" weight="fill" />
-                      <div>
-                          <p className="text-sm font-semibold text-cyan-700">Cek email kamu</p>
-                          <p className="text-xs text-cyan-600 mt-0.5">
-                              Link akses produk sudah dikirim ke{" "}
-                              <span className="font-medium">{purchase?.buyerEmail ?? "emailmu"}</span>
-                          </p>
-                      </div>
-                  </div>
+                    {/* EMAIL NOTICE */}
+                    <div className="bg-cuan-cyan/10 border border-cuan-cyan/30 rounded-xl p-4 w-full flex gap-3 items-start text-left mt-2">
+                        <EnvelopeIcon className="w-5 h-5 text-cuan-cyan shrink-0 mt-0.5" weight="fill" />
+                        <div>
+                            <p className="text-sm font-semibold text-007EA5">Cek email kamu</p>
+                            <p className="text-xs text-cuan-cyan mt-0.5">
+                                Link akses produk sudah dikirim ke{" "}
+                                <span className="font-medium">{purchase?.buyerEmail ?? "emailmu"}</span>
+                            </p>
+                        </div>
+                    </div>
                 </PaymentStatusSection>
 
                 {/* ORDER SUMMARY */}
                 {purchase && (
                     <TransactionDetailsCard
-                      purchase={purchase}
-                      TYPE_MAP={TYPE_MAP}
-                      isFree={isFree}
-                      statusMessage={
-                        <span className="text-green-600 font-medium">
-                          {isFree ? "✓ Sukses" : "✓ Lunas"}
-                        </span>
-                      }
+                        purchase={purchase}
+                        TYPE_MAP={TYPE_MAP}
+                        isFree={isFree}
+                        statusMessage={
+                            <span className="text-green-600 font-medium">
+                                {isFree ? "✓ Sukses" : "✓ Lunas"}
+                            </span>
+                        }
                     />
                 )}
 
@@ -134,7 +134,7 @@ export default function PaymentSuccessPage() {
     return (
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                <SpinnerIcon className="w-8 h-8 animate-spin text-cyan-600" />
+                <SpinnerIcon className="w-8 h-8 animate-spin text-cuan-cyan" />
             </div>
         }>
             <PaymentSuccessContent />

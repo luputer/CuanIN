@@ -16,9 +16,9 @@ import {
 
 export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: number }) {
   const steps = [
-    { title: "Buat Akun", color: "white", icon: <UserIcon size={24} className="text-cyan-600" /> },
-    { title: "Tambahkan Produk", color: "white", icon: <PlusIcon size={24} className="text-cyan-600" /> },
-    { title: "Bagikan Link", color: "white", icon: <ShareNetworkIcon size={24} className="text-cyan-600" /> },
+    { title: "Buat Akun", color: "white", icon: <UserIcon size={24} className="text-cuan-cyan" /> },
+    { title: "Tambahkan Produk", color: "white", icon: <PlusIcon size={24} className="text-cuan-cyan" /> },
+    { title: "Bagikan Link", color: "white", icon: <ShareNetworkIcon size={24} className="text-cuan-cyan" /> },
     { title: "Terima Pembayaran", color: "white", icon: <CreditCardIcon size={24} className="text-emerald-600" /> },
   ];
 
@@ -118,7 +118,7 @@ export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: numbe
                       <div className="space-y-6 mt-4">
                         {/* Sent Bubble */}
                         <div className="flex justify-end">
-                          <div className="bg-cuan-cyan/20 py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg rounded-tr-none text-xs sm:text-base text-cyan-800 border border-cyan-200">
+                          <div className="bg-cuan-cyan/20 py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg rounded-tr-none text-xs sm:text-base text-cyan-800 border border-cuan-cyan/30">
                             Cek link produk ini! <br /> cuanin.com/produk-kreator
                           </div>
                         </div>

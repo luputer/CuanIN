@@ -204,7 +204,7 @@ export default function AdminTransactionPage() {
                                                     <TooltipTrigger asChild>
                                                         <div className="flex items-center min-h-[48px]">
                                                             {item.user?.id ? (
-                                                                <Link href={`/admin/kreator/${item.user.id}`} className="hover:text-cyan-600 transition-colors font-medium truncate block w-full">
+                                                                <Link href={`/admin/kreator/${item.user.id}`} className="hover:text-cuan-cyan transition-colors font-medium truncate block w-full">
                                                                     {item.user.name || item.user.email || "-"}
                                                                 </Link>
                                                             ) : (
@@ -281,7 +281,7 @@ export default function AdminTransactionPage() {
                                                 <div className="flex justify-center items-center gap-2">
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
-                                                            <button onClick={() => { setSelectedTx(item); setIsDetailOpen(true); }} className="text-cyan-600 hover:text-cyan-700 transition cursor-pointer">
+                                                            <button onClick={() => { setSelectedTx(item); setIsDetailOpen(true); }} className="text-cuan-cyan hover:text-007EA5 transition cursor-pointer">
                                                                 <EyeIcon className="w-[22px] h-[22px]" />
                                                             </button>
                                                         </TooltipTrigger>
@@ -369,7 +369,7 @@ export default function AdminTransactionPage() {
                                                 )}
                                                 <button
                                                     onClick={() => { setSelectedTx(item); setIsDetailOpen(true); }}
-                                                    className="text-cyan-600 hover:text-cyan-700 transition"
+                                                    className="text-cuan-cyan hover:text-007EA5 transition"
                                                 >
                                                     <EyeIcon className="w-5 h-5" />
                                                 </button>

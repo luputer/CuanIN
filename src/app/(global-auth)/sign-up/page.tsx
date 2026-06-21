@@ -78,124 +78,124 @@ function SignupPageInner() {
 
   return (
     <>
-          {/* Title */}
-          <div className="pt-2 pb-8 text-center">
-            <h1 className="pb-3 text-3xl font-semibold text-cuan-blue">
-              Daftar
-            </h1>
-            <p className="text-lg text-slate-800">
-              Selamat datang!
-              <br />
-              Silahkan daftarkan akun Anda
-            </p>
-          </div>
+      {/* Title */}
+      <div className="pt-2 pb-8 text-center">
+        <h1 className="pb-3 text-3xl font-semibold text-cuan-blue">
+          Daftar
+        </h1>
+        <p className="text-lg text-slate-800">
+          Selamat datang!
+          <br />
+          Silahkan daftarkan akun Anda
+        </p>
+      </div>
 
-          {/* Google banner */}
-          {fromGoogle && (
-            <div className="mb-5 rounded-lg border border-cuan-blue/20 bg-cuan-blue/5 px-4 py-3 text-sm text-cuan-blue">
-              🎉 Akun Google Anda terdeteksi! Lengkapi data di bawah untuk
-              menyelesaikan pendaftaran.
-            </div>
-          )}
+      {/* Google banner */}
+      {fromGoogle && (
+        <div className="mb-5 rounded-lg border border-cuan-blue/20 bg-cuan-blue/5 px-4 py-3 text-sm text-cuan-blue">
+          🎉 Akun Google Anda terdeteksi! Lengkapi data di bawah untuk
+          menyelesaikan pendaftaran.
+        </div>
+      )}
 
-          {/* Server Error */}
-          {serverError && (
-            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-              {serverError}
-            </div>
-          )}
+      {/* Server Error */}
+      {serverError && (
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          {serverError}
+        </div>
+      )}
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-5"
-            noValidate
-          >
-            {/* Nama Lengkap */}
-            <AuthInput
-              label="Nama Lengkap"
-              type="text"
-              placeholder="Masukkan Nama Lengkap Anda"
-              icon={<UserIcon size={24} />}
-              registration={register("name")}
-              error={errors.name}
-              readOnly={fromGoogle && !!googleName}
-            />
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-5"
+        noValidate
+      >
+        {/* Nama Lengkap */}
+        <AuthInput
+          label="Nama Lengkap"
+          type="text"
+          placeholder="Masukkan Nama Lengkap Anda"
+          icon={<UserIcon size={24} />}
+          registration={register("name")}
+          error={errors.name}
+          readOnly={fromGoogle && !!googleName}
+        />
 
-            {/* Email */}
-            <AuthInput
-              label="Email"
-              type="email"
-              placeholder="Masukkan Email Anda"
-              icon={<EnvelopeIcon size={24} />}
-              registration={register("email")}
-              error={errors.email}
-              readOnly={fromGoogle && !!googleEmail}
-            />
+        {/* Email */}
+        <AuthInput
+          label="Email"
+          type="email"
+          placeholder="Masukkan Email Anda"
+          icon={<EnvelopeIcon size={24} />}
+          registration={register("email")}
+          error={errors.email}
+          readOnly={fromGoogle && !!googleEmail}
+        />
 
-            {/* Nomor HP */}
-            <AuthInput
-              label="Nomor Telepon/HP"
-              type="tel"
-              placeholder="08123456789"
-              icon={<PhoneIcon size={24} />}
-              registration={register("phone")}
-              error={errors.phone}
-            />
+        {/* Nomor HP */}
+        <AuthInput
+          label="Nomor Telepon/HP"
+          type="tel"
+          placeholder="08123456789"
+          icon={<PhoneIcon size={24} />}
+          registration={register("phone")}
+          error={errors.phone}
+        />
 
-            {/* Password */}
-            <AuthInput
-              label="Password"
-              type="password"
-              placeholder="Buat Password"
-              icon={<LockKeyIcon size={24} />}
-              registration={register("password")}
-              error={errors.password}
-            />
+        {/* Password */}
+        <AuthInput
+          label="Password"
+          type="password"
+          placeholder="Buat Password"
+          icon={<LockKeyIcon size={24} />}
+          registration={register("password")}
+          error={errors.password}
+        />
 
-            {/* Confirm Password */}
-            <AuthInput
-              label="Konfirmasi Password"
-              type="password"
-              placeholder="Ketik Ulang Password"
-              icon={<LockKeyIcon size={24} />}
-              registration={register("confirmPassword")}
-              error={errors.confirmPassword}
-            />
+        {/* Confirm Password */}
+        <AuthInput
+          label="Konfirmasi Password"
+          type="password"
+          placeholder="Ketik Ulang Password"
+          icon={<LockKeyIcon size={24} />}
+          registration={register("confirmPassword")}
+          error={errors.confirmPassword}
+        />
 
-            {/* Button */}
-            <button
-              type="submit"
-              disabled={isPending}
-              className="mt-4 w-full cursor-pointer rounded-lg border-2 border-slate-800 bg-cuan-blue py-2.5 text-lg font-semibold text-white shadow-[0px_2px_0px_#000] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_#000]"
-            >
-              {isPending ? "Memproses..." : "Daftar Sekarang"}
-            </button>
-          </form>
+        {/* Button */}
+        <button
+          type="submit"
+          disabled={isPending}
+          className="mt-4 w-full cursor-pointer rounded-lg border-2 border-slate-800 bg-cuan-blue py-2.5 text-lg font-semibold text-white shadow-[0px_2px_0px_#000] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_#000]"
+        >
+          {isPending ? "Memproses..." : "Daftar Sekarang"}
+        </button>
+      </form>
 
-          {/* Only show alternate Google signup if NOT coming from Google */}
-          {!fromGoogle && (
-            <>
-              {/* Divider */}
-              <AuthDivider text="Atau Daftar dengan" />
+      {/* Only show alternate Google signup if NOT coming from Google */}
+      {!fromGoogle && (
+        <>
+          {/* Divider */}
+          <AuthDivider text="Atau Daftar dengan" />
 
-              {/* Google SSO */}
-              <GoogleAuthButton 
-                text="Google" 
-                disabled={isPending} 
-                onError={setServerErrorFallback} 
-              />
-            </>
-          )}
-          {/* Footer */}
-          <div className="mt-6 text-center text-xs text-slate-500">
-            Sudah punya akun?{" "}
-            <Link
-              href="/sign-in"
-              className="font-medium text-cuan-blue hover:text-cuan-blue hover:underline"
-            >
-              Login Disini
-            </Link>
-          </div>
+          {/* Google SSO */}
+          <GoogleAuthButton
+            text="Google"
+            disabled={isPending}
+            onError={setServerErrorFallback}
+          />
+        </>
+      )}
+      {/* Footer */}
+      <div className="mt-6 text-center text-xs text-slate-500">
+        Sudah punya akun?{" "}
+        <Link
+          href="/sign-in"
+          className="font-medium text-cuan-blue hover:text-cuan-blue hover:underline"
+        >
+          Login Disini
+        </Link>
+      </div>
     </>
   );
 }

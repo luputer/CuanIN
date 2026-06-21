@@ -157,7 +157,7 @@ export function CatalogNavHeader({ backHref, shareData }: CatalogNavHeaderProps)
                     </span>
                     <button
                       onClick={handleCopyLink}
-                      className="flex h-7 px-3 items-center justify-center gap-1 rounded-md bg-cyan-600 hover:bg-cyan-700 text-white font-medium text-[11px] cursor-pointer shadow-sm active:translate-y-[1px] transition-all shrink-0"
+                      className="flex h-7 px-3 items-center justify-center gap-1 rounded-md bg-cuan-cyan hover:bg-007EA5 text-white font-medium text-[11px] cursor-pointer shadow-sm active:translate-y-[1px] transition-all shrink-0"
                     >
                       <CopyIcon className="w-3.5 h-3.5" weight="bold" />
                       <span>Salin</span>

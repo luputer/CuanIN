@@ -211,7 +211,7 @@ export function WithdrawalDialog({
                                     <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2">
                                         <div className="flex justify-between text-[13px] text-slate-600">
                                             <span>Nominal Penarikan</span>
-                                            <span className="font-medium text-slate-900">Rp{formatNumberInput(amountVal.toString())}</span>
+                                            <span className="font-medium text-slate-800">Rp{formatNumberInput(amountVal.toString())}</span>
                                         </div>
                                         {!isAdmin && (
                                             <div className="flex justify-between text-[13px] text-slate-600">
@@ -223,7 +223,7 @@ export function WithdrawalDialog({
                                             <span>Biaya Transfer Bank</span>
                                             <span className="font-medium text-slate-800">+ Rp4.000</span>
                                         </div>
-                                        <div className="border-t border-slate-200 pt-2 flex justify-between font-semibold text-[14px] text-slate-900">
+                                        <div className="border-t border-slate-200 pt-2 flex justify-between font-semibold text-[14px] text-slate-800">
                                             <span>Total Potong Saldo</span>
                                             <span className="text-red-600">
                                                 Rp{formatNumberInput(totalDeduction.toString())}
@@ -307,7 +307,7 @@ export function TransactionDetailDialog({
                     <DialogHeader className="flex flex-row justify-between items-center text-left pr-4 pl-6 py-4">
                         <DialogTitle className="text-lg">Detail Transaksi</DialogTitle>
                         <DialogClose asChild>
-                            <button className="text-slate-300 hover:text-cyan-600 transition-colors p-1 cursor-pointer">
+                            <button className="text-slate-300 hover:text-cuan-cyan transition-colors p-1 cursor-pointer">
                                 <XIcon size={20} weight="bold" />
                             </button>
                         </DialogClose>
@@ -378,9 +378,9 @@ export function TransactionDetailDialog({
                                 <span>Biaya Transfer Bank</span>
                                 <span className="font-medium text-slate-500">Rp4.000</span>
                             </div>
-                            <div className="flex justify-between border-t border-dashed border-slate-200 pt-3 font-bold text-[15px] text-slate-900">
+                            <div className="flex justify-between border-t border-dashed border-slate-200 pt-3 font-bold text-[15px] text-slate-800">
                                 <span>Nominal Dikirim ke Kreator</span>
-                                <span className="text-cyan-600">
+                                <span className="text-cuan-cyan">
                                     {formatCurrency(Number(selectedTx.amount) - Number(selectedTx.feeAmount ?? 0) - 4000)}
                                 </span>
                             </div>
@@ -418,7 +418,7 @@ export function TransactionDetailDialog({
                 <DialogHeader className="flex flex-row justify-between items-center text-left pr-4 pl-6 py-4">
                     <DialogTitle className="text-lg">Detail Transaksi</DialogTitle>
                     <DialogClose asChild>
-                        <button className="text-slate-300 hover:text-cyan-600 transition-colors p-1 cursor-pointer">
+                        <button className="text-slate-300 hover:text-cuan-cyan transition-colors p-1 cursor-pointer">
                             <XIcon size={20} weight="bold" />
                         </button>
                     </DialogClose>
@@ -491,7 +491,7 @@ export function TransactionDetailDialog({
                                     <span>Nominal Penjualan</span>
                                     <span className="font-medium text-slate-800">{formatCurrency(Number(selectedTx.amount))}</span>
                                 </div>
-                                <div className="flex justify-between border-t border-dashed border-slate-200 pt-3 mt-1 font-bold text-[15px] text-slate-900">
+                                <div className="flex justify-between border-t border-dashed border-slate-200 pt-3 mt-1 font-bold text-[15px] text-slate-800">
                                     <span>Total Diterima</span>
                                     <span className="text-green-600">{formatCurrency(Number(selectedTx.amount))}</span>
                                 </div>
@@ -510,9 +510,9 @@ export function TransactionDetailDialog({
                                     <span>Biaya Aplikasi (2%)</span>
                                     <span className="font-medium text-slate-800">-{selectedTx.feeAmount ? formatCurrency(Number(selectedTx.feeAmount)) : "Rp0"}</span>
                                 </div>
-                                <div className="flex justify-between border-t border-dashed border-slate-200 pt-3 mt-1 font-bold text-[15px] text-slate-900">
+                                <div className="flex justify-between border-t border-dashed border-slate-200 pt-3 mt-1 font-bold text-[15px] text-slate-800">
                                     <span>Total Diterima</span>
-                                    <span className="text-cyan-600">
+                                    <span className="text-cuan-cyan">
                                         {formatCurrency(Number(selectedTx.amount) - Number(selectedTx.feeAmount ?? 0) - 4000)}
                                     </span>
                                 </div>
@@ -574,7 +574,7 @@ export function ConfirmPaidDialog({ open, onOpenChange, confirmTx, onConfirm, is
                             <span className="font-medium text-slate-800">-{formatCurrency(Number(confirmTx.feeAmount ?? 0))}</span>
                         </div>
                         <div className="flex justify-between border-t border-slate-200 pt-2">
-                            <span className="font-bold text-slate-900 text-slate-600">Total Ditransfer</span>
+                            <span className="font-bold text-slate-800 text-slate-600">Total Ditransfer</span>
                             <span className="text-green-600 font-semibold text-md">
                                 {formatCurrency(Number(confirmTx.amount) - Number(confirmTx.feeAmount ?? 0) - 4000)}
                             </span>
@@ -628,9 +628,9 @@ export function ConfirmFailedDialog({ open, onOpenChange, confirmTx, onConfirm, 
                             <span className="text-slate-500">Fee Platform (Admin)</span>
                             <span className="font-medium text-slate-800">-{formatCurrency(Number(confirmTx.feeAmount ?? 0))}</span>
                         </div>
-                        <div className="flex justify-between border-t border-slate-200 pt-2 font-bold text-slate-900">
+                        <div className="flex justify-between border-t border-slate-200 pt-2 font-bold text-slate-800">
                             <span className="text-slate-600">Saldo Dikembalikan</span>
-                            <span className="text-slate-900">
+                            <span className="text-slate-800">
                                 {formatCurrency(Number(confirmTx.amount))}
                             </span>
                         </div>

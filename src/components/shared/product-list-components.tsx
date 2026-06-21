@@ -52,7 +52,7 @@ export function ProductActions({ editUrl, onDelete, onCopy, deleteTooltip = "Hap
                 <div className="flex items-center gap-2">
                     <Link
                         href={editUrl}
-                        className="p-2 rounded-lg text-cyan-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
+                        className="p-2 rounded-lg text-cuan-cyan border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
                         title="Detail & Edit"
                     >
                         <PencilIcon className="w-5 h-5" />
@@ -84,7 +84,7 @@ export function ProductActions({ editUrl, onDelete, onCopy, deleteTooltip = "Hap
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Link href={editUrl} className="block">
-                        <PencilIcon className="w-[22px] h-[22px] text-cyan-600 cursor-pointer hover:text-cyan-700" />
+                        <PencilIcon className="w-[22px] h-[22px] text-cuan-cyan cursor-pointer hover:text-007EA5" />
                     </Link>
                 </TooltipTrigger>
                 <TooltipContent>Detail & Edit</TooltipContent>

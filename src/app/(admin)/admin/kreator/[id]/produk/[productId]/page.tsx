@@ -104,10 +104,10 @@ export default function AdminCreatorProductDetailPage() {
                                 href={`/${(product as any).user.catalog.slug}/${product.slug}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-cyan-600 hover:bg-cyan-50 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-cuan-cyan hover:bg-cuan-cyan/10 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
                             >
-                                <ArrowSquareOutIcon className="w-4 h-4 text-cyan-600" />
-                                <span className="text-sm font-regular text-cyan-600 whitespace-nowrap">
+                                <ArrowSquareOutIcon className="w-4 h-4 text-cuan-cyan" />
+                                <span className="text-sm font-regular text-cuan-cyan whitespace-nowrap">
                                     Lihat Katalog Produk
                                 </span>
                             </a>
@@ -145,13 +145,13 @@ export default function AdminCreatorProductDetailPage() {
                                                 className="rounded-full w-8 h-8 object-cover border border-slate-200 shrink-0"
                                             />
                                         ) : (
-                                            <div className="w-8 h-8 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-600 text-xs font-bold shrink-0">
+                                            <div className="w-8 h-8 rounded-full bg-cuan-cyan/20 flex items-center justify-center text-cuan-cyan text-xs font-bold shrink-0">
                                                 {((product as any).user?.name ?? "K")[0]?.toUpperCase()}
                                             </div>
                                         )}
                                         <Link
                                             href={`/admin/kreator/${product.userId}`}
-                                            className="text-cyan-600 hover:underline font-semibold text-sm truncate"
+                                            className="text-cuan-cyan hover:underline font-semibold text-sm truncate"
                                         >
                                             {(product as any).user?.name ?? "-"}
                                         </Link>
@@ -183,7 +183,7 @@ export default function AdminCreatorProductDetailPage() {
                                                 {(isOverflowing || expanded) && (
                                                     <button
                                                         onClick={() => setExpanded(!expanded)}
-                                                        className="sm:justify-start mt-2 text-sm text-cyan-600 hover:underline cursor-pointer font-medium"
+                                                        className="sm:justify-start mt-2 text-sm text-cuan-cyan hover:underline cursor-pointer font-medium"
                                                     >
                                                         {expanded ? "Tampilkan lebih sedikit" : "Baca selengkapnya"}
                                                     </button>
@@ -338,8 +338,8 @@ export default function AdminCreatorProductDetailPage() {
                                                                 className={cn(
                                                                     "relative w-20 aspect-square rounded-xl overflow-hidden border shadow-sm transition-all focus:outline-none cursor-pointer",
                                                                     activeImageIndex === idx
-                                                                        ? "border-cyan-600 ring-2 ring-cyan-600/20"
-                                                                        : "border-slate-200 hover:border-cyan-400 hover:opacity-90 opacity-60"
+                                                                        ? "border-cuan-cyan ring-2 ring-cuan-cyan/20"
+                                                                        : "border-slate-200 hover:border-cuan-cyan/50 hover:opacity-90 opacity-60"
                                                                 )}
                                                             >
                                                                 <Image

@@ -111,7 +111,7 @@ export function HistoryList({ purchases, isLoading }: { purchases: any[]; isLoad
             </div>
 
             <div className="mt-auto flex items-center justify-between">
-              <div className="text-md font-semibold text-cyan-600">
+              <div className="text-md font-semibold text-cuan-cyan">
                 {Number(p.amount) === 0 ? 'Gratis' : `Rp ${Number(p.amount).toLocaleString("id-ID")}`}
               </div>
               <div className="text-right text-xs text-slate-500">

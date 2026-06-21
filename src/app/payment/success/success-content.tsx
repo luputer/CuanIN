@@ -24,7 +24,7 @@ export function PaymentSuccessContent() {
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                <SpinnerIcon className="size-8 animate-spin text-cyan-600" />
+                <SpinnerIcon className="size-8 animate-spin text-cuan-cyan" />
             </div>
         );
     }
@@ -35,7 +35,7 @@ export function PaymentSuccessContent() {
 
                 {/* BRAND */}
                 <div className="text-center mb-2">
-                    <span className="text-2xl font-bold text-cyan-600">CuanIN</span>
+                    <span className="text-2xl font-bold text-cuan-cyan">CuanIN</span>
                 </div>
 
                 {/* SUCCESS ICON */}
@@ -50,11 +50,11 @@ export function PaymentSuccessContent() {
                     </p>
 
                     {/* EMAIL NOTICE */}
-                    <div className="bg-cyan-50 border border-cyan-200 rounded-xl p-4 w-full flex gap-3 items-start text-left mt-2">
-                        <EnvelopeIcon className="size-5 text-cyan-600 shrink-0 mt-0.5" weight="fill" />
+                    <div className="bg-cuan-cyan/10 border border-cuan-cyan/30 rounded-xl p-4 w-full flex gap-3 items-start text-left mt-2">
+                        <EnvelopeIcon className="size-5 text-cuan-cyan shrink-0 mt-0.5" weight="fill" />
                         <div>
-                            <p className="text-sm font-semibold text-cyan-700">Cek email kamu</p>
-                            <p className="text-xs text-cyan-600 mt-0.5">
+                            <p className="text-sm font-semibold text-007EA5">Cek email kamu</p>
+                            <p className="text-xs text-cuan-cyan mt-0.5">
                                 Link akses produk sudah dikirim ke{" "}
                                 <span className="font-medium">{purchase?.buyerEmail ?? "emailmu"}</span>
                             </p>
@@ -100,7 +100,7 @@ export function PaymentSuccessContent() {
                             </div>
                             <div className="flex justify-between text-slate-600">
                                 <span>Total Bayar</span>
-                                <span className="font-bold text-cyan-600">
+                                <span className="font-bold text-cuan-cyan">
                                     Rp {Number(purchase.amount).toLocaleString("id-ID")}
                                 </span>
                             </div>
@@ -119,7 +119,7 @@ export function PaymentSuccessContent() {
                 <button
                     type="button"
                     onClick={() => router.push("/")}
-                    className="w-full py-3.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition"
+                    className="w-full py-3.5 bg-cuan-cyan hover:bg-007EA5 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition"
                 >
                     Kembali ke Beranda
                     <ArrowRightIcon className="size-4" />

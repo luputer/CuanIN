@@ -115,7 +115,7 @@ function PurchaseHistoryPageInner() {
           {/* Header baris */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex flex-col gap-1">
-              <h1 className="text-2xl font-black text-slate-900 flex items-center gap-3">
+              <h1 className="text-2xl font-black text-slate-800 flex items-center gap-3">
                 <ReceiptIcon size={28} />
                 Riwayat Pembelian
               </h1>
@@ -159,7 +159,7 @@ function PurchaseHistoryPageInner() {
                       className={cn(
                         "w-full cursor-pointer rounded-lg px-2.5 py-2 text-left text-sm font-medium transition-all hover:bg-slate-100",
                         sortOrder === "newest"
-                          ? "bg-cyan-50 text-cyan-600"
+                          ? "bg-cuan-cyan/10 text-cuan-cyan"
                           : "text-slate-700"
                       )}
                     >
@@ -170,7 +170,7 @@ function PurchaseHistoryPageInner() {
                       className={cn(
                         "w-full cursor-pointer rounded-lg px-2.5 py-2 text-left text-sm font-medium transition-all hover:bg-slate-100",
                         sortOrder === "oldest"
-                          ? "bg-cyan-50 text-cyan-600"
+                          ? "bg-cuan-cyan/10 text-cuan-cyan"
                           : "text-slate-700"
                       )}
                     >

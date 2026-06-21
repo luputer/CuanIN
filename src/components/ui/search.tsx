@@ -20,7 +20,7 @@ export default function SearchInput({
             className={cn(
                 "relative flex items-center w-100 h-10 flex-1 sm:flex-none",
                 "bg-white border border-slate-800 rounded-lg",
-                "shadow-[0px_1.5px_0px_rgba(29,41,61)]",
+                "shadow-[0px_1.5px_0px_#000]",
                 "transition-all duration-200 ease-out",
                 "hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none",
                 "focus-within:translate-x-[1px] focus-within:translate-y-[1px] focus-within:shadow-none",

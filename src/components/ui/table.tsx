@@ -16,7 +16,7 @@ export function Table({
   ...props
 }: React.ComponentProps<"table"> & { pagination?: React.ReactNode }) {
   return (
-    <div className="relative w-full bg-white border border-slate-800 shadow-[0px_1px_0px_rgba(30,27,75)] rounded-xl overflow-hidden flex flex-col">
+    <div className="relative w-full bg-white border border-slate-800 shadow-[0px_1px_0px_#000] rounded-xl overflow-hidden flex flex-col">
       <div className="overflow-x-auto">
         <table
           className={cn("w-full table-auto text-sm text-left", className)}
@@ -37,7 +37,7 @@ export function Table({
 export function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
-      className={cn("bg-cyan-50", className)}
+      className={cn("bg-cuan-cyan/10", className)}
       {...props}
     />
   )
@@ -60,7 +60,7 @@ export function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "py-6 px-6 text-slate-800 font-semibold whitespace-normal border-b border-cyan-200",
+        "py-6 px-6 text-slate-800 font-semibold whitespace-normal border-b border-cuan-cyan/30",
         className
       )}
       {...props}
@@ -88,7 +88,7 @@ export function SortableTableHead<T extends string>({
 }: SortableTableHeadProps<T>) {
   return (
     <TableHead
-      className={cn("cursor-pointer select-none hover:text-slate-900 transition-colors group", className)}
+      className={cn("cursor-pointer select-none hover:text-slate-800 transition-colors group", className)}
       onClick={() => onSort(field)}
       {...props}
     >
@@ -215,7 +215,7 @@ export function TablePagination({
                       <button
                         type="button"
                         onClick={() => onPageChange(p)}
-                        className={`size-7 rounded-[4px] flex items-center justify-center font-medium text-xs transition-colors ${page === p ? "bg-[#00B4D8] text-white hover:bg-[#009bc2]" : "text-slate-500 hover:bg-slate-100" }`}
+                        className={`size-7 rounded-[4px] flex items-center justify-center font-medium text-xs transition-colors ${page === p ? "bg-[#00B4D8] text-white hover:bg-[#009bc2]" : "text-slate-500 hover:bg-slate-100"}`}
                       >
                         {p}
                       </button>

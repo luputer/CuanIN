@@ -160,7 +160,7 @@ export function CatalogProductCard({
                 <span className="text-md font-semibold text-green-600">Gratis</span>
               ) : hasDiscount ? (
                 <div className="flex flex-col">
-                  <span className="text-md font-semibold text-cyan-600">
+                  <span className="text-md font-semibold text-cuan-cyan">
                     Rp {Number(discountPrice).toLocaleString("id-ID")}
                   </span>
                   <span className="text-xs font-medium text-slate-400 line-through">
@@ -168,7 +168,7 @@ export function CatalogProductCard({
                   </span>
                 </div>
               ) : (
-                <span className="text-md font-semibold text-cyan-600">
+                <span className="text-md font-semibold text-cuan-cyan">
                   Rp {price.toLocaleString("id-ID")}
                 </span>
               )}
@@ -180,7 +180,7 @@ export function CatalogProductCard({
                 <span>Sudah Selesai</span>
               </div>
             ) : (
-              <div className="w-full flex items-center justify-center gap-1.5 rounded-md bg-cyan-600 py-2 px-4 text-sm font-semibold text-white transition-all duration-300 shadow-sm hover:bg-cyan-700 hover:shadow-md">
+              <div className="w-full flex items-center justify-center gap-1.5 rounded-md bg-cuan-cyan py-2 px-4 text-sm font-semibold text-white transition-all duration-300 shadow-sm">
                 <span>Beli Sekarang</span>
               </div>
             )}

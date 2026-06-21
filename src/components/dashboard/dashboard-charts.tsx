@@ -19,7 +19,7 @@ import {
 
 // ─── Constants & Utilities ───────────────────────────────────────────────────
 
-export const CHART_COLORS = ["#506CBF", "#27C3F3"];
+export const CHART_COLORS = ["#506CBF", "#00B3E9"];
 
 export function formatRupiah(amount: number): string {
     return new Intl.NumberFormat("id-ID", {
@@ -55,7 +55,7 @@ export function WeeklyRevenueChart({ data }: { data: DayValue[] }) {
                 <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" vertical={false} />
                 <XAxis
                     dataKey="day"
-                    tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 700 }}
+                    tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 500 }}
                     tickMargin={12}
                     axisLine={{ stroke: "#0f172a", strokeWidth: 2 }}
                 />
@@ -88,7 +88,7 @@ export function CategoryBarChart({ data }: { data: NameTotal[] }) {
     const config = {
         total: {
             label: "Produk",
-            color: "#27C3F3",
+            color: "#00B3E9",
         },
     } satisfies ChartConfig;
 
@@ -98,7 +98,7 @@ export function CategoryBarChart({ data }: { data: NameTotal[] }) {
                 <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" vertical={false} />
                 <XAxis
                     dataKey="name"
-                    tick={{ fill: "#0f172a", fontSize: 11, fontWeight: 700 }}
+                    tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 500 }}
                     tickMargin={12}
                     axisLine={{ stroke: "#0f172a", strokeWidth: 2 }}
                 />
@@ -130,7 +130,7 @@ export function TrafficAreaChart({ data }: { data: DayValue[] }) {
     const config = {
         value: {
             label: "Pengunjung",
-            color: "#27C3F3",
+            color: "#00B3E9",
         },
     } satisfies ChartConfig;
 
@@ -140,7 +140,7 @@ export function TrafficAreaChart({ data }: { data: DayValue[] }) {
                 <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" vertical={false} />
                 <XAxis
                     dataKey="day"
-                    tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 700 }}
+                    tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 500 }}
                     tickMargin={12}
                     axisLine={{ stroke: "#0f172a", strokeWidth: 2 }}
                 />
@@ -155,10 +155,10 @@ export function TrafficAreaChart({ data }: { data: DayValue[] }) {
                     type="monotone"
                     dataKey="value"
                     stroke="none"
-                    fill="#27C3F3"
+                    fill="#00B3E9"
                     fillOpacity={0.5}
-                    dot={{ r: 5, fill: "#27C3F3", stroke: "none", fillOpacity: 1 }}
-                    activeDot={{ r: 7, fill: "#27C3F3", stroke: "none", fillOpacity: 1 }}
+                    dot={{ r: 5, fill: "#00B3E9", stroke: "none", fillOpacity: 1 }}
+                    activeDot={{ r: 7, fill: "#00B3E9", stroke: "none", fillOpacity: 1 }}
                 />
             </AreaChart>
         </ChartContainer>
@@ -188,7 +188,7 @@ export function WeeklyBarChart({
                 <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" vertical={false} />
                 <XAxis
                     dataKey="week"
-                    tick={{ fill: "#0f172a", fontSize: 11, fontWeight: 700 }}
+                    tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 500 }}
                     tickMargin={12}
                     axisLine={{ stroke: "#0f172a", strokeWidth: 2 }}
                 />

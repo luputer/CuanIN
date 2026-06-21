@@ -20,7 +20,7 @@ const FilterButton = React.forwardRef<HTMLButtonElement, FilterButtonProps>(
                 rounded-lg
                 text-sm text-slate-700
                 bg-white
-                shadow-[0px_1.5px_0px_rgba(29,41,61)]
+                shadow-[0px_1.5px_0px_#000]
                 transition-all duration-200 ease-out
                 hover:translate-x-px hover:translate-y-px hover:shadow-none
                 focus:translate-x-px focus:translate-y-px focus:shadow-none

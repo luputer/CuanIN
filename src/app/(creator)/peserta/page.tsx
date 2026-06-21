@@ -175,7 +175,7 @@ export default function UserPage() {
 															<Link
 																href={`/peserta/${encodeURIComponent(item.email)}`}
 															>
-																<EyeIcon className="w-[22px] h-[22px] text-cyan-600 cursor-pointer hover:text-cyan-700 transition-colors" />
+																<EyeIcon className="w-[22px] h-[22px] text-cuan-cyan cursor-pointer hover:text-007EA5 transition-colors" />
 															</Link>
 														</TooltipTrigger>
 														<TooltipContent>Lihat Detail</TooltipContent>
@@ -208,7 +208,7 @@ export default function UserPage() {
 									</div>
 
 									<div className="space-y-2 flex-1 min-w-0">
-										<Link href={`/peserta/${encodeURIComponent(item.email)}`} className="font-semibold text-slate-800 hover:text-cyan-600 break-words line-clamp-2">
+										<Link href={`/peserta/${encodeURIComponent(item.email)}`} className="font-semibold text-slate-800 hover:text-cuan-cyan break-words line-clamp-2">
 											{item.name}
 										</Link>
 
@@ -241,7 +241,7 @@ export default function UserPage() {
 									<div className="flex justify-end items-center pt-2.5 border-t border-slate-100 gap-2">
 										<Link
 											href={`/peserta/${encodeURIComponent(item.email)}`}
-											className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-cyan-600 border border-cyan-600 rounded-lg hover:bg-cyan-50 transition cursor-pointer"
+											className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-cuan-cyan border border-cuan-cyan rounded-lg hover:bg-cuan-cyan/10 transition cursor-pointer"
 										>
 											<EyeIcon className="w-4 h-4" />
 											<span>Lihat Detail</span>

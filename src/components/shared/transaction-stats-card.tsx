@@ -1,4 +1,4 @@
-import { WalletIcon, ArrowUpRightIcon } from "@phosphor-icons/react";
+import { WalletIcon, ArrowUpRightIcon, TrendUpIcon, ReceiptIcon } from "@phosphor-icons/react";
 import { Skeleton } from "~/components/ui/skeleton";
 import ActionButton from "~/components/shared/button-add";
 import { formatCurrency } from "~/lib/utils";
@@ -25,21 +25,24 @@ export function TransactionStatsCard({
   isAdmin = false,
 }: TransactionStatsCardProps) {
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl border border-slate-800 bg-cyan-50 p-0 shadow-[0px_1px_0px_rgba(29,41,61)] md:flex-row">
+    <div className="flex flex-col overflow-hidden rounded-xl border border-slate-800 bg-white shadow-[0px_1px_0px_#000] md:flex-row">
       {/* Balance Section */}
-      <div className="flex flex-1 flex-col justify-between border-b border-slate-200 p-6 md:border-r md:border-b-0">
-        <div className="mb-4 flex items-center gap-2 text-slate-800">
-          <WalletIcon className="h-5 w-5 text-cyan-600" weight="fill" />
-          <span className="text-sm font-medium">Saldo saat ini</span>
+      <div className="flex flex-1 flex-col justify-between border-b border-slate-200 p-5 md:border-r md:border-b-0">
+        <div className="mb-3 flex items-center gap-2">
+          <WalletIcon className="h-5 w-5 text-cuan-blue" weight="fill" />
+          <span className="text-sm font-semibold text-slate-800">Saldo saat ini</span>
         </div>
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <h2 className="text-2xl font-semibold text-cyan-600">
+        <div className="flex flex-col gap-1 mb-2">
+          <h2 className="text-2xl font-semibold text-cuan-blue">
             {isLoading && !data ? (
               <Skeleton className="h-8 w-40" />
             ) : (
               formatCurrency(stats.balance)
             )}
           </h2>
+        </div>
+        <div className="flex items-center justify-between text-xs font-medium text-slate-700">
+          {isAdmin && <span>(Saldo yang dapat ditarik)</span>}
           {onWithdraw && (
             <ActionButton
               label="Tarik Saldo"
@@ -52,21 +55,26 @@ export function TransactionStatsCard({
       </div>
 
       {/* Total Income */}
-      <div className="flex flex-col justify-center border-b border-slate-200 p-6 md:w-72 md:border-r md:border-b-0">
-        <p className="mb-2 text-xs font-bold text-slate-700">Total Penghasilan</p>
-        <h3 className="mb-2 text-xl font-semibold text-cyan-600">
-          {isLoading && !data ? (
-            <Skeleton className="h-7 w-32" />
-          ) : (
-            formatCurrency(stats.totalIncome)
-          )}
-        </h3>
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-slate-400">30 hari terakhir</span>
+      <div className="flex flex-1 flex-col justify-between border-b border-slate-200 p-5 md:border-r md:border-b-0">
+        <div className="mb-3 flex items-center gap-2">
+          <TrendUpIcon className="h-5 w-5 text-cuan-blue" weight="fill" />
+          <span className="text-sm font-semibold text-slate-800">Total Penghasilan</span>
+        </div>
+        <div className="flex flex-col gap-1 mb-2">
+          <h3 className="text-2xl font-semibold text-cuan-blue">
+            {isLoading && !data ? (
+              <Skeleton className="h-7 w-32" />
+            ) : (
+              formatCurrency(stats.totalIncome)
+            )}
+          </h3>
+        </div>
+        <div className="flex items-center justify-between text-xs font-medium text-slate-700">
+          <span>30 hari terakhir</span>
           <span
-            className={`rounded-full px-2 py-0.5 text-md font-medium border ${stats.incomeChange >= 0
-              ? "bg-green-50 text-green-600 border-green-100"
-              : "bg-red-50 text-red-600 border-red-100"
+            className={`rounded-md px-3 py-1 text-sm font-medium border border-slate-800 ${stats.incomeChange >= 0
+              ? "bg-green-200 text-slate-800"
+              : "bg-red-100 text-slate-800"
               }`}
           >
             {stats.incomeChange >= 0 ? "+" : "-"}
@@ -76,23 +84,28 @@ export function TransactionStatsCard({
       </div>
 
       {/* Total Transaction */}
-      <div className="flex flex-col justify-center p-6 md:w-72">
-        <p className="mb-2 text-xs font-bold text-slate-700">
-          {isAdmin ? "Total Penarikan" : "Total Transaksi"}
-        </p>
-        <h3 className="mb-2 text-xl font-semibold text-cyan-600">
-          {isLoading && !data ? (
-            <Skeleton className="h-7 w-12" />
-          ) : (
-            stats.totalTransactions
-          )}
-        </h3>
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-slate-400">30 hari terakhir</span>
+      <div className="flex flex-1 flex-col justify-between p-5">
+        <div className="mb-3 flex items-center gap-2">
+          <ReceiptIcon className="h-5 w-5 text-cuan-blue" weight="fill" />
+          <span className="text-sm font-semibold text-slate-800">
+            {isAdmin ? "Total Penarikan" : "Total Transaksi"}
+          </span>
+        </div>
+        <div className="flex flex-col gap-1 mb-2">
+          <h3 className="text-2xl font-semibold text-cuan-blue">
+            {isLoading && !data ? (
+              <Skeleton className="h-7 w-12" />
+            ) : (
+              stats.totalTransactions
+            )}
+          </h3>
+        </div>
+        <div className="flex items-center justify-between text-xs font-medium text-slate-700">
+          <span>30 hari terakhir</span>
           <span
-            className={`rounded-full px-2 py-0.5 font-semibold border ${stats.transactionsChange >= 0
-              ? "bg-green-50 text-green-600 border-green-100"
-              : "bg-red-50 text-red-600 border-red-100"
+            className={`rounded-md px-3 py-1 text-sm font-medium border border-slate-800 ${stats.transactionsChange >= 0
+              ? "bg-green-200 text-slate-800"
+              : "bg-red-100 text-slate-800"
               }`}
           >
             {stats.transactionsChange >= 0 ? "+" : "-"}

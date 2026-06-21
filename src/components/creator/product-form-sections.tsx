@@ -2,13 +2,13 @@
 
 import React from "react";
 import Image from "next/image";
-import { 
-    PlusIcon, 
-    TrashIcon, 
-    X, 
-    CaretUpIcon, 
-    CaretDownIcon, 
-    CircleNotchIcon 
+import {
+    PlusIcon,
+    TrashIcon,
+    X,
+    CaretUpIcon,
+    CaretDownIcon,
+    CircleNotchIcon
 } from "@phosphor-icons/react";
 import { Controller, useFieldArray } from "react-hook-form";
 import type { UseFormReturn } from "react-hook-form";
@@ -20,13 +20,13 @@ import { formatNumberInput } from "~/lib/utils";
 /**
  * Shared Basic Information Section
  */
-export const BasicInfoSection = ({ 
-    form, 
+export const BasicInfoSection = ({
+    form,
     title = "Informasi Dasar",
     namePlaceholder = "Masukkan nama",
     shortDescPlaceholder = "Masukkan ringkasan singkat",
     longDescPlaceholder = "Masukkan deskripsi lengkap"
-}: { 
+}: {
     form: UseFormReturn<any>;
     title?: string;
     namePlaceholder?: string;
@@ -100,11 +100,11 @@ export const BasicInfoSection = ({
 /**
  * Shared Pricing Section
  */
-export const PricingSection = ({ 
-    form, 
-    onAdjustPrice, 
-    onAdjustDiscount 
-}: { 
+export const PricingSection = ({
+    form,
+    onAdjustPrice,
+    onAdjustDiscount
+}: {
     form: UseFormReturn<any>;
     onAdjustPrice: (step: number) => void;
     onAdjustDiscount: (step: number) => void;
@@ -125,7 +125,7 @@ export const PricingSection = ({
                                 className="sr-only peer"
                                 {...register("enableDiscount")}
                             />
-                            <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-4 rtl:peer-checked:after:-translate-x-4 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-cyan-600"></div>
+                            <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-4 rtl:peer-checked:after:-translate-x-4 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-cuan-cyan"></div>
                         </label>
                     </div>
                 }
@@ -148,10 +148,10 @@ export const PricingSection = ({
                             suffix={
                                 <div className="flex flex-col">
                                     <button type="button" onClick={() => onAdjustPrice(1000)} className="cursor-pointer">
-                                        <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                        <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cuan-cyan transition-colors" />
                                     </button>
                                     <button type="button" onClick={() => onAdjustPrice(-1000)} className="cursor-pointer">
-                                        <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                        <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cuan-cyan transition-colors" />
                                     </button>
                                 </div>
                             }
@@ -180,10 +180,10 @@ export const PricingSection = ({
                                 suffix={
                                     <div className="flex flex-col">
                                         <button type="button" onClick={() => onAdjustDiscount(1000)} className="cursor-pointer">
-                                            <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                            <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cuan-cyan transition-colors" />
                                         </button>
                                         <button type="button" onClick={() => onAdjustDiscount(-1000)} className="cursor-pointer">
-                                            <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                            <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cuan-cyan transition-colors" />
                                         </button>
                                     </div>
                                 }
@@ -199,12 +199,12 @@ export const PricingSection = ({
 /**
  * Shared Quota/Capacity Section
  */
-export const QuotaSection = ({ 
-    form, 
+export const QuotaSection = ({
+    form,
     onAdjustQuota,
     label = "Batasi Stok",
     placeholder = "Masukkan batas stok"
-}: { 
+}: {
     form: UseFormReturn<any>;
     onAdjustQuota: (step: number) => void;
     label?: string;
@@ -227,7 +227,7 @@ export const QuotaSection = ({
                             }
                         })}
                     />
-                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cuan-cyan"></div>
                 </label>
             </div>
 
@@ -250,10 +250,10 @@ export const QuotaSection = ({
                                 suffix={
                                     <div className="flex flex-col">
                                         <button type="button" onClick={() => onAdjustQuota(1)} className="cursor-pointer">
-                                            <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                            <CaretUpIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cuan-cyan transition-colors" />
                                         </button>
                                         <button type="button" onClick={() => onAdjustQuota(-1)} className="cursor-pointer">
-                                            <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cyan-600 transition-colors" />
+                                            <CaretDownIcon weight="fill" className="w-3 h-3 text-slate-400 hover:text-cuan-cyan transition-colors" />
                                         </button>
                                     </div>
                                 }
@@ -272,10 +272,10 @@ export const QuotaSection = ({
 /**
  * Shared Platform/Content Type Selector
  */
-export const PlatformSelector = ({ 
-    form, 
-    type = "digital" 
-}: { 
+export const PlatformSelector = ({
+    form,
+    type = "digital"
+}: {
     form: UseFormReturn<any>;
     type?: "digital" | "class" | "webinar";
 }) => {
@@ -337,17 +337,17 @@ export const PlatformSelector = ({
 /**
  * Shared Sidebar Metadata Section
  */
-export const SidebarMetadataSection = ({ 
-    form, 
-    uploading, 
-    onFilesChange, 
+export const SidebarMetadataSection = ({
+    form,
+    uploading,
+    onFilesChange,
     removeImage,
     fileInputRef,
     statusOptions = [
         { label: "Published", value: "published" },
         { label: "Unpublished", value: "unpublished" }
     ]
-}: { 
+}: {
     form: UseFormReturn<any>;
     uploading: boolean;
     onFilesChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -388,9 +388,9 @@ export const SidebarMetadataSection = ({
                             onClick={() => fileInputRef.current?.click()}
                             className="relative group shrink-0 w-24 aspect-square cursor-pointer"
                         >
-                            <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-500 group-hover:bg-cyan-50">
+                            <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10">
                                 {uploading ? (
-                                    <CircleNotchIcon className="animate-spin text-cyan-600" size={24} />
+                                    <CircleNotchIcon className="animate-spin text-cuan-cyan" size={24} />
                                 ) : (
                                     <div className="flex flex-col items-center gap-1 text-slate-400">
                                         <PlusIcon size={24} weight="bold" />
@@ -438,7 +438,7 @@ export const SidebarMetadataSection = ({
                                     className="sr-only peer"
                                     {...register("enableVoucher")}
                                 />
-                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cuan-cyan"></div>
                             </label>
                         </div>
 
@@ -462,7 +462,7 @@ export const SidebarMetadataSection = ({
                                     className="sr-only peer"
                                     {...register("enableNotes")}
                                 />
-                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cuan-cyan"></div>
                             </label>
                         </div>
 
@@ -493,7 +493,7 @@ export const SidebarMetadataSection = ({
                                     className="sr-only peer"
                                     {...register("enablePortal")}
                                 />
-                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cuan-cyan"></div>
                             </label>
                         </div>
                     </div>

@@ -87,7 +87,7 @@ export function TransactionDetailsCard({
         </div>
         <div className="flex justify-between items-center border-t border-slate-200 pt-2 mt-2">
           <span className="font-semibold text-slate-800">Total Bayar</span>
-          <span className="font-bold text-cyan-600">
+          <span className="font-bold text-cuan-cyan">
             {isFree ? "Gratis" : `Rp ${Number(purchase.amount).toLocaleString("id-ID")}`}
           </span>
         </div>

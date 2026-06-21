@@ -41,7 +41,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
   const { register } = form;
 
   return (
-    <div className="space-y-6 lg:sticky lg:top-24 lg:col-span-2 lg:h-fit lg:self-start">
+    <div className="space-y-6 lg:col-span-2">
       {/* VOUCHER */}
       {price > 0 && (
         <div className="rounded-xl border border-slate-300 bg-white p-5">
@@ -73,9 +73,9 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
                   />
                   <input
                     {...register("promo")}
-                    className={`w-full rounded-xl border py-2.5 pr-4 pl-10 focus:ring-1 ${voucherError
+                    className={`w-full rounded-xl border py-2.5 pr-4 pl-10 focus:outline-none focus:ring-1 ${voucherError
                       ? "border-red-400 focus:border-red-500 focus:ring-red-100"
-                      : "border-slate-300 focus:border-cyan-600 focus:ring-cyan-100"
+                      : "border-slate-300 focus:border-cuan-cyan focus:ring-cuan-cyan/20"
                       }`}
                     placeholder="Masukkan kode voucher"
                   />
@@ -156,7 +156,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
             {isGratis ? (
               <span className="font-bold text-green-600">Gratis</span>
             ) : (
-              <span className="font-bold text-cyan-600">
+              <span className="font-bold text-cuan-cyan">
                 Rp {finalPrice.toLocaleString("id-ID")}
               </span>
             )}
@@ -166,7 +166,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
           type="submit"
           form="checkout-form"
           disabled={isPending || isBuyingOwnProduct}
-          className="mt-6 w-full cursor-pointer rounded-xl bg-cyan-600 py-3 text-lg font-semibold text-white shadow-sm hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-6 w-full cursor-pointer rounded-xl bg-cuan-cyan py-3 text-lg font-semibold text-white transition-colors duration-200 hover:bg-[#008BB5] disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isPending
             ? "Memproses..."

@@ -37,8 +37,7 @@ export default function ProfilePage() {
             // Check if it's a zod error (validation error)
             if (e.data?.zodError) {
                 setErrors(e.data.zodError.fieldErrors as Record<string, string[]>);
-            } else if (e.message === "Link sudah dipakai orang lain, pilih link lain." || 
-                       e.message === "Anda hanya bisa mengubah link setiap 7 hari sekali.") {
+            } else if (e.message === "Link sudah dipakai orang lain, pilih link lain.") {
                 setErrors({ slug: [e.message] });
                 // Do not show toast for mapped field errors
             } else {
@@ -105,6 +104,21 @@ export default function ProfilePage() {
         (avatarUpload.previewUrl || "") !== (user?.image || "") ||
         (bannerUpload.previewUrl || "") !== (user?.banner || "");
 
+    useEffect(() => {
+        const errorKeys = Object.keys(errors);
+        if (errorKeys.length > 0) {
+            const firstErrorKey = errorKeys[0];
+            // Tambahkan timeout kecil supaya React render state error dulu (jika ada komponen yang unmount/mount)
+            setTimeout(() => {
+                const el = document.getElementById(firstErrorKey || "");
+                if (el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "center" });
+                    el.focus();
+                }
+            }, 100);
+        }
+    }, [errors]);
+
     // ─── Loading Skeleton ──────────────────────────────────────────────────────
 
     if (isLoading) {
@@ -146,7 +160,7 @@ export default function ProfilePage() {
                                         className="relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer"
                                         onClick={() => fileInputRef.current?.click()}
                                     >
-                                        <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-500 group-hover:bg-cyan-50 relative">
+                                        <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10 relative">
                                             {avatarUpload.previewUrl ? (
                                                 <>
                                                     <Image
@@ -206,7 +220,7 @@ export default function ProfilePage() {
                                         className="relative group w-full aspect-[6/1] md:aspect-[8/1] cursor-pointer"
                                         onClick={() => bannerInputRef.current?.click()}
                                     >
-                                        <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cyan-500 group-hover:bg-cyan-50 relative">
+                                        <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10 relative">
                                             {bannerUpload.previewUrl ? (
                                                 <>
                                                     <Image
@@ -259,9 +273,9 @@ export default function ProfilePage() {
                                 </div>
                             </FormRow>
 
-                            {/* Nama */}
                             <FormRow label="Nama" error={errors.name?.[0]}>
                                 <FormInput
+                                    id="name"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     placeholder="Masukkan nama lengkap"
@@ -277,27 +291,27 @@ export default function ProfilePage() {
                                 />
                             </FormRow>
 
-                            {/* Nomor Hp */}
                             <FormRow label="Nomor Hp" error={errors.phoneNumber?.[0]}>
                                 <FormInput
+                                    id="phoneNumber"
                                     value={phoneNumber}
                                     onChange={(e) => setPhoneNumber(e.target.value)}
                                     placeholder="Masukkan nomor HP aktif"
                                 />
                             </FormRow>
 
-                            {/* Bio */}
                             <FormRow label="Bio" error={errors.bio?.[0]}>
                                 <FormTextarea
+                                    id="bio"
                                     value={bio}
                                     onChange={(e) => setBio(e.target.value)}
                                     placeholder="Ceritakan tentang tokomu"
                                 />
                             </FormRow>
 
-                            {/* Link */}
                             <FormRow label="Link Toko" error={errors.slug?.[0]}>
                                 <FormInput
+                                    id="slug"
                                     value={slug}
                                     onChange={(e) => setSlug(e.target.value)}
                                     placeholder="Masukkan link toko unik"
@@ -312,6 +326,7 @@ export default function ProfilePage() {
                             <div className="space-y-0 pt-6">
                                 <FormRow label="Password Baru (Opsional)" error={errors.password?.[0]}>
                                     <FormInput
+                                        id="password"
                                         type={showPassword ? "text" : "password"}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
@@ -320,7 +335,7 @@ export default function ProfilePage() {
                                             <button
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className="text-slate-400 hover:text-cyan-600 transition-colors px-2"
+                                                className="text-slate-400 hover:text-cuan-cyan transition-colors px-2"
                                             >
                                                 {showPassword ? <EyeSlashIcon size={20} /> : <EyeIcon size={20} />}
                                             </button>

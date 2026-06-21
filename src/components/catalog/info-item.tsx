@@ -12,7 +12,7 @@ export function InfoItem({
   return (
     <div className="flex items-center">
       <div className="flex items-center gap-2 pr-2">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan-50 text-cyan-700">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cuan-cyan/10 text-007EA5">
           {icon}
         </div>
         <div className="flex flex-col">

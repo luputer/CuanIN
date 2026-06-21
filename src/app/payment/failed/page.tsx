@@ -113,7 +113,7 @@ function PaymentFailedContent() {
                 )}
 
                 <PaymentActionAndSecurity
-                  xenditInvoiceUrl={purchase?.xenditInvoiceUrl}
+                  purchaseId={purchase?.id}
                   hasFailed={true}
                 />
 

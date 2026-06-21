@@ -150,9 +150,18 @@ export default function PurchaseDetailPage() {
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-slate-600">Metode Pembayaran</span>
                   <span className="font-medium text-slate-800">
-                    {isFree ? "-" : (p.xenditPaymentMethod ?? "—").replace(/_/g, " ")}
+                    {isFree ? "-" : (p.paymentMethod ?? "—")}
                   </span>
                 </div>
+                {!isFree && p.paymentDetails && (() => {
+                  const details = p.paymentDetails as { paymentType?: string; bank?: string; vaNumber?: string } | null;
+                  return details?.vaNumber ? (
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-slate-600">No. Virtual Account</span>
+                      <span className="font-medium font-mono text-slate-800">{details.vaNumber}</span>
+                    </div>
+                  ) : null;
+                })()}
               </div>
             </div>
           </div>

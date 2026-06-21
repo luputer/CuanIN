@@ -4,28 +4,12 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { sendProductEmail, sendPortalLinkEmail, sendPurchaseHistoryOtpEmail } from "../../../lib/email";
 import { nanoid } from "nanoid";
 import { env } from "~/env";
-import { createInvoice as createXenditInvoice } from "~/lib/xendit";
 import { createSnapTransaction } from "~/lib/midtrans";
 import { calculatePaymentFee } from "~/lib/utils";
 import { Prisma, WithdrawalStatus } from "../../../../prisma/generated/prisma";
 import { getCreatorBalance } from "~/lib/balance";
 import { generateHistoryToken, verifyHistoryToken } from "~/lib/purchase-history-token";
 import crypto from "crypto";
-
-const XENDIT_PAYMENT_METHODS = {
-  qris: "QRIS",
-  shopeepay: "SHOPEEPAY",
-  dana: "DANA",
-  ovo: "OVO",
-  bca: "BCA",
-  bni: "BNI",
-  bri: "BRI",
-  mandiri: "MANDIRI",
-  bsi: "BSI",
-  permata: "PERMATA",
-  alfamart: "ALFAMART",
-  cc: "CREDIT_CARD",
-} as const;
 
 export const purchasesRouter = createTRPCRouter({
   // ─── GET BY ID (public) ──────────────────────────────────────────────────────
@@ -363,91 +347,6 @@ export const purchasesRouter = createTRPCRouter({
       });
 
       return { status: "pending", purchase: purchaseResult };
-    }),
-
-  // ─── CREATE PAYMENT INVOICE ─────────────────────────────────────────────────
-  createPaymentInvoice: publicProcedure
-    .input(
-      z.object({
-        purchaseId: z.string(),
-        paymentMethod: z.enum([
-          "qris",
-          "shopeepay",
-          "dana",
-          "ovo",
-          "bca",
-          "bni",
-          "bri",
-          "mandiri",
-          "bsi",
-          "permata",
-          "alfamart",
-          "cc",
-        ]),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const purchase = await ctx.db.purchase.findUnique({
-        where: { id: input.purchaseId },
-        include: {
-          product: {
-            select: { name: true },
-          },
-        },
-      });
-
-      if (!purchase) throw new Error("Transaksi tidak ditemukan");
-      if (purchase.status === "completed")
-        throw new Error("Transaksi sudah dibayar");
-      if (Number(purchase.amount) <= 0)
-        throw new Error("Transaksi gratis tidak membutuhkan pembayaran");
-
-      // Return existing invoice jika metode sama
-      if (
-        purchase.xenditInvoiceUrl &&
-        purchase.xenditPaymentMethod ===
-        XENDIT_PAYMENT_METHODS[input.paymentMethod]
-      ) {
-        return {
-          invoiceUrl: purchase.xenditInvoiceUrl,
-          xenditInvoiceId: purchase.xenditInvoiceId,
-        };
-      }
-
-      // Return existing invoice jika sudah ada (metode berbeda, tapi invoice sudah dibuat)
-      if (purchase.xenditInvoiceUrl && purchase.xenditPaymentMethod) {
-        return {
-          invoiceUrl: purchase.xenditInvoiceUrl,
-          xenditInvoiceId: purchase.xenditInvoiceId,
-        };
-      }
-
-      const xenditPaymentMethod = XENDIT_PAYMENT_METHODS[input.paymentMethod];
-      const baseAmount = Number(purchase.amount);
-      const fee = calculatePaymentFee(input.paymentMethod, baseAmount);
-      const totalAmount = baseAmount + fee;
-
-      const invoice = await createXenditInvoice({
-        externalId: `${purchase.id}__${input.paymentMethod}__${Date.now()}`,
-        amount: totalAmount,
-        payerEmail: purchase.buyerEmail,
-        description: `Pembelian ${purchase.product.name}`,
-        paymentMethods: [xenditPaymentMethod],
-        successRedirectUrl: `${env.NEXT_PUBLIC_APP_URL}/payment/success?id=${purchase.id}`,
-        failureRedirectUrl: `${env.NEXT_PUBLIC_APP_URL}/payment/failed?id=${purchase.id}`,
-        fees: fee > 0 ? [{ type: "Biaya Layanan", value: fee }] : undefined,
-      });
-
-      await ctx.db.purchase.update({
-        where: { id: purchase.id },
-        data: {
-          xenditInvoiceId: invoice.id,
-          xenditInvoiceUrl: invoice.invoice_url,
-          xenditPaymentMethod,
-        },
-      });
-
-      return { invoiceUrl: invoice.invoice_url, xenditInvoiceId: invoice.id };
     }),
 
   // ─── CREATE MIDTRANS TRANSACTION ────────────────────────────────────────────

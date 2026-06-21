@@ -49,19 +49,18 @@ export async function POST(req: NextRequest) {
 
     function buildPaymentLabel() {
       if (payment_type === "bank_transfer" && bank) {
-        const bankName = bankLabelMap[bank] ?? bank.toUpperCase();
-        return va_number ? `Midtrans: ${bankName} VA (${va_number})` : `Midtrans: ${bankName} Virtual Account`;
+        return bankLabelMap[bank] ?? bank.toUpperCase();
       }
-      if (payment_type === "echannel" && va_number) {
-        return `Midtrans: Mandiri Bill (${va_number})`;
+      if (payment_type === "echannel") {
+        return "Mandiri";
       }
       if (payment_type === "credit_card") {
-        return "Midtrans: Kartu Kredit";
+        return "Kartu Kredit";
       }
-      if (payment_type === "gopay") return "Midtrans: GoPay";
-      if (payment_type === "shopeepay") return "Midtrans: ShopeePay";
-      if (payment_type === "qris") return "Midtrans: QRIS";
-      return `Midtrans: ${payment_type}`;
+      if (payment_type === "gopay") return "GoPay";
+      if (payment_type === "shopeepay") return "ShopeePay";
+      if (payment_type === "qris") return "QRIS";
+      return payment_type;
     }
 
     if (!signature_key || !order_id) {
@@ -135,7 +134,12 @@ export async function POST(req: NextRequest) {
           data: {
             status: "completed",
             paidAt: new Date(),
-            xenditPaymentMethod: buildPaymentLabel(),
+            paymentMethod: buildPaymentLabel(),
+            paymentDetails: {
+              paymentType: payment_type,
+              bank: bank ?? null,
+              vaNumber: va_number ?? null,
+            },
           },
         });
 

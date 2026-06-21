@@ -108,17 +108,15 @@ model Purchase {
   status              String       @default("pending")
   createdAt           DateTime     @default(now())
   updatedAt           DateTime     @updatedAt
-  xenditInvoiceId     String?
-  xenditInvoiceUrl    String?
   paidAt              DateTime?
-  xenditPaymentMethod String?
+  paymentMethod       String?
+  paymentDetails      Json?
   voucherId           String?
   portalToken         String?      @unique
   answers             FormAnswer[]
   product             Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
   voucher             Voucher?     @relation(fields: [voucherId], references: [id], onDelete: SetNull)
 
-  @@index([xenditInvoiceId])
   @@index([voucherId])
 }
 

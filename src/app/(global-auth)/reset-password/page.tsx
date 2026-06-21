@@ -70,7 +70,7 @@ function ResetPasswordInner() {
   if (isTokenLoading) {
     return (
       <div className="flex min-h-screen flex-col bg-white text-center justify-center">
-        <div className="mx-auto size-12 border-4 border-cyan-200 border-t-cyan-600 rounded-full animate-spin mb-4" />
+        <div className="mx-auto size-12 border-4 border-cuan-blue/30 border-t-cuan-blue rounded-full animate-spin mb-4" />
         <p className="text-slate-600">Memvalidasi link...</p>
       </div>
     );
@@ -81,14 +81,14 @@ function ResetPasswordInner() {
       <div className="flex min-h-screen flex-col bg-white">
         <HeaderLandingPage buttonText="Login" buttonHref="/sign-in" />
         <main className="flex flex-1 items-center justify-center px-4 py-12">
-          <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-10 text-center shadow-[0px_4px_0px_rgba(29,41,61)]">
+          <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-10 text-center shadow-[0px_4px_0px_#000]">
             <h1 className="mb-4 text-2xl font-bold text-red-600">Link Tidak Valid</h1>
             <p className="mb-8 text-slate-600">
               Link reset password Anda sudah tidak berlaku, kadaluwarsa, atau tidak lengkap. Silakan minta link baru.
             </p>
             <Link
               href="/forgot-password"
-              className="inline-block rounded-lg border-2 border-slate-800 bg-yellow-200 px-8 py-3 text-lg font-semibold text-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
+              className="inline-block rounded-lg border-2 border-slate-800 bg-cuan-blue px-8 py-3 text-lg font-semibold text-white shadow-[0px_2px_0px_#000] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
             >
               Minta Link Baru
             </Link>
@@ -104,9 +104,9 @@ function ResetPasswordInner() {
       <HeaderLandingPage buttonText="Login" buttonHref="/sign-in" />
 
       <main className="flex flex-1 items-center justify-center px-4 py-12">
-        <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-6 shadow-[0px_4px_0px_rgba(29,41,61)] sm:p-10">
+        <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-6 shadow-[0px_4px_0px_#000] sm:p-10">
           <div className="pt-2 pb-8 text-center">
-            <h1 className="pb-3 text-3xl font-semibold text-cyan-600">
+            <h1 className="pb-3 text-3xl font-semibold text-cuan-blue">
               Reset Password
             </h1>
             <p className="text-lg text-slate-800">
@@ -155,7 +155,7 @@ function ResetPasswordInner() {
               <button
                 type="submit"
                 disabled={resetPasswordMutation.isPending}
-                className="mt-4 w-full cursor-pointer rounded-lg border-2 border-slate-800 bg-yellow-200 py-2.5 text-lg font-semibold text-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70"
+                className="mt-4 w-full cursor-pointer rounded-lg border-2 border-slate-800 bg-cuan-blue py-2.5 text-lg font-semibold text-white shadow-[0px_2px_0px_#000] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_#000]"
               >
                 {resetPasswordMutation.isPending ? "Memproses..." : "Simpan Password Baru"}
               </button>

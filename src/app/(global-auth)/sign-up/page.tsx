@@ -80,7 +80,7 @@ function SignupPageInner() {
     <>
           {/* Title */}
           <div className="pt-2 pb-8 text-center">
-            <h1 className="pb-3 text-3xl font-semibold text-cyan-600">
+            <h1 className="pb-3 text-3xl font-semibold text-cuan-blue">
               Daftar
             </h1>
             <p className="text-lg text-slate-800">
@@ -92,7 +92,7 @@ function SignupPageInner() {
 
           {/* Google banner */}
           {fromGoogle && (
-            <div className="mb-5 rounded-lg border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm text-cyan-700">
+            <div className="mb-5 rounded-lg border border-cuan-blue/20 bg-cuan-blue/5 px-4 py-3 text-sm text-cuan-blue">
               🎉 Akun Google Anda terdeteksi! Lengkapi data di bawah untuk
               menyelesaikan pendaftaran.
             </div>
@@ -166,7 +166,7 @@ function SignupPageInner() {
             <button
               type="submit"
               disabled={isPending}
-              className="mt-4 w-full cursor-pointer rounded-lg border-2 border-slate-800 bg-yellow-200 py-2.5 text-lg font-semibold text-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_rgba(29,41,61)]"
+              className="mt-4 w-full cursor-pointer rounded-lg border-2 border-slate-800 bg-cuan-blue py-2.5 text-lg font-semibold text-white shadow-[0px_2px_0px_#000] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_#000]"
             >
               {isPending ? "Memproses..." : "Daftar Sekarang"}
             </button>
@@ -191,7 +191,7 @@ function SignupPageInner() {
             Sudah punya akun?{" "}
             <Link
               href="/sign-in"
-              className="font-medium text-cyan-600 hover:text-cyan-800 hover:underline"
+              className="font-medium text-cuan-blue hover:text-cuan-blue hover:underline"
             >
               Login Disini
             </Link>
@@ -206,7 +206,7 @@ export default function SignupPage() {
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-white">
           <div className="flex flex-col items-center gap-3">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-cyan-200 border-t-cyan-600"></div>
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-cuan-blue/30 border-t-cuan-blue"></div>
             <p className="text-sm font-medium text-slate-600">Memuat...</p>
           </div>
         </div>

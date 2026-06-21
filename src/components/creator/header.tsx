@@ -91,7 +91,7 @@ export default function HeaderKreator({
                             {/* Akun Saya */}
                             <button type="button"
                                 onClick={() => router.push('/profile')}
-                                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition cursor-pointer"
+                                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cuan-blue/10 hover:text-cuan-blue transition cursor-pointer"
                             >
                                 <UserIcon size={20} />
                                 <span>Akun Saya</span>
@@ -100,7 +100,7 @@ export default function HeaderKreator({
                             {/* Riwayat Pembelian */}
                             <button type="button"
                                 onClick={() => router.push('/riwayat-pembelian?ref=dashboard')}
-                                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition cursor-pointer"
+                                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cuan-blue/10 hover:text-cuan-blue transition cursor-pointer"
                             >
                                 <ShoppingBagIcon size={20} />
                                 <span>Riwayat Pembelian</span>
@@ -112,7 +112,7 @@ export default function HeaderKreator({
                             {/* Logout */}
                             <button type="button"
                                 onClick={() => signOut({ callbackUrl: "/sign-in" })}
-                                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-red-50 hover:text-red-600 transition cursor-pointer"
+                                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cuan-blue/10 hover:text-cuan-blue transition cursor-pointer"
                             >
                                 <SignOutIcon size={20} />
                                 <span>Logout</span>

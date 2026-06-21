@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
       <div className="mb-6">
         <Link
           href="/sign-in"
-          className="inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-cyan-600"
+          className="inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-cuan-blue"
         >
           <CaretLeftIcon size={16} />
           Kembali ke Login
@@ -52,7 +52,7 @@ export default function ForgotPasswordPage() {
       </div>
 
       <div className="pt-2 pb-8 text-center">
-        <h1 className="pb-3 text-3xl font-semibold text-cyan-600">
+        <h1 className="pb-3 text-3xl font-semibold text-cuan-blue">
           Lupa Password?
         </h1>
         <p className="text-lg text-slate-800">
@@ -84,7 +84,7 @@ export default function ForgotPasswordPage() {
           <button
             type="submit"
             disabled={forgotPasswordMutation.isPending}
-            className="mt-4 w-full cursor-pointer rounded-lg border-2 border-slate-800 bg-yellow-200 py-2.5 text-lg font-semibold text-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70"
+            className="mt-4 w-full cursor-pointer rounded-lg border-2 border-slate-800 bg-cuan-blue py-2.5 text-lg font-semibold text-white shadow-[0px_2px_0px_#000] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_#000]"
           >
             {forgotPasswordMutation.isPending ? "Mengirim..." : "Kirim Link Reset"}
           </button>

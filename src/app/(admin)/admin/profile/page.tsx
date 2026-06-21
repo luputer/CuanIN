@@ -30,6 +30,7 @@ export default function AdminProfilePage() {
     });
 
     const [name, setName] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -39,6 +40,7 @@ export default function AdminProfilePage() {
     useEffect(() => {
         if (user && !isInitializedRef.current) {
             setName(user.name ?? "");
+            setPhoneNumber(user.phoneNumber ?? "");
             setEmail(user.email ?? "");
             isInitializedRef.current = true;
         }
@@ -47,12 +49,14 @@ export default function AdminProfilePage() {
     const handleSave = () => {
         updateProfile.mutate({
             name,
+            phoneNumber,
             password: password ? password : undefined,
         });
     };
 
     const isDirty =
         name !== (user?.name || "") ||
+        phoneNumber !== (user?.phoneNumber || "") ||
         password !== "";
 
     // ─── Loading Skeleton ──────────────────────────────────────────────────────
@@ -85,6 +89,15 @@ export default function AdminProfilePage() {
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     placeholder="Masukkan nama lengkap"
+                                />
+                            </FormRow>
+
+                            {/* Nomor HP */}
+                            <FormRow label="Nomor HP">
+                                <FormInput
+                                    value={phoneNumber}
+                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    placeholder="Masukkan nomor HP"
                                 />
                             </FormRow>
 

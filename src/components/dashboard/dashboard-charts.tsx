@@ -3,19 +3,23 @@
 import {
     XAxis,
     YAxis,
-    Tooltip,
     CartesianGrid,
     BarChart,
     Bar,
-    ResponsiveContainer,
     AreaChart,
     Area,
     Cell,
 } from "recharts";
+import {
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+    type ChartConfig,
+} from "~/components/ui/chart";
 
 // ─── Constants & Utilities ───────────────────────────────────────────────────
 
-export const CHART_COLORS = ["#FFF085", "#FFB86A"];
+export const CHART_COLORS = ["#506CBF", "#27C3F3"];
 
 export function formatRupiah(amount: number): string {
     return new Intl.NumberFormat("id-ID", {
@@ -36,137 +40,133 @@ type WeekTotal = { week: string; total: number };
 
 /**
  * AreaChart untuk pendapatan mingguan.
- * XAxis: "day", YAxis: nilai dalam ribuan (k), dataKey: "value"
  */
 export function WeeklyRevenueChart({ data }: { data: DayValue[] }) {
+    const config = {
+        value: {
+            label: "Pendapatan",
+            color: "#506CBF",
+        },
+    } satisfies ChartConfig;
+
     return (
-        <ResponsiveContainer width="100%" height={300}>
+        <ChartContainer config={config} className="h-[300px] w-full">
             <AreaChart data={data}>
-                <defs>
-                    <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#FDC700" stopOpacity={0.4} />
-                        <stop offset="100%" stopColor="#ffffffff" stopOpacity={0} />
-                    </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
+                <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" vertical={false} />
                 <XAxis
                     dataKey="day"
-                    tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 500 }}
-                    tickMargin={10}
-                    stroke="#A2F4FD"
+                    tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 700 }}
+                    tickMargin={12}
+                    axisLine={{ stroke: "#0f172a", strokeWidth: 2 }}
                 />
                 <YAxis
-                    tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
-                    tickMargin={10}
+                    tick={{ fill: "#506CBF", fontSize: 12, fontWeight: 700 }}
+                    tickMargin={12}
                     width={60}
-                    stroke="#A2F4FD"
+                    axisLine={{ stroke: "#0f172a", strokeWidth: 2 }}
                     tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
                 />
-                <Tooltip
-                    formatter={(value) => [
-                        formatRupiah(Number(value) || 0),
-                        "Pendapatan",
-                    ]}
-                />
+                <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />
                 <Area
                     type="monotone"
                     dataKey="value"
-                    stroke="#FFDF20"
-                    strokeWidth={3}
-                    fill="url(#areaGradient)"
-                    fillOpacity={1}
-                    dot={{ r: 4, fill: "#FFDF20", stroke: "#FFB86A", strokeWidth: 2 }}
+                    stroke="none"
+                    fill="#506CBF"
+                    fillOpacity={0.5}
+                    dot={{ r: 5, fill: "#506CBF", stroke: "none", fillOpacity: 1 }}
+                    activeDot={{ r: 7, fill: "#506CBF", stroke: "none", fillOpacity: 1 }}
                 />
             </AreaChart>
-        </ResponsiveContainer>
+        </ChartContainer>
     );
 }
 
 /**
  * BarChart untuk total produk per kategori.
- * XAxis: "name", dataKey bar: "total"
  */
 export function CategoryBarChart({ data }: { data: NameTotal[] }) {
+    const config = {
+        total: {
+            label: "Produk",
+            color: "#27C3F3",
+        },
+    } satisfies ChartConfig;
+
     return (
-        <ResponsiveContainer width="100%" height={300}>
+        <ChartContainer config={config} className="h-[300px] w-full">
             <BarChart data={data} barCategoryGap="20%">
-                <CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
+                <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" vertical={false} />
                 <XAxis
                     dataKey="name"
-                    tick={{ fill: "#0f172a", fontSize: 11, fontWeight: 500 }}
-                    tickMargin={10}
-                    stroke="#A2F4FD"
+                    tick={{ fill: "#0f172a", fontSize: 11, fontWeight: 700 }}
+                    tickMargin={12}
+                    axisLine={{ stroke: "#0f172a", strokeWidth: 2 }}
                 />
                 <YAxis
-                    tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
-                    tickMargin={10}
+                    tick={{ fill: "#506CBF", fontSize: 12, fontWeight: 700 }}
+                    tickMargin={12}
                     width={50}
-                    stroke="#A2F4FD"
+                    axisLine={{ stroke: "#0f172a", strokeWidth: 2 }}
                 />
-                <Tooltip
-                    formatter={(value) => [value as number | string, "Produk"]}
-                />
-                <Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
+                <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />
+                <Bar dataKey="total" radius={[4, 4, 0, 0]} maxBarSize={60} fillOpacity={0.5}>
                     {data.map((_, index) => (
                         <Cell
                             key={`cell-${index}`}
-                            fill={CHART_COLORS[index % CHART_COLORS.length] ?? "#FFF085"}
+                            fill={CHART_COLORS[index % CHART_COLORS.length]}
+                            fillOpacity={0.5}
                         />
                     ))}
                 </Bar>
             </BarChart>
-        </ResponsiveContainer>
+        </ChartContainer>
     );
 }
 
 /**
  * AreaChart untuk traffic website (pengunjung harian).
- * XAxis: "day", dataKey: "value"
  */
 export function TrafficAreaChart({ data }: { data: DayValue[] }) {
+    const config = {
+        value: {
+            label: "Pengunjung",
+            color: "#27C3F3",
+        },
+    } satisfies ChartConfig;
+
     return (
-        <ResponsiveContainer width="100%" height={300}>
+        <ChartContainer config={config} className="h-[300px] w-full">
             <AreaChart data={data}>
-                <defs>
-                    <linearGradient id="trafficGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#FDC700" stopOpacity={0.4} />
-                        <stop offset="100%" stopColor="#ffffffff" stopOpacity={0} />
-                    </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
+                <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" vertical={false} />
                 <XAxis
                     dataKey="day"
-                    tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 500 }}
-                    tickMargin={10}
-                    stroke="#A2F4FD"
+                    tick={{ fill: "#0f172a", fontSize: 12, fontWeight: 700 }}
+                    tickMargin={12}
+                    axisLine={{ stroke: "#0f172a", strokeWidth: 2 }}
                 />
                 <YAxis
-                    tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
-                    tickMargin={10}
+                    tick={{ fill: "#506CBF", fontSize: 12, fontWeight: 700 }}
+                    tickMargin={12}
                     width={40}
-                    stroke="#A2F4FD"
+                    axisLine={{ stroke: "#0f172a", strokeWidth: 2 }}
                 />
-                <Tooltip
-                    formatter={(value) => [value as number | string, "Pengunjung"]}
-                />
+                <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />
                 <Area
                     type="monotone"
                     dataKey="value"
-                    stroke="#FFDF20"
-                    strokeWidth={3}
-                    fill="url(#trafficGradient)"
-                    fillOpacity={1}
-                    dot={{ r: 4, fill: "#FFDF20", stroke: "#FFB86A", strokeWidth: 2 }}
+                    stroke="none"
+                    fill="#27C3F3"
+                    fillOpacity={0.5}
+                    dot={{ r: 5, fill: "#27C3F3", stroke: "none", fillOpacity: 1 }}
+                    activeDot={{ r: 7, fill: "#27C3F3", stroke: "none", fillOpacity: 1 }}
                 />
             </AreaChart>
-        </ResponsiveContainer>
+        </ChartContainer>
     );
 }
 
 /**
- * BarChart mingguan — dipakai untuk "Jumlah Pembeli" (creator) dan
- * "Jumlah Kreator" (admin). Bedakan lewat prop `tooltipLabel`.
- * XAxis: "week", dataKey bar: "total"
+ * BarChart mingguan.
  */
 export function WeeklyBarChart({
     data,
@@ -175,34 +175,41 @@ export function WeeklyBarChart({
     data: WeekTotal[];
     tooltipLabel: string;
 }) {
+    const config = {
+        total: {
+            label: tooltipLabel,
+            color: "#506CBF",
+        },
+    } satisfies ChartConfig;
+
     return (
-        <ResponsiveContainer width="100%" height={300}>
+        <ChartContainer config={config} className="h-[300px] w-full">
             <BarChart data={data} barCategoryGap="20%">
-                <CartesianGrid strokeDasharray="3 3" stroke="#A2F4FD" />
+                <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" vertical={false} />
                 <XAxis
                     dataKey="week"
-                    tick={{ fill: "#0f172a", fontSize: 11, fontWeight: 500 }}
-                    tickMargin={10}
-                    stroke="#A2F4FD"
+                    tick={{ fill: "#0f172a", fontSize: 11, fontWeight: 700 }}
+                    tickMargin={12}
+                    axisLine={{ stroke: "#0f172a", strokeWidth: 2 }}
                 />
                 <YAxis
-                    tick={{ fill: "#06b6d4", fontSize: 14, fontWeight: 600 }}
-                    tickMargin={10}
+                    tick={{ fill: "#506CBF", fontSize: 12, fontWeight: 700 }}
+                    tickMargin={12}
                     width={40}
-                    stroke="#A2F4FD"
+                    axisLine={{ stroke: "#0f172a", strokeWidth: 2 }}
                 />
-                <Tooltip
-                    formatter={(value) => [value as number | string, tooltipLabel]}
-                />
-                <Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
+                <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />
+                <Bar dataKey="total" radius={[4, 4, 0, 0]} maxBarSize={60} fillOpacity={0.5}>
                     {data.map((_, index) => (
                         <Cell
                             key={`cell-${index}`}
-                            fill={CHART_COLORS[index % CHART_COLORS.length] ?? "#FFF085"}
+                            fill={CHART_COLORS[index % CHART_COLORS.length]}
+                            fillOpacity={0.5}
                         />
                     ))}
                 </Bar>
             </BarChart>
-        </ResponsiveContainer>
+        </ChartContainer>
     );
 }
+

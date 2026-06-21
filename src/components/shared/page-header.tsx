@@ -59,11 +59,11 @@ export function PageHeader({
                                 <span className="leading-none">{backLabel}</span>
                             </Link>
                         )}
-                        <div className="text-2xl font-bold mb-1 text-cyan-600">
+                        <div className="text-3xl font-semibold mb-1 text-slate-800">
                             {title}
                         </div>
                         {description && (
-                            <div className="text-sm text-slate-600">
+                            <div className="text-sm font-medium text-slate-600">
                                 {description}
                             </div>
                         )}

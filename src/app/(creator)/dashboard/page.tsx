@@ -40,23 +40,23 @@ export default function DashboardPage() {
             />
 
             {/* TOP CARDS */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 {isLoading ? (
                     <>
-                        <DashboardCardSkeleton />
+                        <DashboardCardSkeleton bgColor="bg-cuan-cyan/10" />
                         <DashboardCardSkeleton />
                         <DashboardCardSkeleton />
                         <DashboardCardSkeleton />
                     </>
                 ) : (
                     <>
-                        <Link href="/pembayaran" className="block rounded-xl transition-transform hover:scale-101">
+                        <Link href="/pembayaran" className="block">
                             <DashboardCard
                                 title="Total Penghasilan"
                                 value={formatRupiah(data?.totalIncome ?? 0)}
                                 icon={<WalletIcon weight="fill" className="size-8" />}
-                                iconColor="text-cyan-600"
-                                bgColor="bg-cyan-50"
+                                iconColor="text-cuan-cyan"
+                                bgColor="bg-cuan-cyan/10"
                                 showArrow={true}
                                 change={data?.incomeChange}
                             />
@@ -66,6 +66,7 @@ export default function DashboardPage() {
                             value={(data?.totalProducts ?? 0).toLocaleString("id-ID")}
                             icon={<BasketIcon weight="fill" className="size-8" />}
                             iconColor="text-yellow-500"
+                            bgColor="bg-white"
                             change={data?.productsChange}
                         />
                         <DashboardCard
@@ -73,6 +74,7 @@ export default function DashboardPage() {
                             value={(data?.totalUsers ?? 0).toLocaleString("id-ID")}
                             icon={<UsersIcon weight="fill" className="size-8" />}
                             iconColor="text-orange-500"
+                            bgColor="bg-white"
                             change={data?.usersChange}
                         />
                         <DashboardCard
@@ -80,6 +82,7 @@ export default function DashboardPage() {
                             value={(data?.totalVisitors ?? 0).toLocaleString("id-ID")}
                             icon={<ChartLineUpIcon weight="fill" className="size-8" color="currentColor" />}
                             iconColor="text-green-500"
+                            bgColor="bg-white"
                             change={data?.visitorsChange}
                         />
                     </>
@@ -87,17 +90,17 @@ export default function DashboardPage() {
             </div>
 
             {/* CHART ROW 1 */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-4">
-                <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
-                    <h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Pendapatan Mingguan</h2>
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
+                <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_#000] p-6 overflow-hidden">
+                    <h2 className="font-semibold text-xl mb-8 text-slate-800">Pendapatan Mingguan</h2>
                     {isLoading
                         ? <ChartSkeleton />
                         : <WeeklyRevenueChart data={data?.weeklyRevenue ?? []} />
                     }
                 </div>
 
-                <div className="lg:col-span-1 bg-white rounded-xl border-1 border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
-                    <h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Total per Kategori</h2>
+                <div className="lg:col-span-1 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_#000] p-6 overflow-hidden">
+                    <h2 className="font-semibold text-xl mb-8 text-slate-800">Total per Kategori</h2>
                     {isLoading
                         ? <ChartSkeleton />
                         : <CategoryBarChart data={data?.categoryData ?? []} />
@@ -106,17 +109,17 @@ export default function DashboardPage() {
             </div>
 
             {/* CHART ROW 2 */}
-            <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
-                <div className="lg:col-span-1 xl:col-span-3 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
-                    <h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Traffic Website</h2>
+            <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+                <div className="lg:col-span-1 xl:col-span-3 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_#000] p-6 overflow-hidden">
+                    <h2 className="font-semibold text-xl mb-8 text-slate-800">Traffic Website</h2>
                     {isLoading
                         ? <ChartSkeleton />
                         : <TrafficAreaChart data={data?.trafficData ?? []} />
                     }
                 </div>
 
-                <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 overflow-hidden">
-                    <h2 className="pl-2 font-semibold text-lg mt-2 mb-6 text-slate-800">Jumlah Pembeli</h2>
+                <div className="lg:col-span-1 xl:col-span-2 bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_#000] p-6 overflow-hidden">
+                    <h2 className="font-semibold text-xl mb-8 text-slate-800">Jumlah Pembeli</h2>
                     {isLoading
                         ? <ChartSkeleton />
                         : <WeeklyBarChart data={data?.buyerData ?? []} tooltipLabel="Pembeli" />

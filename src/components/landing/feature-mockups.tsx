@@ -1,408 +1,161 @@
 "use client";
 
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
-import {
-  DotsSixVerticalIcon,
-  CaretDownIcon,
   PlusIcon,
   WalletIcon,
-  ShoppingBagIcon,
-  EyeIcon,
-  PencilSimpleIcon,
-  ArrowUpRightIcon,
+  ArrowDownIcon,
   CopyIcon,
-  GlobeIcon,
+  ShareNetworkIcon,
+  UserIcon,
+  ShoppingBagIcon,
+  ChatTextIcon,
+  CreditCardIcon,
 } from "@phosphor-icons/react";
 
 // ─── 5. STEPS ILLUSTRATION MOCKUP ────────────────────────────────────────────
 
 export function StepsIllustrationMockup({ activeStep = 0 }: { activeStep?: number }) {
-  return (
-    <div className="w-full h-full rounded-2xl bg-cyan-50 flex items-center justify-center p-4 md:p-8 relative overflow-hidden transition-colors duration-500">
-      {/* Background decoration: Polka Dot Pattern */}
-      <div className="absolute inset-0 opacity-[0.15]"
-        style={{ backgroundImage: 'radial-gradient(#0891b2 1px, transparent 2px)', backgroundSize: '20px 20px' }}
-      />
+  const steps = [
+    { title: "Buat Akun", color: "white", icon: <UserIcon size={24} className="text-cyan-600" /> },
+    { title: "Tambahkan Produk", color: "white", icon: <PlusIcon size={24} className="text-cyan-600" /> },
+    { title: "Bagikan Link", color: "white", icon: <ShareNetworkIcon size={24} className="text-cyan-600" /> },
+    { title: "Terima Pembayaran", color: "white", icon: <CreditCardIcon size={24} className="text-emerald-600" /> },
+  ];
 
-      {/* Decorative Floating Elements */}
-      <div className="absolute top-10 left-10 w-24 h-24 bg-yellow-300 rounded-full blur-[60px] opacity-30" />
-      <div className="absolute bottom-10 right-10 w-32 h-32 bg-cyan-400 rounded-full blur-[80px] opacity-30" />
-
-      {/* Main Container - Carousel / Switcher */}
-      <div className="w-full max-w-[520px] aspect-[4/3] flex items-center justify-center relative z-10">
-
-        {/* Step 1: Buat Akun */}
-        <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 transform ${activeStep === 0
-          ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
-          : "opacity-0 scale-90 -rotate-6 translate-x-[-100px] pointer-events-none z-10"
-          }`}>
-          <div className="w-full max-w-[280px] sm:max-w-[380px] bg-white border-2 border-slate-800 p-5 sm:p-8 rounded-2xl">
-            <div className="flex items-center justify-center gap-4 mb-5 sm:mb-8">
-              <span className="text-base sm:text-xl font-semibold text-slate-800 tracking-tighter">Buat Akun</span>
-            </div>
-            <div className="space-y-3 sm:space-y-5">
-              <div className="space-y-2">
-                <div className="h-2.5 w-16 bg-slate-200 rounded" />
-                <div className="h-9 sm:h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
-              </div>
-              <div className="space-y-2">
-                <div className="h-2.5 w-20 bg-slate-200 rounded" />
-                <div className="h-9 sm:h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
-              </div>
-              <div className="hidden lg:block space-y-2">
-                <div className="h-2.5 w-20 bg-slate-200 rounded" />
-                <div className="h-9 sm:h-10 w-full bg-slate-50 border border-slate-200 rounded-lg" />
-              </div>
-              <div className="h-10 sm:h-12 w-full bg-cyan-600 rounded-xl mt-2 border-2 border-slate-800 shadow-[0.5px_0.5px_0px_rgba(29,41,61)] flex items-center justify-center">
-                <div className="h-2.5 w-24 bg-white/40 rounded-full" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Step 2: Tambahkan Produk */}
-        <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 transform ${activeStep === 1
-          ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
-          : "opacity-0 scale-90 rotate-6 translate-x-[100px] pointer-events-none z-10"
-          }`}>
-          <div className="w-full max-w-[320px] sm:max-w-[380px] bg-white border-2 border-slate-800 rounded-2xl overflow-hidden flex flex-col">
-            <div className="h-10 bg-slate-100 border-b-2 border-slate-800 flex items-center px-4 gap-2 shrink-0">
-              <div className="w-2.5 h-2.5 rounded-full bg-cyan-600 border border-slate-800 shadow-sm" />
-              <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 border border-slate-800 shadow-sm" />
-              <div className="w-2.5 h-2.5 rounded-full bg-orange-400 border border-slate-800 shadow-sm" />
-              <div className="ml-3 h-4 w-28 bg-white rounded-full border border-slate-200" />
-            </div>
-            <div className="p-6 flex flex-col gap-5">
-              <div className="flex items-center gap-4">
-                <div className="flex flex-col">
-                  <span className="text-xl font-semibold text-slate-800 tracking-tighter">Tambah Produk</span>
-                  <span className="text-[12px] text-slate-400 font-medium leading-none mt-1">Webinar, Kelas, Produk Digital</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="aspect-[4/3] bg-cyan-50 border-1 border-cyan-300 rounded-xl flex flex-col p-3">
-                  <div className="flex-1 bg-white rounded-md mb-2" />
-                  <div className="h-2.5 w-full bg-slate-200 rounded" />
-                  <div className="h-2.5 w-1/2 bg-cyan-200 rounded mt-2" />
-                </div>
-                <div className="aspect-[4/3] bg-yellow-50 border-1 border-yellow-300 rounded-xl flex flex-col p-3">
-                  <div className="flex-1 bg-white rounded-md mb-2" />
-                  <div className="h-2.5 w-full bg-slate-200 rounded" />
-                  <div className="h-2.5 w-1/2 bg-yellow-200 rounded mt-2" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Step 3: Bagikan Link */}
-        <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 transform ${activeStep === 2
-          ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
-          : "opacity-0 scale-90 -rotate-6 translate-x-[-100px] pointer-events-none z-10"
-          }`}>
-          <div className="w-full max-w-[320px] sm:max-w-[380px] bg-white border-2 border-slate-800 p-5 sm:p-7 rounded-2xl">
-            <div className="flex items-center gap-4 mb-7">
-              <span className="text-xl font-semibold text-slate-800 tracking-tighter">Bagikan Link</span>
-            </div>
-            <div className="space-y-5">
-              <div className="flex gap-3 items-center bg-cyan-50 border-2 border-slate-800 p-4 rounded-xl">
-                <GlobeIcon size={20} className="text-cyan-600 shrink-0" />
-                <div className="flex-1 h-2.5 bg-cyan-200 rounded-full" />
-                <CopyIcon size={20} className="text-cyan-600 shrink-0" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Step 4: Terima Pembayaran */}
-        <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 transform ${activeStep === 3
-          ? "opacity-100 scale-100 rotate-0 translate-x-0 z-30"
-          : "opacity-0 scale-90 rotate-6 translate-x-[100px] pointer-events-none z-10"
-          }`}>
-          <div className="w-full max-w-[320px] sm:max-w-[380px] bg-emerald-50 border-2 border-emerald-500 p-5 sm:p-8 rounded-2xl">
-            <div className="flex items-center gap-5">
-              <div className="flex flex-col gap-1">
-                <span className="text-lg font-semibold text-green-700 tracking-tighter">Terima Pembayaran</span>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="text-3xl font-black text-emerald-600">+ Rp 150.000</span>
-                </div>
-                <span className="text-sm text-green-500 font-semibold tracking-wider">Verifikasi Otomatis!</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  );
-}
-
-// ─── 1. MANAJEMEN WEBINAR MOCKUP ──────────────────────────────────────────────
-
-export function ProductManagementMockup() {
-  const items = [
-    {
-      name: "Mastering UI/UX Design",
-      date: "12 Mei 2024",
-      price: "Rp 150.000",
-      status: "Published",
-      color: "bg-green-100 text-green-700"
-    },
-    {
-      name: "Webinar Bisnis Digital",
-      date: "20 Mei 2024",
-      price: "Gratis",
-      status: "Published",
-      color: "bg-green-100 text-green-700"
-    },
-    {
-      name: "React Framework Guide",
-      date: "05 Jun 2024",
-      price: "Rp 250.000",
-      status: "Draft",
-      color: "bg-slate-200 text-slate-500"
-    },
+  // Transformations for inactive cards to create a stacked/distributed look
+  const inactiveStyles = [
+    "-rotate-6 -translate-x-12 -translate-y-6",
+    "rotate-3 translate-x-14 -translate-y-4",
+    "-rotate-2 translate-x-8 translate-y-12",
+    "rotate-6 -translate-x-10 translate-y-10"
   ];
 
   return (
-    <div className="w-full h-full bg-slate-50 flex flex-col p-4 overflow-y-auto no-scrollbar">
-      <div className="flex justify-between items-center mb-4 shrink-0">
-        <h3 className="text-sm font-bold text-cyan-600">Produk</h3>
-        <div className="bg-cyan-600 text-white px-4 py-2 rounded-lg text-[10px] font-bold border border-slate-800 shadow-[1.5px_1.5px_0px_rgba(29,41,61)] flex items-center gap-1.5 cursor-default transition-all">
-          <PlusIcon size={12} weight="bold" />
-          <span>Tambah Produk</span>
-        </div>
-      </div>
+    <div className="w-full h-full flex items-center justify-center relative overflow-hidden transition-colors duration-500">
+      <div className="w-full max-w-[550px] aspect-[4/5] relative z-10 flex items-center justify-center">
+        {steps.map((step, index) => {
+          const isActive = activeStep === index;
 
-      <Table className="border-slate-300">
-        <TableHeader className="bg-cyan-50">
-          <TableRow className="hover:bg-transparent">
-            <TableHead className="text-[10px] py-3 px-4 font-bold border-cyan-100">Nama</TableHead>
-            <TableHead className="text-[10px] py-3 px-4 font-bold border-cyan-100">Harga</TableHead>
-            <TableHead className="text-[10px] py-3 px-4 font-bold border-cyan-100">Status</TableHead>
-            <TableHead className="text-[10px] py-3 px-4 font-bold border-cyan-100 text-right">Aksi</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {items.map((item, i) => (
-            <TableRow key={i} className="hover:bg-slate-50/50 transition-colors">
-              <TableCell className="py-3 px-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg border-2 border-dashed border-slate-300 bg-slate-100" />
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-semibold text-slate-800 truncate max-w-[80px]">{item.name}</span>
-                    <span className="text-[8px] text-slate-400">{item.date}</span>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell className="py-3 px-4 text-[10px] text-cyan-600 font-bold">{item.price}</TableCell>
-              <TableCell className="py-3 px-4">
-                <span className={`px-2 py-0.5 rounded-full text-[8px] font-medium ${item.color}`}>{item.status}</span>
-              </TableCell>
-              <TableCell className="py-3 px-4">
-                <div className="flex justify-end gap-2">
-                  <div className="w-4 h-4 flex items-center justify-center"><EyeIcon size={12} className="text-slate-400" /></div>
-                  <div className="w-4 h-4 flex items-center justify-center"><PencilSimpleIcon size={12} className="text-slate-400" /></div>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  );
-}
+          return (
+            <div
+              key={index}
+              className={`absolute transition-all duration-500 ease-out transform ${isActive
+                ? "opacity-100 scale-100 z-30 translate-x-0 translate-y-0 rotate-0"
+                : `opacity-60 scale-90 z-10 pointer-events-none ${inactiveStyles[index]}`
+                }`}
+            >
+              <div className={`w-[260px] sm:w-[420px] bg-${step.color} border-2 border-slate-800 p-4 sm:p-6 rounded-3xl flex flex-col gap-4 sm:gap-5 h-[360px] sm:h-[480px] overflow-hidden`}>
+                {/* Rich Dynamic Content based on step */}
+                <div className="space-y-5 opacity-90 flex-grow">
+                  {index === 0 && ( // Buat Akun
+                    <div className="w-full h-full rounded-2xl bg-white p-2">
+                      {/* Title & Subtitle */}
+                      <div className="text-center mb-4 sm:mb-8">
+                        <h3 className="text-xl sm:text-2xl font-semibold text-cuan-blue">Buat Akun</h3>
+                        <p className="text-base sm:text-lg text-slate-500">Selamat datang <br /> silahkan daftarkan akun anda</p>
+                      </div>
 
-// ─── 2. PEMBAYARAN MOCKUP ────────────────────────────────────────────────────
+                      {/* Form Fields Skeletons */}
+                      <div className="space-y-2 sm:space-y-4">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="space-y-1 sm:space-y-2">
+                            <div className="h-3 sm:h-4 w-16 sm:w-20 bg-slate-200 rounded" />
+                            <div className="h-8 sm:h-10 w-full bg-slate-50 rounded-lg border border-slate-200" />
+                          </div>
+                        ))}
 
-export function PaymentMockup() {
-  const transactions = [
-    { id: "TX-9012", total: "Rp 150.000", buyer: "Budi Santoso", status: "Sudah Bayar", color: "bg-green-100 text-green-700" },
-    { id: "TX-9010", total: "Rp 350.000", buyer: "Siska Putri", status: "Menunggu", color: "bg-yellow-100 text-yellow-700" },
-  ];
+                        {/* Button */}
+                        <button className="mt-2 h-10 sm:h-12 w-full bg-cuan-blue/80 rounded-lg border border-slate-800 text-sm sm:text-lg font-semibold text-white">
+                          Daftar Sekarang
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  {index === 1 && ( // Tambahkan Produk
+                    <div className="h-full flex flex-col justify-center space-y-4">
+                      {/* Tombol Tambah Produk */}
+                      <button className="h-10 sm:h-12 w-full bg-cuan-blue/80 rounded-lg flex items-center justify-center text-white text-base sm:text-lg font-semibold border border-slate-800">
+                        <PlusIcon size={24} className="mr-2" weight="bold" />
+                        Tambah Produk
+                      </button>
 
-  return (
-    <div className="w-full h-full bg-slate-50 flex flex-col p-4 gap-4 overflow-y-auto no-scrollbar justify-center">
-      {/* Balance Section */}
-      <div className="bg-cyan-50 border border-slate-800 p-4 rounded-xl shadow-[0px_1px_0px_rgba(29,41,61)] flex justify-between items-center">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <WalletIcon className="h-4 w-4 text-cyan-600" weight="fill" />
-            <span className="text-[10px] font-medium text-slate-800">Saldo saat ini</span>
-          </div>
-          <h3 className="text-lg font-bold text-cyan-600">Rp 4.820.000</h3>
-        </div>
-        <div className="bg-cyan-600 text-white p-2 rounded-full shadow-sm">
-          <ArrowUpRightIcon size={14} weight="bold" />
-        </div>
-      </div>
+                      {/* Panah ke Bawah */}
+                      <div className="flex justify-center text-slate-800">
+                        <ArrowDownIcon size={24} weight="bold" />
+                      </div>
 
-      <Table className="bg-white">
-        <TableHeader className="bg-cyan-50">
-          <TableRow className="hover:bg-transparent">
-            <TableHead className="text-[9px] py-3 px-4 font-bold">ID</TableHead>
-            <TableHead className="text-[9px] py-3 px-4 font-bold">Total</TableHead>
-            <TableHead className="text-[9px] py-3 px-4 font-bold">Pembeli</TableHead>
-            <TableHead className="text-[9px] py-3 px-4 font-bold text-center">Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {transactions.map((tx, i) => (
-            <TableRow key={i} className="hover:bg-slate-50/50">
-              <TableCell className="text-[9px] py-3 px-4 font-medium text-slate-400 truncate max-w-[50px]">{tx.id}</TableCell>
-              <TableCell className="text-[9px] py-3 px-4 text-slate-800 font-bold">{tx.total}</TableCell>
-              <TableCell className="text-[9px] py-3 px-4 text-slate-600 truncate max-w-[70px]">{tx.buyer}</TableCell>
-              <TableCell className="py-3 px-4 text-center">
-                <span className={`px-2 py-1 rounded-full text-[8px] font-medium ${tx.color}`}>{tx.status}</span>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  );
-}
+                      {/* Katalog Produk - Square Card */}
+                      <div className="h-auto w-full bg-white rounded-2xl border-2 border-slate-400 p-3 sm:p-4 flex flex-col gap-2 sm:gap-3">
+                        <div className="h-32 sm:h-48 w-full bg-cuan-cyan/10 rounded-lg flex items-center justify-center">
+                          <ShoppingBagIcon weight="duotone" className="text-slate-300 w-12 h-12 sm:w-16 sm:h-16" />
+                        </div>
+                        <div className="space-y-1.5 sm:space-y-2">
+                          <div className="h-3 sm:h-4 w-1/2 bg-slate-100 rounded" />
+                          <div className="h-4 sm:h-6 w-3/4 bg-slate-200 rounded" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {index === 2 && ( // Bagikan Link
+                    <div className="h-full flex flex-col justify-center space-y-6">
+                      {/* Tombol Bagikan Link */}
+                      <button className="h-10 sm:h-12 w-full flex items-center justify-center text-xl sm:text-2xl font-semibold text-cuan-blue">
+                        <ShareNetworkIcon size={24} className="mr-2" weight="bold" />
+                        Bagikan Link
+                      </button>
+                      {/* Link Sharing Display */}
+                      <div className="bg-slate-100 p-3 sm:p-4 rounded-2xl border-2 border-slate-200 border-dashed">
+                        <p className="text-sm sm:text-lg text-slate-500 mb-1 sm:mb-2 font-medium">Link Katalog Kamu:</p>
+                        <div className="bg-white p-2 sm:p-3 rounded-lg border border-slate-300 flex items-center justify-between shadow-sm">
+                          <span className="text-cuan-blue font-medium truncate text-xs sm:text-base">cuanin.com/produk-kreator</span>
+                          <button className="bg-slate-100 p-2 rounded-md hover:bg-slate-200">
+                            <CopyIcon size={16} className="text-slate-600" />
+                          </button>
+                        </div>
+                      </div>
 
-// ─── 3. FORM CUSTOMIZER MOCKUP ───────────────────────────────────────────────
+                      {/* Chat Promotion Simulation */}
+                      <div className="space-y-6 mt-4">
+                        {/* Sent Bubble */}
+                        <div className="flex justify-end">
+                          <div className="bg-cuan-cyan/20 py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg rounded-tr-none text-xs sm:text-base text-cyan-800 border border-cyan-200">
+                            Cek link produk ini! <br /> cuanin.com/produk-kreator
+                          </div>
+                        </div>
+                        {/* Received Bubble */}
+                        <div className="flex justify-start">
+                          <div className="bg-slate-100 py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg rounded-tl-none text-xs sm:text-base text-slate-800 border border-slate-200">
+                            Wah, keren! Aku sudah beli!
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {index === 3 && ( // Terima Pembayaran
+                    <div className="h-full flex flex-col justify-center space-y-6">
+                      {/* Transaction Success Simulation */}
+                      <button className="h-10 sm:h-12 w-full flex items-center justify-center text-xl sm:text-2xl font-semibold text-cuan-blue">
+                        <CreditCardIcon size={24} className="mr-2" weight="bold" />
+                        Terima Pembayaran
+                      </button>
+                      <div className="bg-emerald-50 p-4 sm:p-6 rounded-2xl border-2 border-emerald-100 shadow-sm flex flex-col items-center gap-2 sm:gap-3">
+                        <span className="text-xl sm:text-4xl font-semibold text-emerald-700">+ Rp 150.000</span>
+                        <span className="text-xs sm:text-sm font-bold text-emerald-800 bg-emerald-100 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full">Berhasil!</span>
+                      </div>
 
-export function FormBuilderMockup() {
-  return (
-    <div className="w-full h-full p-6 flex flex-col gap-4 bg-white overflow-y-auto no-scrollbar">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-        <h3 className="text-sm font-bold text-slate-800">Kustomisasi Isian Form</h3>
-        <div className="flex items-center gap-1.5 text-emerald-500 text-[10px] font-medium">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-          Tersimpan
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-4">
-        {/* Field 1 */}
-        <div className="flex items-center gap-3 rounded-lg border border-slate-800 bg-white p-4">
-          <DotsSixVerticalIcon className="h-5 w-5 text-slate-300" />
-          <div className="flex-1 space-y-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex-1 border-b border-slate-300 pb-1">
-                <span className="text-[11px] font-medium text-slate-700">Nama Lengkap</span>
-              </div>
-              <div className="relative">
-                <div className="flex items-center gap-2 rounded-md border border-slate-300 px-3 py-1.5 bg-white">
-                  <span className="text-[10px] font-medium text-slate-600">Jawaban Singkat</span>
-                  <CaretDownIcon size={10} weight="bold" className="text-slate-400" />
+                      {/* Total Saldo */}
+                      <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
+                        <p className="text-sm text-slate-500 font-medium mb-1">Total Saldo Terkumpul:</p>
+                        <span className="text-xl sm:text-3xl font-semibold text-slate-800">Rp 2.450.000</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-            <div className="flex justify-end items-center">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-4 rounded-full bg-cyan-500 relative">
-                  <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full shadow-sm" />
-                </div>
-                <span className="text-[10px] font-medium text-slate-600">Wajib diisi</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Field 2 */}
-        <div className="flex items-center gap-3 rounded-lg border border-slate-800 bg-white p-4">
-          <DotsSixVerticalIcon className="h-5 w-5 text-slate-300" />
-          <div className="flex-1">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex-1 border-b border-slate-300 pb-1">
-                <span className="text-[11px] font-medium text-slate-700">Nomor WhatsApp</span>
-              </div>
-              <div className="flex items-center gap-2 rounded-md border border-slate-200 px-3 py-1.5 bg-slate-50/50">
-                <span className="text-[10px] font-medium text-slate-600">Jawaban Singkat</span>
-                <CaretDownIcon size={10} weight="bold" className="text-slate-400" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <button className="flex items-center justify-center gap-2 bg-cyan-600 text-white rounded-lg py-2.5 px-4 text-[11px] font-bold border border-slate-800 shadow-[1.5px_1.5px_0px_rgba(29,41,61)] transition-all">
-          <PlusIcon size={14} weight="bold" />
-          <span>Tambah Field</span>
-        </button>
+          );
+        })}
       </div>
-    </div>
-  );
-}
-
-// ─── 4. DASHBOARD MOCKUP ─────────────────────────────────────────────────────
-
-export function DashboardMockup() {
-  return (
-    <div className="w-full h-full p-4 flex flex-col gap-4 bg-slate-50 overflow-y-auto no-scrollbar">
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-cyan-50 rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col">
-          <div className="flex justify-between items-start mb-3">
-            <div className="rounded-full text-xl text-cyan-600">
-              <WalletIcon weight="fill" className="w-7 h-7" />
-            </div>
-            <div className="flex items-center justify-center p-1.5 rounded-full bg-cyan-600 text-white">
-              <ArrowUpRightIcon size={12} weight="bold" />
-            </div>
-          </div>
-          <div className="flex flex-col gap-1">
-            <p className="text-[10px] font-semibold text-slate-800">Total Penghasilan</p>
-            <h2 className="text-lg font-bold text-cyan-600 leading-none">Rp 2.450.000</h2>
-          </div>
-          <div className="mt-2 flex items-center justify-between text-[10px] text-slate-600 font-medium">
-            <span>30 hari terakhir</span>
-            <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-800">+12.5%</span>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl border border-slate-800 shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col">
-          <div className="flex justify-between items-start mb-3">
-            <div className="rounded-full text-xl text-yellow-500">
-              <ShoppingBagIcon weight="fill" className="w-7 h-7" />
-            </div>
-          </div>
-          <div className="flex flex-col gap-1">
-            <p className="text-[10px] font-semibold text-slate-800">Total Produk</p>
-            <h2 className="text-lg font-bold text-cyan-600 leading-none">12</h2>
-          </div>
-          <div className="mt-2 flex items-center justify-between text-[10px] text-slate-600 font-medium">
-            <span>30 hari terakhir</span>
-            <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-800">+4.2%</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Chart Section */}
-      <div className="flex-1 bg-white border border-slate-800 rounded-xl shadow-[0px_1px_0px_rgba(29,41,61)] p-4 flex flex-col gap-3 overflow-hidden">
-        <h2 className="font-bold text-xs text-slate-800">Pendapatan Mingguan</h2>
-        <div className="flex-1 relative mt-2 border-l border-b border-cyan-100">
-          {/* Cyan Grid Lines */}
-          <div className="absolute inset-0 flex flex-col justify-between py-1 opacity-20 pointer-events-none">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="w-full h-px bg-cyan-400 border-t border-dashed border-cyan-400" />
-            ))}
-          </div>
-
-          <div className="absolute inset-0 flex items-end justify-between gap-2 px-2 pt-2">
-            {[40, 70, 45, 90, 65, 80, 50, 100, 75, 85].map((h, i) => (
-              <div
-                key={i}
-                className="flex-1 bg-[#FFF085] border border-slate-800 rounded-t-[4px] transition-all hover:bg-[#FFB86A]"
-                style={{ height: `${h}%` }}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="flex justify-between text-[8px] font-medium text-slate-400">
-          <span>MON</span><span>WED</span><span>FRI</span><span>SUN</span>
-        </div>
-      </div>
-    </div>
+    </div >
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import React from "react";
 import { SquaresFourIcon, BasketIcon, CreditCardIcon, AddressBookIcon, XIcon } from "@phosphor-icons/react";
 import { usePathname } from "next/navigation";
@@ -28,12 +29,12 @@ function SidebarItem({
             <div
                 className={`flex items-center ${isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-2"} rounded-lg cursor-pointer transition-all duration-300 ease-out
         ${active
-                        ? "bg-yellow-200 text-slate-800 font-semibold text-base border-1 border-slate-800 shadow-[1px_2px_0px_rgba(30,27,75)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition duration-200 ease-out"
-                        : textClassName ?? "font-semibold text-base text-slate-800 hover:bg-slate-200"
+                        ? "bg-cuan-blue text-white font-semibold text-base border-1 border-slate-800 shadow-[1px_2px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition duration-200 ease-out"
+                        : textClassName ?? "font-semibold text-base text-slate-800 hover:bg-cuan-blue/10 hover:text-cuan-blue"
                     }`}
             >
                 {React.cloneElement(icon, {
-                    className: `w-5 h-5 shrink-0 ${iconClassName ?? "text-slate-800"}`,
+                    className: `w-5 h-5 shrink-0 ${active ? "text-white" : (iconClassName ?? "text-slate-800")}`,
                 })}
                 {!isCollapsed && <span className="whitespace-nowrap">{label}</span>}
             </div>
@@ -59,9 +60,27 @@ export default function SidebarAdmin({
         <aside className={`transition-all duration-300 z-50 ease-in-out ${isCollapsed ? "w-20" : "w-64"} h-screen bg-white p-4 text-white border-r-1 border-slate-800 flex flex-col ${!isMobile ? "sticky top-0" : ""}`}>
             {/* Header sidebar + Toggle button */}
             <div className={`flex items-center mb-6 mt-2 ${isCollapsed ? "justify-center" : "justify-between px-2"}`}>
-                {!isCollapsed && (
-                    <div className="text-yellow-500 text-2xl font-bold">
-                        <Link href="/">CuanIN</Link>
+                {isCollapsed ? (
+                    <Link href="/">
+                        <Image
+                            src="/icon cuanin.svg"
+                            alt="CuanIN"
+                            width={32}
+                            height={32}
+                            className="h-8 w-8 object-contain"
+                        />
+                    </Link>
+                ) : (
+                    <div className="flex items-center pl-2">
+                        <Link href="/">
+                            <Image
+                                src="/logo-cuanin.svg"
+                                alt="CuanIN"
+                                width={120}
+                                height={40}
+                                className="h-8 w-auto object-contain"
+                            />
+                        </Link>
                     </div>
                 )}
                 {isMobile && (

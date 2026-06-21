@@ -57,6 +57,7 @@ export function CatalogSetupContent() {
             // Simpan bio ke profile (name wajib, ambil dari profile atau fallback)
             await updateProfile.mutateAsync({
                 name: profile?.name ?? "",
+                phoneNumber: profile?.phoneNumber ?? "",
                 bio: bio.trim() || undefined,
             });
 

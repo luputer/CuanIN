@@ -16,12 +16,14 @@ function StepsSection({ activeStep, setActiveStep }: { activeStep: number; setAc
         <div className="space-y-4 w-full">
             {steps.map((step: { title: string; desc: string }, index: number) => {
                 const isSelected = activeStep === index;
+                const isCyan = index % 2 === 0;
+
                 return (
                     <div
                         key={index}
-                        className={`relative overflow-hidden py-4 px-6 rounded-xl border-1 transition-all duration-300 cursor-pointer ${isSelected
-                            ? "border-cyan-600 bg-cyan-50"
-                            : "bg-white hover:border-cyan-600"
+                        className={`relative overflow-hidden pb-4 pt-3 px-4 sm:pb-6 sm:pt-4 sm:px-6 mr-0 lg:mr-10 rounded-xl border-1 transition-all duration-300 cursor-pointer ${isSelected
+                            ? (isCyan ? "border-slate-800 bg-cuan-cyan/10 shadow-[2px_2px_0px_#000]" : "border-slate-800 bg-cuan-blue/10 shadow-[2px_2px_0px_#000]")
+                            : "bg-white hover:border-slate-400"
                             }`}
                     >
                         <button
@@ -29,10 +31,10 @@ function StepsSection({ activeStep, setActiveStep }: { activeStep: number; setAc
                             className="w-full flex justify-between items-center text-left cursor-pointer"
                         >
                             <div className="flex items-center gap-4">
-                                <div className={`w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center bg-cyan-600 text-white border-slate-800 text-xl md:text-2xl rounded-full font-medium border-2 transition-all duration-300 shrink-0`}>
+                                <div className={`w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center text-white border-slate-800 text-lg sm:text-2xl rounded-full font-medium border-2 transition-all duration-300 shrink-0 ${isCyan ? "bg-cuan-cyan" : "bg-cuan-blue"}`}>
                                     {index + 1}
                                 </div>
-                                <span className={`text-xl md:text-2xl font-semibold transition-colors ${isSelected ? "text-slate-800" : "text-slate-800"
+                                <span className={`text-base sm:text-xl font-semibold transition-colors ${isSelected ? "text-slate-800" : "text-slate-800"
                                     }`}>
                                     {step.title}
                                 </span>
@@ -46,7 +48,7 @@ function StepsSection({ activeStep, setActiveStep }: { activeStep: number; setAc
                         <div className={`grid transition-all duration-300 ${isSelected ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                             }`}>
                             <div className="overflow-hidden">
-                                <p className="text-slate-600 font-regular text-base leading-relaxed pl-16 sm:pl-18">
+                                <p className="text-slate-600 font-regular text-sm sm:text-base leading-relaxed pl-14 sm:pl-18">
                                     {step.desc}
                                 </p>
                             </div>
@@ -86,18 +88,18 @@ export default function HowItWorksSection() {
     };
 
     return (
-        <section id="cara-kerja" className="py-20 md:py-30 bg-white w-full">
+        <section id="cara-kerja" className="bg-white py-16 md:py-32 w-full">
             <div className="max-w-6xl mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-[auto_1fr] gap-x-12 gap-y-4 items-start">
 
                 {/* 1. JUDUL - Menempel di baris 1 kanan */}
                 <div className="order-1 lg:col-start-2 lg:row-start-1">
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-800 mb-6 lg:mb-8 text-left">
+                    <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold text-slate-800 mb-6 lg:mb-8 text-center lg:text-left">
                         Hanya Butuh 4 Langkah untuk Mulai Jualan
                     </h2>
                 </div>
 
                 {/* 2. MOCKUP - Tetap di kiri, memakan 2 baris (Judul + Steps) */}
-                <div className="order-2 lg:col-start-1 lg:row-start-1 lg:row-span-2 w-full h-[300px] sm:h-[450px] lg:h-[600px] bg-cyan-50 flex items-center justify-center rounded-xl border-2 border-slate-800 shadow-[2px_2px_0px_rgba(29,41,61)]">
+                <div className="hidden md:flex order-2 lg:col-start-1 lg:row-start-1 lg:row-span-2 w-full sm:h-[450px] lg:h-[600px] items-center justify-center">
                     <StepsIllustrationMockup activeStep={activeStep} />
                 </div>
 

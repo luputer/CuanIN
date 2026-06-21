@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import Image from "next/image";
+import { useState, useEffect } from "react";
 import Button from "~/components/shared/buttonlogin";
 import { ListIcon, XIcon } from "@phosphor-icons/react";
 
@@ -19,27 +20,71 @@ const NAV_LINKS = [
 
 export default function HeaderLandingPage({ buttonText, buttonHref }: HeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [activeSection, setActiveSection] = useState("");
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const sections = NAV_LINKS.map((link) => link.href.split("#")[1]).filter((s): s is string => !!s);
+            let current = "";
+
+            for (const section of sections) {
+                const element = document.getElementById(section);
+                if (element) {
+                    const rect = element.getBoundingClientRect();
+                    if (rect.top <= 300) {
+                        current = section;
+                    }
+                }
+            }
+
+            // Cek jika sudah scroll ke bagian paling bawah halaman
+            if (window.innerHeight + Math.round(window.scrollY) >= document.body.offsetHeight - 50) {
+                current = sections[sections.length - 1] || "";
+            }
+
+            if (current) {
+                setActiveSection(current);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        handleScroll(); // Set active section saat pertama kali mount
+
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     return (
-        <header className="sticky top-0 z-50 w-full bg-white shadow-[0px_0px_4px_rgba(0,0,0,0.25)]">
-            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5">
+        <header className="sticky top-0 z-[100] w-full bg-white border-b-2 border-slate-800 max-w-8xl mx-auto">
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-6">
 
                 {/* Logo */}
-                <div className="text-yellow-500 text-2xl font-bold">
-                    <Link href="/">CuanIN</Link>
+                <div className="flex items-center">
+                    <Link href="/">
+                        <Image
+                            src="/logo-cuanin.svg"
+                            alt="CuanIN"
+                            width={120}
+                            height={40}
+                            className="h-10 w-auto object-contain"
+                        />
+                    </Link>
                 </div>
 
                 {/* Desktop Nav */}
                 <nav className="hidden md:flex items-center gap-8">
-                    {NAV_LINKS.map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className="text-slate-800 font-medium text-md hover:text-cyan-600 transition-colors duration-200"
-                        >
-                            {link.label}
-                        </Link>
-                    ))}
+                    {NAV_LINKS.map((link) => {
+                        const sectionId = link.href.split("#")[1];
+                        const isActive = activeSection === sectionId;
+                        return (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className={`text-md font-medium transition-colors duration-200 ${isActive ? "text-cuan-blue" : "text-slate-800 hover:text-cuan-blue"}`}
+                            >
+                                {link.label}
+                            </Link>
+                        );
+                    })}
                 </nav>
 
                 {/* Right Side: Button + Hamburger */}
@@ -66,16 +111,20 @@ export default function HeaderLandingPage({ buttonText, buttonHref }: HeaderProp
                     }`}
             >
                 <nav className="flex flex-col px-4 pb-4 gap-1 border-t border-slate-100">
-                    {NAV_LINKS.map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            onClick={() => setIsMenuOpen(false)}
-                            className="py-3 px-2 text-slate-700 font-medium text-sm hover:text-cyan-600 hover:bg-slate-50 rounded-lg transition-colors duration-200"
-                        >
-                            {link.label}
-                        </Link>
-                    ))}
+                    {NAV_LINKS.map((link) => {
+                        const sectionId = link.href.split("#")[1];
+                        const isActive = activeSection === sectionId;
+                        return (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                onClick={() => setIsMenuOpen(false)}
+                                className={`py-3 px-2 text-sm font-medium rounded-lg transition-colors duration-200 ${isActive ? "text-cuan-cyan bg-cyan-50" : "text-slate-700 hover:text-cuan-cyan hover:bg-slate-50"}`}
+                            >
+                                {link.label}
+                            </Link>
+                        );
+                    })}
                     <div className="mt-3">
                         <Button text={buttonText} href={buttonHref} />
                     </div>

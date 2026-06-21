@@ -8,13 +8,13 @@ import { EnvelopeIcon, ArrowClockwiseIcon } from "@phosphor-icons/react";
 function Slot(props: SlotProps) {
   return (
     <div
-      className={`relative flex h-14 w-12 items-center justify-center rounded-lg border-2 border-slate-300 bg-slate-50 text-2xl font-bold text-slate-800 transition-all ${props.isActive ? "border-cyan-600 ring-2 ring-cyan-100" : ""
+      className={`relative flex h-14 w-12 items-center justify-center rounded-lg border-2 border-slate-300 bg-slate-50 text-2xl font-bold text-slate-800 transition-all ${props.isActive ? "border-cuan-blue ring-2 ring-cuan-blue/20" : ""
         }`}
     >
       {props.char !== null && <div>{props.char}</div>}
       {props.hasFakeCaret && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-8 w-px animate-caret-blink bg-cyan-600" />
+          <div className="h-8 w-px animate-caret-blink bg-cuan-blue" />
         </div>
       )}
     </div>
@@ -91,7 +91,7 @@ function VerifyOtpInner() {
   return (
     <div className="text-center">
       <div className="mb-6 flex justify-center">
-        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-cyan-100 text-cyan-600">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-cuan-blue/10 text-cuan-blue">
           <EnvelopeIcon size={40} weight="fill" />
         </div>
       </div>
@@ -129,7 +129,7 @@ function VerifyOtpInner() {
         <button
           onClick={handleVerify}
           disabled={otp.length !== 6 || verifyMutation.isPending}
-          className="w-full rounded-lg border-2 border-slate-800 bg-yellow-200 py-3 text-lg font-semibold text-slate-800 shadow-[0px_2px_0px_rgba(29,41,61)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full rounded-lg border-2 border-slate-800 bg-cuan-blue py-3 text-lg font-semibold text-white shadow-[0px_2px_0px_#000] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {verifyMutation.isPending ? "Memverifikasi..." : "Verifikasi Akun"}
         </button>
@@ -137,14 +137,14 @@ function VerifyOtpInner() {
         <div className="text-sm text-slate-500">
           Tidak menerima kode?{" "}
           {resendTimer > 0 ? (
-            <span className="font-medium text-cyan-600">
+            <span className="font-medium text-cuan-blue">
               Kirim ulang dalam {resendTimer}s
             </span>
           ) : (
             <button
               onClick={handleResend}
               disabled={resendMutation.isPending}
-              className="font-medium text-cyan-600 hover:text-cyan-800 hover:underline inline-flex items-center gap-1"
+              className="font-medium text-cuan-blue hover:text-cuan-blue hover:underline inline-flex items-center gap-1"
             >
               <ArrowClockwiseIcon className={resendMutation.isPending ? "animate-spin" : ""} />
               Kirim Ulang Kode
@@ -158,7 +158,7 @@ function VerifyOtpInner() {
 
 export default function VerifyOtpPage() {
   return (
-    <Suspense fallback={<div className="flex w-full justify-center text-cyan-600">Loading...</div>}>
+    <Suspense fallback={<div className="flex w-full justify-center text-cuan-blue">Loading...</div>}>
       <VerifyOtpInner />
     </Suspense>
   );

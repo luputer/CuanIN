@@ -24,14 +24,27 @@ export default function ProfilePage() {
     const utils = api.useUtils();
     const { data: user, isLoading } = api.profile.get.useQuery();
 
+    const [errors, setErrors] = useState<Record<string, string[]>>({});
+
     const updateProfile = api.profile.update.useMutation({
         onSuccess: () => {
             toast.success("Profil berhasil diperbarui");
+            setErrors({}); // Clear errors on success
             void utils.profile.get.invalidate();
             setPassword(""); // Clear password field after save
         },
         onError: (e) => {
-            toast.error(e.message || "Gagal memperbarui profil");
+            // Check if it's a zod error (validation error)
+            if (e.data?.zodError) {
+                setErrors(e.data.zodError.fieldErrors as Record<string, string[]>);
+            } else if (e.message === "Link sudah dipakai orang lain, pilih link lain." || 
+                       e.message === "Anda hanya bisa mengubah link setiap 7 hari sekali.") {
+                setErrors({ slug: [e.message] });
+                // Do not show toast for mapped field errors
+            } else {
+                toast.error(e.message || "Gagal memperbarui profil");
+                setErrors({});
+            }
         }
     });
 
@@ -40,6 +53,7 @@ export default function ProfilePage() {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [password, setPassword] = useState("");
     const [bio, setBio] = useState("");
+    const [slug, setSlug] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -55,6 +69,7 @@ export default function ProfilePage() {
             setEmail(user.email ?? "");
             setPhoneNumber(user.phoneNumber ?? "");
             setBio(user.bio ?? "");
+            setSlug(user.catalog?.slug ?? "");
             if (user.image) {
                 avatarUpload.setPreviewUrl(user.image);
             }
@@ -76,6 +91,7 @@ export default function ProfilePage() {
             image: avatarUpload.previewUrl,
             banner: bannerUpload.previewUrl,
             bio,
+            slug,
             password: password ? password : undefined,
         });
     };
@@ -84,6 +100,7 @@ export default function ProfilePage() {
         name !== (user?.name || "") ||
         phoneNumber !== (user?.phoneNumber || "") ||
         bio !== (user?.bio || "") ||
+        slug !== (user?.catalog?.slug || "") ||
         password !== "" ||
         (avatarUpload.previewUrl || "") !== (user?.image || "") ||
         (bannerUpload.previewUrl || "") !== (user?.banner || "");
@@ -106,9 +123,12 @@ export default function ProfilePage() {
                     title="Akun Saya"
                     actions={
                         <ButtonSave
-                            isLoading={updateProfile.isPending}
-                            disabled={!isDirty || updateProfile.isPending}
                             onClick={handleSave}
+                            isLoading={updateProfile.isPending || avatarUpload.uploading || bannerUpload.uploading}
+                            disabled={!isDirty}
+                            label="Simpan Perubahan"
+                            loadingLabel="Menyimpan..."
+                            weight="bold"
                         />
                     }
                 />
@@ -240,7 +260,7 @@ export default function ProfilePage() {
                             </FormRow>
 
                             {/* Nama */}
-                            <FormRow label="Nama">
+                            <FormRow label="Nama" error={errors.name?.[0]}>
                                 <FormInput
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
@@ -258,7 +278,7 @@ export default function ProfilePage() {
                             </FormRow>
 
                             {/* Nomor Hp */}
-                            <FormRow label="Nomor Hp">
+                            <FormRow label="Nomor Hp" error={errors.phoneNumber?.[0]}>
                                 <FormInput
                                     value={phoneNumber}
                                     onChange={(e) => setPhoneNumber(e.target.value)}
@@ -267,11 +287,21 @@ export default function ProfilePage() {
                             </FormRow>
 
                             {/* Bio */}
-                            <FormRow label="Bio">
+                            <FormRow label="Bio" error={errors.bio?.[0]}>
                                 <FormTextarea
                                     value={bio}
                                     onChange={(e) => setBio(e.target.value)}
                                     placeholder="Ceritakan tentang tokomu"
+                                />
+                            </FormRow>
+
+                            {/* Link */}
+                            <FormRow label="Link Toko" error={errors.slug?.[0]}>
+                                <FormInput
+                                    value={slug}
+                                    onChange={(e) => setSlug(e.target.value)}
+                                    placeholder="Masukkan link toko unik"
+                                    prefix="cuanin.id/"
                                 />
                             </FormRow>
                         </div>
@@ -280,7 +310,7 @@ export default function ProfilePage() {
                         <div className="pt-6">
                             <SectionHeader title="Keamanan" />
                             <div className="space-y-0 pt-6">
-                                <FormRow label="Password Baru (Opsional)">
+                                <FormRow label="Password Baru (Opsional)" error={errors.password?.[0]}>
                                     <FormInput
                                         type={showPassword ? "text" : "password"}
                                         value={password}
@@ -297,20 +327,6 @@ export default function ProfilePage() {
                                         }
                                     />
                                 </FormRow>
-                            </div>
-                        </div>
-
-                        {/* Footer Form */}
-                        <div className="flex flex-col sm:flex-row justify-end sm:items-center mt-4 pt-4 border-t border-slate-200 gap-4 w-full">
-                            <div className="w-full sm:w-auto flex justify-end">
-                                <ButtonSave
-                                    onClick={handleSave}
-                                    isLoading={updateProfile.isPending || avatarUpload.uploading || bannerUpload.uploading}
-                                    disabled={!isDirty}
-                                    label="Simpan Perubahan"
-                                    loadingLabel="Menyimpan..."
-                                    weight="bold"
-                                />
                             </div>
                         </div>
 

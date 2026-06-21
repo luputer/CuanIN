@@ -4,7 +4,7 @@ import Figure10 from "public/assets/Figure10.png";
 
 export default function DashboardPreviewSection() {
   return (
-    <section className="relative mt-12 md:mt-16 w-full max-w-6xl mx-auto px-4 sm:px-6 mb-20 md:mb-10">
+    <section id="about" className="relative mt-12 md:mt-16 w-full max-w-6xl mx-auto px-4 sm:px-6 mb-20 md:mb-10">
       <div className="w-full h-[300px] sm:h-[450px] lg:h-[640px] rounded-xl flex items-center justify-center bg-cyan-50 shadow-[0px_2px_0px_rgba(29,41,61)] relative z-10">
         <CatalogPreview />
       </div>

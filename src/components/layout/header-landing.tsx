@@ -14,7 +14,9 @@ const NAV_LINKS = [
     { label: "Tentang", href: "/#about" },
     { label: "Fitur", href: "/#fitur" },
     { label: "Cara Kerja", href: "/#cara-kerja" },
+    { label: "FAQ", href: "/#faq" },
     { label: "Kontak", href: "/#footer" },
+
 ];
 
 export default function HeaderLandingPage({ buttonText, buttonHref }: HeaderProps) {

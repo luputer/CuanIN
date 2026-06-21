@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 
 export function PurchaseHistoryButton() {
   const pathname = usePathname();
-  console.log("Current pathname:", pathname);
+  // console.log("Current pathname:", pathname);
 
   // Hide button on Purchase History page or Checkout pages
   if (pathname.includes("/riwayat-pembelian") || pathname.includes("/checkout")) {

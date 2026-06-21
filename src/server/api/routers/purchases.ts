@@ -168,10 +168,10 @@ export const purchasesRouter = createTRPCRouter({
         // Bandingkan timestamp secara langsung
         const now = new Date();
         now.setHours(0, 0, 0, 0);
-        
+
         const voucherStart = new Date(voucher.startDate);
         voucherStart.setHours(0, 0, 0, 0);
-        
+
         const voucherEnd = new Date(voucher.endDate);
         voucherEnd.setHours(23, 59, 59, 999);
 
@@ -655,42 +655,51 @@ export const purchasesRouter = createTRPCRouter({
       const productIds = products.map((p) => p.id);
 
       // 2. Query Purchases
+      const purchaseStatusMap: Record<string, string> = {
+        SUCCEEDED: "completed",
+        PENDING: "pending",
+        FAILED: "failed",
+        EXPIRED: "expired",
+      };
+
       const purchaseWhere = {
-        productId: { in: productIds },
-        ...(input.search
-          ? {
-            OR: [
-              { buyerName: { contains: input.search, mode: "insensitive" as const } },
-              { product: { name: { contains: input.search, mode: "insensitive" as const } } },
-              { id: { contains: input.search, mode: "insensitive" as const } },
-            ],
-          }
-          : {}),
-        ...(input.status && input.status !== "ALL" ? { status: input.status } : {}),
+        ...(input.type === "WITHDRAWAL"
+          ? { id: "skip-all" }  // return 0 hasil
+          : { productId: { in: productIds } }
+        ),
+        ...(input.search && input.type !== "WITHDRAWAL" ? {
+          OR: [
+            { buyerName: { contains: input.search, mode: "insensitive" as const } },
+            { product: { name: { contains: input.search, mode: "insensitive" as const } } },
+            { id: { contains: input.search, mode: "insensitive" as const } },
+          ],
+        } : {}),
+        ...(input.status && input.status !== "ALL" ? { status: purchaseStatusMap[input.status] ?? input.status } : {}),
       };
 
       // 3. Query Withdrawals
       const withdrawalWhere: Prisma.WithdrawalWhereInput = {
-        userId,
-        ...(input.search
-          ? {
-            OR: [
-              { id: { contains: input.search, mode: "insensitive" as const } },
-              { bankName: { contains: input.search, mode: "insensitive" as const } },
-              { accountNumber: { contains: input.search, mode: "insensitive" as const } },
-            ],
-          }
-          : {}),
+        ...(input.type === "INCOME"
+          ? { id: "skip-all" }  // return 0 hasil
+          : { userId }
+        ),
+        ...(input.search && input.type !== "INCOME" ? {
+          OR: [
+            { id: { contains: input.search, mode: "insensitive" as const } },
+            { bankName: { contains: input.search, mode: "insensitive" as const } },
+            { accountNumber: { contains: input.search, mode: "insensitive" as const } },
+          ],
+        } : {}),
       };
 
       if (input.status && input.status !== "ALL") {
-        if (input.status === "completed") {
+        if (input.status === "SUCCEEDED") {
           withdrawalWhere.status = WithdrawalStatus.SUCCEEDED;
-        } else if (input.status === "pending") {
+        } else if (input.status === "PENDING") {
           withdrawalWhere.status = { in: [WithdrawalStatus.PENDING, WithdrawalStatus.REQUESTED, WithdrawalStatus.ACCEPTED] };
-        } else if (input.status === "failed") {
+        } else if (input.status === "FAILED") {
           withdrawalWhere.status = WithdrawalStatus.FAILED;
-        } else if (input.status === "expired") {
+        } else if (input.status === "EXPIRED") {
           withdrawalWhere.status = WithdrawalStatus.CANCELLED;
         }
       }

@@ -32,7 +32,7 @@ export default function PaymentPage() {
             window.location.href = `/payment/success?id=${purchase!.id}`;
           },
           onPending: function () {
-            window.location.href = `/payment/success?id=${purchase!.id}`;
+            window.location.href = `/payment/pending?id=${purchase!.id}`;
           },
           onError: function (_result: any) {
             toast.error("Pembayaran gagal atau dibatalkan.");

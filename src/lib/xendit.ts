@@ -1,10 +1,12 @@
-import { env } from "~/env";
-
 const XENDIT_BASE_URL = "https://api.xendit.co";
-const headers = {
-  "Content-Type": "application/json",
-  Authorization: `Basic ${Buffer.from(env.XENDIT_SECRET_KEY + ":").toString("base64")}`,
-};
+
+function getHeaders() {
+  const secretKey = (process.env.XENDIT_SECRET_KEY as string | undefined) ?? "";
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Basic ${Buffer.from(secretKey + ":").toString("base64")}`,
+  };
+}
 
 type CreateInvoiceParams = {
   externalId: string;
@@ -50,7 +52,7 @@ export async function createInvoice(
 ): Promise<XenditInvoice> {
   const res = await fetch(`${XENDIT_BASE_URL}/v2/invoices`, {
     method: "POST",
-    headers,
+    headers: getHeaders(),
     body: JSON.stringify({
       external_id: params.externalId,
       amount: params.amount,
@@ -78,7 +80,7 @@ export async function createPayout(
   const res = await fetch(`${XENDIT_BASE_URL}/v2/payouts`, {
     method: "POST",
     headers: {
-      ...headers,
+      ...getHeaders(),
       "Idempotency-key": params.referenceId,
     },
     body: JSON.stringify({
@@ -124,7 +126,7 @@ export async function simulatePayoutSuccess(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-callback-token": env.XENDIT_WEBHOOK_TOKEN,
+      "x-callback-token": process.env.XENDIT_WEBHOOK_TOKEN ?? "",
     },
     body: JSON.stringify(payload),
   });

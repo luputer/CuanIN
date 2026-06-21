@@ -4,28 +4,12 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { sendProductEmail, sendPortalLinkEmail, sendPurchaseHistoryOtpEmail } from "../../../lib/email";
 import { nanoid } from "nanoid";
 import { env } from "~/env";
-import { createInvoice as createXenditInvoice } from "~/lib/xendit";
 import { createSnapTransaction } from "~/lib/midtrans";
 import { calculatePaymentFee } from "~/lib/utils";
 import { Prisma, WithdrawalStatus } from "../../../../prisma/generated/prisma";
 import { getCreatorBalance } from "~/lib/balance";
 import { generateHistoryToken, verifyHistoryToken } from "~/lib/purchase-history-token";
 import crypto from "crypto";
-
-const XENDIT_PAYMENT_METHODS = {
-  qris: "QRIS",
-  shopeepay: "SHOPEEPAY",
-  dana: "DANA",
-  ovo: "OVO",
-  bca: "BCA",
-  bni: "BNI",
-  bri: "BRI",
-  mandiri: "MANDIRI",
-  bsi: "BSI",
-  permata: "PERMATA",
-  alfamart: "ALFAMART",
-  cc: "CREDIT_CARD",
-} as const;
 
 export const purchasesRouter = createTRPCRouter({
   // ─── GET BY ID (public) ──────────────────────────────────────────────────────
@@ -184,10 +168,10 @@ export const purchasesRouter = createTRPCRouter({
         // Bandingkan timestamp secara langsung
         const now = new Date();
         now.setHours(0, 0, 0, 0);
-        
+
         const voucherStart = new Date(voucher.startDate);
         voucherStart.setHours(0, 0, 0, 0);
-        
+
         const voucherEnd = new Date(voucher.endDate);
         voucherEnd.setHours(23, 59, 59, 999);
 
@@ -365,91 +349,6 @@ export const purchasesRouter = createTRPCRouter({
       return { status: "pending", purchase: purchaseResult };
     }),
 
-  // ─── CREATE PAYMENT INVOICE ─────────────────────────────────────────────────
-  createPaymentInvoice: publicProcedure
-    .input(
-      z.object({
-        purchaseId: z.string(),
-        paymentMethod: z.enum([
-          "qris",
-          "shopeepay",
-          "dana",
-          "ovo",
-          "bca",
-          "bni",
-          "bri",
-          "mandiri",
-          "bsi",
-          "permata",
-          "alfamart",
-          "cc",
-        ]),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const purchase = await ctx.db.purchase.findUnique({
-        where: { id: input.purchaseId },
-        include: {
-          product: {
-            select: { name: true },
-          },
-        },
-      });
-
-      if (!purchase) throw new Error("Transaksi tidak ditemukan");
-      if (purchase.status === "completed")
-        throw new Error("Transaksi sudah dibayar");
-      if (Number(purchase.amount) <= 0)
-        throw new Error("Transaksi gratis tidak membutuhkan pembayaran");
-
-      // Return existing invoice jika metode sama
-      if (
-        purchase.xenditInvoiceUrl &&
-        purchase.xenditPaymentMethod ===
-        XENDIT_PAYMENT_METHODS[input.paymentMethod]
-      ) {
-        return {
-          invoiceUrl: purchase.xenditInvoiceUrl,
-          xenditInvoiceId: purchase.xenditInvoiceId,
-        };
-      }
-
-      // Return existing invoice jika sudah ada (metode berbeda, tapi invoice sudah dibuat)
-      if (purchase.xenditInvoiceUrl && purchase.xenditPaymentMethod) {
-        return {
-          invoiceUrl: purchase.xenditInvoiceUrl,
-          xenditInvoiceId: purchase.xenditInvoiceId,
-        };
-      }
-
-      const xenditPaymentMethod = XENDIT_PAYMENT_METHODS[input.paymentMethod];
-      const baseAmount = Number(purchase.amount);
-      const fee = calculatePaymentFee(input.paymentMethod, baseAmount);
-      const totalAmount = baseAmount + fee;
-
-      const invoice = await createXenditInvoice({
-        externalId: `${purchase.id}__${input.paymentMethod}__${Date.now()}`,
-        amount: totalAmount,
-        payerEmail: purchase.buyerEmail,
-        description: `Pembelian ${purchase.product.name}`,
-        paymentMethods: [xenditPaymentMethod],
-        successRedirectUrl: `${env.NEXT_PUBLIC_APP_URL}/payment/success?id=${purchase.id}`,
-        failureRedirectUrl: `${env.NEXT_PUBLIC_APP_URL}/payment/failed?id=${purchase.id}`,
-        fees: fee > 0 ? [{ type: "Biaya Layanan", value: fee }] : undefined,
-      });
-
-      await ctx.db.purchase.update({
-        where: { id: purchase.id },
-        data: {
-          xenditInvoiceId: invoice.id,
-          xenditInvoiceUrl: invoice.invoice_url,
-          xenditPaymentMethod,
-        },
-      });
-
-      return { invoiceUrl: invoice.invoice_url, xenditInvoiceId: invoice.id };
-    }),
-
   // ─── CREATE MIDTRANS TRANSACTION ────────────────────────────────────────────
   createMidtransTransaction: publicProcedure
     .input(z.object({ purchaseId: z.string() }))
@@ -505,7 +404,7 @@ export const purchasesRouter = createTRPCRouter({
         callbacks: {
           finish: `${env.NEXT_PUBLIC_APP_URL}/payment/success?id=${purchase.id}`,
           error: `${env.NEXT_PUBLIC_APP_URL}/payment/failed?id=${purchase.id}`,
-          pending: `${env.NEXT_PUBLIC_APP_URL}/payment/success?id=${purchase.id}`,
+          pending: `${env.NEXT_PUBLIC_APP_URL}/payment/pending?id=${purchase.id}`,
         },
       });
 
@@ -756,42 +655,51 @@ export const purchasesRouter = createTRPCRouter({
       const productIds = products.map((p) => p.id);
 
       // 2. Query Purchases
+      const purchaseStatusMap: Record<string, string> = {
+        SUCCEEDED: "completed",
+        PENDING: "pending",
+        FAILED: "failed",
+        EXPIRED: "expired",
+      };
+
       const purchaseWhere = {
-        productId: { in: productIds },
-        ...(input.search
-          ? {
-            OR: [
-              { buyerName: { contains: input.search, mode: "insensitive" as const } },
-              { product: { name: { contains: input.search, mode: "insensitive" as const } } },
-              { id: { contains: input.search, mode: "insensitive" as const } },
-            ],
-          }
-          : {}),
-        ...(input.status && input.status !== "ALL" ? { status: input.status } : {}),
+        ...(input.type === "WITHDRAWAL"
+          ? { id: "skip-all" }  // return 0 hasil
+          : { productId: { in: productIds } }
+        ),
+        ...(input.search && input.type !== "WITHDRAWAL" ? {
+          OR: [
+            { buyerName: { contains: input.search, mode: "insensitive" as const } },
+            { product: { name: { contains: input.search, mode: "insensitive" as const } } },
+            { id: { contains: input.search, mode: "insensitive" as const } },
+          ],
+        } : {}),
+        ...(input.status && input.status !== "ALL" ? { status: purchaseStatusMap[input.status] ?? input.status } : {}),
       };
 
       // 3. Query Withdrawals
       const withdrawalWhere: Prisma.WithdrawalWhereInput = {
-        userId,
-        ...(input.search
-          ? {
-            OR: [
-              { id: { contains: input.search, mode: "insensitive" as const } },
-              { bankName: { contains: input.search, mode: "insensitive" as const } },
-              { accountNumber: { contains: input.search, mode: "insensitive" as const } },
-            ],
-          }
-          : {}),
+        ...(input.type === "INCOME"
+          ? { id: "skip-all" }  // return 0 hasil
+          : { userId }
+        ),
+        ...(input.search && input.type !== "INCOME" ? {
+          OR: [
+            { id: { contains: input.search, mode: "insensitive" as const } },
+            { bankName: { contains: input.search, mode: "insensitive" as const } },
+            { accountNumber: { contains: input.search, mode: "insensitive" as const } },
+          ],
+        } : {}),
       };
 
       if (input.status && input.status !== "ALL") {
-        if (input.status === "completed") {
+        if (input.status === "SUCCEEDED") {
           withdrawalWhere.status = WithdrawalStatus.SUCCEEDED;
-        } else if (input.status === "pending") {
+        } else if (input.status === "PENDING") {
           withdrawalWhere.status = { in: [WithdrawalStatus.PENDING, WithdrawalStatus.REQUESTED, WithdrawalStatus.ACCEPTED] };
-        } else if (input.status === "failed") {
+        } else if (input.status === "FAILED") {
           withdrawalWhere.status = WithdrawalStatus.FAILED;
-        } else if (input.status === "expired") {
+        } else if (input.status === "EXPIRED") {
           withdrawalWhere.status = WithdrawalStatus.CANCELLED;
         }
       }
@@ -995,6 +903,9 @@ export const purchasesRouter = createTRPCRouter({
           amount: true,
           status: true,
           createdAt: true,
+          paidAt: true,
+          paymentMethod: true,
+          paymentDetails: true,
           product: {
             select: {
               name: true,
@@ -1004,6 +915,15 @@ export const purchasesRouter = createTRPCRouter({
               notes: true,
               contentType: true,
               type: true,
+              price: true,
+              user: {
+                select: {
+                  name: true,
+                  catalog: {
+                    select: { slug: true },
+                  },
+                },
+              },
             },
           },
         },

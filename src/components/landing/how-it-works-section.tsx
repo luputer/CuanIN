@@ -88,7 +88,7 @@ export default function HowItWorksSection() {
     };
 
     return (
-        <section id="cara-kerja" className="bg-white py-16 md:py-32 w-full">
+        <section id="cara-kerja" className="bg-white py-12 md:py-32 w-full">
             <div className="max-w-6xl mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-[auto_1fr] gap-x-12 gap-y-4 items-start">
 
                 {/* 1. JUDUL - Menempel di baris 1 kanan */}

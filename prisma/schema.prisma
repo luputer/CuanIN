@@ -9,15 +9,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([name])
-}
-
 model Profile {
   id        Int      @id @default(autoincrement())
   bio       String?
@@ -99,25 +90,24 @@ model FormField {
 }
 
 model Purchase {
-  id                  String       @id @default(uuid())
-  productId           String
-  buyerName           String
-  buyerEmail          String
-  buyerPhone          String
-  amount              Decimal      @default(0)
-  status              String       @default("pending")
-  createdAt           DateTime     @default(now())
-  updatedAt           DateTime     @updatedAt
-  xenditInvoiceId     String?
-  xenditInvoiceUrl    String?
-  paidAt              DateTime?
-  xenditPaymentMethod String?
-  voucherId           String?
-  answers             FormAnswer[]
-  product             Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
-  voucher             Voucher?     @relation(fields: [voucherId], references: [id], onDelete: SetNull)
+  id             String       @id @default(uuid())
+  productId      String
+  buyerName      String
+  buyerEmail     String
+  buyerPhone     String
+  amount         Decimal      @default(0)
+  status         String       @default("pending")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  paidAt         DateTime?
+  paymentMethod  String?
+  paymentDetails Json?
+  voucherId      String?
+  portalToken    String?      @unique
+  answers        FormAnswer[]
+  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  voucher        Voucher?     @relation(fields: [voucherId], references: [id], onDelete: SetNull)
 
-  @@index([xenditInvoiceId])
   @@index([voucherId])
 }
 
@@ -338,13 +328,13 @@ model Voucher {
 }
 
 model PortalAccess {
-  id        String   @id @default(uuid())
-  token     String   @unique
+  id         String   @id @default(uuid())
+  token      String   @unique
   buyerEmail String
-  creatorId String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  creator   User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId  String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  creator    User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
   @@unique([buyerEmail, creatorId])
   @@index([token])

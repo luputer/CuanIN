@@ -64,28 +64,25 @@ export default function TransactionPage() {
   const utils = api.useUtils();
 
   // ─── API ─────────────────────────────────────────────────────────────────
-
   const { data, isLoading } = api.purchases.getAllForCreator.useQuery(
     {
       page,
       limit,
       search: debouncedSearch,
       status,
-      type: type === "ALL" ? undefined : type,
+      type: type === "ALL" ? undefined : (type as "INCOME" | "WITHDRAWAL"),
     },
     {
       placeholderData: (prev) => prev,
     },
   );
 
-
-
   const transactions = (data?.items ?? []).map((item: any) => ({
     ...item,
     amount: Number(item.amount),
     feeAmount: item.type === "WITHDRAWAL" ? Number(item.feeAmount ?? 0) : null
   })) as unknown as Array<
-    ({ type: "INCOME" } & { id: string; amount: number; buyerName: string; createdAt: Date; status: string; product: { name: string }; xenditPaymentMethod?: string | null }) |
+    ({ type: "INCOME" } & { id: string; amount: number; buyerName: string; createdAt: Date; status: string; product: { name: string }; paymentMethod?: string | null; paymentDetails?: { paymentType?: string; bank?: string; vaNumber?: string } | null }) |
     ({ type: "WITHDRAWAL" } & { id: string; amount: number; bankName: string; accountNumber: string; createdAt: Date; status: string; feeAmount?: number | null })
   >;
 
@@ -259,7 +256,9 @@ export default function TransactionPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center min-h-[48px]">
-                          {item.type === "INCOME" ? (item.xenditPaymentMethod ?? "-") : (item.bankName ?? "-")}
+                          {item.type === "INCOME"
+                            ? (item.paymentMethod ?? "-")
+                            : (item.bankName ?? "-")}
                         </div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
@@ -333,7 +332,7 @@ export default function TransactionPage() {
 
                     <div className="text-xs text-slate-500">
                       <span className="font-medium text-slate-400">Metode: </span>
-                      <span className="font-medium text-slate-700">{item.type === "INCOME" ? (item.xenditPaymentMethod ?? "-") : item.bankName}</span>
+                      <span className="font-medium text-slate-700">{item.type === "INCOME" ? (item.paymentMethod ?? "-") : item.bankName}</span>
                     </div>
 
 

@@ -5,9 +5,11 @@ import Image from "next/image";
 import {
   CreditCardIcon,
   ImagesIcon,
+  DownloadSimpleIcon,
 } from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
 import { CatalogNavHeader } from "~/components/layout/catalog-nav-header";
+import { generateInvoicePDF } from "~/lib/invoice";
 
 const CATEGORY_STYLE: Record<string, string> = {
   WEBINAR: "bg-cuan-cyan/20 text-007EA5 border-cuan-cyan/30",
@@ -150,11 +152,30 @@ export default function PurchaseDetailPage() {
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-slate-600">Metode Pembayaran</span>
                   <span className="font-medium text-slate-800">
-                    {isFree ? "-" : (p.xenditPaymentMethod ?? "—").replace(/_/g, " ")}
+                    {isFree ? "-" : (((p as any).paymentDetails as { paymentType?: string } | null)?.paymentType ?? "—")}
                   </span>
                 </div>
+                {!isFree && (p as any).paymentDetails && (() => {
+                  const details = (p as any).paymentDetails as { paymentType?: string; bank?: string; vaNumber?: string } | null;
+                  return details?.vaNumber ? (
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-slate-600">No. Virtual Account</span>
+                      <span className="font-medium font-mono text-slate-800">{details.vaNumber}</span>
+                    </div>
+                  ) : null;
+                })()}
               </div>
             </div>
+
+            {isCompleted && !isFree && (
+              <button
+                onClick={() => generateInvoicePDF(p as any)}
+                className="w-full mt-4 py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition cursor-pointer"
+              >
+                <DownloadSimpleIcon size={18} />
+                Download Invoice
+              </button>
+            )}
           </div>
         </div>
       </div>

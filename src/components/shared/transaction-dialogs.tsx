@@ -467,6 +467,20 @@ export function TransactionDetailDialog({
                             <span className="text-slate-500">{selectedTx.type === "INCOME" ? "Akun" : "Bank"}</span>
                             <span className="font-medium text-slate-800">{selectedTx.type === "INCOME" ? selectedTx.buyerName : (selectedTx.bankName ?? "-")}</span>
                         </div>
+                        {selectedTx.type === "INCOME" && selectedTx.paymentMethod && (
+                            <>
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-slate-500">Metode Pembayaran</span>
+                                    <span className="font-medium text-slate-800">{selectedTx.paymentMethod}</span>
+                                </div>
+                                {selectedTx.paymentDetails?.vaNumber && (
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-slate-500">No. Virtual Account</span>
+                                        <span className="font-medium font-mono text-slate-800">{selectedTx.paymentDetails.vaNumber}</span>
+                                    </div>
+                                )}
+                            </>
+                        )}
                         {selectedTx.type !== "INCOME" && (
                             <>
                                 <div className="flex justify-between items-center text-sm">

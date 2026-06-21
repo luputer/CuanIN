@@ -88,10 +88,10 @@ export function PaymentFailedContent() {
                 )}
 
                 {/* RETRY BUTTON */}
-                {purchase?.xenditInvoiceUrl && (
+                {purchase && (
                     <a
-                        href={purchase.xenditInvoiceUrl}
-                        className="w-full py-3.5 bg-cuan-cyan hover:bg-007EA5 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition"
+                        href={`/payment/${purchase.id}`}
+                        className="w-full py-3.5 bg-cuan-cyan hover:bg-[#008BB5] text-white rounded-xl font-medium flex items-center justify-center gap-2 transition"
                     >
                         <ArrowCounterClockwiseIcon className="size-4" />
                         Coba Bayar Lagi

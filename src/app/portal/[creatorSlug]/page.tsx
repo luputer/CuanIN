@@ -23,7 +23,9 @@ import {
   PresentationChartIcon,
   GraduationCapIcon,
   SquaresFourIcon,
+  DownloadSimpleIcon,
 } from "@phosphor-icons/react";
+import { generateInvoicePDF } from "~/lib/invoice";
 
 const PORTAL_TOKEN_KEY = "portal_token_";
 
@@ -244,11 +246,11 @@ export default function CreatorPortalPage() {
 
     let filtered = activeTab === "ALL"
       ? data.purchases
-      : data.purchases.filter((p) => p.product.type === activeTab);
+      : data.purchases.filter((p: any) => p.product.type === activeTab);
 
     if (search.trim()) {
       const q = search.toLowerCase();
-      filtered = filtered.filter((p) =>
+      filtered = filtered.filter((p: any) =>
         p.product.name.toLowerCase().includes(q)
       );
     }
@@ -342,7 +344,7 @@ export default function CreatorPortalPage() {
                   </p>
                 </div>
               ) : (
-                filteredPurchases.map((purchase) => {
+                filteredPurchases.map((purchase: any) => {
                   const product = purchase.product;
                   const links = Array.isArray(product.links)
                     ? (product.links as string[]).filter((l) => l && l.trim().length > 0)
@@ -438,7 +440,7 @@ export default function CreatorPortalPage() {
                   Riwayat Pembayaran ({data.purchases.length})
                 </h2>
 
-                {data.purchases.map((purchase) => (
+                {data.purchases.map((purchase: any) => (
                   <div
                     key={purchase.id}
                     className="rounded-xl border-2 border-slate-800 bg-white shadow-[4px_4px_0px_0px_#000] p-4 space-y-2"
@@ -475,6 +477,16 @@ export default function CreatorPortalPage() {
                         Rp {Number(purchase.amount).toLocaleString("id-ID")}
                       </span>
                     </div>
+
+                    {purchase.status === "completed" && Number(purchase.amount) > 0 && (
+                      <button
+                        onClick={() => generateInvoicePDF(purchase as any)}
+                        className="w-full py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-medium flex items-center justify-center gap-1.5 transition cursor-pointer text-xs"
+                      >
+                        <DownloadSimpleIcon size={14} />
+                        Download Invoice
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>

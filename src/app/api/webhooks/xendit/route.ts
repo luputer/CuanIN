@@ -8,9 +8,9 @@ import { WithdrawalStatus } from "../../../../../prisma/generated/prisma";
 
 export async function POST(req: NextRequest) {
   const token = req.headers.get("x-callback-token");
-  // if (token !== env.XENDIT_WEBHOOK_TOKEN) {
-  //   return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  // }
+  if (token !== env.XENDIT_WEBHOOK_TOKEN) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
 
   const body = (await req.json()) as {
     event?: string;

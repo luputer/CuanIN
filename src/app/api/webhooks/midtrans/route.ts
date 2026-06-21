@@ -27,8 +27,17 @@ export async function POST(req: NextRequest) {
     const signature_key = body.signature_key as string;
     const status_code = body.status_code as string;
     const payment_type = body.payment_type as string;
-    const bank = body.bank as string | undefined;
-    const va_number = body.va_number as string | undefined;
+
+    const vaNumbers = body.va_numbers as Array<{ bank: string; va_number: string }> | undefined;
+    const bank = (body.bank as string | undefined)
+      ?? vaNumbers?.[0]?.bank
+      ?? (body.payment_type === "echannel" ? "mandiri" : undefined);
+    const vaNumber = (body.va_number as string | undefined)
+      ?? vaNumbers?.[0]?.va_number
+      ?? (body.bill_key as string | undefined)
+      ?? undefined;
+
+    console.log("[Midtrans Webhook] Extracted — bank:", bank, "vaNumber:", vaNumber, "va_numbers:", JSON.stringify(vaNumbers));
 
     const bankLabelMap: Record<string, string> = {
       bca: "BCA",
@@ -138,7 +147,7 @@ export async function POST(req: NextRequest) {
             paymentDetails: {
               paymentType: payment_type,
               bank: bank ?? null,
-              vaNumber: va_number ?? null,
+              vaNumber: vaNumber ?? null,
             },
           },
         });

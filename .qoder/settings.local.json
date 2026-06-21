@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && git diff prisma/schema.prisma)"
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && git diff prisma/schema.prisma)",
+      "Bash(cd /home/luputer/Dokumen/TA/CuanIN && git --no-pager diff --stat)"
     ]
   }
 }

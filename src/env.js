@@ -25,13 +25,15 @@ export const env = createEnv({
     SMTP_USER: z.string(),
     SMTP_PASS: z.string(),
     SMTP_FROM: z.string().email(),
-    // XENDIT_SECRET_KEY: z.string(),
-    // XENDIT_WEBHOOK_TOKEN: z.string(),
+    // Hide for the next development 
+    XENDIT_SECRET_KEY: z.string(),
+    XENDIT_WEBHOOK_TOKEN: z.string(),
     MIDTRANS_SERVER_KEY: z.string(),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().url(),
-    // NEXT_PUBLIC_XENDIT_PUBLIC_KEY: z.string(),
+    // Hide for the next development 
+    NEXT_PUBLIC_XENDIT_PUBLIC_KEY: z.string(),
     NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: z.string(),
     NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION: z.enum(["true", "false"]).default("false"), // ← fix
     NEXT_PUBLIC_BUCKET_PUBLIC_URL: z.string().url(),
@@ -54,11 +56,13 @@ export const env = createEnv({
     SMTP_USER: process.env.SMTP_USER,
     SMTP_PASS: process.env.SMTP_PASS,
     SMTP_FROM: process.env.SMTP_FROM,
-    // XENDIT_SECRET_KEY: process.env.XENDIT_SECRET_KEY,
-    // XENDIT_WEBHOOK_TOKEN: process.env.XENDIT_WEBHOOK_TOKEN,
+
+    // Hide for the next development 
+    XENDIT_SECRET_KEY: process.env.XENDIT_SECRET_KEY,
+    XENDIT_WEBHOOK_TOKEN: process.env.XENDIT_WEBHOOK_TOKEN,
+    NEXT_PUBLIC_XENDIT_PUBLIC_KEY: process.env.NEXT_PUBLIC_XENDIT_PUBLIC_KEY,
     MIDTRANS_SERVER_KEY: process.env.MIDTRANS_SERVER_KEY,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-    // NEXT_PUBLIC_XENDIT_PUBLIC_KEY: process.env.NEXT_PUBLIC_XENDIT_PUBLIC_KEY,
     NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
     NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION: process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION, // ← fix
     NEXT_PUBLIC_BUCKET_PUBLIC_URL: process.env.NEXT_PUBLIC_BUCKET_PUBLIC_URL,

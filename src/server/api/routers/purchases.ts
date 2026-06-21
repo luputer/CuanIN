@@ -903,6 +903,9 @@ export const purchasesRouter = createTRPCRouter({
           amount: true,
           status: true,
           createdAt: true,
+          paidAt: true,
+          paymentMethod: true,
+          paymentDetails: true,
           product: {
             select: {
               name: true,
@@ -912,6 +915,15 @@ export const purchasesRouter = createTRPCRouter({
               notes: true,
               contentType: true,
               type: true,
+              price: true,
+              user: {
+                select: {
+                  name: true,
+                  catalog: {
+                    select: { slug: true },
+                  },
+                },
+              },
             },
           },
         },

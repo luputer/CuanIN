@@ -23,7 +23,9 @@ import {
   PresentationChartIcon,
   GraduationCapIcon,
   SquaresFourIcon,
+  DownloadSimpleIcon,
 } from "@phosphor-icons/react";
+import { generateInvoicePDF } from "~/lib/invoice";
 
 const PORTAL_TOKEN_KEY = "portal_token_";
 
@@ -475,6 +477,16 @@ export default function CreatorPortalPage() {
                         Rp {Number(purchase.amount).toLocaleString("id-ID")}
                       </span>
                     </div>
+
+                    {purchase.status === "completed" && Number(purchase.amount) > 0 && (
+                      <button
+                        onClick={() => generateInvoicePDF(purchase as any)}
+                        className="w-full py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-medium flex items-center justify-center gap-1.5 transition cursor-pointer text-xs"
+                      >
+                        <DownloadSimpleIcon size={14} />
+                        Download Invoice
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>

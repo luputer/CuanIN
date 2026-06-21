@@ -163,7 +163,6 @@ export const sendWithdrawalPendingEmail = async ({
 };
 
 // ─── Withdrawal Success Email (saat admin konfirmasi sudah transfer) ──────────
-
 export const sendWithdrawalEmail = async ({
   email,
   amount,

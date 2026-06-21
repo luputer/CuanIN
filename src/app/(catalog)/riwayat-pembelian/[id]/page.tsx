@@ -5,9 +5,11 @@ import Image from "next/image";
 import {
   CreditCardIcon,
   ImagesIcon,
+  DownloadSimpleIcon,
 } from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
 import { CatalogNavHeader } from "~/components/layout/catalog-nav-header";
+import { generateInvoicePDF } from "~/lib/invoice";
 
 const CATEGORY_STYLE: Record<string, string> = {
   WEBINAR: "bg-cyan-100 text-cyan-700 border-cyan-200",
@@ -164,6 +166,16 @@ export default function PurchaseDetailPage() {
                 })()}
               </div>
             </div>
+
+            {isCompleted && !isFree && (
+              <button
+                onClick={() => generateInvoicePDF(p)}
+                className="w-full mt-4 py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition cursor-pointer"
+              >
+                <DownloadSimpleIcon size={18} />
+                Download Invoice
+              </button>
+            )}
           </div>
         </div>
       </div>

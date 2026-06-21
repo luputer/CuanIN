@@ -64,7 +64,6 @@ export default function TransactionPage() {
   const utils = api.useUtils();
 
   // ─── API ─────────────────────────────────────────────────────────────────
-
   const { data, isLoading } = api.purchases.getAllForCreator.useQuery(
     {
       page,
@@ -77,8 +76,6 @@ export default function TransactionPage() {
       placeholderData: (prev) => prev,
     },
   );
-
-
 
   const transactions = (data?.items ?? []).map((item: any) => ({
     ...item,

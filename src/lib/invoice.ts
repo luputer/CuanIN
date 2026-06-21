@@ -11,15 +11,15 @@ type InvoiceData = {
   buyerName: string;
   buyerEmail: string;
   buyerPhone: string;
-  amount: number | string;
+  amount: number | string | { toNumber: () => number };
   paidAt: Date | string | null;
   createdAt: Date | string;
   paymentMethod: string | null;
-  paymentDetails: PaymentDetails;
+  paymentDetails: unknown;
   product: {
     name: string;
     type: string;
-    price: number | string;
+    price: number | string | { toNumber: () => number };
     user: {
       name: string | null;
       catalog: { slug: string } | null;
@@ -74,7 +74,9 @@ export function generateInvoicePDF(data: InvoiceData) {
   const contentWidth = pageWidth - margin * 2;
   let y = margin;
 
-  const amount = Number(data.amount);
+  const amount = typeof data.amount === "object" && data.amount !== null && "toNumber" in data.amount
+    ? data.amount.toNumber()
+    : Number(data.amount);
   const paidDate = data.paidAt ?? data.createdAt;
   const invoiceNum = `INV-${data.id.slice(0, 5).toUpperCase()}-${new Date(paidDate).getFullYear()}`;
   const verificationCode = generateVerificationCode(data.id);
@@ -187,10 +189,14 @@ export function generateInvoicePDF(data: InvoiceData) {
   const productName = data.product.name.length > 40
     ? data.product.name.slice(0, 40) + "..."
     : data.product.name;
+  const productPrice = typeof data.product.price === "object" && data.product.price !== null && "toNumber" in data.product.price
+    ? data.product.price.toNumber()
+    : Number(data.product.price);
+
   doc.text(productName, margin + 4, y);
   doc.text(TYPE_LABEL[data.product.type] ?? data.product.type, margin + 90, y);
   doc.text("1", margin + 120, y);
-  doc.text(formatIDR(Number(data.product.price)), pageWidth - margin - 4, y, { align: "right" });
+  doc.text(formatIDR(productPrice), pageWidth - margin - 4, y, { align: "right" });
   y += 10;
 
   // ─── DIVIDER ──────────────────────────────────────────────────────────
@@ -225,7 +231,7 @@ export function generateInvoicePDF(data: InvoiceData) {
     doc.text(data.paymentMethod, margin, y);
     y += 5;
 
-    const details = data.paymentDetails;
+    const details = data.paymentDetails as PaymentDetails;
     if (details?.vaNumber) {
       doc.setFontSize(9);
       doc.setFont("helvetica", "normal");

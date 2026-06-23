@@ -61,6 +61,11 @@ export default function AdminTransactionPage() {
         status,
     }, {
         placeholderData: (prev) => prev,
+        refetchOnWindowFocus: true,      // refetch tiap user balik ke tab
+        refetchOnReconnect: true,        // refetch kalau internet reconnect
+        refetchInterval: 20_000,         // polling tiap 30 detik
+        refetchIntervalInBackground: false,
+        staleTime: 10_000,
     });
 
     const stats = {

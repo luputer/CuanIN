@@ -2,13 +2,11 @@
 
 import {
   PlusIcon,
-  WalletIcon,
   ArrowDownIcon,
   CopyIcon,
   ShareNetworkIcon,
   UserIcon,
   ShoppingBagIcon,
-  ChatTextIcon,
   CreditCardIcon,
 } from "@phosphor-icons/react";
 

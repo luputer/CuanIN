@@ -8,6 +8,7 @@ import { createSnapTransaction } from "~/lib/midtrans";
 import { calculatePaymentFee } from "~/lib/utils";
 import { Prisma, WithdrawalStatus } from "../../../../prisma/generated/prisma";
 import { getCreatorBalance } from "~/lib/balance";
+import { createNotification } from "~/lib/notification";
 import { generateHistoryToken, verifyHistoryToken } from "~/lib/purchase-history-token";
 import crypto from "crypto";
 
@@ -293,6 +294,15 @@ export const purchasesRouter = createTRPCRouter({
             });
             portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/${product.user.catalog.slug}?token=${token}`;
           }
+
+          // Kirim notifikasi ke creator
+          await createNotification(tx, {
+            userId: product.userId,
+            type: "PURCHASE",
+            title: "Pembayaran Baru Diterima",
+            message: `Ada pembelian produk gratis "${product.name}" oleh ${input.buyerName}.`,
+            refId: newPurchase.id,
+          });
 
           return newPurchase;
         });

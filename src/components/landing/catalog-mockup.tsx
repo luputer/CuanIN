@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
-import { ImagesIcon, ShoppingBagIcon } from "@phosphor-icons/react";
+import { ShoppingBagIcon } from "@phosphor-icons/react";
 import { Star15 } from "~/components/stars/s15";
 import Star8 from "~/components/stars/s8";
 

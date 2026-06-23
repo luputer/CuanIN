@@ -3,6 +3,7 @@ import { withdrawalSchema } from "~/lib/validation";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { getCreatorBalance, getAdminBalance } from "~/lib/balance";
 import { sendWithdrawalPendingEmail } from "~/lib/email";
+import { createNotification } from "~/lib/notification";
 
 const BANK_OPTIONS = {
   bca: { name: "BCA", channelCode: "ID_BCA" },
@@ -91,6 +92,19 @@ export const withdrawalsRouter = createTRPCRouter({
               },
             });
           }
+        }
+
+        // Kirim notifikasi ke creator
+        try {
+          await createNotification(tx, {
+            userId: ctx.session.user.id,
+            type: "WITHDRAWAL",
+            title: "Penarikan Saldo Diproses",
+            message: `Permintaan penarikan saldo Rp${payoutAmount.toLocaleString("id-ID")} ke ${bank.name} sedang diproses oleh admin.`,
+            refId: newWithdrawal.id,
+          });
+        } catch (notifError) {
+          console.error("❌ Gagal kirim notifikasi:", notifError);
         }
 
         try {

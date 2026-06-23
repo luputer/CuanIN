@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { CheckCircleIcon, ImagesIcon } from "@phosphor-icons/react";
+import { ImagesIcon } from "@phosphor-icons/react";
 
 type CheckoutProductCardProps = {
   product: {

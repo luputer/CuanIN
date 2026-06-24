@@ -312,15 +312,13 @@ export const adminRouter = createTRPCRouter({
           },
         });
 
-        // Kirim notifikasi ke creator
-        await tx.notification.create({
-          data: {
-            userId: withdrawal.userId,
-            type: "WITHDRAWAL",
-            title: "Penarikan Saldo Gagal",
-            message: `Penarilan saldo sebesar Rp${Number(withdrawal.amount).toLocaleString("id-ID")} ditolak. Saldo telah dikembalikan.`,
-            refId: withdrawal.id,
-          },
+        // Kirim notifikasi ke creator (via Pusher agar real-time + sound)
+        await createNotification(tx, {
+          userId: withdrawal.userId,
+          type: "WITHDRAWAL",
+          title: "Penarikan Saldo Gagal",
+          message: `Penarilan saldo sebesar Rp${Number(withdrawal.amount).toLocaleString("id-ID")} ditolak. Saldo telah dikembalikan.`,
+          refId: withdrawal.id,
         });
 
         // Jika ada feeAmount, maka fee tersebut gagal masuk ke admin, kita kembalikan saldo admin

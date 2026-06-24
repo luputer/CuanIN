@@ -13,45 +13,51 @@ export function useNotificationSound() {
 
         const ctx = audioCtx.current;
 
-        // Double ding mirip Lark
-        const dings = [
-            { freq: 1318.5, delay: 0 },    // E6 — ding pertama
-            { freq: 1046.5, delay: 0.18 }, // C6 — ding kedua (lebih rendah)
+        // Lark-like: dua nada marimba, G5 → E5
+        const notes = [
+            { freq: 783.99, delay: 0 },     // G5
+            { freq: 659.25, delay: 0.16 },  // E5
         ];
 
-        dings.forEach(({ freq, delay }) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
+        notes.forEach(({ freq, delay }) => {
+            // Layer 1: fundamental (triangle — lebih warm dari sine)
+            const osc1 = ctx.createOscillator();
+            const gain1 = ctx.createGain();
+            osc1.type = "triangle";
+            osc1.frequency.value = freq;
+            osc1.connect(gain1);
+            gain1.connect(ctx.destination);
+            gain1.gain.setValueAtTime(0, ctx.currentTime + delay);
+            gain1.gain.linearRampToValueAtTime(0.4, ctx.currentTime + delay + 0.008); // attack sangat cepat
+            gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.45);
 
-            // Tambahin slight reverb feel pakai dua oscillator
+            // Layer 2: harmonic 2x (bell overtone)
             const osc2 = ctx.createOscillator();
             const gain2 = ctx.createGain();
-
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-
+            osc2.type = "sine";
+            osc2.frequency.value = freq * 2;
             osc2.connect(gain2);
             gain2.connect(ctx.destination);
-
-            // Main tone
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
-            gain.gain.setValueAtTime(0, ctx.currentTime + delay);
-            gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + delay + 0.01); // attack cepat
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.6);
-
-            // Harmonic tipis buat kesan "bell-like"
-            osc2.type = "sine";
-            osc2.frequency.setValueAtTime(freq * 2, ctx.currentTime + delay); // oktaf atas
             gain2.gain.setValueAtTime(0, ctx.currentTime + delay);
-            gain2.gain.linearRampToValueAtTime(0.08, ctx.currentTime + delay + 0.01);
-            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.3);
+            gain2.gain.linearRampToValueAtTime(0.12, ctx.currentTime + delay + 0.008);
+            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.2);
 
-            osc.start(ctx.currentTime + delay);
-            osc.stop(ctx.currentTime + delay + 0.7);
+            // Layer 3: harmonic 3x tipis (shimmer)
+            const osc3 = ctx.createOscillator();
+            const gain3 = ctx.createGain();
+            osc3.type = "sine";
+            osc3.frequency.value = freq * 3;
+            osc3.connect(gain3);
+            gain3.connect(ctx.destination);
+            gain3.gain.setValueAtTime(0, ctx.currentTime + delay);
+            gain3.gain.linearRampToValueAtTime(0.04, ctx.currentTime + delay + 0.008);
+            gain3.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.1);
 
-            osc2.start(ctx.currentTime + delay);
-            osc2.stop(ctx.currentTime + delay + 0.4);
+            [osc1, osc2, osc3].forEach((osc, i) => {
+                const stops = [0.5, 0.25, 0.15];
+                osc.start(ctx.currentTime + delay);
+                osc.stop(ctx.currentTime + delay + (stops[i] ?? 0.5));
+            });
         });
     }, []);
 

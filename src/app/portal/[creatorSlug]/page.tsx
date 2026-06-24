@@ -25,7 +25,6 @@ import {
   SquaresFourIcon,
   DownloadSimpleIcon,
 } from "@phosphor-icons/react";
-import { generateInvoicePDF } from "~/lib/invoice";
 
 const PORTAL_TOKEN_KEY = "portal_token_";
 
@@ -209,9 +208,9 @@ export default function CreatorPortalPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("ALL");
   const [search, setSearch] = useState("");
+  const [downloadingId, setDownloadingId] = useState<string | null>(null); // State loading untuk tombol download
 
   const urlToken = searchParams.get("token") ?? "";
-
   const [storedToken, setStoredToken] = useState<string>("");
 
   useEffect(() => {
@@ -237,6 +236,19 @@ export default function CreatorPortalPage() {
     localStorage.removeItem(key);
     setStoredToken("");
     router.replace(`/portal/${params.creatorSlug}`);
+  };
+
+  // FIX: Menggunakan Dynamic Import on-demand untuk generator PDF agar tidak membebani kompilasi awal halaman portal
+  const handleDownloadInvoice = async (purchase: any) => {
+    try {
+      setDownloadingId(purchase.id);
+      const { generateInvoicePDF } = await import("~/lib/invoice");
+      await generateInvoicePDF(purchase);
+    } catch (err) {
+      console.error("Gagal mengunduh invoice:", err);
+    } finally {
+      setDownloadingId(null);
+    }
   };
 
   const isProductTab = activeTab !== "payment";
@@ -274,7 +286,6 @@ export default function CreatorPortalPage() {
   }
 
   const { creator, buyerName, buyerEmail } = data;
-
   const currentTabInfo = TABS.find((t) => t.key === activeTab);
 
   return (
@@ -305,7 +316,7 @@ export default function CreatorPortalPage() {
             </button>
           </div>
 
-          {/* Search Bar (only for product tabs) */}
+          {/* Search Bar */}
           {isProductTab && (
             <div className="mt-3 relative">
               <MagnifyingGlassIcon
@@ -327,7 +338,6 @@ export default function CreatorPortalPage() {
         <div className="space-y-4 py-2">
           {isProductTab ? (
             <>
-              {/* Tab Title */}
               <div className="flex items-center gap-2">
                 {currentTabInfo && <currentTabInfo.icon size={18} weight="bold" className="text-cuan-cyan" />}
                 <h2 className="text-sm font-bold text-slate-700">
@@ -338,9 +348,7 @@ export default function CreatorPortalPage() {
               {filteredPurchases.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20">
                   <p className="text-slate-400 text-base font-medium">
-                    {search.trim()
-                      ? "No products match your search"
-                      : "Product Not Available"}
+                    {search.trim() ? "No products match your search" : "Product Not Available"}
                   </p>
                 </div>
               ) : (
@@ -480,11 +488,21 @@ export default function CreatorPortalPage() {
 
                     {purchase.status === "completed" && Number(purchase.amount) > 0 && (
                       <button
-                        onClick={() => generateInvoicePDF(purchase as any)}
-                        className="w-full py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-medium flex items-center justify-center gap-1.5 transition cursor-pointer text-xs"
+                        onClick={() => handleDownloadInvoice(purchase)}
+                        disabled={downloadingId === purchase.id}
+                        className="w-full py-2 bg-slate-800 hover:bg-slate-900 disabled:bg-slate-400 text-white rounded-lg font-medium flex items-center justify-center gap-1.5 transition cursor-pointer text-xs"
                       >
-                        <DownloadSimpleIcon size={14} />
-                        Download Invoice
+                        {downloadingId === purchase.id ? (
+                          <>
+                            <SpinnerIcon className="animate-spin" size={14} />
+                            Generating PDF...
+                          </>
+                        ) : (
+                          <>
+                            <DownloadSimpleIcon size={14} />
+                            Download Invoice
+                          </>
+                        )}
                       </button>
                     )}
                   </div>

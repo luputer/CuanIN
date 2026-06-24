@@ -2,14 +2,15 @@
 
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import { useState } from "react"; // Tambah useState untuk loading download
 import {
   CreditCardIcon,
   ImagesIcon,
   DownloadSimpleIcon,
+  CircleNotchIcon, // Tambah icon loading spinner
 } from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
 import { CatalogNavHeader } from "~/components/layout/catalog-nav-header";
-import { generateInvoicePDF } from "~/lib/invoice";
 
 const CATEGORY_STYLE: Record<string, string> = {
   WEBINAR: "bg-cuan-cyan/20 text-007EA5 border-cuan-cyan/30",
@@ -47,6 +48,7 @@ const formatTime = (date: Date | string) =>
 export default function PurchaseDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data: purchase, isLoading } = api.purchases.getById.useQuery({ id: id! });
+  const [isDownloading, setIsDownloading] = useState(false); // State pelacak loading PDF
 
   if (isLoading) {
     return <div className="p-10 text-center">Loading...</div>;
@@ -60,6 +62,19 @@ export default function PurchaseDetailPage() {
   const isCompleted = p.status === "completed";
   const isFree = Number(p.amount) === 0;
   const paidDate = p.paidAt ?? p.createdAt;
+
+  // FIX: Mekanisme Dynamic Import on Demand untuk memangkas bundle size jspdf/html2canvas
+  const handleDownloadInvoice = async () => {
+    try {
+      setIsDownloading(true);
+      const { generateInvoicePDF } = await import("~/lib/invoice");
+      generateInvoicePDF(p as any); // 👈 Hapus 'await' di sini
+    } catch (err) {
+      console.error("Gagal mengunduh berkas invoice:", err);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -169,11 +184,21 @@ export default function PurchaseDetailPage() {
 
             {isCompleted && !isFree && (
               <button
-                onClick={() => generateInvoicePDF(p as any)}
-                className="w-full mt-4 py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition cursor-pointer"
+                onClick={handleDownloadInvoice}
+                disabled={isDownloading}
+                className="w-full mt-4 py-3 bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-400 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition cursor-pointer"
               >
-                <DownloadSimpleIcon size={18} />
-                Download Invoice
+                {isDownloading ? (
+                  <>
+                    <CircleNotchIcon size={18} className="animate-spin" />
+                    Menyusun PDF...
+                  </>
+                ) : (
+                  <>
+                    <DownloadSimpleIcon size={18} />
+                    Download Invoice
+                  </>
+                )}
               </button>
             )}
           </div>

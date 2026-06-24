@@ -3,7 +3,6 @@ import { db } from "~/server/db";
 import { sendProductEmail } from "~/lib/email";
 import { env } from "~/env";
 import crypto from "crypto";
-import { nanoid } from "nanoid";
 import { createNotification } from "~/lib/notification";
 
 export async function GET() {

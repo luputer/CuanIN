@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { ArrowLeftIcon, CopyIcon, ShareNetworkIcon } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";

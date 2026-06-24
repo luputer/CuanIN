@@ -10,7 +10,6 @@ import {
   CaretLeftIcon,
   ArrowLeftIcon,
   ArrowUpRightIcon,
-  ShieldCheckIcon,
   CircleNotchIcon,
 } from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
@@ -87,7 +86,6 @@ export default function PortalDetailRiwayatPage() {
   const isCompleted = p.status === "completed";
   const isPending = p.status === "pending";
   const isFailed = p.status === "failed";
-  const isExpired = p.status === "expired";
   const isFree = Number(p.amount) === 0;
   const paidDate = p.paidAt ?? p.createdAt;
   const details = p.paymentDetails as { paymentType?: string; bank?: string; vaNumber?: string } | null;
@@ -191,9 +189,9 @@ export default function PortalDetailRiwayatPage() {
                 <div className="flex justify-between items-center">
                   <span className="text-slate-600">Status</span>
                   <span className={`font-semibold px-2 py-0.5 rounded-full text-xs ${isCompleted ? "bg-emerald-100 text-emerald-700" :
-                      isPending ? "bg-yellow-100 text-yellow-700" :
-                        isFailed ? "bg-red-100 text-red-700" :
-                          "bg-slate-100 text-slate-500"
+                    isPending ? "bg-yellow-100 text-yellow-700" :
+                      isFailed ? "bg-red-100 text-red-700" :
+                        "bg-slate-100 text-slate-500"
                     }`}>
                     {isCompleted ? "Berhasil" : isPending ? "Pending" : isFailed ? "Gagal" : "Kadaluarsa"}
                   </span>

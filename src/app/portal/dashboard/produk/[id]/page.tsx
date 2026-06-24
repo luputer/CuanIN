@@ -68,7 +68,6 @@ export default function PortalDetailProdukPage() {
   const p = purchase as any;
   const product = p.product;
   const isFree = Number(p.amount) === 0;
-  const paidDate = p.paidAt ?? p.createdAt;
   const links: string[] = product.links
     ? (Array.isArray(product.links) ? product.links : [product.links].filter(Boolean))
     : product.link

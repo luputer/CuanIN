@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { StorefrontIcon, SignOutIcon, ReceiptIcon, LockIcon } from "@phosphor-icons/react";
+import { LockIcon } from "@phosphor-icons/react";
 import { PortalCombinedHeader } from "~/components/portal/portal-combined-header";
 import { cn } from "~/lib/utils";
 

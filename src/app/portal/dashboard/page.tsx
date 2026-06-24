@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import { ReceiptIcon, Funnel, ShoppingBagIcon } from "@phosphor-icons/react";
+import { Funnel, ShoppingBagIcon } from "@phosphor-icons/react";
 import { getCookie } from "~/app/portal/dashboard/layout";
 import SearchInput from "~/components/ui/search";
 import { PortalPurchaseCard } from "~/components/portal/portal-purchase-card";

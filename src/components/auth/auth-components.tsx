@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 import type { UseFormRegisterReturn, FieldError } from "react-hook-form";
 import { signIn } from "next-auth/react";
@@ -63,6 +63,22 @@ interface GoogleAuthButtonProps {
 
 export function GoogleAuthButton({ text, disabled, onError }: GoogleAuthButtonProps) {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  useEffect(() => {
+    const resetLoading = () => setIsGoogleLoading(false);
+
+    window.addEventListener("focus", resetLoading);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") resetLoading();
+    });
+
+    return () => {
+      window.removeEventListener("focus", resetLoading);
+      document.removeEventListener("visibilitychange", resetLoading);
+    };
+  }, []);
+
+
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);

@@ -1,7 +1,14 @@
 import crypto from "crypto";
 
-// AUTH_SECRET bisa undefined di development (optional), fallback ke env langsung
-const SECRET = process.env.AUTH_SECRET ?? "fallback-secret-change-me";
+const envSecret = process.env.AUTH_SECRET;
+
+if (!envSecret) {
+  throw new Error("AUTH_SECRET is not defined in environment variables");
+}
+
+// TypeScript otomatis tahu konstanta SECRET ini bertipe 'string' murni 100%
+const SECRET = envSecret;
+
 const EXPIRES_IN_MS = 24 * 60 * 60 * 1000; // 24 jam
 
 interface HistoryTokenPayload {

@@ -41,7 +41,6 @@
     "@uiw/react-md-editor": "^4.1.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "auto-skeleton-react": "^1.0.5",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "date-fns": "^4.1.0",
@@ -54,7 +53,6 @@
     "next": "^15.2.3",
     "next-auth": "^5.0.0-beta.31",
     "nodemailer": "^7.0.13",
-    "npm": "^11.12.1",
     "pg": "^8.20.0",
     "phosphor-react": "^1.4.1",
     "pusher": "^5.3.4",
@@ -100,5 +98,14 @@
   "ct3aMetadata": {
     "initVersion": "7.40.0"
   },
-  "packageManager": "npm@10.9.2"
+  "packageManager": "npm@10.9.2",
+  "allowScripts": {
+    "@prisma/client@6.19.3": true,
+    "@prisma/engines@6.19.3": true,
+    "core-js@3.49.0": true,
+    "esbuild@0.28.0": true,
+    "prisma@6.19.3": true,
+    "sharp@0.34.5": true,
+    "unrs-resolver@1.11.1": true
+  }
 }

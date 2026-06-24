@@ -8,19 +8,17 @@ import { useState, useEffect } from "react";
 
 export default function AdminLayoutClient({ children }: { children: React.ReactNode }) {
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+        if (typeof window !== "undefined") {
+            return window.innerWidth < 1024;
+        }
+        return false;
+    });
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth < 1024) {
-                setIsSidebarCollapsed(true);
-            } else {
-                setIsSidebarCollapsed(false);
-            }
+            setIsSidebarCollapsed(window.innerWidth < 1024);
         };
-
-        // Initial check on mount
-        handleResize();
 
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);

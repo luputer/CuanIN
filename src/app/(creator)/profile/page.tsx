@@ -106,10 +106,13 @@ export default function ProfilePage() {
 
     useEffect(() => {
         const errorKeys = Object.keys(errors);
+        let timerId: NodeJS.Timeout; // Letakkan penampung ID di sini
+
         if (errorKeys.length > 0) {
             const firstErrorKey = errorKeys[0];
-            // Tambahkan timeout kecil supaya React render state error dulu (jika ada komponen yang unmount/mount)
-            setTimeout(() => {
+
+            // Masukkan ke dalam variabel timerId
+            timerId = setTimeout(() => {
                 const el = document.getElementById(firstErrorKey || "");
                 if (el) {
                     el.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -117,6 +120,11 @@ export default function ProfilePage() {
                 }
             }, 100);
         }
+
+        // TUKANG BERSIH-BERSIH: Batalkan timeout jika state error berubah atau komponen unmount
+        return () => {
+            if (timerId) clearTimeout(timerId);
+        };
     }, [errors]);
 
     // ─── Loading Skeleton ──────────────────────────────────────────────────────

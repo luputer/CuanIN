@@ -11,7 +11,7 @@ Kreator mengaktifkan fitur ini via toggle **"Portal Akses"** di bagian **Pengatu
 ## Cara Kerja
 
 ```
-Buyer bayar → Webhook (Xendit/Midtrans)
+				Buyer bayar → Webhook (Xendit/Midtrans)
   ├─ Purchase status → completed
   ├─ Generate portalToken (nanoid 16 char)
   ├─ Simpan portalToken ke Purchase
@@ -32,39 +32,40 @@ Buyer buka /portal/{token}
 
 ### Product
 
-| Field | Type | Default | Keterangan |
-|-------|------|---------|------------|
+| Field             | Type    | Default   | Keterangan               |
+| ----------------- | ------- | --------- | ------------------------ |
 | `portalEnabled` | Boolean | `false` | Toggle portal per produk |
 
-### Purchase
+### 
+    Purchase
 
-| Field | Type | Constraint | Keterangan |
-|-------|------|------------|------------|
+| Field           | Type    | Constraint  | Keterangan                                |
+| --------------- | ------- | ----------- | ----------------------------------------- |
 | `portalToken` | String? | `@unique` | Token unik per pembelian (16 char nanoid) |
 
 ---
 
 ## File yang Diubah
 
-| File | Perubahan |
-|------|-----------|
-| `prisma/schema.prisma` | Tambah `portalEnabled` di Product, `portalToken` di Purchase |
-| `src/lib/validation.ts` | Tambah `enablePortal` di semua schema (digital, kelas, webinar) |
-| `src/components/creator/product-form-sections.tsx` | Toggle "Portal Akses" di Pengaturan Tambahan |
-| `src/hooks/use-create-produk-digital.ts` | `enablePortal` di defaultValues + mutation |
-| `src/hooks/use-produk-digital-kelas.ts` | `enablePortal` di defaultValues, edit reset, create/update mutation |
-| `src/hooks/use-create-kelas.ts` | `enablePortal` di defaultValues + mutation |
-| `src/hooks/use-edit-kelas.ts` | `enablePortal` di defaultValues, edit reset, update mutation |
-| `src/hooks/use-create-webinar.ts` | `enablePortal` di defaultValues + mutation |
-| `src/hooks/use-webinar.ts` | `enablePortal` di defaultValues, edit reset, update mutation |
-| `src/server/api/routers/products.ts` | Accept `portalEnabled` di create/update input |
-| `src/server/api/routers/purchases.ts` | Generate token untuk produk gratis, query `getByPortalToken` |
-| `src/app/api/webhooks/xendit/route.ts` | Generate token + kirim portal URL di email |
-| `src/app/api/webhooks/midtrans/route.ts` | Generate token + kirim portal URL di email |
-| `src/lib/email.ts` | Tambah param `portalUrl` di `sendProductEmail` |
-| `src/lib/nodemailer.ts` | Tambah param `portalUrl` di `sendProductEmail` |
-| `src/emails/product-access-email.tsx` | Render section "Buka Portal Akses" jika `portalUrl` ada |
-| `src/app/portal/[token]/page.tsx` | **BARU** — Halaman portal publik |
+| File                                                 | Perubahan                                                             |
+| ---------------------------------------------------- | --------------------------------------------------------------------- |
+| `prisma/schema.prisma`                             | Tambah `portalEnabled` di Product, `portalToken` di Purchase      |
+| `src/lib/validation.ts`                            | Tambah `enablePortal` di semua schema (digital, kelas, webinar)     |
+| `src/components/creator/product-form-sections.tsx` | Toggle "Portal Akses" di Pengaturan Tambahan                          |
+| `src/hooks/use-create-produk-digital.ts`           | `enablePortal` di defaultValues + mutation                          |
+| `src/hooks/use-produk-digital-kelas.ts`            | `enablePortal` di defaultValues, edit reset, create/update mutation |
+| `src/hooks/use-create-kelas.ts`                    | `enablePortal` di defaultValues + mutation                          |
+| `src/hooks/use-edit-kelas.ts`                      | `enablePortal` di defaultValues, edit reset, update mutation        |
+| `src/hooks/use-create-webinar.ts`                  | `enablePortal` di defaultValues + mutation                          |
+| `src/hooks/use-webinar.ts`                         | `enablePortal` di defaultValues, edit reset, update mutation        |
+| `src/server/api/routers/products.ts`               | Accept `portalEnabled` di create/update input                       |
+| `src/server/api/routers/purchases.ts`              | Generate token untuk produk gratis, query `getByPortalToken`        |
+| `src/app/api/webhooks/xendit/route.ts`             | Generate token + kirim portal URL di email                            |
+| `src/app/api/webhooks/midtrans/route.ts`           | Generate token + kirim portal URL di email                            |
+| `src/lib/email.ts`                                 | Tambah param `portalUrl` di `sendProductEmail`                    |
+| `src/lib/nodemailer.ts`                            | Tambah param `portalUrl` di `sendProductEmail`                    |
+| `src/emails/product-access-email.tsx`              | Render section "Buka Portal Akses" jika `portalUrl` ada             |
+| `src/app/portal/[token]/page.tsx`                  | **BARU** — Halaman portal publik                               |
 
 ---
 
@@ -75,11 +76,13 @@ Buyer buka /portal/{token}
 **Access**: Public (tanpa auth)
 
 **Input**:
+
 ```ts
 { token: string }
 ```
 
 **Output**:
+
 ```ts
 {
   id: string
@@ -107,6 +110,7 @@ Buyer buka /portal/{token}
 **Route**: `/portal/[token]`
 
 Konten yang ditampilkan:
+
 1. **Header** — Logo CuanIN
 2. **Kartu Produk** — Thumbnail, nama produk, badge tipe konten, tanggal pembelian
 3. **Info Pembeli** — Nama dan email pembeli
@@ -145,10 +149,11 @@ Link Tambahan:
 Token di-generate menggunakan `nanoid(16)` — menghasilkan string URL-safe sepanjang 16 karakter.
 
 **Kapan di-generate**:
-| Jalur | Lokasi |
-|-------|--------|
-| Produk gratis | `src/server/api/routers/purchases.ts` — langsung completed |
-| Pembayaran Xendit | `src/app/api/webhooks/xendit/route.ts` — saat webhook PAID |
+
+| Jalur               | Lokasi                                                        |
+| ------------------- | ------------------------------------------------------------- |
+| Produk gratis       | `src/server/api/routers/purchases.ts` — langsung completed |
+| Pembayaran Xendit   | `src/app/api/webhooks/xendit/route.ts` — saat webhook PAID |
 | Pembayaran Midtrans | `src/app/api/webhooks/midtrans/route.ts` — saat settlement |
 
 **Kondisi**: Token hanya dibuat jika `product.portalEnabled === true`.
@@ -164,6 +169,7 @@ npx prisma migrate dev --name add_portal_feature
 ```
 
 Existing data tidak terpengaruh (backward compatible):
+
 - `portalEnabled` default `false`
 - `portalToken` nullable
 
@@ -171,8 +177,8 @@ Existing data tidak terpengaruh (backward compatible):
 
 ## Dependencies
 
-| Package | Versi | Kegunaan |
-|---------|-------|----------|
+| Package    | Versi  | Kegunaan                     |
+| ---------- | ------ | ---------------------------- |
 | `nanoid` | latest | Generate unique portal token |
 
 ---

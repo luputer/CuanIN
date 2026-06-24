@@ -1,4 +1,6 @@
-import { useState, type FormEvent, useEffect } from "react";
+"use client";
+
+import { useState, type FormEvent } from "react";
 import { CheckCircleIcon, CreditCardIcon, XCircleIcon, XIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
@@ -91,9 +93,8 @@ export function WithdrawalDialog({
     });
     const [withdrawErrors, setWithdrawErrors] = useState<Partial<Record<keyof WithdrawalFormData, string>>>({});
 
-    // Reset form when dialog closes/opens
-    useEffect(() => {
-        if (!open) {
+    const handleOpenChange = (isOpen: boolean) => {
+        if (!isOpen) {
             setWithdrawErrors({});
             setWithdrawForm({
                 amount: "",
@@ -102,7 +103,8 @@ export function WithdrawalDialog({
                 accountHolderName: "",
             });
         }
-    }, [open]);
+        onOpenChange(isOpen);
+    };
 
     const bankOptions = [
         { value: "bca", label: "BCA" },
@@ -148,8 +150,9 @@ export function WithdrawalDialog({
     const totalDeduction = amountVal + appFee + bankFee;
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent size="2xl" showCloseButton={false}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
+            {/* Tambah aria-describedby={undefined} untuk mematikan warning aksesibilitas */}
+            <DialogContent size="2xl" showCloseButton={false} aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle className="flex items-center justify-center gap-4">
                         <CreditCardIcon className="h-6 w-6" weight="fill" />
@@ -221,7 +224,7 @@ export function WithdrawalDialog({
                                         )}
                                         <div className="flex justify-between text-[13px] text-slate-600">
                                             <span>Biaya Transfer Bank</span>
-                                            <span className="font-medium text-slate-800">+ Rp4.000</span>
+                                            <span className="font-medium text-slate-800">Rp4.000</span>
                                         </div>
                                         <div className="border-t border-slate-200 pt-2 flex justify-between font-semibold text-[14px] text-slate-800">
                                             <span>Total Potong Saldo</span>
@@ -292,7 +295,7 @@ export function TransactionDetailDialog({
     if (!selectedTx) {
         return (
             <Dialog open={open} onOpenChange={onOpenChange}>
-                <DialogContent size="default" showCloseButton={false}></DialogContent>
+                <DialogContent size="default" showCloseButton={false} aria-describedby={undefined}></DialogContent>
             </Dialog>
         );
     }
@@ -303,7 +306,7 @@ export function TransactionDetailDialog({
     if (viewMode === "admin") {
         return (
             <Dialog open={open} onOpenChange={onOpenChange}>
-                <DialogContent size="default" showCloseButton={false}>
+                <DialogContent size="default" showCloseButton={false} aria-describedby={undefined}>
                     <DialogHeader className="flex flex-row justify-between items-center text-left pr-4 pl-6 py-4">
                         <DialogTitle className="text-lg">Detail Transaksi</DialogTitle>
                         <DialogClose asChild>
@@ -335,7 +338,7 @@ export function TransactionDetailDialog({
                             <div className="space-y-1 text-right">
                                 <span className="text-slate-400 text-[11px] uppercase tracking-wider font-semibold">Tanggal</span>
                                 <p className="font-medium text-slate-800 text-sm">
-                                    {format(new Date(selectedTx.createdAt), "dd MMM yyyy, HH:mm", { locale: idLocale })}
+                                    {selectedTx.createdAt ? format(new Date(selectedTx.createdAt), "dd MMM yyyy, HH:mm", { locale: idLocale }) : "-"}
                                 </p>
                             </div>
                         </div>
@@ -414,7 +417,7 @@ export function TransactionDetailDialog({
     // viewMode === "creator"
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent size="default" showCloseButton={false}>
+            <DialogContent size="default" showCloseButton={false} aria-describedby={undefined}>
                 <DialogHeader className="flex flex-row justify-between items-center text-left pr-4 pl-6 py-4">
                     <DialogTitle className="text-lg">Detail Transaksi</DialogTitle>
                     <DialogClose asChild>
@@ -444,7 +447,7 @@ export function TransactionDetailDialog({
                         <div className="space-y-1 text-right">
                             <span className="text-slate-400 text-[11px] uppercase tracking-wider font-semibold">Tanggal & Waktu</span>
                             <p className="font-medium text-slate-800 text-sm">
-                                {format(new Date(selectedTx.createdAt), "dd MMM yyyy, HH:mm", { locale: idLocale })}
+                                {selectedTx.createdAt ? format(new Date(selectedTx.createdAt), "dd MMM yyyy, HH:mm", { locale: idLocale }) : "-"}
                             </p>
                         </div>
                     </div>
@@ -464,8 +467,8 @@ export function TransactionDetailDialog({
                             </div>
                         )}
                         <div className="flex justify-between items-center text-sm">
-                            <span className="text-slate-500">{selectedTx.type === "INCOME" ? "Akun" : "Bank"}</span>
-                            <span className="font-medium text-slate-800">{selectedTx.type === "INCOME" ? selectedTx.buyerName : (selectedTx.bankName ?? "-")}</span>
+                            <span className="text-slate-500">{(selectedTx.type === "INCOME") ? "Akun" : "Bank"}</span>
+                            <span className="font-medium text-slate-800">{(selectedTx.type === "INCOME") ? selectedTx.buyerName : (selectedTx.bankName ?? "-")}</span>
                         </div>
                         {selectedTx.type === "INCOME" && selectedTx.paymentMethod && (
                             <>
@@ -588,7 +591,7 @@ export function ConfirmPaidDialog({ open, onOpenChange, confirmTx, onConfirm, is
                             <span className="font-medium text-slate-800">-{formatCurrency(Number(confirmTx.feeAmount ?? 0))}</span>
                         </div>
                         <div className="flex justify-between border-t border-slate-200 pt-2">
-                            <span className="font-bold text-slate-800 text-slate-600">Total Ditransfer</span>
+                            <span className="font-bold text-slate-600">Total Ditransfer</span>
                             <span className="text-green-600 font-semibold text-md">
                                 {formatCurrency(Number(confirmTx.amount) - Number(confirmTx.feeAmount ?? 0) - 4000)}
                             </span>
@@ -642,7 +645,7 @@ export function ConfirmFailedDialog({ open, onOpenChange, confirmTx, onConfirm, 
                             <span className="text-slate-500">Fee Platform (Admin)</span>
                             <span className="font-medium text-slate-800">-{formatCurrency(Number(confirmTx.feeAmount ?? 0))}</span>
                         </div>
-                        <div className="flex justify-between border-t border-slate-200 pt-2 font-bold text-slate-800">
+                        <div className="flex justify-between border-t border-slate-200 pt-2 font-bold">
                             <span className="text-slate-600">Saldo Dikembalikan</span>
                             <span className="text-slate-800">
                                 {formatCurrency(Number(confirmTx.amount))}

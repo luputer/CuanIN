@@ -7,7 +7,6 @@ type TxClient = Omit<
   "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
 >;
 
-
 const pusher = new Pusher({
   appId: env.PUSHER_APP_ID,
   key: env.PUSHER_KEY,

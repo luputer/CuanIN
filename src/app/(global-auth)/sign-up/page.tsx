@@ -204,10 +204,63 @@ export default function SignupPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-white">
-          <div className="flex flex-col items-center gap-3">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-cuan-blue/30 border-t-cuan-blue"></div>
-            <p className="text-sm font-medium text-slate-600">Memuat...</p>
+        <div className="w-full animate-pulse space-y-6">
+          {/* Title Skeleton */}
+          <div className="flex flex-col items-center pt-2 pb-8 space-y-3">
+            <div className="h-9 w-20 rounded-lg bg-slate-200"></div>
+            <div className="h-5 w-36 rounded-md bg-slate-200"></div>
+            <div className="h-5 w-48 rounded-md bg-slate-200"></div>
+          </div>
+
+          {/* Form Skeleton */}
+          <div className="space-y-5">
+            {/* Nama Lengkap */}
+            <div className="space-y-2">
+              <div className="h-4 w-24 rounded bg-slate-200"></div>
+              <div className="h-12 w-full rounded-lg bg-slate-200"></div>
+            </div>
+
+            {/* Email */}
+            <div className="space-y-2">
+              <div className="h-4 w-14 rounded bg-slate-200"></div>
+              <div className="h-12 w-full rounded-lg bg-slate-200"></div>
+            </div>
+
+            {/* Nomor Telepon */}
+            <div className="space-y-2">
+              <div className="h-4 w-28 rounded bg-slate-200"></div>
+              <div className="h-12 w-full rounded-lg bg-slate-200"></div>
+            </div>
+
+            {/* Password */}
+            <div className="space-y-2">
+              <div className="h-4 w-16 rounded bg-slate-200"></div>
+              <div className="h-12 w-full rounded-lg bg-slate-200"></div>
+            </div>
+
+            {/* Confirm Password */}
+            <div className="space-y-2">
+              <div className="h-4 w-32 rounded bg-slate-200"></div>
+              <div className="h-12 w-full rounded-lg bg-slate-200"></div>
+            </div>
+
+            {/* Register Button */}
+            <div className="pt-4">
+              <div className="h-12 w-full rounded-lg bg-slate-200"></div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="flex items-center justify-center py-1">
+            <div className="h-4 w-36 rounded bg-slate-200"></div>
+          </div>
+
+          {/* Google SSO Button */}
+          <div className="h-11 w-full rounded-lg bg-slate-200"></div>
+
+          {/* Footer */}
+          <div className="flex justify-center pt-2">
+            <div className="h-4 w-40 rounded bg-slate-200"></div>
           </div>
         </div>
       }

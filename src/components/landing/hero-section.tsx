@@ -1,6 +1,4 @@
-import Image from "next/image";
 import Button from "~/components/shared/buttonlogin";
-import Figure6 from "public/assets/Figure6.png";
 import CatalogMockup from "~/components/landing/catalog-mockup";
 import Star8 from "~/components/stars/s8";
 

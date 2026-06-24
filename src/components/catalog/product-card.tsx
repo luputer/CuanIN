@@ -132,12 +132,8 @@ export function CatalogProductCard({
         {/* Info */}
         <div className="flex-1 flex flex-col justify-between space-y-1.5 pt-4">
           <div>
-            <p className="mb-1 line-clamp-2 text-sm leading-snug font-semibold text-slate-800">
-              {name}
-            </p>
-            {/* Category badge moved here */}
             {categoryLabel && (
-              <div className="mb-2">
+              <div className="mb-1.5">
                 <span
                   className={`inline-block rounded-full border px-2 py-0.5 text-[9px] font-medium ${CATEGORY_STYLE[type] ?? CATEGORY_STYLE_DEFAULT}`}
                 >
@@ -145,6 +141,9 @@ export function CatalogProductCard({
                 </span>
               </div>
             )}
+            <p className="mb-1 line-clamp-2 text-sm leading-snug font-semibold text-slate-800">
+              {name}
+            </p>
             <ExtraInfo
               type={type}
               startDate={startDate}

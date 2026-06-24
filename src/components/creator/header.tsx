@@ -97,13 +97,13 @@ export default function HeaderKreator({
                                 <span>Akun Saya</span>
                             </button>
 
-                            {/* Riwayat Pembelian */}
+                            {/* Portal Pelanggan */}
                             <button type="button"
-                                onClick={() => router.push('/riwayat-pembelian?ref=dashboard')}
+                                onClick={() => router.push('/portal/dashboard?ref=/dashboard')}
                                 className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cuan-blue/10 hover:text-cuan-blue transition cursor-pointer"
                             >
                                 <ShoppingBagIcon size={20} />
-                                <span>Riwayat Pembelian</span>
+                                <span>Portal Pelanggan</span>
                             </button>
 
                             {/* Divider */}

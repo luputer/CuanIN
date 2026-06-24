@@ -3,7 +3,6 @@ import { db } from "~/server/db";
 import { sendProductEmail } from "~/lib/email";
 import { env } from "~/env";
 import crypto from "crypto";
-import { nanoid } from "nanoid";
 
 export async function GET() {
   return NextResponse.json({ message: "Midtrans Webhook endpoint is active" });
@@ -162,26 +161,9 @@ export async function POST(req: NextRequest) {
           },
         });
 
-        // Create portal access if product has portal enabled
-        if (purchase.product.portalEnabled && purchase.product.user?.catalog?.slug) {
-          const token = nanoid(16);
-          const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-          await tx.portalAccess.upsert({
-            where: {
-              buyerEmail_creatorId: {
-                buyerEmail: purchase.buyerEmail.toLowerCase(),
-                creatorId: purchase.product.userId,
-              },
-            },
-            update: { token, expiresAt },
-            create: {
-              token,
-              buyerEmail: purchase.buyerEmail.toLowerCase(),
-              creatorId: purchase.product.userId,
-              expiresAt,
-            },
-          });
-          portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/${purchase.product.user.catalog.slug}?token=${token}`;
+        // Point to new unified portal login page
+        if (purchase.product.portalEnabled) {
+          portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/login`;
         }
       });
       console.log("[Midtrans Webhook] Success update purchase:", purchase.id);

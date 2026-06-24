@@ -1,0 +1,181 @@
+"use client";
+
+import { useState, useEffect, useMemo, Suspense } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { api } from "~/trpc/react";
+import { ReceiptIcon, Funnel, ShoppingBagIcon } from "@phosphor-icons/react";
+import { getCookie } from "~/app/portal/dashboard/layout";
+import SearchInput from "~/components/ui/search";
+import { PortalPurchaseCard } from "~/components/portal/portal-purchase-card";
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import { cn } from "~/lib/utils";
+
+type TabType = "ALL" | "DIGITAL_PRODUCT" | "WEBINAR" | "KELAS_ONLINE";
+
+const TABS: { key: TabType; label: string }[] = [
+  { key: "ALL", label: "Semua Produk" },
+  { key: "DIGITAL_PRODUCT", label: "Produk Digital" },
+  { key: "WEBINAR", label: "Webinar" },
+  { key: "KELAS_ONLINE", label: "Kelas" },
+];
+
+function PortalProductPageInner() {
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<TabType>("ALL");
+  const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session?.user) {
+      const token = localStorage.getItem("history_access_token");
+      const email = getCookie("history_authorized_email");
+      if (!token || !email) {
+        router.replace("/portal/login");
+      } else {
+        setAccessToken(token);
+      }
+    }
+  }, [session, status, router]);
+
+  const { data: historyData, isLoading: isLoadingGuest } = api.purchases.getPurchaseHistoryByToken.useQuery(
+    { accessToken: accessToken!, mode: "produk" },
+    { enabled: !!accessToken && !session?.user }
+  );
+
+  const { data: authPurchases, isLoading: isLoadingAuth } = api.purchases.getPurchaseHistoryForCreator.useQuery(
+    { mode: "produk" },
+    { enabled: !!session?.user }
+  );
+
+  const rawPurchases = (session?.user ? authPurchases?.purchases : historyData?.purchases) ?? [];
+  const isLoading = session?.user ? isLoadingAuth : (isLoadingGuest && !!accessToken);
+
+  const currentPurchases = useMemo(() => {
+    return [...rawPurchases]
+      .sort((a, b) => {
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
+        return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
+      });
+  }, [rawPurchases, sortOrder]);
+
+  const filteredPurchases = useMemo(() => {
+    let filtered = activeTab === "ALL"
+      ? currentPurchases
+      : currentPurchases.filter((p: any) => p.product.type === activeTab);
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      filtered = filtered.filter((p: any) => p.product.name.toLowerCase().includes(q));
+    }
+
+    return filtered;
+  }, [currentPurchases, activeTab, search]);
+
+  return (
+    <div className="space-y-6">
+      {/* Controls Bar */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex w-full items-center gap-3 md:w-auto">
+          <div className="w-full flex-1 md:w-96 md:flex-initial">
+            <SearchInput
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Cari nama produk..."
+              className="w-full rounded-full border border-slate-400 !shadow-none"
+            />
+          </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full border border-slate-400 bg-white text-slate-600 transition-all duration-200 ease-out hover:bg-slate-50 hover:text-slate-800 hover:translate-x-[1px] hover:translate-y-[1px] !shadow-none m-0 p-0 box-border"
+                title="Urutkan Produk"
+              >
+                <Funnel className="h-5 w-5" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-48 p-2" align="end">
+              <div className="flex flex-col gap-1">
+                <p className="px-2.5 py-1.5 text-xs font-semibold text-slate-400">Urutkan Berdasarkan:</p>
+                <button
+                  onClick={() => setSortOrder("newest")}
+                  className={cn(
+                    "w-full cursor-pointer rounded-lg px-2.5 py-2 text-left text-sm font-medium transition-all hover:bg-slate-100",
+                    sortOrder === "newest" ? "bg-cuan-cyan/10 text-cuan-cyan" : "text-slate-600"
+                  )}
+                >
+                  Terbaru
+                </button>
+                <button
+                  onClick={() => setSortOrder("oldest")}
+                  className={cn(
+                    "w-full cursor-pointer rounded-lg px-2.5 py-2 text-left text-sm font-medium transition-all hover:bg-slate-100",
+                    sortOrder === "oldest" ? "bg-cuan-cyan/10 text-cuan-cyan" : "text-slate-600"
+                  )}
+                >
+                  Terlama
+                </button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        {/* Category Tabs */}
+        <div className="flex flex-wrap gap-2">
+          {TABS.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => { setActiveTab(tab.key); setSearch(""); }}
+              className={`h-9 md:h-10 cursor-pointer rounded-full px-3 md:px-4 py-2 text-xs md:text-sm font-medium transition-all ${activeTab === tab.key
+                ? "border border-cuan-cyan bg-cuan-cyan text-white"
+                : "border border-slate-400 bg-white text-slate-600 hover:bg-cuan-cyan/10"
+                }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex items-center justify-start">
+        <p className="text-md md:text-lg font-medium text-slate-800">
+          {TABS.find((t) => t.key === activeTab)?.label ?? "Semua Kategori"}
+        </p>
+      </div>
+
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="h-64 w-full rounded-xl bg-slate-100 animate-pulse" />
+          ))}
+        </div>
+      ) : filteredPurchases.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-2 py-24 text-slate-400 text-center px-4">
+          <ShoppingBagIcon className="h-12 w-12" strokeWidth={1} />
+          <p className="text-sm">
+            {search.trim() ? `Pencarian "${search}" tidak ditemukan.` : "Belum ada produk yang dibeli."}
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {filteredPurchases.map((purchase: any) => (
+            <PortalPurchaseCard key={purchase.id} purchase={purchase} isHistoryTab={false} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function PortalProductPage() {
+  return (
+    <Suspense>
+      <PortalProductPageInner />
+    </Suspense>
+  );
+}

@@ -27,6 +27,14 @@ export const purchasesRouter = createTRPCRouter({
               type: true,
               price: true,
               slug: true,
+              contentType: true,
+              startDate: true,
+              endDate: true,
+              duration: true,
+              link: true,
+              links: true,
+              notes: true,
+              portalEnabled: true,
               user: {
                 select: {
                   name: true,
@@ -272,26 +280,9 @@ export const purchasesRouter = createTRPCRouter({
             },
           });
 
-          // Create portal access if product has portal enabled
-          if (product.portalEnabled && product.user?.catalog?.slug) {
-            const token = nanoid(16);
-            const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-            await tx.portalAccess.upsert({
-              where: {
-                buyerEmail_creatorId: {
-                  buyerEmail: input.buyerEmail.toLowerCase(),
-                  creatorId: product.userId,
-                },
-              },
-              update: { token, expiresAt },
-              create: {
-                token,
-                buyerEmail: input.buyerEmail.toLowerCase(),
-                creatorId: product.userId,
-                expiresAt,
-              },
-            });
-            portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/${product.user.catalog.slug}?token=${token}`;
+          // Point to new unified portal login page
+          if (product.portalEnabled) {
+            portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/login`;
           }
 
           return newPurchase;
@@ -1008,7 +999,7 @@ export const purchasesRouter = createTRPCRouter({
         },
       });
 
-      const portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/${input.creatorSlug}?token=${token}`;
+      const portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/login`;
       const buyerName = purchases[0]!.buyerName;
 
       void sendPortalLinkEmail({
@@ -1036,7 +1027,10 @@ export const purchasesRouter = createTRPCRouter({
       });
 
       if (!existingPurchase) {
-        return { success: true };
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Email tidak ditemukan dalam riwayat pembelian.",
+        });
       }
 
       const otp = crypto.randomInt(100000, 999999).toString();
@@ -1115,7 +1109,12 @@ export const purchasesRouter = createTRPCRouter({
 
   // ─── GET PURCHASE HISTORY BY TOKEN (guest) ──────────────────────────────
   getPurchaseHistoryByToken: publicProcedure
-    .input(z.object({ accessToken: z.string() }))
+    .input(
+      z.object({
+        accessToken: z.string(),
+        mode: z.enum(["produk", "riwayat"]).default("produk"),
+      })
+    )
     .query(async ({ ctx, input }) => {
       const payload = verifyHistoryToken(input.accessToken);
 
@@ -1126,10 +1125,13 @@ export const purchasesRouter = createTRPCRouter({
         });
       }
 
+      const isProduk = input.mode === "produk";
+
       const purchases = await ctx.db.purchase.findMany({
         where: {
           buyerEmail: { equals: payload.email, mode: "insensitive" },
-          status: "completed",
+          ...(isProduk ? { status: "completed" } : {}),
+          ...(isProduk ? { product: { portalEnabled: true } } : {}),
         },
         include: {
           product: {
@@ -1139,6 +1141,14 @@ export const purchasesRouter = createTRPCRouter({
               image: true,
               type: true,
               slug: true,
+              link: true,
+              links: true,
+              notes: true,
+              price: true,
+              contentType: true,
+              startDate: true,
+              endDate: true,
+              duration: true,
               user: {
                 select: {
                   name: true,
@@ -1156,8 +1166,16 @@ export const purchasesRouter = createTRPCRouter({
 
   // ─── GET PURCHASE HISTORY FOR CREATOR (logged in) ───────────────────────
   getPurchaseHistoryForCreator: protectedProcedure
-    .query(async ({ ctx }) => {
+    .input(
+      z
+        .object({
+          mode: z.enum(["produk", "riwayat"]).default("produk"),
+        })
+        .optional(),
+    )
+    .query(async ({ ctx, input }) => {
       const email = ctx.session.user.email;
+      const isProduk = (input?.mode ?? "produk") === "produk";
 
       if (!email) {
         throw new TRPCError({
@@ -1169,7 +1187,8 @@ export const purchasesRouter = createTRPCRouter({
       const purchases = await ctx.db.purchase.findMany({
         where: {
           buyerEmail: { equals: email, mode: "insensitive" },
-          status: "completed",
+          ...(isProduk ? { status: "completed" } : {}),
+          ...(isProduk ? { product: { portalEnabled: true } } : {}),
         },
         include: {
           product: {
@@ -1179,6 +1198,14 @@ export const purchasesRouter = createTRPCRouter({
               image: true,
               type: true,
               slug: true,
+              link: true,
+              links: true,
+              notes: true,
+              price: true,
+              contentType: true,
+              startDate: true,
+              endDate: true,
+              duration: true,
               user: {
                 select: {
                   name: true,
@@ -1192,5 +1219,30 @@ export const purchasesRouter = createTRPCRouter({
       });
 
       return { email, purchases };
+    }),
+
+  loginWithPortalToken: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const portalAccess = await ctx.db.portalAccess.findUnique({
+        where: { token: input.token },
+      });
+
+      if (!portalAccess) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Portal token tidak valid.",
+        });
+      }
+
+      if (new Date() > portalAccess.expiresAt) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Portal token sudah kedaluwarsa.",
+        });
+      }
+
+      const accessToken = generateHistoryToken(portalAccess.buyerEmail);
+      return { success: true, email: portalAccess.buyerEmail, accessToken };
     }),
 });

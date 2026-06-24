@@ -1,6 +1,4 @@
-import Image from "next/image";
 import Button from "~/components/shared/buttonlogin";
-import Figure11 from "public/assets/Figure11.png";
 import { Star15 } from "~/components/stars/s15";
 
 export default function CtaSection() {

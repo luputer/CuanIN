@@ -117,7 +117,7 @@ function PortalDashboardLayoutContent({ children }: { children: React.ReactNode 
       </main>
 
       <footer className="text-center py-6 border-t border-slate-200 mt-auto bg-white">
-        <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 font-bold uppercase tracking-wider">
+        <div className="flex items-center justify-center gap-4 text-xs text-slate-400 font-bold uppercase tracking-wider">
           <LockIcon size={12} weight="fill" />
           <span>Powered by</span>
           <Image

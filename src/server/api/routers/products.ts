@@ -1,6 +1,7 @@
 import { z } from "zod";
 // Force TS refresh
 import { createTRPCRouter, protectedProcedure, adminProcedure, creatorProcedure } from "../trpc";
+import { createNotification } from "~/lib/notification";
 import { s3Client } from "./s3";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { env } from "~/env";
@@ -298,7 +299,7 @@ export const productsRouter = createTRPCRouter({
             }
 
             const { vouchers, ...data } = input;
-            return await ctx.db.product.create({
+            const product = await ctx.db.product.create({
                 data: {
                     ...data,
                     vouchers: vouchers ? {
@@ -308,6 +309,21 @@ export const productsRouter = createTRPCRouter({
                     userId: ctx.session.user.id,
                 },
             });
+
+            // Kirim notifikasi produk diterbitkan
+            try {
+                await createNotification(ctx.db, {
+                    userId: ctx.session.user.id,
+                    type: "PRODUCT",
+                    title: "Produk Berhasil Diterbitkan",
+                    message: `Produk "${product.name}" kamu telah berhasil diterbitkan & aktif.`,
+                    refId: product.id,
+                });
+            } catch (notifError) {
+                console.error("❌ Gagal kirim notifikasi:", notifError);
+            }
+
+            return product;
         }),
 
     // Update a product — hanya milik sendiri

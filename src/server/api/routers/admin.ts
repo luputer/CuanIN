@@ -6,6 +6,7 @@ import { createPayout as createXenditPayout, simulatePayoutSuccess } from "~/lib
 import { WithdrawalStatus } from "../../../../prisma/generated/prisma";
 import { TRPCError } from "@trpc/server";
 import { sendWithdrawalEmail } from "~/lib/email";
+import { createNotification } from "~/lib/notification";
 
 const BANK_OPTIONS = {
   bca: { name: "BCA", channelCode: "ID_BCA" },
@@ -244,6 +245,19 @@ export const adminRouter = createTRPCRouter({
         },
       });
 
+      // Kirim notifikasi ke creator
+      try {
+        await createNotification(ctx.db, {
+          userId: withdrawal.userId,
+          type: "WITHDRAWAL",
+          title: "Penarikan Saldo Berhasil",
+          message: `Penarikan saldo sebesar Rp${Number(withdrawal.amount).toLocaleString("id-ID")} ke ${withdrawal.bankName} ${withdrawal.accountNumber} telah berhasil.`,
+          refId: withdrawal.id,
+        });
+      } catch (notifError) {
+        console.error("❌ Gagal kirim notifikasi:", notifError);
+      }
+
       try {
         await sendWithdrawalEmail({
           email: withdrawal.email,
@@ -296,6 +310,15 @@ export const adminRouter = createTRPCRouter({
             refId: withdrawal.id,
             note: `Pengembalian dana penarikan gagal: ${input.failureMessage ?? "Ditolak oleh Admin"}`,
           },
+        });
+
+        // Kirim notifikasi ke creator (via Pusher agar real-time + sound)
+        await createNotification(tx, {
+          userId: withdrawal.userId,
+          type: "WITHDRAWAL",
+          title: "Penarikan Saldo Gagal",
+          message: `Penarilan saldo sebesar Rp${Number(withdrawal.amount).toLocaleString("id-ID")} ditolak. Saldo telah dikembalikan.`,
+          refId: withdrawal.id,
         });
 
         // Jika ada feeAmount, maka fee tersebut gagal masuk ke admin, kita kembalikan saldo admin

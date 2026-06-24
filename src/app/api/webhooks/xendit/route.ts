@@ -3,6 +3,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { db } from "~/server/db";
 import { sendProductEmail, sendWithdrawalEmail } from "~/lib/email";
+import { createNotification } from "~/lib/notification";
 import { env } from "~/env";
 import { WithdrawalStatus } from "../../../../../prisma/generated/prisma";
 
@@ -93,6 +94,19 @@ export async function POST(req: NextRequest) {
         });
       }
 
+      // Kirim notifikasi ke creator
+      try {
+        await createNotification(db, {
+          userId: withdrawal.userId,
+          type: "WITHDRAWAL",
+          title: "Penarikan Saldo Berhasil",
+          message: `Penarikan saldo sebesar Rp${Number(withdrawal.amount).toLocaleString("id-ID")} ke ${withdrawal.bankName} ${withdrawal.accountNumber} telah berhasil.`,
+          refId: withdrawal.id,
+        });
+      } catch (notifError) {
+        console.error("❌ Gagal kirim notifikasi:", notifError);
+      }
+
       try {
         await sendWithdrawalEmail({
           email: withdrawal.email,
@@ -131,6 +145,16 @@ export async function POST(req: NextRequest) {
             type: "WITHDRAWAL_FAILED",
             refId: withdrawal.id,
             note: `Payout gagal: ${payout.failure_code ?? "UNKNOWN"} — saldo dikembalikan`,
+          },
+        }),
+        // Kirim notifikasi ke creator
+        db.notification.create({
+          data: {
+            userId: withdrawal.userId,
+            type: "WITHDRAWAL",
+            title: "Penarikan Saldo Gagal",
+            message: `Penarikan saldo sebesar Rp${Number(withdrawal.amount).toLocaleString("id-ID")} gagal. Saldo telah dikembalikan.`,
+            refId: withdrawal.id,
           },
         }),
       ]);
@@ -249,6 +273,19 @@ export async function POST(req: NextRequest) {
           note: `Pembelian dari ${purchase.buyerName} (${purchase.buyerEmail})`,
         },
       });
+
+      // Kirim notifikasi ke creator
+      try {
+        await createNotification(tx, {
+          userId: purchase.product.userId,
+          type: "PURCHASE",
+          title: "Pembayaran Baru Diterima",
+          message: `Pembayaran sebesar Rp${Number(purchase.amount).toLocaleString("id-ID")} untuk "${purchase.product.name}" dari ${purchase.buyerName} telah diterima.`,
+          refId: purchase.id,
+        });
+      } catch (notifError) {
+        console.error("❌ Gagal kirim notifikasi:", notifError);
+      }
     });
   } catch {
     // Jika error karena record tidak ditemukan (berarti sudah bukan pending)

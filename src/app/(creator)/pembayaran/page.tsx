@@ -71,9 +71,15 @@ export default function TransactionPage() {
       search: debouncedSearch,
       status,
       type: type === "ALL" ? undefined : (type as "INCOME" | "WITHDRAWAL"),
+
     },
     {
       placeholderData: (prev) => prev,
+      refetchOnWindowFocus: true,      // refetch tiap user balik ke tab
+      refetchOnReconnect: true,        // refetch kalau internet reconnect
+      refetchInterval: 20_000,         // polling tiap 30 detik
+      refetchIntervalInBackground: false,
+      staleTime: 10_000,               // anggap data stale setelah 10 detik
     },
   );
 

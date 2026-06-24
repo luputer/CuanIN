@@ -10,6 +10,7 @@ import { withdrawalsRouter } from "./routers/withdrawals";
 import { analyticsRouter } from "./routers/analytics";
 import { creatorsRouter } from "./routers/creators";
 import { vouchersRouter } from "./routers/vouchers";
+import { notificationRouter } from "./routers/notification";
 
 import { adminRouter } from "./routers/admin";
 
@@ -26,6 +27,7 @@ export const appRouter = createTRPCRouter({
   analytics: analyticsRouter,
   creators: creatorsRouter,
   vouchers: vouchersRouter,
+  notification: notificationRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -3,6 +3,7 @@
 @plugin "tailwindcss-animate";
 @plugin "@tailwindcss/typography";
 
+
 @theme {
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
 }

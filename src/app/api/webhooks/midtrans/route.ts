@@ -3,6 +3,8 @@ import { db } from "~/server/db";
 import { sendProductEmail } from "~/lib/email";
 import { env } from "~/env";
 import crypto from "crypto";
+import { nanoid } from "nanoid";
+import { createNotification } from "~/lib/notification";
 
 export async function GET() {
   return NextResponse.json({ message: "Midtrans Webhook endpoint is active" });
@@ -10,9 +12,9 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    let body: Record<string, unknown>;
+    let body;
     try {
-      body = await req.json() as Record<string, unknown>;
+      body = await req.json();
     } catch {
       console.log("[Midtrans Webhook] Received empty or invalid JSON body");
       return NextResponse.json({ message: "Empty body" }, { status: 200 });
@@ -20,56 +22,21 @@ export async function POST(req: NextRequest) {
 
     console.log("[Midtrans Webhook] Received:", JSON.stringify(body, null, 2));
 
-    const transaction_status = body.transaction_status as string;
-    const order_id = body.order_id as string;
-    const gross_amount = body.gross_amount as string;
-    const signature_key = body.signature_key as string;
-    const status_code = body.status_code as string;
-    const payment_type = body.payment_type as string;
-
-    const vaNumbers = body.va_numbers as Array<{ bank: string; va_number: string }> | undefined;
-    const bank = (body.bank as string | undefined)
-      ?? vaNumbers?.[0]?.bank
-      ?? (body.payment_type === "echannel" ? "mandiri" : undefined);
-    const vaNumber = (body.va_number as string | undefined)
-      ?? vaNumbers?.[0]?.va_number
-      ?? (body.bill_key as string | undefined)
-      ?? undefined;
-
-    console.log("[Midtrans Webhook] Extracted — bank:", bank, "vaNumber:", vaNumber, "va_numbers:", JSON.stringify(vaNumbers));
-
-    const bankLabelMap: Record<string, string> = {
-      bca: "BCA",
-      bni: "BNI",
-      bri: "BRI",
-      mandiri: "Mandiri",
-      permata: "Permata",
-      bsi: "BSI",
-      cimb: "CIMB",
-      danamon: "Danamon",
-      mega: "Mega",
-      bukopin: "Bukopin",
-      hanabank: "Hana",
-      akulaku: "Akulaku",
-      mybank: "MyBank",
-      uob: "UOB",
+    const {
+      transaction_status,
+      order_id,
+      gross_amount,
+      signature_key,
+      status_code,
+      payment_type,
+    } = body as {
+      transaction_status: string;
+      order_id: string;
+      gross_amount: string;
+      signature_key: string;
+      status_code: string;
+      payment_type: string;
     };
-
-    function buildPaymentLabel() {
-      if (payment_type === "bank_transfer" && bank) {
-        return bankLabelMap[bank] ?? bank.toUpperCase();
-      }
-      if (payment_type === "echannel") {
-        return "Mandiri";
-      }
-      if (payment_type === "credit_card") {
-        return "Kartu Kredit";
-      }
-      if (payment_type === "gopay") return "GoPay";
-      if (payment_type === "shopeepay") return "ShopeePay";
-      if (payment_type === "qris") return "QRIS";
-      return payment_type;
-    }
 
     if (!signature_key || !order_id) {
       console.log("[Midtrans Webhook] Ping detected (no signature or order_id)");
@@ -142,12 +109,7 @@ export async function POST(req: NextRequest) {
           data: {
             status: "completed",
             paidAt: new Date(),
-            paymentMethod: buildPaymentLabel(),
-            paymentDetails: {
-              paymentType: payment_type,
-              bank: bank ?? null,
-              vaNumber: vaNumber ?? null,
-            },
+            paymentMethod: `Midtrans: ${payment_type}`,
           },
         });
 
@@ -165,6 +127,15 @@ export async function POST(req: NextRequest) {
         if (purchase.product.portalEnabled) {
           portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/login`;
         }
+
+        // ✅ Di dalam transaction — tx tersedia di sini
+        await createNotification(tx, {
+          userId: purchase.product.userId,
+          type: "PURCHASE",
+          title: "Pembelian Baru! 🎉",
+          message: `${purchase.buyerName} baru saja membeli ${purchase.product.name}`,
+          refId: purchase.id,
+        });
       });
       console.log("[Midtrans Webhook] Success update purchase:", purchase.id);
     } catch {

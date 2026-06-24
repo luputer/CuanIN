@@ -154,14 +154,54 @@ function LoginPageInner() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center bg-white">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-cuan-cyan/30 border-t-cuan-cyan"></div>
-          <p className="text-sm font-medium text-slate-600">Memuat...</p>
+    <Suspense
+      fallback={
+        <div className="w-full animate-pulse space-y-6">
+          {/* Title Skeleton */}
+          <div className="flex flex-col items-center pt-2 pb-8 space-y-3">
+            <div className="h-9 w-24 rounded-lg bg-slate-200"></div>
+            <div className="h-5 w-48 rounded-md bg-slate-200"></div>
+            <div className="h-5 w-40 rounded-md bg-slate-200"></div>
+          </div>
+
+          {/* Form Skeleton */}
+          <div className="space-y-4">
+            {/* Email Input */}
+            <div className="space-y-2">
+              <div className="h-4 w-14 rounded bg-slate-200"></div>
+              <div className="h-12 w-full rounded-lg bg-slate-200"></div>
+            </div>
+
+            {/* Password Input */}
+            <div className="space-y-2">
+              <div className="h-4 w-16 rounded bg-slate-200"></div>
+              <div className="h-12 w-full rounded-lg bg-slate-200"></div>
+              <div className="flex justify-end pt-1">
+                <div className="h-3 w-20 rounded bg-slate-200"></div>
+              </div>
+            </div>
+
+            {/* Login Button */}
+            <div className="pt-4">
+              <div className="h-12 w-full rounded-lg bg-slate-200"></div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="flex items-center justify-center py-2">
+            <div className="h-4 w-32 rounded bg-slate-200"></div>
+          </div>
+
+          {/* Google SSO Button */}
+          <div className="h-11 w-full rounded-lg bg-slate-200"></div>
+
+          {/* Footer */}
+          <div className="flex justify-center pt-2">
+            <div className="h-4 w-44 rounded bg-slate-200"></div>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <LoginPageInner />
     </Suspense>
   );

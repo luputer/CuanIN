@@ -90,14 +90,7 @@ function ProductDetailSkeleton() {
   );
 }
 
-
-const name = "asyaika"
-name = 10;
-
-
 // ─── Main Page ────────────────────────────────────────────────────────────────
-
-
 export default function ProductDetailPage() {
   const params = useParams();
   const slug = params.slug as string;

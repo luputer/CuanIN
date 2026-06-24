@@ -1,3 +1,4 @@
+import { env } from "~/env";
 import type { NotificationType, PrismaClient } from "../../prisma/generated/prisma";
 import Pusher from "pusher";
 
@@ -7,13 +8,11 @@ type TxClient = Omit<
 >;
 
 
-
-
 const pusher = new Pusher({
-  appId: "2169997",
-  key: "3faea90fc4a2235e062f",
-  secret: "d89d681066f39074f0e8",
-  cluster: "ap2",
+  appId: env.PUSHER_APP_ID,
+  key: env.PUSHER_KEY,
+  secret: env.PUSHER_SECRET,
+  cluster: env.PUSHER_CLUSTER,
   useTLS: true,
 });
 

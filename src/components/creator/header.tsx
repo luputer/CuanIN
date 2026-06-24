@@ -70,8 +70,8 @@ export default function HeaderKreator({
     useEffect(() => {
         if (!session?.user?.id) return;
 
-        const pusherClient = new PusherClient("3faea90fc4a2235e062f", {
-            cluster: "ap2",
+        const pusherClient = new PusherClient(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+            cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
         });
 
         const channel = pusherClient.subscribe(`user-${session.user.id}`);

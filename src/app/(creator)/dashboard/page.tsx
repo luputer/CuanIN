@@ -65,7 +65,7 @@ export default function DashboardPage() {
                             title="Total Produk"
                             value={(data?.totalProducts ?? 0).toLocaleString("id-ID")}
                             icon={<BasketIcon weight="fill" className="size-8" />}
-                            iconColor="text-yellow-500"
+                            iconColor="text-cuan-blue"
                             bgColor="bg-white"
                             change={data?.productsChange}
                         />
@@ -73,7 +73,7 @@ export default function DashboardPage() {
                             title="Total User"
                             value={(data?.totalUsers ?? 0).toLocaleString("id-ID")}
                             icon={<UsersIcon weight="fill" className="size-8" />}
-                            iconColor="text-orange-500"
+                            iconColor="text-cuan-blue"
                             bgColor="bg-white"
                             change={data?.usersChange}
                         />
@@ -81,7 +81,7 @@ export default function DashboardPage() {
                             title="Total Pengunjung"
                             value={(data?.totalVisitors ?? 0).toLocaleString("id-ID")}
                             icon={<ChartLineUpIcon weight="fill" className="size-8" color="currentColor" />}
-                            iconColor="text-green-500"
+                            iconColor="text-cuan-blue"
                             bgColor="bg-white"
                             change={data?.visitorsChange}
                         />

@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { cn } from "~/lib/utils";
 
-const ACTIVE_TAB_CLASSES = "border-cuan-cyan text-cuan-cyan";
+const ACTIVE_TAB_CLASSES = "border-cuan-blue text-cuan-blue";
 
 interface TabsContextProps {
     activeTab: string;
@@ -47,7 +47,7 @@ export function ProductDetailTabs({ defaultTab, buyerCount, children, className,
     return (
         <TabsContext.Provider value={{ activeTab, setActiveTab }}>
             <div className="flex flex-col">
-                <div className={cn("bg-cuan-cyan/10 border-b border-cuan-cyan/30 px-4 sm:px-10", className)}>
+                <div className={cn("bg-cuan-blue/10 border-b border-cuan-blue/50 px-4 sm:px-10", className)}>
                     <div className="flex w-full gap-2 sm:gap-10 items-end -mb-[1px]">
                         <TabButton value="detail" label="Detail Produk" />
                         <TabButton value="form" label="Kustomisasi Form" />

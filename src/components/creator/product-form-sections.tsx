@@ -318,6 +318,7 @@ export const PlatformSelector = ({
                         }
                     })}
                 >
+                    <option value="" disabled>Pilih {label}</option>
                     {options[type].map(opt => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}

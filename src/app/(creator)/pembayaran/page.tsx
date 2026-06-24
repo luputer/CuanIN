@@ -244,7 +244,7 @@ export default function TransactionPage() {
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
                         <div className="flex min-h-[48px] items-center">
-                          <span className={`font-semibold ${item.type === "INCOME" ? "text-green-600" : "text-slate-800"}`}>
+                          <span className={`font-semibold ${item.type === "INCOME" ? "text-cuan-cyan" : "text-slate-800"}`}>
                             {item.type === "INCOME" ? "+" : ""} {formatCurrency(nominal)}
                           </span>
                         </div>
@@ -320,7 +320,7 @@ export default function TransactionPage() {
                       <span className="truncate pr-2">
                         {item.type === "INCOME" ? item.buyerName : (item.accountHolderName ?? "-")}
                       </span>
-                      <span className={`text-[12px] font-medium whitespace-nowrap ${item.type === "INCOME" ? "text-green-600" : "text-slate-800"}`}>
+                      <span className={`text-[12px] font-medium whitespace-nowrap ${item.type === "INCOME" ? "text-cuan-cyan" : "text-slate-800"}`}>
                         {typeLabel}
                       </span>
                     </div>
@@ -355,7 +355,7 @@ export default function TransactionPage() {
                     <div className="flex items-center justify-between pt-1 border-t border-slate-50 mt-2">
                       <div>
                         <span className="font-medium text-slate-400">Nominal: </span>
-                        <span className={`font-bold text-sm ${item.type === "INCOME" ? "text-green-600" : "text-slate-800"}`}>
+                        <span className={`font-bold text-sm ${item.type === "INCOME" ? "text-cuan-cyan" : "text-slate-800"}`}>
                           {item.type === "INCOME" ? "+" : ""} {formatCurrency(nominal)}
                         </span>
                       </div>

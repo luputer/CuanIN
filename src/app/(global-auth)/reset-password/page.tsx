@@ -8,9 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api } from "~/trpc/react";
-import HeaderLandingPage from "~/components/layout/header-landing";
 
-import Footer from "~/components/layout/footer";
 import Link from "next/link";
 
 const resetPasswordSchema = z
@@ -69,7 +67,7 @@ function ResetPasswordInner() {
 
   if (isTokenLoading) {
     return (
-      <div className="flex min-h-screen flex-col bg-white text-center justify-center">
+      <div className="flex flex-col items-center justify-center py-12 text-center">
         <div className="mx-auto size-12 border-4 border-cuan-blue/30 border-t-cuan-blue rounded-full animate-spin mb-4" />
         <p className="text-slate-600">Memvalidasi link...</p>
       </div>
@@ -78,94 +76,80 @@ function ResetPasswordInner() {
 
   if (!token || tokenData?.valid === false) {
     return (
-      <div className="flex min-h-screen flex-col bg-white">
-        <HeaderLandingPage buttonText="Login" buttonHref="/sign-in" />
-        <main className="flex flex-1 items-center justify-center px-4 py-12">
-          <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-10 text-center shadow-[0px_4px_0px_#000]">
-            <h1 className="mb-4 text-2xl font-bold text-red-600">Link Tidak Valid</h1>
-            <p className="mb-8 text-slate-600">
-              Link reset password Anda sudah tidak berlaku, kadaluwarsa, atau tidak lengkap. Silakan minta link baru.
-            </p>
-            <Link
-              href="/forgot-password"
-              className="inline-block rounded-lg border-2 border-slate-800 bg-cuan-blue px-8 py-3 text-lg font-semibold text-white shadow-[0px_2px_0px_#000] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
-            >
-              Minta Link Baru
-            </Link>
-          </div>
-        </main>
-        <Footer />
+      <div className="text-center">
+        <h1 className="mb-4 text-2xl font-bold text-red-600">Link Tidak Valid</h1>
+        <p className="mb-8 text-slate-600">
+          Link reset password Anda sudah tidak berlaku, kadaluwarsa, atau tidak lengkap. Silakan minta link baru.
+        </p>
+        <Link
+          href="/forgot-password"
+          className="inline-block rounded-lg border-2 border-slate-800 bg-cuan-blue px-8 py-3 text-lg font-semibold text-white shadow-[0px_2px_0px_#000] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
+        >
+          Minta Link Baru
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <HeaderLandingPage buttonText="Login" buttonHref="/sign-in" />
+    <>
+      <div className="pt-2 pb-8 text-center">
+        <h1 className="pb-3 text-3xl font-semibold text-cuan-blue">
+          Reset Password
+        </h1>
+        <p className="text-lg text-slate-800">
+          Silakan masukkan password baru Anda {displayEmail ? <>untuk akun <br /><span className="font-semibold">{displayEmail}</span></> : "untuk akun Anda"}
+        </p>
+      </div>
 
-      <main className="flex flex-1 items-center justify-center px-4 py-12">
-        <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-6 shadow-[0px_4px_0px_#000] sm:p-10">
-          <div className="pt-2 pb-8 text-center">
-            <h1 className="pb-3 text-3xl font-semibold text-cuan-blue">
-              Reset Password
-            </h1>
-            <p className="text-lg text-slate-800">
-              Silakan masukkan password baru Anda {displayEmail ? <>untuk akun <br /><span className="font-semibold">{displayEmail}</span></> : "untuk akun Anda"}
-            </p>
+      {isSuccess ? (
+        <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-6 text-center">
+          <div className="mb-3 flex justify-center text-green-500">
+            <CheckCircleIcon size={48} weight="fill" />
           </div>
-
-          {isSuccess ? (
-            <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-6 text-center">
-              <div className="mb-3 flex justify-center text-green-500">
-                <CheckCircleIcon size={48} weight="fill" />
-              </div>
-              <h2 className="mb-2 text-xl font-bold text-green-800">Password Diperbarui!</h2>
-              <p className="text-green-700">
-                Password Anda telah berhasil diubah. Anda akan dialihkan ke halaman login dalam beberapa detik.
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
-              {resetPasswordMutation.error && (
-                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-                  {resetPasswordMutation.error.message}
-                </div>
-              )}
-
-              {/* Password */}
-              <AuthInput
-                label="Password Baru"
-                type="password"
-                placeholder="Minimal 8 karakter"
-                icon={<LockKeyIcon size={24} />}
-                registration={register("password")}
-                error={errors.password}
-              />
-
-              {/* Confirm Password */}
-              <AuthInput
-                label="Konfirmasi Password Baru"
-                type="password"
-                placeholder="Ulangi Password Baru"
-                icon={<LockKeyIcon size={24} />}
-                registration={register("confirmPassword")}
-                error={errors.confirmPassword}
-              />
-
-              <button
-                type="submit"
-                disabled={resetPasswordMutation.isPending}
-                className="mt-4 w-full cursor-pointer rounded-lg border-2 border-slate-800 bg-cuan-blue py-2.5 text-lg font-semibold text-white shadow-[0px_2px_0px_#000] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_#000]"
-              >
-                {resetPasswordMutation.isPending ? "Memproses..." : "Simpan Password Baru"}
-              </button>
-            </form>
-          )}
+          <h2 className="mb-2 text-xl font-bold text-green-800">Password Diperbarui!</h2>
+          <p className="text-green-700">
+            Password Anda telah berhasil diubah. Anda akan dialihkan ke halaman login dalam beberapa detik.
+          </p>
         </div>
-      </main>
+      ) : (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+          {resetPasswordMutation.error && (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+              {resetPasswordMutation.error.message}
+            </div>
+          )}
 
-      <Footer />
-    </div>
+          {/* Password */}
+          <AuthInput
+            label="Password Baru"
+            type="password"
+            placeholder="Minimal 8 karakter"
+            icon={<LockKeyIcon size={24} />}
+            registration={register("password")}
+            error={errors.password}
+          />
+
+          {/* Confirm Password */}
+          <AuthInput
+            label="Konfirmasi Password Baru"
+            type="password"
+            placeholder="Ulangi Password Baru"
+            icon={<LockKeyIcon size={24} />}
+            registration={register("confirmPassword")}
+            error={errors.confirmPassword}
+          />
+
+          <button
+            type="submit"
+            disabled={resetPasswordMutation.isPending}
+            className="mt-4 w-full cursor-pointer rounded-lg border-2 border-slate-800 bg-cuan-blue py-2.5 text-lg font-semibold text-white shadow-[0px_2px_0px_#000] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_#000]"
+          >
+            {resetPasswordMutation.isPending ? "Memproses..." : "Simpan Password Baru"}
+          </button>
+        </form>
+      )}
+    </>
   );
 }
 

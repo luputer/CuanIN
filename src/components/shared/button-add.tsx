@@ -57,8 +57,8 @@ export default function ButtonAdd({
     responsive ? "px-3 sm:px-6" : "px-6",
     "border rounded-lg",
     variant === "primary"
-      ? "text-sm font-semibold text-white bg-cuan-cyan hover:bg-007EA5 border-slate-800 shadow-[1.5px_1.5px_0px_#000]"
-      : "text-sm font-semibold text-cuan-cyan bg-white border-cuan-cyan shadow-[1.5px_1.5px_0px_#00B3E9]",
+      ? "text-sm font-semibold text-white bg-cuan-blue/80 hover:bg-007EA5 border-slate-800 shadow-[1.5px_1.5px_0px_#000]"
+      : "text-sm font-semibold text-cuan-blue bg-white border-cuan-blue shadow-[1.5px_1.5px_0px_#506CBF]",
     "transition-all duration-200 ease-out",
     "hover:translate-x-px hover:translate-y-px hover:shadow-none",
     "disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0",

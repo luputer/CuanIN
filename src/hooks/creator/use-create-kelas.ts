@@ -43,7 +43,7 @@ export function useCreateKelas() {
             discountPrice: 0,
             image: "",
             images: [],
-            enablePortal: false,
+            enablePortal: true,
         },
     });
 

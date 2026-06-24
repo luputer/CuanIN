@@ -5,6 +5,8 @@ import { signIn, signOut } from "next-auth/react";
 import type { UseFormReturn } from "react-hook-form";
 import type { CheckoutFormValues, FormFieldData } from "~/hooks/checkout/use-checkout";
 import { toast } from "sonner";
+import { CaretDownIcon } from "@phosphor-icons/react";
+import { cn } from "~/lib/utils";
 
 type CheckoutFormProps = {
   form: UseFormReturn<CheckoutFormValues>;
@@ -17,7 +19,7 @@ type CheckoutFormProps = {
 };
 
 const inputClass = (err?: boolean) =>
-  `w-full px-4 py-2.5 rounded-xl border transition bg-white focus:outline-none
+  `w-full px-4 py-2.5 rounded-xl border transition bg-white focus:outline-none text-sm
         ${err
     ? "border-red-400 focus:border-red-500 bg-red-50"
     : "border-slate-300 focus:border-cuan-cyan focus:ring-1 focus:ring-cuan-cyan/20"
@@ -128,14 +130,20 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
         );
       case "DROPDOWN":
         return (
-          <select {...register(`custom.${field.id}` as any)} className={inputClass(!!fieldError)}>
-            <option value="">Pilih {field.label.toLowerCase()}</option>
-            {options.map((opt, _i) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              {...register(`custom.${field.id}` as any)}
+              className={cn(inputClass(!!fieldError), "appearance-none pr-10")}
+            >
+              <option value="">Pilih {field.label.toLowerCase()}</option>
+              {options.map((opt, _i) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            <CaretDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 size-4" />
+          </div>
         );
       default:
         return (

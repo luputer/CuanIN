@@ -33,7 +33,7 @@ export function TransactionStatsCard({
           <span className="text-sm font-semibold text-slate-800">Saldo saat ini</span>
         </div>
         <div className="flex flex-col gap-1 mb-2">
-          <h2 className="text-2xl font-semibold text-cuan-blue">
+          <h2 className="text-2xl font-medium text-slate-800">
             {isLoading && !data ? (
               <Skeleton className="h-8 w-40" />
             ) : (
@@ -41,8 +41,8 @@ export function TransactionStatsCard({
             )}
           </h2>
         </div>
-        <div className="flex items-center justify-between text-xs font-medium text-slate-700">
-          {isAdmin && <span>(Saldo yang dapat ditarik)</span>}
+        <div className="flex items-center justify-end text-xs font-medium text-slate-700">
+          {isAdmin && <span className="mr-auto">(Saldo yang dapat ditarik)</span>}
           {onWithdraw && (
             <ActionButton
               label="Tarik Saldo"
@@ -61,7 +61,7 @@ export function TransactionStatsCard({
           <span className="text-sm font-semibold text-slate-800">Total Penghasilan</span>
         </div>
         <div className="flex flex-col gap-1 mb-2">
-          <h3 className="text-2xl font-semibold text-cuan-blue">
+          <h3 className="text-2xl font-medium text-slate-800">
             {isLoading && !data ? (
               <Skeleton className="h-7 w-32" />
             ) : (
@@ -92,7 +92,7 @@ export function TransactionStatsCard({
           </span>
         </div>
         <div className="flex flex-col gap-1 mb-2">
-          <h3 className="text-2xl font-semibold text-cuan-blue">
+          <h3 className="text-2xl font-medium text-slate-800">
             {isLoading && !data ? (
               <Skeleton className="h-7 w-12" />
             ) : (

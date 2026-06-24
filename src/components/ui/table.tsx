@@ -37,7 +37,7 @@ export function Table({
 export function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
-      className={cn("bg-cuan-cyan/10", className)}
+      className={cn("bg-cuan-blue/10", className)}
       {...props}
     />
   )
@@ -60,7 +60,7 @@ export function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "py-6 px-6 text-slate-800 font-semibold whitespace-normal border-b border-cuan-cyan/30",
+        "py-6 px-6 text-slate-800 font-semibold whitespace-normal border-b border-cuan-blue/50",
         className
       )}
       {...props}
@@ -215,7 +215,7 @@ export function TablePagination({
                       <button
                         type="button"
                         onClick={() => onPageChange(p)}
-                        className={`size-7 rounded-[4px] flex items-center justify-center font-medium text-xs transition-colors ${page === p ? "bg-[#00B4D8] text-white hover:bg-[#009bc2]" : "text-slate-500 hover:bg-slate-100"}`}
+                        className={`size-7 rounded-[4px] flex items-center justify-center font-medium text-xs transition-colors ${page === p ? "bg-cuan-blue/80 text-white hover:bg-cuan-blue" : "text-slate-500 hover:bg-slate-100"}`}
                       >
                         {p}
                       </button>

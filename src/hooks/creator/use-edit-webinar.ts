@@ -43,7 +43,7 @@ export function useEditWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
             discountPrice: 0,
             image: "",
             images: [],
-            enablePortal: false,
+            enablePortal: true,
         },
     });
 

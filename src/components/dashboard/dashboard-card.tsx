@@ -31,7 +31,7 @@ export function DashboardCard({
                     {icon}
                 </div>
                 {showArrow && (
-                    <div className="flex items-center justify-center p-2 rounded-lg border border-slate-800 bg-cuan-cyan/20 text-slate-800 cursor-pointer hover:bg-cuan-cyan/30 active:translate-y-px active:shadow-none transition-all">
+                    <div className="flex items-center justify-center p-2 rounded-lg border border-slate-800 bg-white text-slate-800 cursor-pointer hover:bg-slate-100 active:translate-y-px active:shadow-none transition-all">
                         <ArrowUpRightIcon size={16} weight="bold" />
                     </div>
                 )}
@@ -40,7 +40,7 @@ export function DashboardCard({
             {/* TITLE & VALUE */}
             <div className="flex flex-col gap-1">
                 <p className="text-sm font-semibold text-slate-800">{title}</p>
-                <h2 className="text-2xl font-semibold text-cuan-blue">{value}</h2>
+                <h2 className="text-2xl font-semibold text-slate-800">{value}</h2>
             </div>
 
             {/* INFO */}

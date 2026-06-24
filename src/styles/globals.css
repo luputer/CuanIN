@@ -11,6 +11,12 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
+  accent-color: #008BB5;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: #008BB5 !important;
 }
 
 

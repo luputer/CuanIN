@@ -41,7 +41,7 @@ export function useCreateWebinar() {
             enableQuota: false,
             image: "",
             images: [],
-            enablePortal: false,
+            enablePortal: true,
         },
     });
 

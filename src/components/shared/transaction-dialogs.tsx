@@ -307,7 +307,7 @@ export function TransactionDetailDialog({
                     <DialogHeader className="flex flex-row justify-between items-center text-left pr-4 pl-6 py-4">
                         <DialogTitle className="text-lg">Detail Transaksi</DialogTitle>
                         <DialogClose asChild>
-                            <button className="text-slate-300 hover:text-cuan-cyan transition-colors p-1 cursor-pointer">
+                            <button className="text-slate-300 hover:text-cuan-blue transition-colors p-1 cursor-pointer">
                                 <XIcon size={20} weight="bold" />
                             </button>
                         </DialogClose>
@@ -372,7 +372,7 @@ export function TransactionDetailDialog({
                             </div>
                             <div className="flex justify-between text-sm text-slate-600">
                                 <span>Fee Platform (2%)</span>
-                                <span className="font-medium text-green-600">+{formatCurrency(Number(selectedTx.feeAmount ?? 0))}</span>
+                                <span className="font-medium text-cuan-cyan">+{formatCurrency(Number(selectedTx.feeAmount ?? 0))}</span>
                             </div>
                             <div className="flex justify-between text-sm text-slate-600">
                                 <span>Biaya Transfer Bank</span>
@@ -418,7 +418,7 @@ export function TransactionDetailDialog({
                 <DialogHeader className="flex flex-row justify-between items-center text-left pr-4 pl-6 py-4">
                     <DialogTitle className="text-lg">Detail Transaksi</DialogTitle>
                     <DialogClose asChild>
-                        <button className="text-slate-300 hover:text-cuan-cyan transition-colors p-1 cursor-pointer">
+                        <button className="text-slate-300 hover:text-cuan-blue transition-colors p-1 cursor-pointer">
                             <XIcon size={20} weight="bold" />
                         </button>
                     </DialogClose>
@@ -507,7 +507,7 @@ export function TransactionDetailDialog({
                                 </div>
                                 <div className="flex justify-between border-t border-dashed border-slate-200 pt-3 mt-1 font-bold text-[15px] text-slate-800">
                                     <span>Total Diterima</span>
-                                    <span className="text-green-600">{formatCurrency(Number(selectedTx.amount))}</span>
+                                    <span className="text-cuan-cyan">{formatCurrency(Number(selectedTx.amount))}</span>
                                 </div>
                             </>
                         ) : (
@@ -589,7 +589,7 @@ export function ConfirmPaidDialog({ open, onOpenChange, confirmTx, onConfirm, is
                         </div>
                         <div className="flex justify-between border-t border-slate-200 pt-2">
                             <span className="font-bold text-slate-800 text-slate-600">Total Ditransfer</span>
-                            <span className="text-green-600 font-semibold text-md">
+                            <span className="text-cuan-cyan font-semibold text-md">
                                 {formatCurrency(Number(confirmTx.amount) - Number(confirmTx.feeAmount ?? 0) - 4000)}
                             </span>
                         </div>

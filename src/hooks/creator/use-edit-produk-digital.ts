@@ -42,7 +42,7 @@ export function useEditProdukDigital({ id, isEdit = false }: UseProdukDigitalKel
             vouchers: [],
             enableDiscount: false,
             discountPrice: 0,
-            enablePortal: false,
+            enablePortal: true,
             image: "",
             images: [],
         },

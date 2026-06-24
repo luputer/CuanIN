@@ -34,7 +34,7 @@ export function useCreateProdukDigital() {
             vouchers: [],
             enableDiscount: false,
             discountPrice: 0,
-            enablePortal: false,
+            enablePortal: true,
             image: "",
             images: [],
         },
@@ -70,9 +70,24 @@ export function useCreateProdukDigital() {
         }
     };
 
+    const saveFormFields = api.formFields.save.useMutation();
+
     const createMutation = api.products.create.useMutation({
         onSuccess: (product) => {
             void utils.products.getAll.invalidate();
+            if (customFields.length > 0) {
+                saveFormFields.mutate({
+                    productId: product.id,
+                    fields: customFields.map((f, i) => ({
+                        id: f.id,
+                        label: f.label,
+                        type: f.type,
+                        options: f.options || [],
+                        required: f.required,
+                        order: i,
+                    })),
+                });
+            }
             toast.success("Produk Digital berhasil dibuat");
             setCreatedProduct({
                 name: product.name,

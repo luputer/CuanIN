@@ -45,7 +45,7 @@ export function useEditKelas({ id, isEdit = false }: UseEditKelasProps = {}) {
             discountPrice: 0,
             image: "",
             images: [],
-            enablePortal: false,
+            enablePortal: true,
         },
     });
 

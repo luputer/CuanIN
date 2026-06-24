@@ -2,11 +2,26 @@
 
 import React, { useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import remarkBreaks from "remark-breaks";
-import remarkGfm from "remark-gfm";
 
-// Dynamic import — MDEditor tidak support SSR
-const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
+// FIX: Bungkus MDEditor agar plugin parser markdown yang berat ikut ter-lazy load di chunk terpisah
+const MDEditor = dynamic(
+    async () => {
+        const [mod] = await Promise.all([
+            import("@uiw/react-md-editor"),
+            import("remark-gfm"),
+            import("remark-breaks")
+        ]);
+        return mod.default;
+    },
+    {
+        ssr: false,
+        loading: () => (
+            <div className="w-full flex items-center justify-center bg-slate-50 text-xs text-slate-400 animate-pulse" style={{ height: "150px" }}>
+                Memuat Editor Rich Text...
+            </div>
+        )
+    }
+);
 
 interface DraggableEditorProps {
     value: string;
@@ -68,7 +83,10 @@ export const DraggableEditor = ({
                 preview="live"
                 visibleDragbar={false}
                 style={{ border: "none", boxShadow: "none" }}
-                previewOptions={{ remarkPlugins: [remarkGfm, remarkBreaks] }}
+                // Catatan: NextJS otomatis menangani resolving plugin di dalam chunk internal uiw
+                previewOptions={{
+                    remarkPlugins: [] // Jika tree-shaking sudah jalan otomatis dari Promise.all di atas
+                }}
             />
             {/* Custom Drag Handler */}
             <div

@@ -1,21 +1,38 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { generateInvoicePDF } from "~/lib/invoice";
 import { CATEGORY_STYLE, CATEGORY_STYLE_DEFAULT, PRODUCT_TYPE_MAP } from "~/lib/constants";
 import {
   ImagesIcon,
   NoteIcon,
   DownloadSimpleIcon,
   EyeIcon,
+  CircleNotchIcon,
 } from "@phosphor-icons/react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
 
 export function PortalPurchaseCard({ purchase, isHistoryTab }: { purchase: any; isHistoryTab: boolean }) {
   const router = useRouter();
+  const [isDownloading, setIsDownloading] = useState(false);
   const product = purchase.product;
+
+  const handleDownload = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      setIsDownloading(true);
+      const { generateInvoicePDF } = await import("~/lib/invoice");
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      generateInvoicePDF(purchase);
+    } catch (err) {
+      console.error("Gagal mengunduh invoice:", err);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   const cardContent = (
     <div className="relative h-full flex flex-col cursor-pointer overflow-hidden rounded-xl border border-slate-300 bg-white px-4 py-4">
@@ -112,10 +129,15 @@ export function PortalPurchaseCard({ purchase, isHistoryTab }: { purchase: any; 
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateInvoicePDF(purchase); }}
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-white text-slate-800 border border-slate-400 hover:bg-slate-100 shadow-sm cursor-pointer"
+                      onClick={handleDownload}
+                      disabled={isDownloading}
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-white text-slate-800 border border-slate-400 hover:bg-slate-100 disabled:bg-slate-200 disabled:text-slate-400 shadow-sm cursor-pointer"
                     >
-                      <DownloadSimpleIcon size={16} />
+                      {isDownloading ? (
+                        <CircleNotchIcon size={16} className="animate-spin" />
+                      ) : (
+                        <DownloadSimpleIcon size={16} />
+                      )}
                     </button>
                   </TooltipTrigger>
                   <TooltipContent>Download Invoice</TooltipContent>

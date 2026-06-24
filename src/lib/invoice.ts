@@ -90,7 +90,7 @@ export function generateInvoicePDF(data: InvoiceData) {
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   doc.setTextColor(100, 116, 139); // slate-500
-  doc.text("Platform Produk Digital", margin, y + 14);
+  doc.text("Platform Penjualan Layanan Digital", margin, y + 14);
 
   doc.setFontSize(28);
   doc.setFont("helvetica", "bold");

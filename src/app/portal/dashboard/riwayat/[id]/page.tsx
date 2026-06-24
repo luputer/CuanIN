@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,9 +11,9 @@ import {
   ArrowLeftIcon,
   ArrowUpRightIcon,
   ShieldCheckIcon,
+  CircleNotchIcon,
 } from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
-import { generateInvoicePDF } from "~/lib/invoice";
 import { CATEGORY_STYLE, CATEGORY_STYLE_DEFAULT, PRODUCT_TYPE_MAP } from "~/lib/constants";
 
 const formatIDR = (val: number) =>
@@ -33,6 +34,20 @@ const formatDate = (date: Date | string) =>
 export default function PortalDetailRiwayatPage() {
   const { id } = useParams<{ id: string }>();
   const { data: purchase, isLoading } = api.purchases.getById.useQuery({ id: id! });
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    try {
+      setIsDownloading(true);
+      const { generateInvoicePDF } = await import("~/lib/invoice");
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      generateInvoicePDF(purchase as any);
+    } catch (err) {
+      console.error("Gagal mengunduh invoice:", err);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -229,11 +244,21 @@ export default function PortalDetailRiwayatPage() {
 
               {isCompleted && (
                 <button
-                  onClick={() => generateInvoicePDF(p)}
-                  className="mt-6 w-full cursor-pointer rounded-xl bg-cuan-cyan py-3 text-lg font-semibold text-white transition-colors duration-200 hover:bg-[#008BB5] flex items-center justify-center gap-2"
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                  className="mt-6 w-full cursor-pointer rounded-xl bg-cuan-cyan py-3 text-lg font-semibold text-white transition-colors duration-200 hover:bg-[#008BB5] disabled:bg-slate-400 flex items-center justify-center gap-2"
                 >
-                  <DownloadSimpleIcon size={20} />
-                  Download Invoice
+                  {isDownloading ? (
+                    <>
+                      <CircleNotchIcon size={20} className="animate-spin" />
+                      Menyusun PDF...
+                    </>
+                  ) : (
+                    <>
+                      <DownloadSimpleIcon size={20} />
+                      Download Invoice
+                    </>
+                  )}
                 </button>
               )}
 

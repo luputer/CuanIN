@@ -3,23 +3,33 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const notificationRouter = createTRPCRouter({
   list: protectedProcedure
-    .input(z.object({ limit: z.number().min(1).max(200).default(50) }).optional())
+    .input(
+      z.object({
+        page: z.number().min(1).default(1),
+        limit: z.number().min(1).max(100).default(20),
+      }).optional()
+    )
     .query(async ({ ctx, input }) => {
-      const limit = input?.limit ?? 50;
+      const page = input?.page ?? 1;
+      const limit = input?.limit ?? 20;
       const userId = ctx.session.user.id;
 
-      const [items, unreadCount] = await Promise.all([
+      const [items, total, unreadCount] = await Promise.all([
         ctx.db.notification.findMany({
           where: { userId },
           orderBy: { createdAt: "desc" },
+          skip: (page - 1) * limit,
           take: limit,
         }),
+        ctx.db.notification.count({ where: { userId } }),
         ctx.db.notification.count({
           where: { userId, isRead: false },
         }),
       ]);
 
-      return { items, unreadCount };
+      const totalPages = Math.ceil(total / limit);
+
+      return { items, unreadCount, total, totalPages, page, limit };
     }),
 
   markRead: protectedProcedure

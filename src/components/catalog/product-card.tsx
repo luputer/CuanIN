@@ -13,9 +13,7 @@ import { CATEGORY_STYLE, CATEGORY_STYLE_DEFAULT, getProductTypeLabel } from "~/l
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface CatalogProductCardProps {
-  /** slug kreator, dipakai untuk membangun href */
   creatorSlug: string;
-  /** slug / id produk */
   productSlug: string;
   id: string;
   name: string;

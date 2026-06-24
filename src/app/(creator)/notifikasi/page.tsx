@@ -7,6 +7,8 @@ import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { DetailHeader } from "~/components/shared/detail-header";
 import { Skeleton } from "~/components/ui/skeleton";
+import { useDataTable } from "~/hooks/shared/use-data-table";
+import { TablePagination } from "~/components/ui/table";
 
 function formatTimeAgo(date: Date | string) {
   const now = new Date();
@@ -23,7 +25,12 @@ function formatTimeAgo(date: Date | string) {
 }
 
 export default function NotifikasiPage() {
-  const { data, isLoading, refetch } = api.notification.list.useQuery();
+  const { page, setPage, limit, setLimit } = useDataTable<"createdAt">("createdAt", "desc");
+
+  const { data, isLoading, refetch } = api.notification.list.useQuery({
+    page: page || 1,
+    limit: limit || 20,
+  });
   const markReadMutation = api.notification.markRead.useMutation({
     onSuccess: () => refetch(),
   });
@@ -34,6 +41,8 @@ export default function NotifikasiPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const notifications = data?.items ?? [];
   const unreadCount = data?.unreadCount ?? 0;
+  const total = data?.total ?? 0;
+  const totalPages = data?.totalPages ?? 0;
 
   return (
     <div className="w-full max-w-7xl mx-auto">
@@ -127,6 +136,18 @@ export default function NotifikasiPage() {
             )}
           </div>
         </div>
+        {total > limit && (
+          <div className="mt-6 pt-4 border-t border-slate-200">
+            <TablePagination
+              page={page}
+              totalPages={totalPages}
+              limit={limit}
+              total={total}
+              onPageChange={setPage}
+              onLimitChange={setLimit}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

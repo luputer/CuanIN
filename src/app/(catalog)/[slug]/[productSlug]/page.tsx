@@ -90,6 +90,11 @@ function ProductDetailSkeleton() {
   );
 }
 
+
+const name = "asyaika"
+name = 10;
+
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 

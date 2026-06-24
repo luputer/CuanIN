@@ -243,7 +243,7 @@ export default function CreatorPortalPage() {
     try {
       setDownloadingId(purchase.id);
       const { generateInvoicePDF } = await import("~/lib/invoice");
-      await generateInvoicePDF(purchase);
+      generateInvoicePDF(purchase);
     } catch (err) {
       console.error("Gagal mengunduh invoice:", err);
     } finally {

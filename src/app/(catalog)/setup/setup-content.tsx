@@ -182,7 +182,7 @@ export function CatalogSetupContent() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={isPending || slug.length < 3 || slugAvailable === false || isCheckingSlug}
-                    className="w-full mt-4 cursor-pointer rounded-lg border-2 border-slate-800 bg-yellow-200 py-3 text-base font-semibold text-slate-800 shadow-[0px_2px_0px_#000] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_#000] flex items-center justify-center"
+                    className="w-full mt-4 cursor-pointer rounded-lg border-2 border-slate-800 bg-cuan-blue py-3 text-base font-semibold text-white shadow-[0px_2px_0px_#000] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_#000] flex items-center justify-center"
                 >
                     {isPending ? (
                         <>

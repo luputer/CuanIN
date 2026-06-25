@@ -193,7 +193,8 @@ model Catalog {
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
   lastSlugUpdatedAt DateTime?
-  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slugChangeCount   Int           @default(0)
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   views     CatalogView[]
 }
 

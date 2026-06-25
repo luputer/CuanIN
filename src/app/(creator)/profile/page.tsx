@@ -334,6 +334,9 @@ export default function ProfilePage() {
                                         cuanin.id/{slug}
                                     </a>
                                 )}
+                                <p className="mt-1.5 text-xs text-gray-500">
+                                    Link hanya bisa diganti maksimal 2 kali seminggu.
+                                </p>
                             </FormRow>
                         </div>
 

@@ -55,7 +55,7 @@ export const profileRouter = createTRPCRouter({
       // Ambil current catalog untuk cek perubahan slug
       const currentCatalog = await ctx.db.catalog.findUnique({
         where: { userId: ctx.session.user.id },
-        select: { slug: true, lastSlugUpdatedAt: true },
+        select: { slug: true, lastSlugUpdatedAt: true, slugChangeCount: true },
       });
 
       // Validasi slug kalau diisi
@@ -76,16 +76,19 @@ export const profileRouter = createTRPCRouter({
           throw new Error("Link sudah dipakai orang lain, pilih link lain.");
         }
 
-        // Cek apakah slug berubah & sudah 7 hari sejak perubahan terakhir
+        // Cek 2x per minggu
         if (currentCatalog && currentCatalog.slug !== slug) {
-          const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-          if (currentCatalog.lastSlugUpdatedAt && currentCatalog.lastSlugUpdatedAt > sevenDaysAgo) {
-            const daysLeft = Math.ceil(
-              (currentCatalog.lastSlugUpdatedAt.getTime() + 7 * 24 * 60 * 60 * 1000 - Date.now()) /
-                (24 * 60 * 60 * 1000),
-            );
+          const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+          const lastChange = currentCatalog.lastSlugUpdatedAt;
+          const changeCount = currentCatalog.slugChangeCount ?? 0;
+
+          if (lastChange && lastChange < weekAgo) {
+            // reset count kalo udah lewat seminggu
+          } else if (changeCount >= 2) {
+            const nextReset = new Date((lastChange ?? new Date()).getTime() + 7 * 24 * 60 * 60 * 1000);
+            const daysLeft = Math.ceil((nextReset.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
             throw new Error(
-              `Link toko hanya bisa diganti 1 minggu sekali. Coba lagi ${daysLeft} hari lagi.`,
+              `Link toko maksimal diganti 2 kali seminggu. Coba lagi ${daysLeft} hari lagi.`,
             );
           }
         }
@@ -125,7 +128,16 @@ export const profileRouter = createTRPCRouter({
                 ...(slug
                   ? {
                       slug,
-                      lastSlugUpdatedAt: currentCatalog?.slug !== slug ? new Date() : undefined,
+                      ...(currentCatalog?.slug !== slug
+                        ? {
+                            lastSlugUpdatedAt: new Date(),
+                            slugChangeCount:
+                              currentCatalog?.lastSlugUpdatedAt &&
+                              currentCatalog.lastSlugUpdatedAt < new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+                                ? 1
+                                : (currentCatalog?.slugChangeCount ?? 0) + 1,
+                          }
+                        : {}),
                     }
                   : {}),
               },

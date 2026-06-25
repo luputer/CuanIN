@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import Button from "~/components/shared/buttonlogin";
-import Image from "next/image";
 
 export default function HeaderLogin() {
     const pathname = usePathname();
@@ -25,7 +24,7 @@ export default function HeaderLogin() {
                 {/* Logo */}
                 <div className="flex items-center">
                     <Link href="/">
-                        <Image
+                        <img
                             src="/logo-cuanin.svg"
                             alt="CuanIN"
                             width={120}

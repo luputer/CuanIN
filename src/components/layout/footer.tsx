@@ -17,6 +17,7 @@ export default function Footer() {
                                     alt="CuanIN"
                                     width={100}
                                     height={30}
+                                    priority
                                     className="h-10 w-auto object-contain"
                                 />
                             </Link>
@@ -48,7 +49,7 @@ export default function Footer() {
             </div>
             <div className="py-6 md:py-8 bg-[#221F44] border-t border-white/20 text-sm text-white">
                 <div className="max-w-6xl mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <span>&copy; {new Date().getFullYear()} CuanIN. All rights reserved.</span>
+                    <span>&copy; 2026 CuanIN. All rights reserved.</span>
                     <span>Developed by CuanIN Team</span>
                 </div>
             </div>

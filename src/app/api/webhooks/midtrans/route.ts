@@ -43,10 +43,8 @@ export async function POST(req: NextRequest) {
 
     }
 
-
-    const formattedAmount = Number(gross_amount).toFixed(0);
     // ─── VERIFY SIGNATURE ─────────────────────────────────────────────────────
-    const verifyString = order_id + status_code + formattedAmount + (env.MIDTRANS_SERVER_KEY ?? "");
+    const verifyString = order_id + status_code + gross_amount + (env.MIDTRANS_SERVER_KEY ?? "");
     const expectedSignature = crypto
       .createHash("sha512")
       .update(verifyString)

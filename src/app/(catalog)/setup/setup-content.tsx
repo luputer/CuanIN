@@ -95,10 +95,10 @@ export function CatalogSetupContent() {
             <div className="w-full max-w-md space-y-8">
                 {/* Header */}
                 <div className="text-center">
-                    <div className="inline-flex items-center justify-center size-20 bg-cuan-cyan/10 rounded-full mb-4">
-                        <StorefrontIcon className="size-10 text-cuan-cyan" />
+                    <div className="inline-flex items-center justify-center size-20 bg-cuan-blue/10 rounded-full mb-4">
+                        <StorefrontIcon className="size-10 text-cuan-blue" />
                     </div>
-                    <h1 className="pb-3 text-2xl font-semibold text-cuan-cyan">Buat Halaman Katalog</h1>
+                    <h1 className="pb-3 text-2xl font-semibold text-cuan-blue">Buat Halaman Katalog</h1>
                     <p className="text-md text-slate-800">
                         Bagikan semua produkmu dalam satu halaman yang bisa diakses siapa saja.
                     </p>

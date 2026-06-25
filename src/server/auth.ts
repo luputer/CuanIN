@@ -19,6 +19,7 @@ declare module "next-auth" {
       statusPayment: string;
       isProfileComplete: boolean;
       phone: string | null;
+      hasCatalog: boolean;
     } & DefaultSession["user"];
   }
 
@@ -28,6 +29,7 @@ declare module "next-auth" {
     statusPayment: string;
     isProfileComplete: boolean;
     phone: string | null;
+    hasCatalog: boolean;
   }
 }
 
@@ -39,6 +41,7 @@ declare module "next-auth/jwt" {
     statusPayment: string;
     isProfileComplete: boolean;
     phone: string | null;
+    hasCatalog: boolean;
   }
 }
 
@@ -105,6 +108,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           statusPayment: user.statusPayment,
           isProfileComplete: !!user.phoneNumber,
           phone: user.phoneNumber,
+          hasCatalog: false, // akan diisi di jwt callback
         };
       },
     }),
@@ -127,7 +131,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!dbUser || dbUser.role === "USER") {
           user.role = "USER";
         }
-
         return true;
       }
 
@@ -151,7 +154,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.statusPayment = user.statusPayment;
         token.isProfileComplete = user.isProfileComplete;
 
-        // Ensure phone is loaded from DB (Google doesn't provide it)
+        // Phone
         if (user.phone) {
           token.phone = user.phone;
         } else {
@@ -161,6 +164,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           });
           token.phone = dbUser?.phoneNumber ?? null;
         }
+
+        // Cek catalog saat pertama login
+        const catalog = await db.catalog.findUnique({
+          where: { userId: user.id },
+          select: { slug: true },
+        });
+        token.hasCatalog = !!catalog;
       }
 
       if (trigger === "update" && token.sub) {
@@ -181,9 +191,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           token.isProfileComplete = !!dbUser.phoneNumber;
           token.phone = dbUser.phoneNumber;
         }
+
+        // Update hasCatalog dari DB saat trigger update
+        const catalog = await db.catalog.findUnique({
+          where: { userId: token.sub },
+          select: { slug: true },
+        });
+        token.hasCatalog = !!catalog;
       }
 
       return token;
+    },
+    session({ session, token }) {
+      if (token && session.user) {
+        session.user.id = token.id;
+        session.user.role = token.role;
+        session.user.status = token.status;
+        session.user.statusPayment = token.statusPayment;
+        session.user.isProfileComplete = token.isProfileComplete;
+        session.user.phone = token.phone;
+        session.user.hasCatalog = token.hasCatalog;
+      }
+      return session;
     },
   },
 });

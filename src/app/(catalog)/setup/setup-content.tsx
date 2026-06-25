@@ -6,10 +6,12 @@ import { CheckCircleIcon, LinkIcon, SpinnerIcon, StorefrontIcon, ArrowRightIcon,
 import { Label } from "~/components/ui/label";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 export function CatalogSetupContent() {
     const router = useRouter();
     const utils = api.useUtils();
+    const { update } = useSession();
 
     const { data: existing, isLoading: isLoadingCatalog } = api.catalog.getMine.useQuery();
     const { data: profile, isLoading: isLoadingProfile } = api.profile.get.useQuery();
@@ -23,13 +25,6 @@ export function CatalogSetupContent() {
         return () => clearTimeout(timer);
     }, [slug]);
 
-    // Pre-fill slug dari catalog, bio dari profile
-    useEffect(() => {
-        if (existing?.slug) {
-            setSlug(existing.slug);
-            setDebouncedSlug(existing.slug);
-        }
-    }, [existing]);
 
     useEffect(() => {
         if (profile?.bio) {
@@ -63,9 +58,11 @@ export function CatalogSetupContent() {
             });
 
             await utils.catalog.getMine.invalidate();
-            toast.success("Catalog berhasil disimpan!");
-            // router.push(`/${slug.trim()}`);
-            router.push("/dashboard");
+            toast.success("Catalog berhasil dibuat!");
+
+            await update({ hasCatalog: true });
+            router.push(`/${slug.trim()}`);
+            // router.push("/dashboard");
         } catch (err) {
             toast.error(err instanceof Error ? err.message : "Terjadi kesalahan");
         }

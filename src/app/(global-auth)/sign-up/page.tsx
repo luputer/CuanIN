@@ -118,7 +118,7 @@ function SignupPageInner() {
           icon={<UserIcon size={24} />}
           registration={register("name")}
           error={errors.name}
-          readOnly={fromGoogle && !!googleName}
+        // readOnly={fromGoogle && !!googleName}
         />
 
         {/* Email */}

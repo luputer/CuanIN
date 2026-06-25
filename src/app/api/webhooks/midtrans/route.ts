@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
     if (!signature_key || !order_id) {
       console.log("[Midtrans Webhook] Ping detected (no signature or order_id)");
       return NextResponse.json({ message: "Ping received" }, { status: 200 });
+
     }
 
     // ─── VERIFY SIGNATURE ─────────────────────────────────────────────────────

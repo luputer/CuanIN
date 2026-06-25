@@ -107,6 +107,22 @@ export const withdrawalsRouter = createTRPCRouter({
           console.error("❌ Gagal kirim notifikasi:", notifError);
         }
 
+        // Kirim notifikasi ke semua admin
+        try {
+          const admins = await tx.user.findMany({ where: { role: "ADMIN" } });
+          for (const admin of admins) {
+            await createNotification(tx, {
+              userId: admin.id,
+              type: "WITHDRAWAL",
+              title: "Penarikan Saldo Baru",
+              message: `${ctx.session.user.name ?? "Kreator"} mengajukan penarikan saldo Rp${payoutAmount.toLocaleString("id-ID")} ke ${bank.name}.`,
+              refId: newWithdrawal.id,
+            });
+          }
+        } catch (notifError) {
+          console.error("❌ Gagal kirim notifikasi admin:", notifError);
+        }
+
         try {
           await sendWithdrawalPendingEmail({
             email: ctx.session.user.email ?? "",

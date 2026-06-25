@@ -62,7 +62,7 @@ export default function ParticipantDetailPage() {
         />
 
         {/* User Information */}
-        <div className="overflow-hidden rounded-xl border border-slate-800 bg-cuan-cyan/10">
+        <div className="overflow-hidden rounded-xl border border-slate-800 bg-white">
           <div className="px-4 py-6 sm:px-10 sm:py-8">
             <SectionHeader title="Informasi User" />
 

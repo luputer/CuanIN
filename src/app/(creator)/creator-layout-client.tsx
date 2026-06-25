@@ -4,31 +4,11 @@ import HeaderKreator from "~/components/creator/header";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { api } from "~/trpc/react";
 
 export default function CreatorLayoutClient({ children }: { children: React.ReactNode }) {
-    const router = useRouter();
-    const { data: catalog, isLoading: isCatalogLoading } = api.catalog.getMine.useQuery();
 
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-    const [isReady, setIsReady] = useState(false);
-
-    // ── Semua useEffect di atas conditional return ──
-
-    useEffect(() => {
-        if (isCatalogLoading) return;
-
-        // undefined = query belum resolve, skip dulu
-        if (catalog === undefined) return;
-
-        if (catalog === null) {
-            router.replace("/setup");
-        } else {
-            setIsReady(true);
-        }
-    }, [catalog, isCatalogLoading, router]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -38,10 +18,6 @@ export default function CreatorLayoutClient({ children }: { children: React.Reac
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
-
-    // ── Conditional return setelah semua hooks ──
-
-    if (!isReady) return null;
 
     const handleHeaderMenuClick = () => {
         if (window.innerWidth < 768) {

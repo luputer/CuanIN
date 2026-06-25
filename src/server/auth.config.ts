@@ -13,6 +13,7 @@ declare module "next-auth" {
             statusPayment: string;
             isProfileComplete: boolean;
             phone: string | null;
+            hasCatalog: boolean;
         } & DefaultSession["user"];
     }
 
@@ -22,6 +23,7 @@ declare module "next-auth" {
         statusPayment: string;
         isProfileComplete: boolean;
         phone: string | null;
+        hasCatalog: boolean;
     }
 }
 
@@ -33,12 +35,10 @@ declare module "next-auth/jwt" {
         statusPayment: string;
         isProfileComplete: boolean;
         phone: string | null;
+        hasCatalog: boolean;
     }
 }
 
-
-
-// Ini adalah konfigurasi yang aman untuk Edge Runtime (Middleware)
 export const authConfig = {
     session: {
         strategy: "jwt",
@@ -60,6 +60,7 @@ export const authConfig = {
         authorized({ auth, request: { nextUrl } }) {
             const isLoggedIn = !!auth;
             const role = auth?.user?.role;
+            const hasCatalog = auth?.user?.hasCatalog;
 
             const isAuthPage =
                 nextUrl.pathname.startsWith("/sign-in") ||
@@ -67,8 +68,17 @@ export const authConfig = {
                 nextUrl.pathname === "/";
 
             const isAdminPage = nextUrl.pathname.startsWith("/admin");
+            const isSetupPage = nextUrl.pathname.startsWith("/setup");
+            const isDashboardPage =
+                nextUrl.pathname.startsWith("/dashboard") ||
+                nextUrl.pathname.startsWith("/profile") ||
+                nextUrl.pathname.startsWith("/webinar") ||
+                nextUrl.pathname.startsWith("/kelas") ||
+                nextUrl.pathname.startsWith("/produk-digital") ||
+                nextUrl.pathname.startsWith("/peserta") ||
+                nextUrl.pathname.startsWith("/pembayaran");
 
-            // 1. If trying to access public auth/landing pages while logged in
+            // 1. Auth pages saat sudah login
             if (isAuthPage && isLoggedIn) {
                 if (role === "ADMIN") {
                     return Response.redirect(new URL("/admin/dashboard", nextUrl));
@@ -76,7 +86,7 @@ export const authConfig = {
                 return Response.redirect(new URL("/dashboard", nextUrl));
             }
 
-            // 2. Protect Admin Pages
+            // 2. Protect admin pages
             if (isAdminPage) {
                 if (!isLoggedIn) return false;
                 if (role !== "ADMIN") {
@@ -84,16 +94,24 @@ export const authConfig = {
                 }
             }
 
-            // 3. Protect Creator/User Pages (dashboard, webinar, etc)
-            // If they are logged in as ADMIN, they shouldn't necessarily be blocked from these,
-            // but usually they go to admin dashboard.
+            // 3. Admin ga boleh ke creator pages
             if (!isAuthPage && !isAdminPage && isLoggedIn && role === "ADMIN") {
                 return Response.redirect(new URL("/admin/dashboard", nextUrl));
             }
 
-            // 4. If trying to access any OTHER matched path while logged out, block access
+            // 4. Belum login → block
             if (!isAuthPage && !isLoggedIn) {
-                return false; // Automatically redirects to signIn page
+                return false;
+            }
+
+            // 5. Belum punya catalog → wajib setup dulu
+            if (isDashboardPage && isLoggedIn && role !== "ADMIN" && hasCatalog === false) {
+                return Response.redirect(new URL("/setup", nextUrl));
+            }
+
+            // 6. Sudah punya catalog → ga perlu ke /setup lagi
+            if (isSetupPage && isLoggedIn && hasCatalog === true) {
+                return Response.redirect(new URL("/dashboard", nextUrl));
             }
 
             return true;
@@ -107,6 +125,7 @@ export const authConfig = {
                 token.statusPayment = user.statusPayment;
                 token.isProfileComplete = user.isProfileComplete;
                 token.phone = user.phone;
+                token.hasCatalog = user.hasCatalog; // ← dari authorize()
             }
             if (trigger === "update" && session) {
                 return { ...token, ...(session as Partial<JWT>) };
@@ -121,6 +140,7 @@ export const authConfig = {
                 session.user.statusPayment = token.statusPayment;
                 session.user.isProfileComplete = token.isProfileComplete;
                 session.user.phone = token.phone;
+                session.user.hasCatalog = token.hasCatalog; // ← tambah
             }
             return session;
         },

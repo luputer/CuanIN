@@ -8,7 +8,7 @@ import {
 import { AuthInput, GoogleAuthButton, AuthDivider } from "~/components/auth/auth-components";
 import { Suspense, useState } from "react";
 import { signIn, getSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { LoginFormData } from "~/lib/validation";
@@ -19,7 +19,6 @@ function LoginPageInner() {
   const searchParams = useSearchParams();
   const verified = searchParams.get("verified") === "1";
   const [serverError, setServerError] = useState<string | null>(null);
-  const router = useRouter();
 
   const {
     register,
@@ -44,25 +43,11 @@ function LoginPageInner() {
         setServerError("Email atau password salah. Silakan coba lagi.");
       }
     } else {
-      // Get session to check role
-      // const session = await getSession();
-      // if (session?.user?.role === "ADMIN") {
-      //   window.location.href = "/admin/dashboard";
-      // } else {
-      //   const res = await fetch("/api/trpc/catalog.getMine?input=%7B%7D", {
-      //     headers: { "Content-Type": "application/json" },
-      //   });
-      //   const json = await res.json();
-      //   // console.log("catalog response:", JSON.stringify(json)); // ← liat di console
-      //   const hasCatalog = !!json?.result?.data?.slug;
-      //   window.location.href = hasCatalog ? "/dashboard" : "/setup";
-      // }
-
       const session = await getSession();
       if (session?.user?.role === "ADMIN") {
-        router.push("/admin/dashboard");
+        window.location.href = "/admin/dashboard";
       } else {
-        router.push("/dashboard"); // layout akan redirect ke /setup kalau belum ada catalog
+        window.location.href = "/dashboard";
       }
     }
   };

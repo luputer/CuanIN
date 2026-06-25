@@ -42,7 +42,7 @@ function SignupPageInner() {
     defaultValues: { name: googleName, email: googleEmail },
   });
 
-  // Handle auto-redirect if already logged in (extra safety layer on top of middleware)
+  // Handle auto-redirect if already logged in (extra safety layer on top of middleware) -> next ini bisa di hapus
   useEffect(() => {
     if (status === "authenticated" && !fromGoogle) {
       router.push("/dashboard");

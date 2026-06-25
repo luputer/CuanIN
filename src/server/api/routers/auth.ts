@@ -62,7 +62,7 @@ export const authRouter = createTRPCRouter({
         else {
           throw new TRPCError({
             code: "CONFLICT",
-            message: "Email sudah terdaftar",
+            message: "Email sudah terdaftar, silakan login",
           });
         }
       } else {

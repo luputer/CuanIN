@@ -18,7 +18,10 @@ import { loginSchema } from "~/lib/validation";
 function LoginPageInner() {
   const searchParams = useSearchParams();
   const verified = searchParams.get("verified") === "1";
-  const [serverError, setServerError] = useState<string | null>(null);
+  const notVerified = searchParams.get("error") === "email_not_verified";
+  const [serverError, setServerError] = useState<string | null>(
+    notVerified ? "Email belum diverifikasi. Silakan daftar lagi dan masukkan kode OTP" : null
+  );
 
   const {
     register,

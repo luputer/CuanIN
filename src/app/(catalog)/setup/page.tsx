@@ -3,7 +3,7 @@ import { CatalogSetupContent } from "./setup-content";
 
 export const metadata: Metadata = {
     title: "Setup Katalog - CuanIN",
-    description: "Bagikan semua produkmu dalam satu halaman yang bisa diakses siapa saja.",
+    description: "Buat halaman katalog untuk menampilkan produkmu.",
 };
 
 export default function CatalogSetupPage() {

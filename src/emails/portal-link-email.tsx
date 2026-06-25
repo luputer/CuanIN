@@ -60,7 +60,7 @@ export function PortalLinkEmail({
             Atau salin dan tempel link berikut ke browser kamu:
           </Text>
           <Text style={linkText}>
-            <Link href={portalUrl} style={{ color: "#0891b2" }}>
+            <Link href={portalUrl} style={{ color: "#00B3E9" }}>
               {portalUrl}
             </Link>
           </Text>

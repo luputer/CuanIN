@@ -124,7 +124,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       const dbUser = await db.user.findUnique({
         where: { email: user.email! },
-        select: { id: true, phoneNumber: true, role: true },
+        select: { id: true, phoneNumber: true, role: true, emailVerified: true },
       });
 
       if (isCheckoutSignIn) {
@@ -141,6 +141,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           fromGoogle: "1",
         });
         return `/sign-up?${params.toString()}`;
+      }
+
+      if (!dbUser.emailVerified) {
+        return `/verify-otp?email=${encodeURIComponent(user.email!)}&from=sso`;
       }
 
       return true;

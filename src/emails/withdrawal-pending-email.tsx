@@ -51,7 +51,7 @@ export function WithdrawalPendingEmail({
                     </Text>
                     <Section style={detailBox}>
                         <Text style={detailLabel}>Jumlah Diterima</Text>
-                        <Text style={{ ...detailValue, color: "#0891b2", fontWeight: "bold" }}>{formattedAmount}</Text>
+                        <Text style={{ ...detailValue, color: "#506CBF", fontWeight: "bold" }}>{formattedAmount}</Text>
                         <Text style={detailLabel}>Bank</Text>
                         <Text style={detailValue}>{bankName}</Text>
                         <Text style={detailLabel}>No. Rekening</Text>

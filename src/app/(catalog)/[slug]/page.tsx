@@ -185,7 +185,7 @@ export default function CatalogSlugPage() {
         <div className="relative z-10 -mt-12 flex flex-col items-center text-center md:-mt-16">
           <Avatar className="h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-white p-1 shadow-md md:h-32 md:w-32">
             <AvatarImage src={creator.image ?? ""} alt={creator.name ?? ""} />
-            <AvatarFallback className="bg-yellow-200 text-2xl font-bold text-slate-800">
+            <AvatarFallback className="bg-cuan-cyan/10 text-2xl font-bold text-cuan-cyan">
               {initials}
             </AvatarFallback>
           </Avatar>
@@ -215,8 +215,21 @@ export default function CatalogSlugPage() {
           </div>
         </div>
 
+        {/* ── Back to Dashboard (creator only) ── */}
+        {session?.user?.role === "CREATOR" && (
+          <div className="mt-8">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 transition-colors"
+            >
+              <ArrowLeftIcon className="size-4" />
+              <span>Kembali ke Dashboard</span>
+            </Link>
+          </div>
+        )}
+
         {/* ── Product Panel ── */}
-        <div className="mt-8 rounded-xl border border-slate-200 bg-white px-4 py-8 md:px-10 md:pt-10 md:pb-12 shadow-sm">
+        <div className="mt-4 rounded-xl border border-slate-200 bg-white px-4 py-8 md:px-10 md:pt-10 md:pb-12 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex w-full items-center gap-3 md:w-auto">
               <div className="w-full flex-1 md:w-104 md:flex-initial">
@@ -321,18 +334,6 @@ export default function CatalogSlugPage() {
           )}
         </div>
 
-        {/* ── Back to Dashboard (creator only) ── */}
-        {session?.user?.role === "CREATOR" && (
-          <div className="mt-12 flex justify-center border-t border-slate-200 pt-10">
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-2 rounded-full bg-slate-800 px-8 py-3 font-semibold text-white shadow-md transition-all hover:bg-slate-700"
-            >
-              <ArrowLeftIcon className="h-5 w-5" />
-              <span>Kembali ke Dashboard</span>
-            </Link>
-          </div>
-        )}
       </div>
     </div>
   );

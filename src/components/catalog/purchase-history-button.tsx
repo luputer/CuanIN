@@ -9,8 +9,8 @@ export function PurchaseHistoryButton() {
   const pathname = usePathname();
   // console.log("Current pathname:", pathname);
 
-  // Hide button on Portal page or Checkout pages
-  if (pathname === "/portal/dashboard" || pathname.startsWith("/portal/") || pathname.includes("/checkout")) {
+  // Hide button on Portal page, Checkout pages, or Setup page
+  if (pathname === "/portal/dashboard" || pathname.startsWith("/portal/") || pathname.includes("/checkout") || pathname === "/setup") {
     return null;
   }
 

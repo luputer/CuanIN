@@ -75,8 +75,8 @@ export function ProductAccessEmail({
                   <Text style={{ ...paragraph, fontSize: "13px", color: "#64748b" }}>
                     Atau akses langsung link produk:
                   </Text>
-                  <Text style={{ ...linkText, fontSize: "13px" }}>
-                    <Link href={productLink} style={{ color: "#64748b", wordBreak: "break-all" }}>{productLink}</Link>
+                  <Text style={linkText}>
+                    <Link href={productLink} style={linkText}>{productLink}</Link>
                   </Text>
                 </>
               )}
@@ -105,7 +105,7 @@ export function ProductAccessEmail({
                 {links.map((link, index) => (
                   <Text key={index} style={{ ...paragraph, margin: "4px 0" }}>
                     {index + 1}.{" "}
-                    <Link href={link} style={{ color: "#0891b2", wordBreak: "break-all" }}>
+                    <Link href={link} style={{ color: "#00B3E9", wordBreak: "break-all" }}>
                       {link}
                     </Link>
                   </Text>
@@ -116,7 +116,7 @@ export function ProductAccessEmail({
           {notes && (
             <>
               <Text style={heading}>Catatan Tambahan</Text>
-              <Text style={{ ...paragraph, backgroundColor: "#f1f5f9", padding: "16px", borderRadius: "8px", whiteSpace: "pre-wrap" }}>
+              <Text style={{ ...paragraph, backgroundColor: "#f8fafc", padding: "16px", borderRadius: "8px", whiteSpace: "pre-wrap" }}>
                 {notes}
               </Text>
             </>

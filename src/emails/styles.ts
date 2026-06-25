@@ -30,7 +30,7 @@ export const paragraph = {
 };
 
 export const button = {
-  backgroundColor: "#0891b2",
+  backgroundColor: "#506CBF",
   borderRadius: "6px",
   color: "#ffffff",
   display: "inline-block",
@@ -47,7 +47,7 @@ export const actionSection = {
 };
 
 export const linkText = {
-  color: "#0891b2",
+  color: "#00B3E9",
   fontSize: "14px",
   lineHeight: "22px",
   margin: "0 0 16px",
@@ -109,7 +109,7 @@ export const notesBox = {
 };
 
 export const notesTitle = {
-  color: "#0891b2",
+  color: "#506CBF",
   fontSize: "14px",
   fontWeight: "700",
   lineHeight: "20px",

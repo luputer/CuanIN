@@ -52,6 +52,12 @@ export const profileRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { name, phoneNumber, image, password, bio, banner, slug } = input;
 
+      // Ambil current catalog untuk cek perubahan slug
+      const currentCatalog = await ctx.db.catalog.findUnique({
+        where: { userId: ctx.session.user.id },
+        select: { slug: true, lastSlugUpdatedAt: true },
+      });
+
       // Validasi slug kalau diisi
       if (slug) {
         const slugRegex = /^[a-z0-9-]+$/;
@@ -68,6 +74,20 @@ export const profileRouter = createTRPCRouter({
         });
         if (existing) {
           throw new Error("Link sudah dipakai orang lain, pilih link lain.");
+        }
+
+        // Cek apakah slug berubah & sudah 7 hari sejak perubahan terakhir
+        if (currentCatalog && currentCatalog.slug !== slug) {
+          const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+          if (currentCatalog.lastSlugUpdatedAt && currentCatalog.lastSlugUpdatedAt > sevenDaysAgo) {
+            const daysLeft = Math.ceil(
+              (currentCatalog.lastSlugUpdatedAt.getTime() + 7 * 24 * 60 * 60 * 1000 - Date.now()) /
+                (24 * 60 * 60 * 1000),
+            );
+            throw new Error(
+              `Link toko hanya bisa diganti 1 minggu sekali. Coba lagi ${daysLeft} hari lagi.`,
+            );
+          }
         }
       }
 
@@ -101,7 +121,14 @@ export const profileRouter = createTRPCRouter({
           catalog: {
             upsert: {
               create: { slug: slug ?? `user-${Date.now()}` },
-              update: { ...(slug ? { slug } : {}) }, // ← update slug kalau ada
+              update: {
+                ...(slug
+                  ? {
+                      slug,
+                      lastSlugUpdatedAt: currentCatalog?.slug !== slug ? new Date() : undefined,
+                    }
+                  : {}),
+              },
             },
           },
         },

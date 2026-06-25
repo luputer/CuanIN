@@ -325,6 +325,15 @@ export default function ProfilePage() {
                                     placeholder="Masukkan link toko unik"
                                     prefix="cuanin.id/"
                                 />
+                                {slug && (
+                                    <a
+                                        href={`/${slug}`}
+                                        target="_blank"
+                                        className="mt-1.5 inline-flex items-center gap-1 text-sm text-cuan-cyan hover:underline"
+                                    >
+                                        cuanin.id/{slug}
+                                    </a>
+                                )}
                             </FormRow>
                         </div>
 

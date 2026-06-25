@@ -136,7 +136,7 @@ function SignupPageInner() {
         <AuthInput
           label="Nomor Telepon/HP"
           type="tel"
-          placeholder="08123456789"
+          placeholder="Masukkan No Telepon/HP Anda"
           icon={<PhoneIcon size={24} />}
           registration={register("phone")}
           error={errors.phone}

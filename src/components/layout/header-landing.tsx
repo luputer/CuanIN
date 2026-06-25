@@ -23,6 +23,7 @@ const NAV_LINKS = [
 export default function HeaderLandingPage({ buttonText, buttonHref }: HeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("");
+    const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -49,15 +50,21 @@ export default function HeaderLandingPage({ buttonText, buttonHref }: HeaderProp
             }
         };
 
-        window.addEventListener("scroll", handleScroll);
-        handleScroll(); // Set active section saat pertama kali mount
+        const handleScrollShrink = () => setScrolled(window.scrollY > 10);
 
-        return () => window.removeEventListener("scroll", handleScroll);
+        window.addEventListener("scroll", handleScroll);
+        window.addEventListener("scroll", handleScrollShrink, { passive: true });
+        handleScroll();
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+            window.removeEventListener("scroll", handleScrollShrink);
+        };
     }, []);
 
     return (
-        <header className="sticky top-0 z-[100] w-full bg-white border-b-2 border-slate-800 max-w-8xl mx-auto">
-            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-6">
+        <header className="sticky top-0 z-[100] w-full bg-white border-b-2 border-slate-800 max-w-8xl mx-auto transition-all duration-300">
+            <div className={`mx-auto flex max-w-7xl items-center justify-between px-4 transition-all duration-300 ${scrolled ? "py-3" : "py-6"}`}>
 
                 {/* Logo */}
                 <div className="flex items-center">
@@ -67,7 +74,7 @@ export default function HeaderLandingPage({ buttonText, buttonHref }: HeaderProp
                             alt="CuanIN"
                             width={120}
                             height={40}
-                            className="h-10 w-auto object-contain"
+                            className={`w-auto object-contain transition-all duration-300 ${scrolled ? "h-7" : "h-10"}`}
                         />
                     </Link>
                 </div>

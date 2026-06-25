@@ -8,6 +8,7 @@ import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 
+
 export function CatalogSetupContent() {
     const router = useRouter();
     const utils = api.useUtils();
@@ -47,10 +48,8 @@ export function CatalogSetupContent() {
         if (!slugAvailable) return toast.error("Slug sudah dipakai, pilih nama lain");
 
         try {
-            // Simpan slug ke catalog
             await upsertCatalog.mutateAsync({ slug: slug.trim() });
 
-            // Simpan bio ke profile (name wajib, ambil dari profile atau fallback)
             await updateProfile.mutateAsync({
                 name: profile?.name ?? "",
                 phoneNumber: profile?.phoneNumber ?? "",
@@ -61,8 +60,7 @@ export function CatalogSetupContent() {
             toast.success("Catalog berhasil dibuat!");
 
             await update({ hasCatalog: true });
-            router.push(`/${slug.trim()}`);
-            // router.push("/dashboard");
+            router.push("/dashboard");
         } catch (err) {
             toast.error(err instanceof Error ? err.message : "Terjadi kesalahan");
         }
@@ -75,8 +73,8 @@ export function CatalogSetupContent() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <SpinnerIcon className="size-8 animate-spin text-blue-400" />
+            <div className="min-h-screen bg-white flex items-center justify-center px-4">
+                <SpinnerIcon className="size-10 animate-spin text-cuan-blue" />
             </div>
         );
     }
@@ -85,27 +83,25 @@ export function CatalogSetupContent() {
     const slugIndicator = isCheckingSlug ? (
         <SpinnerIcon className="size-4 animate-spin text-slate-400" />
     ) : showIndicator && slugAvailable ? (
-        <CheckCircleIcon className="size-4 text-green-500" />
+        <CheckCircleIcon className="size-4 text-green-600" />
     ) : showIndicator && slugAvailable === false ? (
         <XCircleIcon className="size-4 text-red-500" />
     ) : null;
 
     return (
-        <div className="min-h-screen bg-white flex items-center justify-center px-4 py-10">
-            <div className="w-full max-w-md space-y-8">
-                {/* Header */}
+        <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12 sm:py-20">
+            <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-6 shadow-[0px_3px_0px_#000] sm:p-10">
                 <div className="text-center">
                     <div className="inline-flex items-center justify-center size-20 bg-cuan-blue/10 rounded-full mb-4">
                         <StorefrontIcon className="size-10 text-cuan-blue" />
                     </div>
                     <h1 className="pb-3 text-2xl font-semibold text-cuan-blue">Buat Halaman Katalog</h1>
-                    <p className="text-md text-slate-800">
-                        Bagikan semua produkmu dalam satu halaman yang bisa diakses siapa saja.
+                    <p className="text-base text-slate-800">
+                        Buat halaman katalog untuk menampilkan produkmu.
                     </p>
                 </div>
 
-                {/* Form */}
-                <div className="w-full max-w-lg rounded-2xl border-2 border-slate-800 bg-white p-6 shadow-[0px_2px_0px_#000] sm:p-10 space-y-4">
+                <div className="mt-8 space-y-4">
                     {/* Slug */}
                     <div className="space-y-1.5">
                         <Label htmlFor="catalog-url" className="text-sm font-medium text-slate-800">
@@ -182,16 +178,16 @@ export function CatalogSetupContent() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={isPending || slug.length < 3 || slugAvailable === false || isCheckingSlug}
-                    className="w-full mt-4 cursor-pointer rounded-lg border-2 border-slate-800 bg-cuan-blue py-3 text-base font-semibold text-white shadow-[0px_2px_0px_#000] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_#000] flex items-center justify-center"
+                    className="mt-6 w-full cursor-pointer rounded-lg border-2 border-slate-800 bg-cuan-blue py-2.5 text-lg font-semibold text-white shadow-[0px_2px_0px_#000] transition duration-200 ease-out hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[0px_2px_0px_#000] flex items-center justify-center"
                 >
                     {isPending ? (
                         <>
-                            <SpinnerIcon className="mr-2 size-5 animate-spin" />
+                            <SpinnerIcon className="mr-2 size-5 animate-spin" weight="bold" />
                             Menyimpan...
                         </>
                     ) : (
                         <>
-                            Simpan & Lihat Catalog
+                            Lanjut
                             <ArrowRightIcon className="ml-2 size-5" weight="bold" />
                         </>
                     )}

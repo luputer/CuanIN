@@ -33,7 +33,7 @@ const otpSection = {
 };
 
 const otpText = {
-  color: "#0891b2",
+  color: "#506CBF",
   fontSize: "36px",
   fontWeight: "700",
   letterSpacing: "8px",

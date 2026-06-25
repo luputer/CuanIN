@@ -30,6 +30,8 @@ function VerifyOtpInner() {
   const [error, setError] = useState<string | null>(null);
   const [resendTimer, setResendTimer] = useState(0);
 
+  const fromSSO = searchParams.get("from") === "sso";
+
   useEffect(() => {
     // Security check: verify if the email in URL matches the cookie set during signup
     const getCookie = (name: string) => {
@@ -41,10 +43,15 @@ function VerifyOtpInner() {
 
     const authorizedEmail = getCookie("otp_authorized_email");
 
-    if (!email || authorizedEmail !== email) {
+    if (!email) {
+      router.push("/sign-up");
+      return;
+    }
+
+    if (!fromSSO && authorizedEmail !== email) {
       router.push("/sign-up");
     }
-  }, [email, router]);
+  }, [email, fromSSO, router]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -129,7 +136,7 @@ function VerifyOtpInner() {
         <button
           onClick={handleVerify}
           disabled={otp.length !== 6 || verifyMutation.isPending}
-          className="w-full rounded-lg border-2 border-slate-800 bg-cuan-blue py-3 text-lg font-semibold text-white shadow-[0px_2px_0px_#000] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full rounded-lg border-2 border-slate-800 bg-cuan-blue py-3 text-lg font-semibold text-white shadow-[0px_2px_0px_#000] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {verifyMutation.isPending ? "Memverifikasi..." : "Verifikasi Akun"}
         </button>

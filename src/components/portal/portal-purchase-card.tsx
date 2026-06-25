@@ -98,7 +98,7 @@ export function PortalPurchaseCard({ purchase, isHistoryTab }: { purchase: any; 
                   const url = product.link ?? (Array.isArray(product.links) ? product.links[0] : "#");
                   if (url && url !== "#") window.open(url, "_blank", "noopener,noreferrer");
                 }}
-                className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-cuan-cyan py-2 px-4 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-[#008BB5]"
+                className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-cuan-cyan py-2 px-4 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-[#008BB5] cursor-pointer"
               >
                 Masuk ke Produk
               </button>

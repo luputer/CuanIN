@@ -135,9 +135,7 @@ export default function NotifikasiPage() {
               </div>
             )}
           </div>
-        </div>
-        {total > limit && (
-          <div className="mt-6 pt-4 border-t border-slate-200">
+          <div className="border-t border-slate-300 px-4 py-4 sm:px-8">
             <TablePagination
               page={page}
               totalPages={totalPages}
@@ -147,7 +145,7 @@ export default function NotifikasiPage() {
               onLimitChange={setLimit}
             />
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

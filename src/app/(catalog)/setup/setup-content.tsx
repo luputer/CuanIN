@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 export function CatalogSetupContent() {
     const router = useRouter();
+    const utils = api.useUtils();
 
     const { data: existing, isLoading: isLoadingCatalog } = api.catalog.getMine.useQuery();
     const { data: profile, isLoading: isLoadingProfile } = api.profile.get.useQuery();
@@ -61,8 +62,10 @@ export function CatalogSetupContent() {
                 bio: bio.trim() || undefined,
             });
 
+            await utils.catalog.getMine.invalidate();
             toast.success("Catalog berhasil disimpan!");
-            router.push(`/${slug.trim()}`);
+            // router.push(`/${slug.trim()}`);
+            router.push("/dashboard");
         } catch (err) {
             toast.error(err instanceof Error ? err.message : "Terjadi kesalahan");
         }

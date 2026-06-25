@@ -1,30 +1,47 @@
 "use client";
-
 import SidebarKreator from "~/components/creator/sidebar";
 import HeaderKreator from "~/components/creator/header";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { api } from "~/trpc/react";
 
 export default function CreatorLayoutClient({ children }: { children: React.ReactNode }) {
+    const router = useRouter();
+    const { data: catalog, isLoading: isCatalogLoading } = api.catalog.getMine.useQuery();
+
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+    const [isReady, setIsReady] = useState(false);
+
+    // ── Semua useEffect di atas conditional return ──
+
+    useEffect(() => {
+        if (isCatalogLoading) return;
+
+        // undefined = query belum resolve, skip dulu
+        if (catalog === undefined) return;
+
+        if (catalog === null) {
+            router.replace("/setup");
+        } else {
+            setIsReady(true);
+        }
+    }, [catalog, isCatalogLoading, router]);
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth < 1024) {
-                setIsSidebarCollapsed(true);
-            } else {
-                setIsSidebarCollapsed(false);
-            }
+            setIsSidebarCollapsed(window.innerWidth < 1024);
         };
-
-        // Initial check on mount
         handleResize();
-
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
+
+    // ── Conditional return setelah semua hooks ──
+
+    if (!isReady) return null;
 
     const handleHeaderMenuClick = () => {
         if (window.innerWidth < 768) {
@@ -36,21 +53,16 @@ export default function CreatorLayoutClient({ children }: { children: React.Reac
 
     return (
         <div className="flex h-screen overflow-hidden">
-            {/* Docked Sidebar for Tablet & Desktop (visible on md screens and up) */}
             <div className="hidden md:flex shrink-0">
                 <SidebarKreator isCollapsed={isSidebarCollapsed} />
             </div>
 
-            {/* Mobile Slide-out Drawer (visible on < md screens) */}
             {isMobileSidebarOpen && (
                 <div className="md:hidden fixed inset-0 z-50 flex">
-                    {/* Backdrop overlay */}
                     <div
                         className="fixed inset-0 bg-slate-800/40 backdrop-blur-sm transition-opacity"
                         onClick={() => setIsMobileSidebarOpen(false)}
                     />
-
-                    {/* Sidebar container */}
                     <div className="relative flex w-auto max-w-xs transition-transform duration-300 ease-out">
                         <SidebarKreator onCloseMobile={() => setIsMobileSidebarOpen(false)} isMobile />
                     </div>
@@ -59,7 +71,6 @@ export default function CreatorLayoutClient({ children }: { children: React.Reac
 
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <HeaderKreator onMenuClick={handleHeaderMenuClick} />
-
                 <main className="bg-slate-50 flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6 py-6">
                     <div className="max-w-none">
                         {children}

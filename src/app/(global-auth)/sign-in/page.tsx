@@ -48,7 +48,13 @@ function LoginPageInner() {
       if (session?.user?.role === "ADMIN") {
         window.location.href = "/admin/dashboard";
       } else {
-        window.location.href = "/dashboard";
+        const res = await fetch("/api/trpc/catalog.getMine?input=%7B%7D", {
+          headers: { "Content-Type": "application/json" },
+        });
+        const json = await res.json();
+        // console.log("catalog response:", JSON.stringify(json)); // ← liat di console
+        const hasCatalog = !!json?.result?.data?.slug;
+        window.location.href = hasCatalog ? "/dashboard" : "/setup";
       }
     }
   };

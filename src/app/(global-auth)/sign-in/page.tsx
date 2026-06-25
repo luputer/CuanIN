@@ -8,7 +8,7 @@ import {
 import { AuthInput, GoogleAuthButton, AuthDivider } from "~/components/auth/auth-components";
 import { Suspense, useState } from "react";
 import { signIn, getSession } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { LoginFormData } from "~/lib/validation";
@@ -19,6 +19,7 @@ function LoginPageInner() {
   const searchParams = useSearchParams();
   const verified = searchParams.get("verified") === "1";
   const [serverError, setServerError] = useState<string | null>(null);
+  const router = useRouter();
 
   const {
     register,
@@ -44,17 +45,24 @@ function LoginPageInner() {
       }
     } else {
       // Get session to check role
+      // const session = await getSession();
+      // if (session?.user?.role === "ADMIN") {
+      //   window.location.href = "/admin/dashboard";
+      // } else {
+      //   const res = await fetch("/api/trpc/catalog.getMine?input=%7B%7D", {
+      //     headers: { "Content-Type": "application/json" },
+      //   });
+      //   const json = await res.json();
+      //   // console.log("catalog response:", JSON.stringify(json)); // ← liat di console
+      //   const hasCatalog = !!json?.result?.data?.slug;
+      //   window.location.href = hasCatalog ? "/dashboard" : "/setup";
+      // }
+
       const session = await getSession();
       if (session?.user?.role === "ADMIN") {
-        window.location.href = "/admin/dashboard";
+        router.push("/admin/dashboard");
       } else {
-        const res = await fetch("/api/trpc/catalog.getMine?input=%7B%7D", {
-          headers: { "Content-Type": "application/json" },
-        });
-        const json = await res.json();
-        // console.log("catalog response:", JSON.stringify(json)); // ← liat di console
-        const hasCatalog = !!json?.result?.data?.slug;
-        window.location.href = hasCatalog ? "/dashboard" : "/setup";
+        router.push("/dashboard"); // layout akan redirect ke /setup kalau belum ada catalog
       }
     }
   };

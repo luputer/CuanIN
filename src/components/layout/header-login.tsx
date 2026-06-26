@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -24,11 +25,12 @@ export default function HeaderLogin() {
                 {/* Logo */}
                 <div className="flex items-center">
                     <Link href="/">
-                        <img
+                        <Image
                             src="/logo-cuanin.svg"
                             alt="CuanIN"
                             width={120}
                             height={40}
+                            priority
                             className={`w-auto object-contain transition-all duration-300 ${scrolled ? "h-7" : "h-10"}`}
                         />
                     </Link>

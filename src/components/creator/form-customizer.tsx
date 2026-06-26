@@ -35,21 +35,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-
-export type FieldType =
-  | "SHORT"
-  | "LONG"
-  | "MULTIPLE_CHOICE"
-  | "CHECKBOX"
-  | "DROPDOWN";
-
-export interface FormField {
-  id: string;
-  label: string;
-  type: FieldType;
-  required: boolean;
-  options?: string[];
-}
+import type { FieldType, FormField } from "~/types/form";
 
 const FIELD_TYPE_LABELS: Record<FieldType, string> = {
   SHORT: "Jawaban Singkat",

@@ -39,7 +39,7 @@ function DialogOverlay({
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        "fixed inset-0 isolate z-50 bg-slate-950/60 backdrop-blur-[2px] duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
         className
       )}
       {...props}
@@ -55,7 +55,7 @@ function DialogContent({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean
-  size?: "sm" | "default" | "lg" | "xl" | "2xl" | "3xl"
+  size?: "sm" | "default" | "lg" | "xl" | "2xl" | "3xl" | "5xl"
 }) {
   return (
     <DialogPortal>
@@ -64,7 +64,7 @@ function DialogContent({
         data-slot="dialog-content"
         data-size={size}
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 flex flex-col w-full -translate-x-1/2 -translate-y-1/2 gap-0 rounded-lg bg-white p-0 text-slate-800 border-2 border-slate-800 shadow-[0px_2px_0px_#000] duration-100 outline-none max-h-[90dvh] data-[size=sm]:max-w-sm data-[size=default]:max-w-lg data-[size=lg]:max-w-lg data-[size=xl]:max-w-xl data-[size=2xl]:max-w-2xl data-[size=3xl]:max-w-3xl data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed top-1/2 left-1/2 z-50 flex flex-col w-full -translate-x-1/2 -translate-y-1/2 gap-0 rounded-lg bg-white p-0 text-slate-800 border-2 border-slate-800 shadow-[0px_2px_0px_#000] duration-100 outline-none max-h-[90dvh] data-[size=sm]:max-w-sm data-[size=default]:max-w-lg data-[size=lg]:max-w-lg data-[size=xl]:max-w-xl data-[size=2xl]:max-w-2xl data-[size=3xl]:max-w-3xl data-[size=5xl]:max-w-5xl data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
         )}
         {...props}

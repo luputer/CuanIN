@@ -18,6 +18,7 @@ import { api } from "~/trpc/react";
 import { useDebounce } from "~/hooks/shared/use-debounce";
 import { type WithdrawalFormData } from "~/lib/validation";
 import { formatCurrency } from "~/lib/utils";
+import type { CreatorTransactionType } from "~/types/creator";
 
 // Components
 import SearchInput from "~/components/ui/search";
@@ -59,7 +60,7 @@ export default function TransactionPage() {
   const [type, setType] = useState<"ALL" | "INCOME" | "WITHDRAWAL">("ALL");
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [selectedTx, setSelectedTx] = useState<any>(null);
+  const [selectedTx, setSelectedTx] = useState<CreatorTransactionType | null>(null);
   const debouncedSearch = useDebounce(search, 500);
   const utils = api.useUtils();
 
@@ -83,14 +84,20 @@ export default function TransactionPage() {
     },
   );
 
-  const transactions = (data?.items ?? []).map((item: any) => ({
-    ...item,
-    amount: Number(item.amount),
-    feeAmount: item.type === "WITHDRAWAL" ? Number(item.feeAmount ?? 0) : null
-  })) as unknown as Array<
-    ({ type: "INCOME" } & { id: string; amount: number; buyerName: string; createdAt: Date; status: string; product: { name: string }; paymentMethod?: string | null; paymentDetails?: { paymentType?: string; bank?: string; vaNumber?: string } | null }) |
-    ({ type: "WITHDRAWAL" } & { id: string; amount: number; bankName: string; accountNumber: string; createdAt: Date; status: string; feeAmount?: number | null })
-  >;
+  const transactions = (data?.items ?? []).map((item) => {
+    if (item.type === "INCOME") {
+      return {
+        ...item,
+        amount: Number(item.amount),
+      } as CreatorTransactionType;
+    } else {
+      return {
+        ...item,
+        amount: Number(item.amount),
+        feeAmount: Number(item.feeAmount ?? 0),
+      } as CreatorTransactionType;
+    }
+  });
 
   const stats = {
     totalIncome: data?.stats.totalIncome ?? 0,
@@ -213,7 +220,7 @@ export default function TransactionPage() {
                   description="Tidak ada transaksi ditemukan"
                 />
               ) : (
-                transactions.map((item: any, index: number) => {
+                transactions.map((item, index) => {
                   const typeLabel = item.type === "INCOME" ? "Masuk" : "Tarik";
                   const nominal = item.type === "INCOME" ? Number(item.amount) : (Number(item.amount) - Number(item.feeAmount ?? 0) - 4000);
 
@@ -309,7 +316,7 @@ export default function TransactionPage() {
           ) : transactions.length === 0 ? (
             <MobileEmptyState description="Tidak ada transaksi ditemukan" />
           ) : (
-            transactions.map((item: any, index: number) => {
+            transactions.map((item, index) => {
               const rowNumber = (page - 1) * limit + index + 1;
               const typeLabel = item.type === "INCOME" ? "Masuk" : "Tarik";
               const nominal = item.type === "INCOME" ? Number(item.amount) : (Number(item.amount) - Number(item.feeAmount ?? 0) - 4000);

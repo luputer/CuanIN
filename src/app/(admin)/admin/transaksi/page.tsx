@@ -8,6 +8,7 @@ import { id } from "date-fns/locale";
 import { api } from "~/trpc/react";
 import { useDebounce } from "~/hooks/shared/use-debounce";
 import { toast } from "sonner";
+import type { AdminWithdrawalType } from "~/types/admin";
 
 import {
     ConfirmPaidDialog,
@@ -45,9 +46,9 @@ export default function AdminTransactionPage() {
     const [limit, setLimit] = useState(10);
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("ALL");
-    const [selectedTx, setSelectedTx] = useState<any>(null);
+    const [selectedTx, setSelectedTx] = useState<AdminWithdrawalType | null>(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
-    const [confirmTx, setConfirmTx] = useState<any>(null);
+    const [confirmTx, setConfirmTx] = useState<AdminWithdrawalType | null>(null);
     const [isConfirmPaidOpen, setIsConfirmPaidOpen] = useState(false);
     const [isConfirmFailOpen, setIsConfirmFailOpen] = useState(false);
 
@@ -183,7 +184,7 @@ export default function AdminTransactionPage() {
                                     description="Belum ada data penarikan ditemukan"
                                 />
                             ) : (
-                                transactions.map((item: any, index: number) => {
+                                transactions.map((item: AdminWithdrawalType, index: number) => {
                                     // nominal bersih yang diterima kreator = amount - feeAmount - 4000
                                     const nominalBersih = Number(item.amount) - Number(item.feeAmount ?? 0) - 4000;
 
@@ -227,7 +228,7 @@ export default function AdminTransactionPage() {
                                                     </div>
                                                     {Number(item.feeAmount) > 0 && (
                                                         <div className="mt-1 text-[12px] text-slate-600">
-                                                            Fee: {formatCurrency(item.feeAmount)}
+                                                            Fee: {formatCurrency(Number(item.feeAmount))}
                                                         </div>
                                                     )}
                                                 </div>
@@ -309,7 +310,7 @@ export default function AdminTransactionPage() {
                     ) : transactions.length === 0 ? (
                         <MobileEmptyState description="Belum ada data penarikan ditemukan" />
                     ) : (
-                        transactions.map((item: any, index: number) => {
+                        transactions.map((item: AdminWithdrawalType, index: number) => {
                             const rowNumber = (page - 1) * limit + index + 1;
                             const nominalBersih = Number(item.amount) - Number(item.feeAmount ?? 0) - 4000;
 
@@ -352,7 +353,7 @@ export default function AdminTransactionPage() {
                                                 <span className="font-medium text-slate-400 text-xs">Nominal</span>
                                                 <span className="font-bold text-sm text-slate-800">{formatCurrency(nominalBersih)}</span>
                                                 {Number(item.feeAmount) > 0 && (
-                                                    <span className="text-[10px] text-slate-400">Fee: {formatCurrency(item.feeAmount)}</span>
+                                                    <span className="text-[10px] text-slate-400">Fee: {formatCurrency(Number(item.feeAmount))}</span>
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-2">
@@ -405,7 +406,11 @@ export default function AdminTransactionPage() {
                     open={isConfirmPaidOpen}
                     onOpenChange={setIsConfirmPaidOpen}
                     confirmTx={confirmTx}
-                    onConfirm={() => markPaid.mutate({ withdrawalId: confirmTx?.id })}
+                    onConfirm={() => {
+                        if (confirmTx) {
+                            markPaid.mutate({ withdrawalId: confirmTx.id });
+                        }
+                    }}
                     isPending={markPaid.isPending}
                 />
 
@@ -413,7 +418,11 @@ export default function AdminTransactionPage() {
                     open={isConfirmFailOpen}
                     onOpenChange={setIsConfirmFailOpen}
                     confirmTx={confirmTx}
-                    onConfirm={() => markFailed.mutate({ withdrawalId: confirmTx?.id })}
+                    onConfirm={() => {
+                        if (confirmTx) {
+                            markFailed.mutate({ withdrawalId: confirmTx.id });
+                        }
+                    }}
                     isPending={markFailed.isPending}
                 />
 

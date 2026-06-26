@@ -16,7 +16,7 @@ import { CatalogProductCard, CatalogProductCardSkeleton } from "~/components/cat
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type TabFilter = "Semua" | "Webinar" | "Kelas" | "Produk Digital";
+import type { TabFilter } from "~/types/catalog";
 
 const TAB_TITLE: Record<TabFilter, string> = {
   Semua: "Semua Produk",

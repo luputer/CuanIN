@@ -6,7 +6,7 @@ import { api } from "~/trpc/react";
 interface UseImageUploadReturn {
     uploading: boolean;
     previewUrl: string | null;
-    handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<string | null>;
+    handleFileUpload: (fileOrEvent: File | React.ChangeEvent<HTMLInputElement>) => Promise<string | null>;
     setPreviewUrl: (url: string | null) => void;
 }
 
@@ -16,9 +16,9 @@ export function useImageUpload(folder = "products"): UseImageUploadReturn {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     const handleFileUpload = async (
-        e: React.ChangeEvent<HTMLInputElement>
+        fileOrEvent: File | React.ChangeEvent<HTMLInputElement>
     ): Promise<string | null> => {
-        const file = e.target.files?.[0];
+        const file = fileOrEvent instanceof File ? fileOrEvent : fileOrEvent.target.files?.[0];
         if (!file) return null;
 
         const localUrl = URL.createObjectURL(file);

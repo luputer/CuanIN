@@ -12,6 +12,7 @@ import {
 } from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
 import { CATEGORY_STYLE, CATEGORY_STYLE_DEFAULT, PRODUCT_TYPE_MAP } from "~/lib/constants";
+import type { PortalPurchaseType } from "~/types/portal";
 
 const formatDate = (date: Date | string) =>
   new Date(date).toLocaleDateString("id-ID", {
@@ -65,7 +66,7 @@ export default function PortalDetailProdukPage() {
     );
   }
 
-  const p = purchase as any;
+  const p = purchase as unknown as PortalPurchaseType;
   const product = p.product;
   const isFree = Number(p.amount) === 0;
   const links: string[] = product.links

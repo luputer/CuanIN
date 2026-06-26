@@ -8,32 +8,8 @@ const LOGO_SVG = `<svg width="1828" height="430" viewBox="0 0 1828 430" fill="no
 <path d="M1549.67 129.28L1505.03 382H1443.47L1488.11 129.28H1549.67ZM1782.92 382H1721.36L1646.12 226.12L1618.4 382H1556.84L1601.48 129.28H1663.04L1738.28 285.88L1766 129.28H1827.56L1782.92 382Z" fill="#00B3E9"/>
 </svg>`;
 
-type PaymentDetails = {
-  paymentType?: string;
-  bank?: string;
-  vaNumber?: string;
-} | null;
+import type { PaymentDetails, InvoiceData } from "~/types/invoice";
 
-type InvoiceData = {
-  id: string;
-  buyerName: string;
-  buyerEmail: string;
-  buyerPhone: string;
-  amount: number | string | { toNumber: () => number };
-  paidAt: Date | string | null;
-  createdAt: Date | string;
-  paymentMethod: string | null;
-  paymentDetails: unknown;
-  product: {
-    name: string;
-    type: string;
-    price: number | string | { toNumber: () => number };
-    user: {
-      name: string | null;
-      catalog: { slug: string } | null;
-    };
-  };
-};
 
 function generateVerificationCode(id: string): string {
   let hash = 0;

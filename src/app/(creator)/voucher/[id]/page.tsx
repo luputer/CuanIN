@@ -77,7 +77,7 @@ export default function VoucherDetailPage() {
             setIsLimitEnabled(!!voucher.usageLimit);
             setIsLimitPerUser(voucher.isLimitPerUser ?? false);
             if (voucher.products) {
-                setSelectedProductIds(voucher.products.map((p: any) => p.id));
+                setSelectedProductIds(voucher.products.map((p) => p.id));
             }
         }
     }, [voucher]);
@@ -94,7 +94,7 @@ export default function VoucherDetailPage() {
         usageLimit !== (voucher.usageLimit ?? undefined) ||
         isLimitPerUser !== (voucher.isLimitPerUser ?? false) ||
 
-        JSON.stringify(selectedProductIds.slice().sort()) !== JSON.stringify((voucher.products || []).map((p: any) => p.id).slice().sort())
+        JSON.stringify(selectedProductIds.slice().sort()) !== JSON.stringify((voucher.products || []).map((p) => p.id).slice().sort())
     ) : false;
 
     const updateMutation = api.vouchers.update.useMutation({

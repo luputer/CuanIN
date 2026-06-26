@@ -71,16 +71,16 @@ CuanIN is an all-in-one platform for Indonesian creators to sell digital product
 ### Installation
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/luputer/CuanIN.git
    cd CuanIN
    ```
-
 2. **Install dependencies:**
+
    ```bash
    npm install
    ```
-
 3. **Configure Environment Variables:**
    Create a `.env` file in the root directory based on the following complete configurations:
 
@@ -134,13 +134,13 @@ CuanIN is an all-in-one platform for Indonesian creators to sell digital product
    NEXT_PUBLIC_MIDTRANS_CLIENT_KEY="your-midtrans-client-key"
    NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION=false
    ```
-
 4. **Initialize Prisma Client & Database Migrations:**
+
    ```bash
    npm run db:generate
    ```
-
 5. **Run the Development Server:**
+
    ```bash
    npm run dev
    ```
@@ -153,33 +153,34 @@ To build and run the application locally inside Docker containers using Docker C
 
 1. **Verify your `.env` configuration:**
    Make sure you have populated the credentials correctly (specifically `POSTGRES_PASSWORD` if running the integrated database).
-
 2. **Spin up the stack:**
+
    ```bash
    docker compose up --build
    ```
+
    This compiles the optimized Next.js standalone build using the `Dockerfile` and deploys the PostgreSQL schema updates automatically.
 
 ---
 
 ## Available Scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Starts dev server using Turbopack |
-| `npm run build` | Builds the optimized Next.js application for production |
-| `npm run start` | Runs the compiled Next.js server locally |
-| `npm run preview` | Builds and spins up the production build locally for verification |
-| `npm run lint` | Runs ESLint formatting check |
-| `npm run lint:fix` | Automatically corrects ESLint rule violations |
-| `npm run check` | Checks both linting rules and TypeScript typings |
-| `npm run typecheck` | Validates types across code using TypeScript compiler |
-| `npm run format:write` | Prettifies project code recursively |
-| `npm run format:check` | Verifies code conforms to Prettier rules |
-| `npm run db:generate` | Creates schema migrations and compiles Prisma client models |
-| `npm run db:migrate` | Deploys accumulated migration files to production database |
-| `npm run db:push` | Fast updates target DB with current schemas without creating migration files |
-| `npm run db:studio` | Launches visual Prisma Studio interface |
+| Command                  | Description                                                                  |
+| ------------------------ | ---------------------------------------------------------------------------- |
+| `npm run dev`          | Starts dev server using Turbopack                                            |
+| `npm run build`        | Builds the optimized Next.js application for production                      |
+| `npm run start`        | Runs the compiled Next.js server locally                                     |
+| `npm run preview`      | Builds and spins up the production build locally for verification            |
+| `npm run lint`         | Runs ESLint formatting check                                                 |
+| `npm run lint:fix`     | Automatically corrects ESLint rule violations                                |
+| `npm run check`        | Checks both linting rules and TypeScript typings                             |
+| `npm run typecheck`    | Validates types across code using TypeScript compiler                        |
+| `npm run format:write` | Prettifies project code recursively                                          |
+| `npm run format:check` | Verifies code conforms to Prettier rules                                     |
+| `npm run db:generate`  | Creates schema migrations and compiles Prisma client models                  |
+| `npm run db:migrate`   | Deploys accumulated migration files to production database                   |
+| `npm run db:push`      | Fast updates target DB with current schemas without creating migration files |
+| `npm run db:studio`    | Launches visual Prisma Studio interface                                      |
 
 ---
 

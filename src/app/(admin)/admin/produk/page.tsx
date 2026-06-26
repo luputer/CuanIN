@@ -12,6 +12,7 @@ import React from "react";
 // Internal & Utils
 import { useAdminProducts } from "~/hooks/admin/use-admin-products";
 import { getProductTypeLabel } from "~/lib/constants";
+import type { AdminProductType } from "~/types/admin";
 
 // Components
 import {
@@ -155,7 +156,7 @@ export default function AdminProductsPage() {
 									title={isFiltered ? "Hasil pencarian atau filter tidak ditemukan." : "Tidak ada produk yang ditemukan."}
 								/>
 							) : (
-								products?.map((item: any, index: number) => (
+								products?.map((item: AdminProductType, index: number) => (
 									<AdminProductTableRow
 										key={item.id}
 										item={item}
@@ -180,7 +181,7 @@ export default function AdminProductsPage() {
 							title={isFiltered ? "Hasil pencarian atau filter tidak ditemukan." : "Tidak ada produk yang ditemukan."}
 						/>
 					) : (
-						products?.map((item: any) => (
+						products?.map((item: AdminProductType) => (
 							<AdminProductMobileCard
 								key={item.id}
 								item={item}

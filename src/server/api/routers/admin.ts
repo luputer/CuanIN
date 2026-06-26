@@ -63,7 +63,7 @@ export const adminRouter = createTRPCRouter({
         ctx.db.withdrawal.findMany({
           where,
           include: {
-            user: { select: { name: true, email: true, role: true } },
+            user: { select: { id: true, name: true, email: true, role: true } },
           },
           orderBy: { createdAt: "desc" },
           skip,

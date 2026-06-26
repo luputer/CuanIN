@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { FormProvider, type UseFormReturn } from "react-hook-form";
+import { FormProvider, type UseFormReturn, type FieldValues } from "react-hook-form";
 import { ProductDetailTabs, ProductDetailTabContent } from "~/components/shared/product-detail-tabs";
 import { DetailHeader } from "~/components/shared/detail-header";
 import { FormCustomizer } from "~/components/creator/form-customizer";
@@ -11,9 +11,10 @@ import ButtonSave from "~/components/shared/button-save";
 import ButtonCancel from "~/components/shared/button-cancel";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
+import type { FormField } from "~/types/form";
 
-interface ProductFormLayoutProps {
-    form: UseFormReturn<any>;
+interface ProductFormLayoutProps<TFieldValues extends FieldValues = FieldValues> {
+    form: UseFormReturn<TFieldValues>;
     title: string;
     backLink: string;
     backLabel: string;
@@ -34,16 +35,16 @@ interface ProductFormLayoutProps {
     children: React.ReactNode; // The main form content
     // Sidebar props
     uploading: boolean;
-    onFilesChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onFilesChange: (fileOrEvent: File | React.ChangeEvent<HTMLInputElement>) => void;
     removeImage: (index: number) => void;
     fileInputRef: React.RefObject<HTMLInputElement | null>;
     statusOptions?: { label: string; value: string }[];
     // Form Customizer props
-    customFields?: any[];
-    setCustomFields?: (fields: any[]) => void;
+    customFields?: FormField[];
+    setCustomFields?: (fields: FormField[]) => void;
 }
 
-export function ProductFormLayout({
+export function ProductFormLayout<TFieldValues extends FieldValues = FieldValues>({
     form,
     title,
     backLink,
@@ -69,7 +70,7 @@ export function ProductFormLayout({
     statusOptions,
     customFields,
     setCustomFields
-}: ProductFormLayoutProps) {
+}: ProductFormLayoutProps<TFieldValues>) {
     const { formState: { isDirty } } = form;
 
     // Peringatan jika user mencoba keluar dengan perubahan yang belum disimpan

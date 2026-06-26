@@ -63,7 +63,7 @@ export default function AdminCreatorProductDetailPage() {
     const isKelas = product.type === "KELAS_ONLINE";
     const isDigital = product.type === "DIGITAL_PRODUCT";
 
-    const buyerCount = (product as any)._count?.purchases ?? 0;
+    const buyerCount = product._count?.purchases ?? 0;
 
     const currentStatus =
         isWebinar && product.endDate && new Date() > new Date(product.endDate)
@@ -99,9 +99,9 @@ export default function AdminCreatorProductDetailPage() {
                         </div>
                     }
                     actions={
-                        product.slug && (product as any).user?.catalog?.slug && (
+                        product.slug && product.user?.catalog?.slug && (
                             <a
-                                href={`/${(product as any).user.catalog.slug}/${product.slug}`}
+                                href={`/${product.user.catalog.slug}/${product.slug}`}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-cuan-cyan hover:bg-cuan-cyan/10 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
@@ -135,10 +135,10 @@ export default function AdminCreatorProductDetailPage() {
 
                                 <FormRow label="Kreator">
                                     <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-2.5 w-full min-w-0">
-                                        {(product as any).user?.image ? (
+                                        {product.user?.image ? (
                                             <Image
-                                                src={(product as any).user.image}
-                                                alt={(product as any).user.name ?? "Kreator"}
+                                                src={product.user.image}
+                                                alt={product.user.name ?? "Kreator"}
                                                 width={32}
                                                 height={32}
                                                 unoptimized
@@ -146,14 +146,14 @@ export default function AdminCreatorProductDetailPage() {
                                             />
                                         ) : (
                                             <div className="w-8 h-8 rounded-full bg-cuan-cyan/20 flex items-center justify-center text-cuan-cyan text-xs font-bold shrink-0">
-                                                {((product as any).user?.name ?? "K")[0]?.toUpperCase()}
+                                                {(product.user?.name ?? "K")[0]?.toUpperCase()}
                                             </div>
                                         )}
                                         <Link
                                             href={`/admin/kreator/${product.userId}`}
                                             className="text-cuan-cyan hover:underline font-semibold text-sm truncate"
                                         >
-                                            {(product as any).user?.name ?? "-"}
+                                            {product.user?.name ?? "-"}
                                         </Link>
                                     </div>
                                 </FormRow>

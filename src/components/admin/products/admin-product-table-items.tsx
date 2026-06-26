@@ -7,10 +7,11 @@ import { TableRow, TableCell } from "~/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { StatusBadge } from "~/components/ui/status-badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
+import type { AdminProductType } from "~/types/admin";
 import { getProductTypeLabel } from "~/lib/constants";
 
 interface AdminProductTableRowProps {
-    item: any;
+    item: AdminProductType;
     index: number;
     page: number;
     limit: number;
@@ -91,7 +92,7 @@ export function AdminProductTableRow({ item, index, page, limit, showCreatorColu
 }
 
 interface AdminProductMobileCardProps {
-    item: any;
+    item: AdminProductType;
     showCreatorColumn?: boolean;
     viewHref: string;
 }

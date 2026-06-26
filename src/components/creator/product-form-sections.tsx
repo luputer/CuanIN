@@ -11,23 +11,24 @@ import {
     CircleNotchIcon
 } from "@phosphor-icons/react";
 import { Controller, useFieldArray } from "react-hook-form";
-import type { UseFormReturn } from "react-hook-form";
+import type { UseFormReturn, FieldValues, Path, ArrayPath, PathValue, FieldArray } from "react-hook-form";
 import { SectionHeader, FormInput, FormTextarea, FormSelect, FormRow } from "~/components/shared/form-layout";
 import { DraggableEditor } from "~/components/shared/draggable-editor";
 import { VoucherSelector } from "~/components/voucher/selector";
 import { formatNumberInput } from "~/lib/utils";
+import { ImageCropperDialog } from "~/components/shared/image-cropper-dialog";
 
 /**
  * Shared Basic Information Section
  */
-export const BasicInfoSection = ({
+export const BasicInfoSection = <TFieldValues extends FieldValues = FieldValues>({
     form,
     title = "Informasi Dasar",
     namePlaceholder = "Masukkan nama",
     shortDescPlaceholder = "Masukkan ringkasan singkat",
     longDescPlaceholder = "Masukkan deskripsi lengkap"
 }: {
-    form: UseFormReturn<any>;
+    form: UseFormReturn<TFieldValues>;
     title?: string;
     namePlaceholder?: string;
     shortDescPlaceholder?: string;
@@ -36,42 +37,44 @@ export const BasicInfoSection = ({
     const { register, watch, setValue, control, formState: { errors } } = form;
     const { fields, append, remove } = useFieldArray({
         control,
-        name: "benefit",
+        name: "benefit" as ArrayPath<TFieldValues>,
     });
+
+    const anyErrors = errors as Record<string, { message?: string } | undefined>;
 
     return (
         <div className="space-y-0">
             <SectionHeader title={title} />
             <div className="pt-6">
-                <FormRow label="Nama" error={errors.name?.message as string}>
-                    <FormInput placeholder={namePlaceholder} {...register("name")} />
+                <FormRow label="Nama" error={anyErrors.name?.message}>
+                    <FormInput placeholder={namePlaceholder} {...register("name" as Path<TFieldValues>)} />
                 </FormRow>
 
-                <FormRow label="Ringkasan" error={errors.shortDescription?.message as string}>
+                <FormRow label="Ringkasan" error={anyErrors.shortDescription?.message}>
                     <FormTextarea
                         placeholder={shortDescPlaceholder}
                         maxLength={200}
-                        {...register("shortDescription")}
+                        {...register("shortDescription" as Path<TFieldValues>)}
                     />
-                    <p className="text-xs text-slate-400 mt-1">{watch("shortDescription")?.length ?? 0}/200 karakter</p>
+                    <p className="text-xs text-slate-400 mt-1">{(watch("shortDescription" as Path<TFieldValues>) as string)?.length ?? 0}/200 karakter</p>
                 </FormRow>
 
-                <FormRow label="Deskripsi Lengkap" error={errors.description?.message as string}>
+                <FormRow label="Deskripsi Lengkap" error={anyErrors.description?.message}>
                     <DraggableEditor
-                        value={watch("description") ?? ""}
-                        onChange={(val) => setValue("description", val, { shouldDirty: true, shouldValidate: true })}
+                        value={(watch("description" as Path<TFieldValues>) as string) ?? ""}
+                        onChange={(val) => setValue("description" as Path<TFieldValues>, val as PathValue<TFieldValues, Path<TFieldValues>>, { shouldDirty: true, shouldValidate: true })}
                         placeholder={longDescPlaceholder}
                     />
                 </FormRow>
 
-                <FormRow label="Keuntungan" error={errors.benefit?.message as string}>
+                <FormRow label="Keuntungan" error={anyErrors.benefit?.message}>
                     <div className="flex flex-col space-y-3">
                         {fields.map((field, index) => (
                             <div key={field.id} className="flex gap-2">
                                 <FormInput
                                     placeholder={`Keuntungan ${index + 1}`}
                                     className="flex-1"
-                                    {...register(`benefit.${index}` as const)}
+                                    {...register(`benefit.${index}` as Path<TFieldValues>)}
                                 />
                                 <button
                                     type="button"
@@ -84,7 +87,7 @@ export const BasicInfoSection = ({
                         ))}
                         <button
                             type="button"
-                            onClick={() => append("")}
+                            onClick={() => append("" as FieldArray<TFieldValues, ArrayPath<TFieldValues>>)}
                             className="flex justify-center items-center gap-2 bg-white border border-slate-400 rounded-lg py-2 px-4 text-sm font-regular text-slate-800 hover:bg-slate-100 w-fit cursor-pointer"
                         >
                             <PlusIcon className="h-4 w-4" weight="regular" />
@@ -100,22 +103,23 @@ export const BasicInfoSection = ({
 /**
  * Shared Pricing Section
  */
-export const PricingSection = ({
+export const PricingSection = <TFieldValues extends FieldValues = FieldValues>({
     form,
     onAdjustPrice,
     onAdjustDiscount
 }: {
-    form: UseFormReturn<any>;
+    form: UseFormReturn<TFieldValues>;
     onAdjustPrice: (step: number) => void;
     onAdjustDiscount: (step: number) => void;
 }) => {
     const { register, watch, control, formState: { errors } } = form;
+    const anyErrors = errors as Record<string, { message?: string } | undefined>;
 
     return (
         <div className="space-y-0 pt-4">
             <FormRow
                 label="Harga"
-                error={errors.price?.message as string}
+                error={anyErrors.price?.message}
                 extra={
                     <div className="flex items-center gap-2 mt-2">
                         <span className="text-[12px] font-medium text-slate-500 tracking-wider">Diskon</span>
@@ -123,7 +127,7 @@ export const PricingSection = ({
                             <input
                                 type="checkbox"
                                 className="sr-only peer"
-                                {...register("enableDiscount")}
+                                {...register("enableDiscount" as Path<TFieldValues>)}
                             />
                             <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-4 rtl:peer-checked:after:-translate-x-4 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-cuan-cyan"></div>
                         </label>
@@ -132,7 +136,7 @@ export const PricingSection = ({
             >
                 <Controller
                     control={control}
-                    name="price"
+                    name={"price" as Path<TFieldValues>}
                     render={({ field: { onChange, value, ref } }) => (
                         <FormInput
                             ref={ref}
@@ -160,11 +164,11 @@ export const PricingSection = ({
                 />
             </FormRow>
 
-            {watch("enableDiscount") && (
-                <FormRow label="Harga Diskon" error={errors.discountPrice?.message as string}>
+            {watch("enableDiscount" as Path<TFieldValues>) && (
+                <FormRow label="Harga Diskon" error={anyErrors.discountPrice?.message}>
                     <Controller
                         control={control}
-                        name="discountPrice"
+                        name={"discountPrice" as Path<TFieldValues>}
                         render={({ field: { onChange, value, ref } }) => (
                             <FormInput
                                 ref={ref}
@@ -199,18 +203,19 @@ export const PricingSection = ({
 /**
  * Shared Quota/Capacity Section
  */
-export const QuotaSection = ({
+export const QuotaSection = <TFieldValues extends FieldValues = FieldValues>({
     form,
     onAdjustQuota,
     label = "Batasi Stok",
     placeholder = "Masukkan batas stok"
 }: {
-    form: UseFormReturn<any>;
+    form: UseFormReturn<TFieldValues>;
     onAdjustQuota: (step: number) => void;
     label?: string;
     placeholder?: string;
 }) => {
     const { register, watch, control, setValue, formState: { errors } } = form;
+    const anyErrors = errors as Record<string, { message?: string } | undefined>;
 
     return (
         <div className="space-y-2">
@@ -220,10 +225,10 @@ export const QuotaSection = ({
                     <input
                         type="checkbox"
                         className="sr-only peer"
-                        {...register("enableQuota", {
+                        {...register("enableQuota" as Path<TFieldValues>, {
                             onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                                if (!e.target.checked) setValue("capacity", undefined, { shouldDirty: true, shouldValidate: true });
-                                else setValue("capacity", 10, { shouldDirty: true, shouldValidate: true });
+                                if (!e.target.checked) setValue("capacity" as Path<TFieldValues>, undefined as PathValue<TFieldValues, Path<TFieldValues>>, { shouldDirty: true, shouldValidate: true });
+                                else setValue("capacity" as Path<TFieldValues>, 10 as PathValue<TFieldValues, Path<TFieldValues>>, { shouldDirty: true, shouldValidate: true });
                             }
                         })}
                     />
@@ -231,18 +236,18 @@ export const QuotaSection = ({
                 </label>
             </div>
 
-            {watch("enableQuota") && (
+            {watch("enableQuota" as Path<TFieldValues>) && (
                 <div className="animate-in fade-in slide-in-from-top-2 duration-200">
                     <Controller
                         control={control}
-                        name="capacity"
+                        name={"capacity" as Path<TFieldValues>}
                         render={({ field: { onChange, value, ref } }) => (
                             <FormInput
                                 ref={ref}
                                 placeholder={placeholder}
                                 type="text"
                                 inputMode="numeric"
-                                value={value ?? ""}
+                                value={(value as number | undefined) ?? ""}
                                 onChange={(e) => {
                                     const val = e.target.value.replace(/[^0-9]/g, "");
                                     onChange(val === "" ? undefined : Number(val));
@@ -260,8 +265,8 @@ export const QuotaSection = ({
                             />
                         )}
                     />
-                    {errors.capacity?.message && (
-                        <span className="text-red-500 text-xs mt-1 block">{errors.capacity.message as string}</span>
+                    {anyErrors.capacity?.message && (
+                        <span className="text-red-500 text-xs mt-1 block">{anyErrors.capacity.message}</span>
                     )}
                 </div>
             )}
@@ -272,14 +277,15 @@ export const QuotaSection = ({
 /**
  * Shared Platform/Content Type Selector
  */
-export const PlatformSelector = ({
+export const PlatformSelector = <TFieldValues extends FieldValues = FieldValues>({
     form,
     type = "digital"
 }: {
-    form: UseFormReturn<any>;
+    form: UseFormReturn<TFieldValues>;
     type?: "digital" | "class" | "webinar";
 }) => {
     const { register, watch, setValue, formState: { errors } } = form;
+    const anyErrors = errors as Record<string, { message?: string } | undefined>;
 
     const options = {
         digital: [
@@ -307,13 +313,13 @@ export const PlatformSelector = ({
     const otherPlaceholder = type === "digital" ? "Format file (contoh: EPUB, MP4, dll.)" : "Nama platform";
 
     return (
-        <FormRow label={label} error={errors.contentType?.message as string ?? errors.platformCustom?.message as string}>
+        <FormRow label={label} error={anyErrors.contentType?.message ?? anyErrors.platformCustom?.message}>
             <div className="space-y-2 w-full">
                 <FormSelect
-                    {...register("contentType", {
+                    {...register("contentType" as Path<TFieldValues>, {
                         onChange: (e: React.ChangeEvent<HTMLSelectElement>) => {
                             if (e.target.value !== "other") {
-                                setValue("platformCustom", "", { shouldDirty: true });
+                                setValue("platformCustom" as Path<TFieldValues>, "" as PathValue<TFieldValues, Path<TFieldValues>>, { shouldDirty: true });
                             }
                         }
                     })}
@@ -323,11 +329,11 @@ export const PlatformSelector = ({
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                 </FormSelect>
-                {watch("contentType") === "other" && (
+                {watch("contentType" as Path<TFieldValues>) === "other" && (
                     <FormInput
                         placeholder={otherPlaceholder}
                         className="animate-in fade-in slide-in-from-top-1 duration-200"
-                        {...register("platformCustom")}
+                        {...register("platformCustom" as Path<TFieldValues>)}
                     />
                 )}
             </div>
@@ -338,7 +344,7 @@ export const PlatformSelector = ({
 /**
  * Shared Sidebar Metadata Section
  */
-export const SidebarMetadataSection = ({
+export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldValues>({
     form,
     uploading,
     onFilesChange,
@@ -349,15 +355,34 @@ export const SidebarMetadataSection = ({
         { label: "Unpublished", value: "unpublished" }
     ]
 }: {
-    form: UseFormReturn<any>;
+    form: UseFormReturn<TFieldValues>;
     uploading: boolean;
-    onFilesChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onFilesChange: (fileOrEvent: File | React.ChangeEvent<HTMLInputElement>) => void;
     removeImage: (index: number) => void;
     fileInputRef: React.RefObject<HTMLInputElement | null>;
     statusOptions?: { label: string; value: string }[];
 }) => {
     const { register, watch, setValue, formState: { errors } } = form;
-    const images = watch("images") || [];
+    const anyErrors = errors as Record<string, { message?: string } | undefined>;
+    const images = (watch("images" as Path<TFieldValues>) as string[]) || [];
+
+    const [cropperOpen, setCropperOpen] = React.useState(false);
+    const [selectedImageSrc, setSelectedImageSrc] = React.useState("");
+    const [fileName, setFileName] = React.useState("");
+
+    const handleLocalFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            setSelectedImageSrc(reader.result as string);
+            setFileName(file.name);
+            setCropperOpen(true);
+        };
+        reader.readAsDataURL(file);
+        e.target.value = "";
+    };
 
     return (
         <div className="shrink-0 w-full lg:w-[400px] space-y-6">
@@ -404,7 +429,7 @@ export const SidebarMetadataSection = ({
                                 type="file"
                                 className="hidden"
                                 accept="image/*"
-                                onChange={onFilesChange}
+                                onChange={handleLocalFileChange}
                             />
                         </div>
                     )}
@@ -412,16 +437,26 @@ export const SidebarMetadataSection = ({
                 <p className="text-[12px] text-slate-400 mt-3 leading-tight italic">Maksimal 4 gambar. JPG/PNG, 1:1 direkomendasikan</p>
             </div>
 
+            <ImageCropperDialog
+                isOpen={cropperOpen}
+                imageSrc={selectedImageSrc}
+                fileName={fileName}
+                onClose={() => setCropperOpen(false)}
+                onCrop={(croppedFile) => {
+                    onFilesChange(croppedFile);
+                }}
+            />
+
             {/* Status */}
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <p className="text-slate-700 text-sm font-semibold mb-3">Status</p>
-                <FormSelect {...register("status")}>
+                <FormSelect {...register("status" as Path<TFieldValues>)}>
                     {statusOptions.map(opt => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                 </FormSelect>
-                {errors.status?.message && (
-                    <span className="text-red-500 text-xs mt-1 block">{errors.status.message as string}</span>
+                {anyErrors.status?.message && (
+                    <span className="text-red-500 text-xs mt-1 block">{anyErrors.status.message}</span>
                 )}
             </div>
 
@@ -437,17 +472,17 @@ export const SidebarMetadataSection = ({
                                 <input
                                     type="checkbox"
                                     className="sr-only peer"
-                                    {...register("enableVoucher")}
+                                    {...register("enableVoucher" as Path<TFieldValues>)}
                                 />
                                 <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cuan-cyan"></div>
                             </label>
                         </div>
 
-                        {watch("enableVoucher") && (
+                        {watch("enableVoucher" as Path<TFieldValues>) && (
                             <div className="animate-in fade-in slide-in-from-top-2 duration-200">
                                 <VoucherSelector
-                                    selectedIds={watch("vouchers") || []}
-                                    onChange={(ids) => setValue("vouchers", ids, { shouldDirty: true, shouldValidate: true })}
+                                    selectedIds={(watch("vouchers" as Path<TFieldValues>) as string[]) || []}
+                                    onChange={(ids) => setValue("vouchers" as Path<TFieldValues>, ids as PathValue<TFieldValues, Path<TFieldValues>>, { shouldDirty: true, shouldValidate: true })}
                                 />
                             </div>
                         )}
@@ -461,21 +496,21 @@ export const SidebarMetadataSection = ({
                                 <input
                                     type="checkbox"
                                     className="sr-only peer"
-                                    {...register("enableNotes")}
+                                    {...register("enableNotes" as Path<TFieldValues>)}
                                 />
                                 <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cuan-cyan"></div>
                             </label>
                         </div>
 
-                        {watch("enableNotes") && (
+                        {watch("enableNotes" as Path<TFieldValues>) && (
                             <div className="animate-in fade-in slide-in-from-top-2 duration-200 space-y-1">
                                 <FormTextarea
                                     placeholder="Masukkan catatan khusus yang akan dikirim ke email pembeli"
                                     className="min-h-[60px]"
-                                    {...register("notes")}
+                                    {...register("notes" as Path<TFieldValues>)}
                                 />
-                                {errors.notes?.message && (
-                                    <span className="text-red-500 text-xs mt-1 block">{errors.notes.message as string}</span>
+                                {anyErrors.notes?.message && (
+                                    <span className="text-red-500 text-xs mt-1 block">{anyErrors.notes.message}</span>
                                 )}
                             </div>
                         )}
@@ -492,7 +527,7 @@ export const SidebarMetadataSection = ({
                                 <input
                                     type="checkbox"
                                     className="sr-only peer"
-                                    {...register("enablePortal")}
+                                    {...register("enablePortal" as Path<TFieldValues>)}
                                 />
                                 <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cuan-cyan"></div>
                             </label>

@@ -14,6 +14,7 @@ import {
 } from "@phosphor-icons/react";
 import { api } from "~/trpc/react";
 import { CATEGORY_STYLE, CATEGORY_STYLE_DEFAULT, PRODUCT_TYPE_MAP } from "~/lib/constants";
+import type { PortalPurchaseType } from "~/types/portal";
 
 const formatIDR = (val: number) =>
   new Intl.NumberFormat("id-ID", {
@@ -40,7 +41,7 @@ export default function PortalDetailRiwayatPage() {
       setIsDownloading(true);
       const { generateInvoicePDF } = await import("~/lib/invoice");
       await new Promise((resolve) => setTimeout(resolve, 50));
-      generateInvoicePDF(purchase as any);
+      generateInvoicePDF(purchase as unknown as PortalPurchaseType);
     } catch (err) {
       console.error("Gagal mengunduh invoice:", err);
     } finally {
@@ -81,7 +82,7 @@ export default function PortalDetailRiwayatPage() {
     );
   }
 
-  const p = purchase as any;
+  const p = purchase as unknown as PortalPurchaseType;
   const product = p.product;
   const isCompleted = p.status === "completed";
   const isPending = p.status === "pending";

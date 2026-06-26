@@ -17,6 +17,7 @@ import { CreatorProfileSkeleton } from "~/components/shared/detail-skeletons";
 import { FormInput, FormRow, FormTextarea, SectionHeader } from "~/components/shared/form-layout";
 import { useImageUpload } from "~/hooks/shared/use-upload";
 import { api } from "~/trpc/react";
+import { ImageCropperDialog } from "~/components/shared/image-cropper-dialog";
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -60,6 +61,11 @@ export default function ProfilePage() {
     const avatarUpload = useImageUpload("avatars");
     const bannerUpload = useImageUpload("banners");
 
+    const [cropperOpen, setCropperOpen] = useState(false);
+    const [cropperMode, setCropperMode] = useState<"avatar" | "banner" | null>(null);
+    const [selectedImageSrc, setSelectedImageSrc] = useState("");
+    const [fileName, setFileName] = useState("");
+
     const isInitializedRef = useRef(false);
 
     useEffect(() => {
@@ -79,8 +85,34 @@ export default function ProfilePage() {
         }
     }, [user]);
 
-    const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        await avatarUpload.handleFileUpload(e);
+    const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            setSelectedImageSrc(reader.result as string);
+            setFileName(file.name);
+            setCropperMode("avatar");
+            setCropperOpen(true);
+        };
+        reader.readAsDataURL(file);
+        e.target.value = "";
+    };
+
+    const handleBannerFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            setSelectedImageSrc(reader.result as string);
+            setFileName(file.name);
+            setCropperMode("banner");
+            setCropperOpen(true);
+        };
+        reader.readAsDataURL(file);
+        e.target.value = "";
     };
 
     const handleSave = () => {
@@ -261,7 +293,7 @@ export default function ProfilePage() {
                                             ref={bannerInputRef}
                                             className="hidden"
                                             accept="image/*"
-                                            onChange={(e) => bannerUpload.handleFileUpload(e)}
+                                            onChange={handleBannerFileChange}
                                         />
                                     </div>
                                     {bannerUpload.previewUrl && (
@@ -368,6 +400,28 @@ export default function ProfilePage() {
                     </div>
                 </div>
             </div>
+            
+            <ImageCropperDialog
+                isOpen={cropperOpen}
+                imageSrc={selectedImageSrc}
+                fileName={fileName}
+                onClose={() => {
+                    setCropperOpen(false);
+                    setCropperMode(null);
+                }}
+                onCrop={async (croppedFile) => {
+                    if (cropperMode === "avatar") {
+                        await avatarUpload.handleFileUpload(croppedFile);
+                    } else if (cropperMode === "banner") {
+                        await bannerUpload.handleFileUpload(croppedFile);
+                    }
+                }}
+                cropShape={cropperMode === "avatar" ? "circle" : "rect"}
+                cropWidth={cropperMode === "avatar" ? 300 : 640}
+                cropHeight={cropperMode === "avatar" ? 300 : 160}
+                outputWidth={cropperMode === "avatar" ? 400 : 1600}
+                outputHeight={cropperMode === "avatar" ? 400 : 400}
+            />
         </div>
     );
 }

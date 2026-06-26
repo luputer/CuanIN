@@ -8,6 +8,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAdminCreators } from "~/hooks/admin/use-admin-creators";
+import type { AdminCreatorType } from "~/types/admin";
 
 import {
     Avatar,
@@ -144,7 +145,7 @@ export default function AdminCreatorsPage() {
                                     }
                                 />
                             ) : (
-                                creators?.map((item: any, index: number) => {
+                                creators?.map((item: AdminCreatorType, index: number) => {
                                     const rowNumber = (page - 1) * limit + index + 1;
                                     return (
                                         <TableRow key={item.id} data-type="body">
@@ -224,7 +225,7 @@ export default function AdminCreatorsPage() {
                             }
                         />
                     ) : (
-                        creators?.map((item: any, index: number) => {
+                        creators?.map((item: AdminCreatorType, index: number) => {
                             const rowNumber = (page - 1) * limit + index + 1;
 
                             return (

@@ -160,7 +160,7 @@ export default function ProductDetailPage() {
   const currentImage = allImages[activeImageIndex] ?? allImages[0] ?? product.image;
 
   const otherProducts = (product.user.products ?? []).filter(
-    (p: any) => p.id !== product.id,
+    (p) => p.id !== product.id,
   );
   const recommendationList = otherProducts.slice(0, 4);
 
@@ -501,32 +501,23 @@ export default function ProductDetailPage() {
               Rekomendasi Produk Lainnya
             </h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {recommendationList.map((rec) => {
-                const recPrice =
-                  (rec as any)?.price &&
-                    typeof (rec as any)?.price === "object" &&
-                    typeof (rec as any)?.price.toNumber === "function"
-                    ? (rec as any).price.toNumber()
-                    : (rec as any).price;
-
-                return (
-                  <CatalogProductCard
-                    key={rec.id}
-                    id={rec.id}
-                    productSlug={(rec as any).slug ?? rec.id}
-                    creatorSlug={slug}
-                    name={rec.name}
-                    shortDescription={(rec as any).shortDescription}
-                    type={rec.type}
-                    price={Number(recPrice)}
-                    image={(rec as any).image}
-                    startDate={(rec as any).startDate}
-                    endDate={(rec as any).endDate}
-                    contentType={(rec as any).contentType}
-                    duration={(rec as any).duration}
-                  />
-                );
-              })}
+              {recommendationList.map((rec) => (
+                <CatalogProductCard
+                  key={rec.id}
+                  id={rec.id}
+                  productSlug={rec.slug ?? rec.id}
+                  creatorSlug={slug}
+                  name={rec.name}
+                  shortDescription={rec.shortDescription}
+                  type={rec.type}
+                  price={Number(rec.price)}
+                  image={rec.image}
+                  startDate={rec.startDate}
+                  endDate={rec.endDate}
+                  contentType={rec.contentType}
+                  duration={rec.duration}
+                />
+              ))}
             </div>
           </div>
         </>

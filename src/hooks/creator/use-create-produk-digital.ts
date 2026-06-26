@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { api } from "~/trpc/react";
 import { useImageUpload } from "~/hooks/shared/use-upload";
 import { productDigitalSchema, type DigitalProductFormValues } from "~/lib/validation";
-import type { FormField } from "~/components/creator/form-customizer";
+import type { FormField } from "~/types/form";
 
 export function useCreateProdukDigital() {
     const router = useRouter();
@@ -44,8 +44,8 @@ export function useCreateProdukDigital() {
 
     const { uploading, handleFileUpload } = useImageUpload("products");
 
-    const onFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const url = await handleFileUpload(e);
+    const onFilesChange = async (fileOrEvent: File | React.ChangeEvent<HTMLInputElement>) => {
+        const url = await handleFileUpload(fileOrEvent);
         if (url) {
             const currentImages = getValues("images") || [];
             if (currentImages.length < 4) {
@@ -58,7 +58,9 @@ export function useCreateProdukDigital() {
                 toast.error("Maksimal 4 gambar");
             }
         }
-        e.target.value = "";
+        if (!(fileOrEvent instanceof File)) {
+            fileOrEvent.target.value = "";
+        }
     };
 
     const removeImage = (index: number) => {

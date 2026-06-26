@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 
 import { api } from "~/trpc/react";
+import type { AdminProductType } from "~/types/admin";
 import { getProductTypeLabel } from "~/lib/constants";
 import {
     Table,
@@ -98,7 +99,7 @@ export default function CreatorProductsPage() {
                             <SelectFilter
                                 label={`Kategori: ${getProductTypeLabel(typeFilter)}`}
                                 value={typeFilter}
-                                onValueChange={(v) => setTypeFilter(v as any)}
+                                onValueChange={(v) => setTypeFilter(v as "ALL" | "WEBINAR" | "DIGITAL_PRODUCT" | "KELAS_ONLINE")}
                                 options={[
                                     { value: "ALL", label: "Semua Kategori" },
                                     { value: "WEBINAR", label: "Webinar" },
@@ -171,7 +172,7 @@ export default function CreatorProductsPage() {
                                     title={isFiltered ? "Hasil pencarian atau filter tidak ditemukan." : "Belum ada produk yang ditemukan."}
                                 />
                             ) : (
-                                products?.map((item: any, index: number) => (
+                                products?.map((item: AdminProductType, index: number) => (
                                     <AdminProductTableRow
                                         key={item.id}
                                         item={item}
@@ -196,7 +197,7 @@ export default function CreatorProductsPage() {
                             title={isFiltered ? "Hasil pencarian atau filter tidak ditemukan." : "Belum ada produk yang ditemukan."}
                         />
                     ) : (
-                        products?.map((item: any) => (
+                        products?.map((item: AdminProductType) => (
                             <AdminProductMobileCard
                                 key={item.id}
                                 item={item}

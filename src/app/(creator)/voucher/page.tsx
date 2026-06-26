@@ -21,6 +21,7 @@ import {
 // Internal & Utils
 import { api } from "~/trpc/react";
 import { useDataTable } from "~/hooks/shared/use-data-table";
+import type { CreatorVoucherType } from "~/types/voucher";
 
 // Components
 import {
@@ -79,7 +80,7 @@ export default function VoucherPage() {
         placeholderData: (prev) => prev,
     });
 
-    const paginatedVouchers = data?.items ?? [];
+    const paginatedVouchers = (data?.items ?? []) as unknown as CreatorVoucherType[];
     const total = data?.total ?? 0;
     const totalPages = data?.totalPages ?? 1;
 
@@ -225,8 +226,8 @@ export default function VoucherPage() {
                             ) : (
                                 paginatedVouchers.map((item, index) => {
                                     const rowNumber = (page - 1) * limit + index + 1;
-                                    const usageCount = (item as any).usageCount || 0;
-                                    const limitCount = (item as any).usageLimit;
+                                    const usageCount = item.usageCount || 0;
+                                    const limitCount = item.usageLimit;
 
                                     return (
                                         <TableRow key={item.id} data-type="body">
@@ -254,7 +255,7 @@ export default function VoucherPage() {
 
                                             <TableCell className="whitespace-nowrap">
                                                 <div className="flex items-center min-h-[48px] font-medium text-cuan-cyan">
-                                                    {item.type === "PERSEN" ? `${item.discount}%` : `Rp ${Number(item.discount).toLocaleString("id-ID")}`}
+                                                    {item.type === "PERSEN" ? `${Number(item.discount)}%` : `Rp ${Number(item.discount).toLocaleString("id-ID")}`}
                                                 </div>
                                             </TableCell>
 
@@ -345,7 +346,7 @@ export default function VoucherPage() {
                                                 {item.code}
                                             </span>
                                             <span className="font-bold text-007EA5 text-sm">
-                                                {item.type === "PERSEN" ? `${item.discount}%` : `Rp ${Number(item.discount).toLocaleString("id-ID")}`}
+                                                {item.type === "PERSEN" ? `${Number(item.discount)}%` : `Rp ${Number(item.discount).toLocaleString("id-ID")}`}
                                             </span>
                                         </div>
 
@@ -361,8 +362,8 @@ export default function VoucherPage() {
 
                                         <div className="text-xs text-slate-500">
                                             <span className="font-medium text-slate-400">Digunakan: </span>
-                                            <span className="font-medium text-slate-800">{(item as any).usageCount || 0}</span>
-                                            {(item as any).usageLimit && <span className="text-slate-400"> / {(item as any).usageLimit}</span>}
+                                            <span className="font-medium text-slate-800">{item.usageCount || 0}</span>
+                                            {item.usageLimit && <span className="text-slate-400"> / {item.usageLimit}</span>}
                                         </div>
 
                                         <div className="text-xs text-slate-500">
@@ -425,5 +426,4 @@ export default function VoucherPage() {
         </TooltipProvider>
     );
 }
-
 

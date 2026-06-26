@@ -2,8 +2,9 @@
 
 import React from "react";
 import { signIn, signOut } from "next-auth/react";
-import type { UseFormReturn } from "react-hook-form";
-import type { CheckoutFormValues, FormFieldData } from "~/hooks/checkout/use-checkout";
+import type { Path, UseFormReturn } from "react-hook-form";
+import type { CheckoutFormValues, FormFieldData } from "~/types/form";
+import type { Session } from "next-auth";
 import { toast } from "sonner";
 import { CaretDownIcon } from "@phosphor-icons/react";
 import { cn } from "~/lib/utils";
@@ -11,7 +12,7 @@ import { cn } from "~/lib/utils";
 type CheckoutFormProps = {
   form: UseFormReturn<CheckoutFormValues>;
   status: "authenticated" | "unauthenticated" | "loading";
-  session: any;
+  session: Session | null;
   isGoogleLoading: boolean;
   setIsGoogleLoading: (val: boolean) => void;
   formFields: FormFieldData[];
@@ -69,13 +70,13 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
   const renderFormField = (field: FormFieldData) => {
     const options = Array.isArray(field.options) ? (field.options as string[]) : [];
-    const fieldError = (errors.custom as any)?.[field.id];
+    const fieldError = (errors.custom as Record<string, { message?: string }> | undefined)?.[field.id];
 
     switch (field.type) {
       case "SHORT":
         return (
           <input
-            {...register(`custom.${field.id}` as any)}
+            {...register(`custom.${field.id}` as Path<CheckoutFormValues>)}
             placeholder={`Masukkan ${field.label.toLowerCase()}`}
             className={inputClass(!!fieldError)}
           />
@@ -83,7 +84,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
       case "LONG":
         return (
           <textarea
-            {...register(`custom.${field.id}` as any)}
+            {...register(`custom.${field.id}` as Path<CheckoutFormValues>)}
             placeholder={`Masukkan ${field.label.toLowerCase()}`}
             rows={3}
             className={inputClass(!!fieldError)}
@@ -94,7 +95,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
           <div className="space-y-2">
             {options.map((opt, _i) => (
               <label key={opt} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                <input type="radio" value={opt} {...register(`custom.${field.id}` as any)} className="accent-cuan-cyan w-4 h-4 cursor-pointer" />
+                <input type="radio" value={opt} {...register(`custom.${field.id}` as Path<CheckoutFormValues>)} className="accent-cuan-cyan w-4 h-4 cursor-pointer" />
                 {opt}
               </label>
             ))}
@@ -104,7 +105,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
         return (
           <div className="space-y-2">
             {options.map((opt, _i) => {
-              const current = watch(`custom.${field.id}` as any) ?? "";
+              const current = (watch(`custom.${field.id}` as Path<CheckoutFormValues>) as string | undefined) ?? "";
               const values = current.split(",").filter(Boolean);
               const checked = values.includes(opt);
               return (
@@ -117,7 +118,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                       const newValues = checked
                         ? values.filter((v: string) => v !== opt)
                         : [...values, opt];
-                      setValue(`custom.${field.id}` as any, newValues.join(","), {
+                      setValue(`custom.${field.id}` as Path<CheckoutFormValues>, newValues.join(","), {
                         shouldValidate: true,
                       });
                     }}
@@ -132,7 +133,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
         return (
           <div className="relative">
             <select
-              {...register(`custom.${field.id}` as any)}
+              {...register(`custom.${field.id}` as Path<CheckoutFormValues>)}
               className={cn(inputClass(!!fieldError), "appearance-none pr-10")}
             >
               <option value="">Pilih {field.label.toLowerCase()}</option>
@@ -147,7 +148,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
         );
       default:
         return (
-          <input {...register(`custom.${field.id}` as any)} className={inputClass(!!fieldError)} />
+          <input {...register(`custom.${field.id}` as Path<CheckoutFormValues>)} className={inputClass(!!fieldError)} />
         );
     }
   };
@@ -163,7 +164,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
           <div className="flex flex-col">
             <div className="text-xs text-007EA5">Login sebagai</div>
             <div className="max-w-[220px] truncate text-sm font-medium text-cyan-800">
-              {session.user.email}
+              {session?.user?.email}
             </div>
           </div>
           <button
@@ -272,9 +273,9 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 {field.required && <span className="text-red-500"> *</span>}
               </label>
               {renderFormField(field)}
-              {(errors.custom as any)?.[field.id] && (
+              {(errors.custom as Record<string, { message?: string }> | undefined)?.[field.id] && (
                 <p className="text-xs text-red-500">
-                  {(errors.custom as any)[field.id]?.message?.toString()}
+                  {(errors.custom as Record<string, { message?: string }> | undefined)?.[field.id]?.message?.toString()}
                 </p>
               )}
             </div>

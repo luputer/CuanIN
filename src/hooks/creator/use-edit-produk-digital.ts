@@ -95,8 +95,8 @@ export function useEditProdukDigital({ id, isEdit = false }: UseProdukDigitalKel
         }
     }, [product, reset, isEdit]);
 
-    const onFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const url = await handleFileUpload(e);
+    const onFilesChange = async (fileOrEvent: File | React.ChangeEvent<HTMLInputElement>) => {
+        const url = await handleFileUpload(fileOrEvent);
         if (url) {
             const currentImages = form.getValues("images") || [];
             if (currentImages.length < 4) {
@@ -110,7 +110,9 @@ export function useEditProdukDigital({ id, isEdit = false }: UseProdukDigitalKel
                 toast.error("Maksimal 4 gambar");
             }
         }
-        e.target.value = "";
+        if (!(fileOrEvent instanceof File)) {
+            fileOrEvent.target.value = "";
+        }
     };
 
     const removeImage = (index: number) => {

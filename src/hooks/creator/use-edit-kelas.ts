@@ -99,8 +99,8 @@ export function useEditKelas({ id, isEdit = false }: UseEditKelasProps = {}) {
         }
     }, [product, reset, isEdit]);
 
-    const onFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const url = await handleFileUpload(e);
+    const onFilesChange = async (fileOrEvent: File | React.ChangeEvent<HTMLInputElement>) => {
+        const url = await handleFileUpload(fileOrEvent);
         if (url) {
             const currentImages = form.getValues("images") || [];
             if (currentImages.length < 4) {
@@ -113,7 +113,9 @@ export function useEditKelas({ id, isEdit = false }: UseEditKelasProps = {}) {
                 toast.error("Maksimal 4 gambar");
             }
         }
-        e.target.value = "";
+        if (!(fileOrEvent instanceof File)) {
+            fileOrEvent.target.value = "";
+        }
     };
 
     const removeImage = (index: number) => {

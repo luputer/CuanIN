@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { api } from "~/trpc/react";
 import { productKelasOnlineSchema } from "~/lib/validation";
 import { useImageUpload } from "~/hooks/shared/use-upload";
-import type { FormField } from "~/components/creator/form-customizer";
+import type { FormField } from "~/types/form";
 import type { z } from "zod";
 
 type KelasOnlineFormValues = z.infer<typeof productKelasOnlineSchema>;
@@ -79,8 +79,8 @@ export function useCreateKelas() {
         setValue("capacity", newQuota, { shouldValidate: true, shouldDirty: true });
     };
 
-    const onFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const url = await handleFileUpload(e);
+    const onFilesChange = async (fileOrEvent: File | React.ChangeEvent<HTMLInputElement>) => {
+        const url = await handleFileUpload(fileOrEvent);
         if (url) {
             const currentImages = getValues("images") || [];
             if (currentImages.length < 4) {
@@ -93,7 +93,9 @@ export function useCreateKelas() {
                 toast.error("Maksimal 4 gambar");
             }
         }
-        e.target.value = "";
+        if (!(fileOrEvent instanceof File)) {
+            fileOrEvent.target.value = "";
+        }
     };
 
     const removeImage = (index: number) => {

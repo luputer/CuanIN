@@ -9,30 +9,8 @@ import { z } from "zod";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 
-export type FormFieldData = {
-  id: string;
-  label: string;
-  type: string;
-  options: unknown;
-  required: boolean;
-  order: number;
-};
+import type { FormFieldData, CheckoutFormValues, AppliedVoucher } from "~/types/form";
 
-export type CheckoutFormValues = {
-  name: string;
-  email: string;
-  phone: string;
-  promo?: string;
-  custom?: Record<string, string>;
-};
-
-export type AppliedVoucher = {
-  id: string;
-  code: string;
-  name: string;
-  type: "PERSEN" | "NOMINAL";
-  discount: number;
-};
 
 export function useCheckout() {
   const params = useParams();

@@ -11,7 +11,7 @@ import { PortalPurchaseCard } from "~/components/portal/portal-purchase-card";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { cn } from "~/lib/utils";
 
-type TabType = "ALL" | "DIGITAL_PRODUCT" | "WEBINAR" | "KELAS_ONLINE";
+import type { TabType, PortalPurchaseType } from "~/types/portal";
 
 const TABS: { key: TabType; label: string }[] = [
   { key: "ALL", label: "Semua Produk" },
@@ -52,7 +52,7 @@ function PortalProductPageInner() {
     { enabled: !!session?.user }
   );
 
-  const rawPurchases = (session?.user ? authPurchases?.purchases : historyData?.purchases) ?? [];
+  const rawPurchases = ((session?.user ? authPurchases?.purchases : historyData?.purchases) ?? []) as unknown as PortalPurchaseType[];
   const isLoading = session?.user ? isLoadingAuth : (isLoadingGuest && !!accessToken);
 
   const currentPurchases = useMemo(() => {
@@ -67,11 +67,11 @@ function PortalProductPageInner() {
   const filteredPurchases = useMemo(() => {
     let filtered = activeTab === "ALL"
       ? currentPurchases
-      : currentPurchases.filter((p: any) => p.product.type === activeTab);
+      : currentPurchases.filter((p) => p.product.type === activeTab);
 
     if (search.trim()) {
       const q = search.toLowerCase();
-      filtered = filtered.filter((p: any) => p.product.name.toLowerCase().includes(q));
+      filtered = filtered.filter((p) => p.product.name.toLowerCase().includes(q));
     }
 
     return filtered;
@@ -163,7 +163,7 @@ function PortalProductPageInner() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {filteredPurchases.map((purchase: any) => (
+          {filteredPurchases.map((purchase) => (
             <PortalPurchaseCard key={purchase.id} purchase={purchase} isHistoryTab={false} />
           ))}
         </div>

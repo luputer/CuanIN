@@ -92,8 +92,8 @@ export function useEditWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
 
     const images = watch("images") || [];
 
-    const onFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const url = await handleFileUpload(e);
+    const onFilesChange = async (fileOrEvent: File | React.ChangeEvent<HTMLInputElement>) => {
+        const url = await handleFileUpload(fileOrEvent);
         if (url) {
             const currentImages = getValues("images") || [];
             if (currentImages.length < 4) {
@@ -107,7 +107,9 @@ export function useEditWebinar({ id, isEdit = false }: UseWebinarProps = {}) {
                 toast.error("Maksimal 4 gambar");
             }
         }
-        e.target.value = "";
+        if (!(fileOrEvent instanceof File)) {
+            fileOrEvent.target.value = "";
+        }
     };
 
     const handlePriceAdjust = (step: number) => {

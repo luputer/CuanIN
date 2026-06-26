@@ -13,8 +13,9 @@ import {
   CircleNotchIcon,
 } from "@phosphor-icons/react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
+import type { PortalPurchaseType } from "~/types/portal";
 
-export function PortalPurchaseCard({ purchase, isHistoryTab }: { purchase: any; isHistoryTab: boolean }) {
+export function PortalPurchaseCard({ purchase, isHistoryTab }: { purchase: PortalPurchaseType; isHistoryTab: boolean }) {
   const router = useRouter();
   const [isDownloading, setIsDownloading] = useState(false);
   const product = purchase.product;

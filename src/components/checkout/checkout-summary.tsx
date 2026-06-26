@@ -3,7 +3,7 @@
 import React from "react";
 import { SealPercentIcon, SpinnerIcon, WarningCircleIcon, ShieldCheckIcon } from "@phosphor-icons/react";
 import type { UseFormReturn } from "react-hook-form";
-import type { AppliedVoucher, CheckoutFormValues } from "~/hooks/checkout/use-checkout";
+import type { AppliedVoucher, CheckoutFormValues } from "~/types/form";
 
 type CheckoutSummaryProps = {
   form: UseFormReturn<CheckoutFormValues>;

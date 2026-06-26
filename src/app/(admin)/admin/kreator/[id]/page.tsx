@@ -100,14 +100,18 @@ export default function CreatorDetailPage() {
         if (url) setValue("banner", url, { shouldValidate: true });
     };
 
-    const avatarDrop = useImageDrop(useCallback(async (file: File) => {
-        const url = await avatarUpload.handleFileUpload(file);
-        if (url) setValue("image", url, { shouldValidate: true });
+    const avatarDrop = useImageDrop(useCallback((file: File) => {
+        void (async () => {
+            const url = await avatarUpload.handleFileUpload(file);
+            if (url) setValue("image", url, { shouldValidate: true });
+        })();
     }, [avatarUpload, setValue]));
 
-    const bannerDrop = useImageDrop(useCallback(async (file: File) => {
-        const url = await bannerUpload.handleFileUpload(file);
-        if (url) setValue("banner", url, { shouldValidate: true });
+    const bannerDrop = useImageDrop(useCallback((file: File) => {
+        void (async () => {
+            const url = await bannerUpload.handleFileUpload(file);
+            if (url) setValue("banner", url, { shouldValidate: true });
+        })();
     }, [bannerUpload, setValue]));
 
     const updateCreator = api.creators.update.useMutation({

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { 
     X as XIcon, 
     ArrowClockwise as ArrowClockwiseIcon, 
@@ -242,10 +243,13 @@ export function ImageCropperDialog({
                         onTouchEnd={handleMouseUp}
                     >
                         {/* The Image */}
-                        <img
+                        <Image
                             ref={imageRef}
                             src={imageSrc}
                             alt="To Crop"
+                            width={imageDimensions.width || 300}
+                            height={imageDimensions.height || 300}
+                            unoptimized
                             onLoad={handleImageLoad}
                             className="absolute pointer-events-none origin-center max-w-none"
                             style={{

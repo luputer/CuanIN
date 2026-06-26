@@ -10,7 +10,7 @@ import { useState, useCallback, type DragEvent } from "react";
  * - `dragHandlers` – spread these onto the drop-zone container div
  * - `handleDrop` will call `onFile(file)` with the first valid image file.
  */
-export function useImageDrop(onFile: (file: File) => void) {
+export function useImageDrop(onFile: (file: File) => void | Promise<void>) {
     const [isDragging, setIsDragging] = useState(false);
 
     const handleDragEnter = useCallback((e: DragEvent) => {

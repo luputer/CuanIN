@@ -17,6 +17,7 @@ import { DraggableEditor } from "~/components/shared/draggable-editor";
 import { VoucherSelector } from "~/components/voucher/selector";
 import { formatNumberInput } from "~/lib/utils";
 import { ImageCropperDialog } from "~/components/shared/image-cropper-dialog";
+import { useImageDrop } from "~/hooks/shared/use-image-drop";
 
 /**
  * Shared Basic Information Section
@@ -384,6 +385,18 @@ export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldV
         e.target.value = "";
     };
 
+    const handleDroppedFile = React.useCallback((file: File) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            setSelectedImageSrc(reader.result as string);
+            setFileName(file.name);
+            setCropperOpen(true);
+        };
+        reader.readAsDataURL(file);
+    }, []);
+
+    const thumbnailDrop = useImageDrop(handleDroppedFile);
+
     return (
         <div className="shrink-0 w-full lg:w-[400px] space-y-6">
             {/* Thumbnail */}
@@ -412,9 +425,10 @@ export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldV
                     {images.length < 4 && (
                         <div
                             onClick={() => fileInputRef.current?.click()}
-                            className="relative group shrink-0 w-24 aspect-square cursor-pointer"
+                            className={`relative group shrink-0 w-24 aspect-square cursor-pointer transition-transform ${thumbnailDrop.isDragging ? "scale-105" : ""}`}
+                            {...thumbnailDrop.dragHandlers}
                         >
-                            <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10">
+                            <div className={`w-full h-full bg-white border-2 border-dashed rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors ${thumbnailDrop.isDragging ? "border-cuan-cyan bg-cuan-cyan/10" : "border-slate-300 group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10"}`}>
                                 {uploading ? (
                                     <CircleNotchIcon className="animate-spin text-cuan-cyan" size={24} />
                                 ) : (

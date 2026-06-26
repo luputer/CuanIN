@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -33,6 +33,7 @@ import {
 import ButtonSave from "~/components/shared/button-save";
 import { DetailHeader } from "~/components/shared/detail-header";
 import { AdminCreatorDetailSkeleton } from "~/components/shared/detail-skeletons";
+import { useImageDrop } from "~/hooks/shared/use-image-drop";
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -98,6 +99,16 @@ export default function CreatorDetailPage() {
         const url = await bannerUpload.handleFileUpload(e);
         if (url) setValue("banner", url, { shouldValidate: true });
     };
+
+    const avatarDrop = useImageDrop(useCallback(async (file: File) => {
+        const url = await avatarUpload.handleFileUpload(file);
+        if (url) setValue("image", url, { shouldValidate: true });
+    }, [avatarUpload, setValue]));
+
+    const bannerDrop = useImageDrop(useCallback(async (file: File) => {
+        const url = await bannerUpload.handleFileUpload(file);
+        if (url) setValue("banner", url, { shouldValidate: true });
+    }, [bannerUpload, setValue]));
 
     const updateCreator = api.creators.update.useMutation({
         onSuccess: () => {
@@ -173,10 +184,11 @@ export default function CreatorDetailPage() {
                                 <FormRow label="Foto Profil">
                                     <div className="flex flex-col gap-3">
                                         <div
-                                            className="relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer"
+                                            className={`relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer transition-transform ${avatarDrop.isDragging ? "scale-105" : ""}`}
                                             onClick={() => fileInputRef.current?.click()}
+                                            {...avatarDrop.dragHandlers}
                                         >
-                                            <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10 relative">
+                                            <div className={`w-full h-full bg-white border-2 border-dashed rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors relative ${avatarDrop.isDragging ? "border-cuan-cyan bg-cuan-cyan/10" : "border-slate-300 group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10"}`}>
                                                 {avatarUpload.previewUrl ? (
                                                     <>
                                                         <Image
@@ -233,10 +245,11 @@ export default function CreatorDetailPage() {
                                 <FormRow label="Banner Profil">
                                     <div className="flex flex-col gap-3">
                                         <div
-                                            className="relative group w-full aspect-[6/1] md:aspect-[8/1] cursor-pointer"
+                                            className={`relative group w-full aspect-[6/1] md:aspect-[8/1] cursor-pointer transition-transform ${bannerDrop.isDragging ? "scale-[1.02]" : ""}`}
                                             onClick={() => bannerInputRef.current?.click()}
+                                            {...bannerDrop.dragHandlers}
                                         >
-                                            <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10 relative">
+                                            <div className={`w-full h-full bg-white border-2 border-dashed rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors relative ${bannerDrop.isDragging ? "border-cuan-cyan bg-cuan-cyan/10" : "border-slate-300 group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10"}`}>
                                                 {bannerUpload.previewUrl ? (
                                                     <>
                                                         <Image

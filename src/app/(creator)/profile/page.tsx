@@ -9,13 +9,14 @@ import {
     TrashIcon
 } from "@phosphor-icons/react";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import ButtonSave from "~/components/shared/button-save";
 import { DetailHeader } from "~/components/shared/detail-header";
 import { CreatorProfileSkeleton } from "~/components/shared/detail-skeletons";
 import { FormInput, FormRow, FormTextarea, SectionHeader } from "~/components/shared/form-layout";
 import { useImageUpload } from "~/hooks/shared/use-upload";
+import { useImageDrop } from "~/hooks/shared/use-image-drop";
 import { api } from "~/trpc/react";
 import { ImageCropperDialog } from "~/components/shared/image-cropper-dialog";
 
@@ -65,6 +66,20 @@ export default function ProfilePage() {
     const [cropperMode, setCropperMode] = useState<"avatar" | "banner" | null>(null);
     const [selectedImageSrc, setSelectedImageSrc] = useState("");
     const [fileName, setFileName] = useState("");
+
+    const openCropperWithFile = useCallback((file: File, mode: "avatar" | "banner") => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            setSelectedImageSrc(reader.result as string);
+            setFileName(file.name);
+            setCropperMode(mode);
+            setCropperOpen(true);
+        };
+        reader.readAsDataURL(file);
+    }, []);
+
+    const avatarDrop = useImageDrop(useCallback((file: File) => openCropperWithFile(file, "avatar"), [openCropperWithFile]));
+    const bannerDrop = useImageDrop(useCallback((file: File) => openCropperWithFile(file, "banner"), [openCropperWithFile]));
 
     const isInitializedRef = useRef(false);
 
@@ -197,10 +212,11 @@ export default function ProfilePage() {
                             <FormRow label="Foto Profil">
                                 <div className="flex flex-col gap-3">
                                     <div
-                                        className="relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer"
+                                        className={`relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer transition-transform ${avatarDrop.isDragging ? "scale-105" : ""}`}
                                         onClick={() => fileInputRef.current?.click()}
+                                        {...avatarDrop.dragHandlers}
                                     >
-                                        <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10 relative">
+                                        <div className={`w-full h-full bg-white border-2 border-dashed rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors relative ${avatarDrop.isDragging ? "border-cuan-cyan bg-cuan-cyan/10" : "border-slate-300 group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10"}`}>
                                             {avatarUpload.previewUrl ? (
                                                 <>
                                                     <Image
@@ -257,10 +273,11 @@ export default function ProfilePage() {
                             <FormRow label="Banner Profil">
                                 <div className="flex flex-col gap-3">
                                     <div
-                                        className="relative group w-full aspect-[6/1] md:aspect-[8/1] cursor-pointer"
+                                        className={`relative group w-full aspect-[6/1] md:aspect-[8/1] cursor-pointer transition-transform ${bannerDrop.isDragging ? "scale-[1.02]" : ""}`}
                                         onClick={() => bannerInputRef.current?.click()}
+                                        {...bannerDrop.dragHandlers}
                                     >
-                                        <div className="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10 relative">
+                                        <div className={`w-full h-full bg-white border-2 border-dashed rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors relative ${bannerDrop.isDragging ? "border-cuan-cyan bg-cuan-cyan/10" : "border-slate-300 group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10"}`}>
                                             {bannerUpload.previewUrl ? (
                                                 <>
                                                     <Image

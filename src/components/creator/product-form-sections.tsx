@@ -8,7 +8,8 @@ import {
     X,
     CaretUpIcon,
     CaretDownIcon,
-    CircleNotchIcon
+    CircleNotchIcon,
+    PencilSimpleIcon
 } from "@phosphor-icons/react";
 import { Controller, useFieldArray } from "react-hook-form";
 import type { UseFormReturn, FieldValues, Path, ArrayPath, PathValue, FieldArray } from "react-hook-form";
@@ -18,6 +19,7 @@ import { VoucherSelector } from "~/components/voucher/selector";
 import { formatNumberInput } from "~/lib/utils";
 import { ImageCropperDialog } from "~/components/shared/image-cropper-dialog";
 import { useImageDrop } from "~/hooks/shared/use-image-drop";
+import { useImageUpload } from "~/hooks/shared/use-upload";
 
 /**
  * Shared Basic Information Section
@@ -348,7 +350,6 @@ export const PlatformSelector = <TFieldValues extends FieldValues = FieldValues>
 export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldValues>({
     form,
     uploading,
-    onFilesChange,
     removeImage,
     fileInputRef,
     statusOptions = [
@@ -370,13 +371,19 @@ export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldV
     const [cropperOpen, setCropperOpen] = React.useState(false);
     const [selectedImageSrc, setSelectedImageSrc] = React.useState("");
     const [fileName, setFileName] = React.useState("");
+    const [editingImageIndex, setEditingImageIndex] = React.useState<number | null>(null);
+    const [originalProductFiles, setOriginalProductFiles] = React.useState<Record<number, File>>({});
+
+    const productImageUpload = useImageUpload("products");
 
     const handleLocalFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        setOriginalProductFiles(prev => ({ ...prev, [images.length]: file }));
         const reader = new FileReader();
         reader.onload = () => {
+            setEditingImageIndex(null);
             setSelectedImageSrc(reader.result as string);
             setFileName(file.name);
             setCropperOpen(true);
@@ -386,14 +393,16 @@ export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldV
     };
 
     const handleDroppedFile = React.useCallback((file: File) => {
+        setOriginalProductFiles(prev => ({ ...prev, [images.length]: file }));
         const reader = new FileReader();
         reader.onload = () => {
+            setEditingImageIndex(null);
             setSelectedImageSrc(reader.result as string);
             setFileName(file.name);
             setCropperOpen(true);
         };
         reader.readAsDataURL(file);
-    }, []);
+    }, [images.length]);
 
     const thumbnailDrop = useImageDrop(handleDroppedFile);
 
@@ -404,17 +413,45 @@ export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldV
                 <p className="text-slate-700 text-sm font-semibold mb-3">Thumbnail</p>
                 <div className="flex flex-wrap gap-3 items-start">
                     {images.map((img: string, index: number) => (
-                        <div key={index} className="relative group shrink-0 w-24 aspect-square">
+                        <div
+                            key={index}
+                            className="relative group shrink-0 w-24 aspect-square cursor-pointer overflow-hidden rounded-xl border border-slate-200"
+                            onClick={() => {
+                                setEditingImageIndex(index);
+                                const originalUrl = img.includes("/products/")
+                                    ? img.replace("/products/", "/products/original-")
+                                    : img;
+                                setSelectedImageSrc(originalUrl);
+                                setFileName(`thumbnail-${index + 1}.jpg`);
+                                setCropperOpen(true);
+                            }}
+                        >
                             <Image
                                 src={img}
                                 alt={`Thumbnail ${index + 1}`}
                                 fill
                                 unoptimized
-                                className="object-cover rounded-xl border border-slate-200"
+                                className="object-cover transition-opacity group-hover:opacity-80"
                             />
+                            {/* Edit Overlay */}
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/15">
+                                <div className="bg-white/90 px-1.5 py-0.5 rounded-full shadow-sm text-[10px] font-semibold text-slate-800 flex items-center gap-0.5">
+                                    <PencilSimpleIcon size={10} weight="bold" />
+                                    <span>Crop</span>
+                                </div>
+                            </div>
+                            {/* Specific Uploading Spinner */}
+                            {productImageUpload.uploading && editingImageIndex === index && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10">
+                                    <CircleNotchIcon className="animate-spin text-white" size={18} />
+                                </div>
+                            )}
                             <button
                                 type="button"
-                                onClick={() => removeImage(index)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeImage(index);
+                                }}
                                 className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md border border-slate-200 text-slate-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                             >
                                 <X size={12} weight="bold" />
@@ -429,7 +466,7 @@ export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldV
                             {...thumbnailDrop.dragHandlers}
                         >
                             <div className={`w-full h-full bg-white border-2 border-dashed rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors ${thumbnailDrop.isDragging ? "border-cuan-cyan bg-cuan-cyan/10" : "border-slate-300 group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10"}`}>
-                                {uploading ? (
+                                {uploading || productImageUpload.uploading ? (
                                     <CircleNotchIcon className="animate-spin text-cuan-cyan" size={24} />
                                 ) : (
                                     <div className="flex flex-col items-center gap-1 text-slate-400">
@@ -456,8 +493,50 @@ export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldV
                 imageSrc={selectedImageSrc}
                 fileName={fileName}
                 onClose={() => setCropperOpen(false)}
-                onCrop={(croppedFile) => {
-                    onFilesChange(croppedFile);
+                onCrop={async (croppedFile) => {
+                    const targetIndex = editingImageIndex !== null ? editingImageIndex : images.length;
+                    let originalFile = originalProductFiles[targetIndex];
+
+                    if (editingImageIndex !== null) {
+                        const currentImages = (form.getValues("images" as Path<TFieldValues>) as string[]) || [];
+                        const currentImgUrl = currentImages[editingImageIndex];
+
+                        if (!originalFile && currentImgUrl?.includes("/products/")) {
+                            const originalUrl = currentImgUrl.replace("/products/", "/products/original-");
+                            try {
+                                const res = await fetch(originalUrl);
+                                if (res.ok) {
+                                    const blob = await res.blob();
+                                    originalFile = new File([blob], "original-product.jpg", { type: blob.type });
+                                }
+                            } catch (err) {
+                                console.error("Failed to fetch original product image:", err);
+                            }
+                        }
+
+                        const url = await productImageUpload.handleFileUpload(croppedFile, originalFile);
+                        if (url) {
+                            const newImages = [...currentImages];
+                            newImages[editingImageIndex] = url;
+                            setValue("images" as Path<TFieldValues>, newImages as PathValue<TFieldValues, Path<TFieldValues>>, { shouldValidate: true, shouldDirty: true });
+                            // If it was the main image, update it too
+                            if (form.getValues("image" as Path<TFieldValues>) === currentImages[editingImageIndex]) {
+                                setValue("image" as Path<TFieldValues>, url as PathValue<TFieldValues, Path<TFieldValues>>, { shouldValidate: true, shouldDirty: true });
+                            }
+                        }
+                    } else {
+                        // New image upload - upload both cropped and original
+                        const url = await productImageUpload.handleFileUpload(croppedFile, originalFile);
+                        if (url) {
+                            const currentImages = (form.getValues("images" as Path<TFieldValues>) as string[]) || [];
+                            const newImages = [...currentImages, url];
+                            setValue("images" as Path<TFieldValues>, newImages as PathValue<TFieldValues, Path<TFieldValues>>, { shouldValidate: true, shouldDirty: true });
+                            // Main image is the first one if not set
+                            if (!form.getValues("image" as Path<TFieldValues>)) {
+                                setValue("image" as Path<TFieldValues>, url as PathValue<TFieldValues, Path<TFieldValues>>, { shouldValidate: true, shouldDirty: true });
+                            }
+                        }
+                    }
                 }}
             />
 

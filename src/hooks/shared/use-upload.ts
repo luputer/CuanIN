@@ -6,7 +6,7 @@ import { api } from "~/trpc/react";
 interface UseImageUploadReturn {
     uploading: boolean;
     previewUrl: string | null;
-    handleFileUpload: (fileOrEvent: File | React.ChangeEvent<HTMLInputElement>) => Promise<string | null>;
+    handleFileUpload: (fileOrEvent: File | React.ChangeEvent<HTMLInputElement>, originalFile?: File) => Promise<string | null>;
     setPreviewUrl: (url: string | null) => void;
 }
 
@@ -16,7 +16,8 @@ export function useImageUpload(folder = "products"): UseImageUploadReturn {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     const handleFileUpload = async (
-        fileOrEvent: File | React.ChangeEvent<HTMLInputElement>
+        fileOrEvent: File | React.ChangeEvent<HTMLInputElement>,
+        originalFile?: File
     ): Promise<string | null> => {
         const file = fileOrEvent instanceof File ? fileOrEvent : fileOrEvent.target.files?.[0];
         if (!file) return null;
@@ -26,7 +27,29 @@ export function useImageUpload(folder = "products"): UseImageUploadReturn {
         setUploading(true);
 
         try {
-            const key = `${folder}/${Date.now()}-${file.name}`;
+            const timestamp = Date.now();
+            const filenameSanitized = file.name.replace(/\s+/g, "_");
+
+            // If originalFile is provided, upload it first with the same timestamp & original- prefix
+            if (originalFile) {
+                const originalSanitized = originalFile.name.replace(/\s+/g, "_");
+                const originalKey = `${folder}/original-${timestamp}-${originalSanitized}`;
+                try {
+                    const originalPresignedUrl = await getPresignedUrl.mutateAsync({
+                        key: originalKey,
+                        fileType: originalFile.type,
+                    });
+                    await fetch(originalPresignedUrl, {
+                        method: "PUT",
+                        body: originalFile,
+                        headers: { "Content-Type": originalFile.type },
+                    });
+                } catch (err) {
+                    console.error("Failed to upload original image to S3:", err);
+                }
+            }
+
+            const key = `${folder}/${timestamp}-${filenameSanitized}`;
             const url = await getPresignedUrl.mutateAsync({
                 key,
                 fileType: file.type,

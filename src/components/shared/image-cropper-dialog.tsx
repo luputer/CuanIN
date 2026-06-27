@@ -45,6 +45,11 @@ export function ImageCropperDialog({
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
     const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
     const [viewportSize, setViewportSize] = useState({ width: 400, height: 400 });
+    const [currentSrc, setCurrentSrc] = useState(imageSrc);
+
+    useEffect(() => {
+        setCurrentSrc(imageSrc);
+    }, [imageSrc]);
 
     // Calculate scaling factor to fit the crop box within the viewport with some padding (e.g., 32px)
     const padding = 32;
@@ -245,12 +250,19 @@ export function ImageCropperDialog({
                         {/* The Image */}
                         <Image
                             ref={imageRef}
-                            src={imageSrc}
+                            src={currentSrc}
                             alt="To Crop"
                             width={imageDimensions.width || 300}
                             height={imageDimensions.height || 300}
                             unoptimized
+                            crossOrigin="anonymous"
                             onLoad={handleImageLoad}
+                            onError={() => {
+                                // If loading the original image fails (e.g. 404), fallback to the cropped image
+                                if (currentSrc.includes("/original-")) {
+                                    setCurrentSrc(currentSrc.replace("/original-", "/"));
+                                }
+                            }}
                             className="absolute pointer-events-none origin-center max-w-none"
                             style={{
                                 width: imageDimensions.width ? `${imageDimensions.width}px` : "auto",

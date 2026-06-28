@@ -36,7 +36,6 @@ Buyer buka /portal/{token}
 | ----------------- | ------- | --------- | ------------------------ |
 | `portalEnabled` | Boolean | `false` | Toggle portal per produk |
 
-### 
     Purchase
 
 | Field           | Type    | Constraint  | Keterangan                                |
@@ -49,8 +48,8 @@ Buyer buka /portal/{token}
 
 | File                                                 | Perubahan                                                             |
 | ---------------------------------------------------- | --------------------------------------------------------------------- |
-| `prisma/schema.prisma`                             | Tambah `portalEnabled` di Product, `portalToken` di Purchase      |
-| `src/lib/validation.ts`                            | Tambah `enablePortal` di semua schema (digital, kelas, webinar)     |
+| `prisma/schema.prisma`                             | Tambah`portalEnabled` di Product, `portalToken` di Purchase       |
+| `src/lib/validation.ts`                            | Tambah`enablePortal` di semua schema (digital, kelas, webinar)      |
 | `src/components/creator/product-form-sections.tsx` | Toggle "Portal Akses" di Pengaturan Tambahan                          |
 | `src/hooks/use-create-produk-digital.ts`           | `enablePortal` di defaultValues + mutation                          |
 | `src/hooks/use-produk-digital-kelas.ts`            | `enablePortal` di defaultValues, edit reset, create/update mutation |
@@ -58,13 +57,13 @@ Buyer buka /portal/{token}
 | `src/hooks/use-edit-kelas.ts`                      | `enablePortal` di defaultValues, edit reset, update mutation        |
 | `src/hooks/use-create-webinar.ts`                  | `enablePortal` di defaultValues + mutation                          |
 | `src/hooks/use-webinar.ts`                         | `enablePortal` di defaultValues, edit reset, update mutation        |
-| `src/server/api/routers/products.ts`               | Accept `portalEnabled` di create/update input                       |
-| `src/server/api/routers/purchases.ts`              | Generate token untuk produk gratis, query `getByPortalToken`        |
+| `src/server/api/routers/products.ts`               | Accept`portalEnabled` di create/update input                        |
+| `src/server/api/routers/purchases.ts`              | Generate token untuk produk gratis, query`getByPortalToken`         |
 | `src/app/api/webhooks/xendit/route.ts`             | Generate token + kirim portal URL di email                            |
 | `src/app/api/webhooks/midtrans/route.ts`           | Generate token + kirim portal URL di email                            |
-| `src/lib/email.ts`                                 | Tambah param `portalUrl` di `sendProductEmail`                    |
-| `src/lib/nodemailer.ts`                            | Tambah param `portalUrl` di `sendProductEmail`                    |
-| `src/emails/product-access-email.tsx`              | Render section "Buka Portal Akses" jika `portalUrl` ada             |
+| `src/lib/email.ts`                                 | Tambah param`portalUrl` di `sendProductEmail`                     |
+| `src/lib/nodemailer.ts`                            | Tambah param`portalUrl` di `sendProductEmail`                     |
+| `src/emails/product-access-email.tsx`              | Render section "Buka Portal Akses" jika`portalUrl` ada              |
 | `src/app/portal/[token]/page.tsx`                  | **BARU** — Halaman portal publik                               |
 
 ---
@@ -97,7 +96,7 @@ Buyer buka /portal/{token}
     links: string[] | null
     notes: string | null
     contentType: string | null
-  }
+  }                     
 }
 ```
 
@@ -181,7 +180,13 @@ Existing data tidak terpengaruh (backward compatible):
 | ---------- | ------ | ---------------------------- |
 | `nanoid` | latest | Generate unique portal token |
 
----
+: string | null
+    link: string | null
+    links: string[] | null
+    notes: string | n: string | null
+    link: string | null
+    links: string[] | null
+    notes: string | n---
 
 ## Testing Checklist
 

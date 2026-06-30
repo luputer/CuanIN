@@ -321,10 +321,10 @@ export default function ProfilePage() {
                                              <button
                                                  type="button"
                                                  onClick={(e) => {
-                                                     e.stopPropagation();
-                                                     avatarUpload.setPreviewUrl(null);
-                                                     setOriginalAvatarFile(null);
-                                                 }}
+                                                      e.stopPropagation();
+                                                      avatarUpload.setPreviewUrl(null);
+                                                      setOriginalAvatarFile(null);
+                                                  }}
                                                  className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs font-semibold transition-colors cursor-pointer"
                                              >
                                                  <TrashIcon size={14} weight="bold" />
@@ -340,7 +340,7 @@ export default function ProfilePage() {
                              <FormRow label="Banner Profil">
                                  <div className="flex flex-col gap-3">
                                      <div
-                                         className={`relative group w-full aspect-[6/1] md:aspect-[8/1] cursor-pointer transition-transform ${bannerDrop.isDragging ? "scale-[1.02]" : ""}`}
+                                         className={`relative group w-full aspect-[4/1] md:max-h-[240px] max-h-[160px] cursor-pointer transition-transform ${bannerDrop.isDragging ? "scale-[1.02]" : ""}`}
                                          onClick={() => {
                                              if (bannerUpload.previewUrl) {
                                                  const originalUrl = bannerUpload.previewUrl.includes("/banners/") 
@@ -410,10 +410,10 @@ export default function ProfilePage() {
                                              <button
                                                  type="button"
                                                  onClick={(e) => {
-                                                     e.stopPropagation();
-                                                     bannerUpload.setPreviewUrl(null);
-                                                     setOriginalBannerFile(null);
-                                                 }}
+                                                      e.stopPropagation();
+                                                      bannerUpload.setPreviewUrl(null);
+                                                      setOriginalBannerFile(null);
+                                                  }}
                                                  className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs font-semibold transition-colors cursor-pointer"
                                              >
                                                  <TrashIcon size={14} weight="bold" />
@@ -539,13 +539,13 @@ export default function ProfilePage() {
                                 const res = await fetch(originalUrl);
                                 if (res.ok) {
                                     const blob = await res.blob();
-                                    originalFile = new File([blob], "original-avatar.jpg", { type: blob.type });
+                                    originalFile = new File([blob], fileName, { type: blob.type });
                                 }
                             } catch (err) {
                                 console.error("Failed to fetch original avatar image:", err);
                             }
                         }
-                        await avatarUpload.handleFileUpload(croppedFile, originalFile || undefined);
+                        await avatarUpload.handleFileUpload(croppedFile, originalFile as File);
                     } else if (cropperMode === "banner") {
                         let originalFile = originalBannerFile;
                         if (!originalFile && bannerUpload.previewUrl?.includes("/banners/")) {
@@ -554,13 +554,13 @@ export default function ProfilePage() {
                                 const res = await fetch(originalUrl);
                                 if (res.ok) {
                                     const blob = await res.blob();
-                                    originalFile = new File([blob], "original-banner.jpg", { type: blob.type });
+                                    originalFile = new File([blob], fileName, { type: blob.type });
                                 }
                             } catch (err) {
                                 console.error("Failed to fetch original banner image:", err);
                             }
                         }
-                        await bannerUpload.handleFileUpload(croppedFile, originalFile || undefined);
+                        await bannerUpload.handleFileUpload(croppedFile, originalFile as File);
                     }
                 }}
                 cropShape={cropperMode === "avatar" ? "circle" : "rect"}

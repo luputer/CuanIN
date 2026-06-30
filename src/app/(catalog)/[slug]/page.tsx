@@ -167,7 +167,7 @@ export default function CatalogSlugPage() {
   return (
     <div className="min-h-screen bg-slate-50 pb-16">
       {/* ── Banner ── */}
-      <div className="relative h-32 w-full overflow-hidden bg-slate-200 md:h-48">
+      <div className="relative w-full overflow-hidden bg-slate-200 aspect-[4/1] md:max-h-[240px] max-h-[160px]">
         {creator.banner ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img

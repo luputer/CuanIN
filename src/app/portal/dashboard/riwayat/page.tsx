@@ -44,16 +44,16 @@ function PortalRiwayatPageInner() {
 
   const { data: historyData, isLoading: isLoadingGuest } = api.purchases.getPurchaseHistoryByToken.useQuery(
     { accessToken: accessToken!, mode: "riwayat" },
-    { enabled: !!accessToken && !session?.user }
+    { enabled: !!accessToken }
   );
 
   const { data: authPurchases, isLoading: isLoadingAuth } = api.purchases.getPurchaseHistoryForCreator.useQuery(
     { mode: "riwayat" },
-    { enabled: !!session?.user }
+    { enabled: !accessToken && !!session?.user }
   );
 
-  const rawPurchases = ((session?.user ? authPurchases?.purchases : historyData?.purchases) ?? []) as unknown as PortalPurchaseType[];
-  const isLoading = session?.user ? isLoadingAuth : (isLoadingGuest && !!accessToken);
+  const rawPurchases = ((accessToken ? historyData?.purchases : authPurchases?.purchases) ?? []) as unknown as PortalPurchaseType[];
+  const isLoading = accessToken ? (isLoadingGuest && !!accessToken) : isLoadingAuth;
 
   const sortedPurchases = useMemo(() => {
     return [...rawPurchases].sort((a, b) => {

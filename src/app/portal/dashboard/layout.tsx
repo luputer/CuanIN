@@ -46,16 +46,32 @@ function PortalDashboardLayoutContent({ children }: { children: React.ReactNode 
     const decodedEmail = authorizedEmail ? decodeURIComponent(authorizedEmail) : null;
     const savedToken = localStorage.getItem("history_access_token");
 
-    if (decodedEmail && savedToken) {
-      setEmail(decodedEmail);
-      setIsInitializing(false);
-    } else if (session?.user?.email) {
+    const ref = searchParams.get("ref");
+    const isFromDashboard = ref === "/dashboard" || ref === "dashboard" || ref?.startsWith("/dashboard") || ref?.startsWith("dashboard");
+
+    // Jika datang dari dashboard creator, dan sedang login via Next-Auth:
+    // Hapus token tamu agar langsung masuk menggunakan akun creatornya
+    if (isFromDashboard && session?.user?.email) {
+      localStorage.removeItem("history_access_token");
+      deleteCookie("history_authorized_email");
       setEmail(session.user.email);
       setIsInitializing(false);
-    } else {
+    }
+    // Jika tidak dari dashboard, dan ada token tamu (Guest), utamakan token tamu
+    else if (decodedEmail && savedToken) {
+      setEmail(decodedEmail);
+      setIsInitializing(false);
+    }
+    // Jika tidak ada token tamu, tapi login via Next-Auth (Creator)
+    else if (session?.user?.email) {
+      setEmail(session.user.email);
+      setIsInitializing(false);
+    }
+    // Jika tidak ada dua-duanya, arahkan ke login portal
+    else {
       router.replace("/portal/login");
     }
-  }, [session, status, router]);
+  }, [session, status, router, searchParams]);
 
   const handleLogout = async () => {
     deleteCookie("history_authorized_email");

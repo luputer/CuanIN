@@ -454,6 +454,19 @@ export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldV
                                 type="button"
                                 onClick={(e) => {
                                     e.stopPropagation();
+                                    // Shift original product files
+                                    setOriginalProductFiles(prev => {
+                                        const next = { ...prev };
+                                        delete next[index];
+                                        for (let i = index + 1; i < images.length; i++) {
+                                            const file = next[i];
+                                            if (file) {
+                                                next[i - 1] = file;
+                                                delete next[i];
+                                            }
+                                        }
+                                        return next;
+                                    });
                                     removeImage(index);
                                 }}
                                 className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md border border-slate-200 text-slate-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
@@ -500,25 +513,25 @@ export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldV
                 onCrop={async (croppedFile) => {
                     const targetIndex = editingImageIndex !== null ? editingImageIndex : images.length;
                     let originalFile = originalProductFiles[targetIndex];
-
+ 
                     if (editingImageIndex !== null) {
                         const currentImages = (form.getValues("images" as Path<TFieldValues>) as string[]) || [];
                         const currentImgUrl = currentImages[editingImageIndex];
-
+ 
                         if (!originalFile && currentImgUrl?.includes("/products/")) {
                             const originalUrl = currentImgUrl.replace("/products/", "/products/original-");
                             try {
                                 const res = await fetch(originalUrl);
                                 if (res.ok) {
                                     const blob = await res.blob();
-                                    originalFile = new File([blob], "original-product.jpg", { type: blob.type });
+                                    originalFile = new File([blob], fileName, { type: blob.type });
                                 }
                             } catch (err) {
                                 console.error("Failed to fetch original product image:", err);
                             }
                         }
-
-                        const url = await productImageUpload.handleFileUpload(croppedFile, originalFile);
+ 
+                        const url = await productImageUpload.handleFileUpload(croppedFile, originalFile as File);
                         if (url) {
                             const newImages = [...currentImages];
                             newImages[editingImageIndex] = url;
@@ -530,7 +543,7 @@ export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldV
                         }
                     } else {
                         // New image upload - upload both cropped and original
-                        const url = await productImageUpload.handleFileUpload(croppedFile, originalFile);
+                        const url = await productImageUpload.handleFileUpload(croppedFile, originalFile as File);
                         if (url) {
                             const currentImages = (form.getValues("images" as Path<TFieldValues>) as string[]) || [];
                             const newImages = [...currentImages, url];

@@ -272,7 +272,7 @@ export default function CreatorDetailPage() {
                                 <FormRow label="Banner Profil">
                                     <div className="flex flex-col gap-3">
                                         <div
-                                            className={`relative group w-full aspect-[6/1] md:aspect-[8/1] cursor-pointer transition-transform ${bannerDrop.isDragging ? "scale-[1.02]" : ""}`}
+                                            className={`relative group w-full aspect-[4/1] md:max-h-[240px] max-h-[160px] cursor-pointer transition-transform ${bannerDrop.isDragging ? "scale-[1.02]" : ""}`}
                                             onClick={() => bannerInputRef.current?.click()}
                                             {...bannerDrop.dragHandlers}
                                         >

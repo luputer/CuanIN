@@ -9,7 +9,7 @@ import {
   CheckCircleIcon,
   CaretDownIcon,
 } from "@phosphor-icons/react";
-import { useEffect, useState, useRef, useCallback, type CSSProperties } from "react";
+import { useEffect, useState, useRef, useCallback, type CSSProperties, useMemo } from "react";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
 import ButtonSave from "~/components/shared/button-save";
@@ -293,25 +293,29 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
 
   const debouncedFields = useDebounce(fields, 1000);
 
-  // FIX 4: Gunakan useCallback-wrapped mutate agar ref selalu fresh, dan
-  // tambahkan saveMutation.mutate ke deps dengan useCallback pattern
-  useEffect(() => {
-    if (isControlled || !hasLoaded) return;
-    if (debouncedFields.length === 0 && fields.length > 0) return;
-    if (isSavingRef.current) return;
-
-    const fieldsPayload = debouncedFields.map((f, index) => ({
+  // 1. Definisikan payload sebagai memoized object
+  const payload = useMemo(() => ({
+    productId: productId ?? "",
+    fields: debouncedFields.map((f, index) => ({
       id: f.id,
       label: f.label.trim() || "Pertanyaan Tanpa Judul",
       type: f.type,
       required: f.required,
       options: f.options?.filter((o) => o.trim() !== ""),
       order: index,
-    }));
+    })),
+  }), [debouncedFields, productId]);
 
-    const payload = { productId: productId ?? "", fields: fieldsPayload };
+  // 2. Efek Auto-Save yang lebih bersih
+  useEffect(() => {
+    // Guard Clauses (Pintu pengaman)
+    if (isControlled || !hasLoaded) return;
+    if (debouncedFields.length === 0 && fields.length > 0) return;
+    if (isSavingRef.current) return;
+
     const payloadString = JSON.stringify(payload);
 
+    // Mencegah request jika data sama dengan yang terakhir disimpan
     if (payloadString === lastSavedRef.current) return;
 
     isSavingRef.current = true;
@@ -324,7 +328,8 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
         isSavingRef.current = false;
       },
     });
-  }, [debouncedFields, productId, hasLoaded, isControlled]);
+  }, [payload, isControlled, hasLoaded]); // Hanya depend pada payload
+
 
   // FIX 5: handleFieldsChange sekarang selalu update internal state (fields),
   // DAN memanggil onChange di controlled mode. Dua-duanya jalan.

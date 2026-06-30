@@ -247,180 +247,180 @@ export default function ProfilePage() {
                         <SectionHeader title="Informasi User" />
 
                         <div className="space-y-0 pt-6">
-                             {/* Foto Profil */}
-                             <FormRow label="Foto Profil">
-                                 <div className="flex flex-col gap-3">
-                                     <div
-                                         className={`relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer transition-transform ${avatarDrop.isDragging ? "scale-105" : ""}`}
-                                         onClick={() => {
-                                             if (avatarUpload.previewUrl) {
-                                                 const originalUrl = avatarUpload.previewUrl.includes("/avatars/") 
-                                                     ? avatarUpload.previewUrl.replace("/avatars/", "/avatars/original-") 
-                                                     : avatarUpload.previewUrl;
-                                                 setSelectedImageSrc(originalUrl);
-                                                 setFileName("avatar.jpg");
-                                                 setCropperMode("avatar");
-                                                 setCropperOpen(true);
-                                             } else {
-                                                 fileInputRef.current?.click();
-                                             }
-                                         }}
-                                         {...avatarDrop.dragHandlers}
-                                     >
-                                         <div className={`w-full h-full bg-white border-2 border-dashed rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors relative ${avatarDrop.isDragging ? "border-cuan-cyan bg-cuan-cyan/10" : "border-slate-300 group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10"}`}>
-                                             {avatarUpload.previewUrl ? (
-                                                 <>
-                                                     <Image
-                                                         src={avatarUpload.previewUrl}
-                                                         alt="Foto Profil"
-                                                         fill
-                                                         className="object-cover transition-opacity group-hover:opacity-80"
-                                                         unoptimized
-                                                     />
-                                                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/15">
-                                                         <div className="bg-white/90 px-2 py-1 rounded-full shadow-md text-xs font-semibold text-slate-800 flex items-center gap-1">
-                                                             <PencilSimpleIcon size={14} weight="bold" />
-                                                             <span>Atur Crop</span>
-                                                         </div>
-                                                     </div>
-                                                 </>
-                                             ) : (
-                                                 <div className="flex flex-col items-center gap-1 text-slate-400">
-                                                     <ImageIcon size={22} weight="light" />
-                                                     <span className="text-[10px] font-bold uppercase tracking-wider">Upload</span>
-                                                 </div>
-                                             )}
-                                             {avatarUpload.uploading && (
-                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10">
-                                                     <CircleNotchIcon size={22} weight="bold" className="animate-spin text-white" />
-                                                 </div>
-                                             )}
-                                         </div>
-                                         <input
-                                             type="file"
-                                             ref={fileInputRef}
-                                             className="hidden"
-                                             accept="image/*"
-                                             onChange={onFileChange}
-                                         />
-                                     </div>
-                                     {avatarUpload.previewUrl && (
-                                         <div className="flex items-center gap-3">
-                                             <button
-                                                 type="button"
-                                                 onClick={(e) => {
-                                                     e.stopPropagation();
-                                                     fileInputRef.current?.click();
-                                                 }}
-                                                 className="flex items-center gap-1 text-cuan-cyan hover:text-cuan-cyan/85 text-xs font-semibold transition-colors cursor-pointer"
-                                             >
-                                                 <PencilSimpleIcon size={14} weight="bold" />
-                                                 <span>Ganti Foto</span>
-                                             </button>
-                                             <span className="text-slate-300 text-xs">|</span>
-                                             <button
-                                                 type="button"
-                                                 onClick={(e) => {
-                                                      e.stopPropagation();
-                                                      avatarUpload.setPreviewUrl(null);
-                                                      setOriginalAvatarFile(null);
-                                                  }}
-                                                 className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs font-semibold transition-colors cursor-pointer"
-                                             >
-                                                 <TrashIcon size={14} weight="bold" />
-                                                 <span>Hapus Foto</span>
-                                             </button>
-                                         </div>
-                                     )}
-                                     <p className="text-[11px] text-slate-400 italic">Disarankan rasio 1:1 (square)</p>
-                                 </div>
-                             </FormRow>
+                            {/* Foto Profil */}
+                            <FormRow label="Foto Profil">
+                                <div className="flex flex-col gap-3">
+                                    <div
+                                        className={`relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer transition-transform ${avatarDrop.isDragging ? "scale-105" : ""}`}
+                                        onClick={() => {
+                                            if (avatarUpload.previewUrl) {
+                                                const originalUrl = avatarUpload.previewUrl.includes("/avatars/")
+                                                    ? avatarUpload.previewUrl.replace("/avatars/", "/avatars/original-")
+                                                    : avatarUpload.previewUrl;
+                                                setSelectedImageSrc(originalUrl);
+                                                setFileName("avatar.jpg");
+                                                setCropperMode("avatar");
+                                                setCropperOpen(true);
+                                            } else {
+                                                fileInputRef.current?.click();
+                                            }
+                                        }}
+                                        {...avatarDrop.dragHandlers}
+                                    >
+                                        <div className={`w-full h-full bg-white border-2 border-dashed rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors relative ${avatarDrop.isDragging ? "border-cuan-cyan bg-cuan-cyan/10" : "border-slate-300 group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10"}`}>
+                                            {avatarUpload.previewUrl ? (
+                                                <>
+                                                    <Image
+                                                        src={avatarUpload.previewUrl}
+                                                        alt="Foto Profil"
+                                                        fill
+                                                        className="object-cover transition-opacity group-hover:opacity-80"
+                                                        unoptimized
+                                                    />
+                                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/15">
+                                                        <div className="bg-white/90 px-2 py-1 rounded-full shadow-md text-xs font-semibold text-slate-800 flex items-center gap-1">
+                                                            <PencilSimpleIcon size={14} weight="bold" />
+                                                            <span>Atur Crop</span>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div className="flex flex-col items-center gap-1 text-slate-400">
+                                                    <ImageIcon size={22} weight="light" />
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider">Upload</span>
+                                                </div>
+                                            )}
+                                            {avatarUpload.uploading && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10">
+                                                    <CircleNotchIcon size={22} weight="bold" className="animate-spin text-white" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={onFileChange}
+                                        />
+                                    </div>
+                                    {avatarUpload.previewUrl && (
+                                        <div className="flex items-center gap-3">
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    fileInputRef.current?.click();
+                                                }}
+                                                className="flex items-center gap-1 text-cuan-cyan hover:text-cuan-cyan/85 text-xs font-semibold transition-colors cursor-pointer"
+                                            >
+                                                <PencilSimpleIcon size={14} weight="bold" />
+                                                <span>Ganti Foto</span>
+                                            </button>
+                                            <span className="text-slate-300 text-xs">|</span>
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    avatarUpload.setPreviewUrl(null);
+                                                    setOriginalAvatarFile(null);
+                                                }}
+                                                className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs font-semibold transition-colors cursor-pointer"
+                                            >
+                                                <TrashIcon size={14} weight="bold" />
+                                                <span>Hapus Foto</span>
+                                            </button>
+                                        </div>
+                                    )}
+                                    <p className="text-[11px] text-slate-400 italic">Disarankan rasio 1:1 (square)</p>
+                                </div>
+                            </FormRow>
 
-                             {/* Banner Profile */}
-                             <FormRow label="Banner Profil">
-                                 <div className="flex flex-col gap-3">
-                                     <div
-                                         className={`relative group w-full aspect-[4/1] md:max-h-[240px] max-h-[160px] cursor-pointer transition-transform ${bannerDrop.isDragging ? "scale-[1.02]" : ""}`}
-                                         onClick={() => {
-                                             if (bannerUpload.previewUrl) {
-                                                 const originalUrl = bannerUpload.previewUrl.includes("/banners/") 
-                                                     ? bannerUpload.previewUrl.replace("/banners/", "/banners/original-") 
-                                                     : bannerUpload.previewUrl;
-                                                 setSelectedImageSrc(originalUrl);
-                                                 setFileName("banner.jpg");
-                                                 setCropperMode("banner");
-                                                 setCropperOpen(true);
-                                             } else {
-                                                 bannerInputRef.current?.click();
-                                             }
-                                         }}
-                                         {...bannerDrop.dragHandlers}
-                                     >
-                                         <div className={`w-full h-full bg-white border-2 border-dashed rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors relative ${bannerDrop.isDragging ? "border-cuan-cyan bg-cuan-cyan/10" : "border-slate-300 group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10"}`}>
-                                             {bannerUpload.previewUrl ? (
-                                                 <>
-                                                     <Image
-                                                         src={bannerUpload.previewUrl}
-                                                         alt="Banner Preview"
-                                                         fill
-                                                         className="object-cover transition-opacity group-hover:opacity-80"
-                                                         unoptimized
-                                                     />
-                                                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/15">
-                                                         <div className="bg-white/90 px-3 py-1.5 rounded-full shadow-md text-xs font-semibold text-slate-800 flex items-center gap-1.5">
-                                                             <PencilSimpleIcon size={14} weight="bold" />
-                                                             <span>Atur Crop Banner</span>
-                                                         </div>
-                                                     </div>
-                                                 </>
-                                             ) : (
-                                                 <div className="flex flex-col items-center gap-2 text-slate-400">
-                                                     <ImageIcon size={26} weight="light" />
-                                                     <span className="text-xs font-bold uppercase tracking-wider">Upload Banner</span>
-                                                 </div>
-                                             )}
-                                             {bannerUpload.uploading && (
-                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10">
-                                                     <CircleNotchIcon size={22} weight="bold" className="animate-spin text-white" />
-                                                 </div>
-                                             )}
-                                         </div>
-                                         <input
-                                             type="file"
-                                             ref={bannerInputRef}
-                                             className="hidden"
-                                             accept="image/*"
-                                             onChange={handleBannerFileChange}
-                                         />
-                                     </div>
-                                     {bannerUpload.previewUrl && (
-                                         <div className="flex items-center gap-3">
-                                             <button
-                                                 type="button"
-                                                 onClick={(e) => {
-                                                     e.stopPropagation();
-                                                     bannerInputRef.current?.click();
-                                                 }}
-                                                 className="flex items-center gap-1 text-cuan-cyan hover:text-cuan-cyan/85 text-xs font-semibold transition-colors cursor-pointer"
-                                             >
-                                                 <PencilSimpleIcon size={14} weight="bold" />
-                                                 <span>Ganti Banner</span>
-                                             </button>
-                                             <span className="text-slate-300 text-xs">|</span>
-                                             <button
-                                                 type="button"
-                                                 onClick={(e) => {
-                                                      e.stopPropagation();
-                                                      bannerUpload.setPreviewUrl(null);
-                                                      setOriginalBannerFile(null);
-                                                  }}
-                                                 className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs font-semibold transition-colors cursor-pointer"
-                                             >
-                                                 <TrashIcon size={14} weight="bold" />
-                                                 <span>Hapus Banner</span>
-                                             </button>
-                                         </div>
-                                     )}
+                            {/* Banner Profile */}
+                            <FormRow label="Banner Profil">
+                                <div className="flex flex-col gap-3">
+                                    <div
+                                        className={`relative group w-full aspect-[4/1] md:max-h-[240px] max-h-[160px] cursor-pointer transition-transform ${bannerDrop.isDragging ? "scale-[1.02]" : ""}`}
+                                        onClick={() => {
+                                            if (bannerUpload.previewUrl) {
+                                                const originalUrl = bannerUpload.previewUrl.includes("/banners/")
+                                                    ? bannerUpload.previewUrl.replace("/banners/", "/banners/original-")
+                                                    : bannerUpload.previewUrl;
+                                                setSelectedImageSrc(originalUrl);
+                                                setFileName("banner.jpg");
+                                                setCropperMode("banner");
+                                                setCropperOpen(true);
+                                            } else {
+                                                bannerInputRef.current?.click();
+                                            }
+                                        }}
+                                        {...bannerDrop.dragHandlers}
+                                    >
+                                        <div className={`w-full h-full bg-white border-2 border-dashed rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors relative ${bannerDrop.isDragging ? "border-cuan-cyan bg-cuan-cyan/10" : "border-slate-300 group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10"}`}>
+                                            {bannerUpload.previewUrl ? (
+                                                <>
+                                                    <Image
+                                                        src={bannerUpload.previewUrl}
+                                                        alt="Banner Preview"
+                                                        fill
+                                                        className="object-cover transition-opacity group-hover:opacity-80"
+                                                        unoptimized
+                                                    />
+                                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/15">
+                                                        <div className="bg-white/90 px-3 py-1.5 rounded-full shadow-md text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+                                                            <PencilSimpleIcon size={14} weight="bold" />
+                                                            <span>Atur Crop Banner</span>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div className="flex flex-col items-center gap-2 text-slate-400">
+                                                    <ImageIcon size={26} weight="light" />
+                                                    <span className="text-xs font-bold uppercase tracking-wider">Upload Banner</span>
+                                                </div>
+                                            )}
+                                            {bannerUpload.uploading && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10">
+                                                    <CircleNotchIcon size={22} weight="bold" className="animate-spin text-white" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <input
+                                            type="file"
+                                            ref={bannerInputRef}
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={handleBannerFileChange}
+                                        />
+                                    </div>
+                                    {bannerUpload.previewUrl && (
+                                        <div className="flex items-center gap-3">
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    bannerInputRef.current?.click();
+                                                }}
+                                                className="flex items-center gap-1 text-cuan-cyan hover:text-cuan-cyan/85 text-xs font-semibold transition-colors cursor-pointer"
+                                            >
+                                                <PencilSimpleIcon size={14} weight="bold" />
+                                                <span>Ganti Banner</span>
+                                            </button>
+                                            <span className="text-slate-300 text-xs">|</span>
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    bannerUpload.setPreviewUrl(null);
+                                                    setOriginalBannerFile(null);
+                                                }}
+                                                className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs font-semibold transition-colors cursor-pointer"
+                                            >
+                                                <TrashIcon size={14} weight="bold" />
+                                                <span>Hapus Banner</span>
+                                            </button>
+                                        </div>
+                                    )}
                                     <p className="text-[11px] text-slate-400 italic">Disarankan rasio 6:1 atau 8:1 (Tipis/Ceper)</p>
                                 </div>
                             </FormRow>
@@ -473,7 +473,7 @@ export default function ProfilePage() {
                                     value={slug}
                                     onChange={(e) => setSlug(e.target.value)}
                                     placeholder="Masukkan link toko unik"
-                                    prefix="cuanin.id/"
+                                    prefix="cuanin.my.id/"
                                 />
                                 {slug && (
                                     <a
@@ -481,7 +481,7 @@ export default function ProfilePage() {
                                         target="_blank"
                                         className="mt-1.5 inline-flex items-center gap-1 text-sm text-cuan-cyan hover:underline"
                                     >
-                                        cuanin.id/{slug}
+                                        cuanin.my.id/{slug}
                                     </a>
                                 )}
                                 <p className="mt-1.5 text-xs text-gray-500">
@@ -521,7 +521,7 @@ export default function ProfilePage() {
                     </div>
                 </div>
             </div>
-            
+
             <ImageCropperDialog
                 isOpen={cropperOpen}
                 imageSrc={selectedImageSrc}

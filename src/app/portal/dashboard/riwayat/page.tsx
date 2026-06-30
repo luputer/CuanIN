@@ -31,21 +31,34 @@ function PortalRiwayatPageInner() {
 
   useEffect(() => {
     if (status === "loading") return;
+
+    const token = localStorage.getItem("history_access_token");
+    const email = getCookie("history_authorized_email");
+
+    if (token && email) {
+      setAccessToken(token);
+      return;
+    }
+
     if (!session?.user) {
-      const token = localStorage.getItem("history_access_token");
-      const email = getCookie("history_authorized_email");
-      if (!token || !email) {
-        router.replace("/portal/login");
-      } else {
-        setAccessToken(token);
-      }
+      router.replace("/portal/login");
     }
   }, [session, status, router]);
 
-  const { data: historyData, isLoading: isLoadingGuest } = api.purchases.getPurchaseHistoryByToken.useQuery(
-    { accessToken: accessToken!, mode: "riwayat" },
-    { enabled: !!accessToken }
-  );
+
+
+  const { data: historyData, isLoading: isLoadingGuest, error: historyError } =
+    api.purchases.getPurchaseHistoryByToken.useQuery(
+      { accessToken: accessToken!, mode: "riwayat" },
+      { enabled: !!accessToken, retry: false }
+    );
+
+  useEffect(() => {
+    if (historyError && accessToken) {
+      localStorage.removeItem("history_access_token");
+      setAccessToken(null);
+    }
+  }, [historyError, accessToken]);
 
   const { data: authPurchases, isLoading: isLoadingAuth } = api.purchases.getPurchaseHistoryForCreator.useQuery(
     { mode: "riwayat" },

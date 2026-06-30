@@ -38,30 +38,21 @@ function PortalDashboardLayoutContent({ children }: { children: React.ReactNode 
     const ref = searchParams.get("ref");
     setBackHref(ref ? (ref.startsWith("/") ? ref : `/${ref}`) : "/");
   }, [searchParams]);
-
   useEffect(() => {
     if (status === "loading") return;
 
-    const authorizedEmail = getCookie("history_authorized_email");
-    const savedToken = localStorage.getItem("history_access_token");
+    const token = localStorage.getItem("history_access_token");
+    const email = getCookie("history_authorized_email");
 
-    // 1. CEK TOKEN TAMU DULU (Prioritas Utama untuk Testing)
-    if (authorizedEmail && savedToken) {
-      const decodedEmail = decodeURIComponent(authorizedEmail);
-      setEmail(decodedEmail);
-      setIsInitializing(false);
-      return; // Berhenti di sini, jangan lanjut cek session
-    }
-
-    // 2. JIKA TIDAK ADA TOKEN TAMU, BARU CEK SESSION CREATOR
-    if (session?.user?.email) {
-      setEmail(session.user.email);
-      setIsInitializing(false);
+    // Prioritaskan token dulu, baru fallback session — konsisten sama layout
+    if (token && email) {
+      setAccessToken(token);
       return;
     }
 
-    // 3. JIKA KEDUANYA TIDAK ADA
-    router.replace("/portal/login");
+    if (!session?.user) {
+      router.replace("/portal/login");
+    }
   }, [session, status, router]);
 
   const handleLogout = async () => {

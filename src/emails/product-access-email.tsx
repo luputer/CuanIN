@@ -26,21 +26,23 @@ import {
 
 export type ProductAccessEmailProps = {
   productName: string;
-  productLink: string;
+  links: string[]; // Sekarang hanya menerima array
   notes?: string | null;
-  links?: string[] | null;
   portalUrl?: string | null;
   year: number;
 };
 
 export function ProductAccessEmail({
   productName,
-  productLink,
   links,
   notes,
   portalUrl,
   year,
 }: ProductAccessEmailProps) {
+  // Ambil link utama (indeks 0) dan link tambahan (sisanya)
+  const primaryLink = links[0];
+  const additionalLinks = links.slice(1);
+
   return (
     <Html>
       <Head />
@@ -53,6 +55,7 @@ export function ProductAccessEmail({
             Terima kasih telah membeli produk <strong>{productName}</strong>.
             Pembayaran kamu telah kami terima.
           </Text>
+
           {portalUrl ? (
             <>
               <Text style={paragraph}>
@@ -67,16 +70,16 @@ export function ProductAccessEmail({
                 Link Portal: <Link href={portalUrl} style={linkText}>{portalUrl}</Link>
               </Text>
               <Text style={{ ...paragraph, fontSize: "13px", color: "#64748b" }}>
-                Link portal berlaku selama 24 jam. Jika sudah kedaluwarsa, kamu bisa minta link baru di halaman portal.
+                Link portal berlaku selama 24 jam.
               </Text>
 
-              {productLink && (
+              {primaryLink && (
                 <>
                   <Text style={{ ...paragraph, fontSize: "13px", color: "#64748b" }}>
-                    Atau akses langsung link produk:
+                    Atau akses langsung link produk utama:
                   </Text>
                   <Text style={linkText}>
-                    <Link href={productLink} style={linkText}>{productLink}</Link>
+                    <Link href={primaryLink} style={linkText}>{primaryLink}</Link>
                   </Text>
                 </>
               )}
@@ -87,22 +90,23 @@ export function ProductAccessEmail({
                 Kamu dapat mengakses produk melalui tombol di bawah ini:
               </Text>
               <Section style={actionSection}>
-                <Button href={productLink} style={button}>
+                <Button href={primaryLink} style={button}>
                   Masuk ke Produk Kamu
                 </Button>
               </Section>
               <Text style={paragraph}>
                 Atau copy dan paste link berikut ke browser kamu:
               </Text>
-              <Text style={linkText}>{productLink}</Text>
+              <Text style={linkText}>{primaryLink}</Text>
             </>
           )}
 
-          {links && links.length > 0 && (
+          {/* Menampilkan Link Tambahan jika ada */}
+          {additionalLinks.length > 0 && (
             <>
               <Text style={heading}>Link Tambahan</Text>
               <Section style={{ backgroundColor: "#f1f5f9", padding: "16px", borderRadius: "8px" }}>
-                {links.map((link, index) => (
+                {additionalLinks.map((link, index) => (
                   <Text key={index} style={{ ...paragraph, margin: "4px 0" }}>
                     {index + 1}.{" "}
                     <Link href={link} style={{ color: "#00B3E9", wordBreak: "break-all" }}>
@@ -113,6 +117,7 @@ export function ProductAccessEmail({
               </Section>
             </>
           )}
+
           {notes && (
             <>
               <Text style={heading}>Catatan Tambahan</Text>
@@ -132,4 +137,3 @@ export function ProductAccessEmail({
     </Html>
   );
 }
-

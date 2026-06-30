@@ -69,11 +69,9 @@ export default function PortalDetailProdukPage() {
   const p = purchase as unknown as PortalPurchaseType;
   const product = p.product;
   const isFree = Number(p.amount) === 0;
-  const links: string[] = product.links
-    ? (Array.isArray(product.links) ? product.links : [product.links].filter(Boolean))
-    : product.link
-      ? [product.link]
-      : [];
+
+  const allLinks = Array.isArray(product.links) ? (product.links as string[]) : [];
+
 
   const infoRows: { label: string; value: string }[] = [];
 
@@ -179,9 +177,9 @@ export default function PortalDetailProdukPage() {
           <div className="rounded-xl border border-slate-300 bg-white p-6">
             <h3 className="mb-4 pb-3 font-semibold text-slate-800">Akses Produk</h3>
 
-            {links.length > 0 ? (
+            {allLinks.length > 0 ? (
               <div className="space-y-2">
-                {links.map((link, i) => (
+                {allLinks.map((link, i) => (
                   <a
                     key={i}
                     href={link}

@@ -46,20 +46,50 @@ function PortalLoginPageContent() {
   const backHref = ref ? (ref.startsWith("/") ? ref : `/${ref}`) : undefined;
   const dashboardUrl = ref ? `/portal/dashboard?ref=${encodeURIComponent(ref)}` : "/portal/dashboard";
 
+  const tokenParam = searchParams.get("token");
+  const [isVerifyingToken, setIsVerifyingToken] = useState(false);
+
   const isLoggedInViaToken = () => {
     const authorizedEmail = getCookie("history_authorized_email");
     const savedToken = localStorage.getItem("history_access_token");
     return !!(authorizedEmail && savedToken);
   };
 
+  const loginWithToken = api.purchases.loginWithPortalToken.useMutation({
+    onMutate: () => {
+      setIsVerifyingToken(true);
+    },
+    onSuccess: (data) => {
+      localStorage.setItem("history_access_token", data.accessToken);
+      setCookie("history_authorized_email", data.email, 30);
+      toast.success("Login berhasil via token!");
+      router.replace(dashboardUrl);
+    },
+    onError: (err) => {
+      toast.error(err.message || "Token akses tidak valid.");
+      setIsVerifyingToken(false);
+      // Hapus token dari URL agar user bisa login manual
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.delete("token");
+      router.replace(`/portal/login${newParams.toString() ? `?${newParams.toString()}` : ""}`);
+    },
+  });
+
   // Check login state and redirect if already logged in via portal token
   useEffect(() => {
     if (status === "loading") return;
 
-    if (isLoggedInViaToken()) {
+    if (isLoggedInViaToken() && !tokenParam) {
       router.replace(dashboardUrl);
     }
-  }, [session, status, router, dashboardUrl]);
+  }, [session, status, router, dashboardUrl, tokenParam]);
+
+  // Efek untuk memicu verifikasi token dari URL secara otomatis
+  useEffect(() => {
+    if (tokenParam) {
+      loginWithToken.mutate({ token: tokenParam });
+    }
+  }, [tokenParam]);
 
   const sendOtp = api.purchases.sendPurchaseHistoryOtp.useMutation({
     onSuccess: () => {
@@ -195,7 +225,12 @@ function PortalLoginPageContent() {
           </div>
 
           <div className="bg-white p-6 rounded-2xl border border-slate-300 shadow-[0_-4px_0px_0px_#00B3E9] space-y-6">
-            {session?.user?.email && !isLoggedInViaToken() ? (
+            {isVerifyingToken ? (
+              <div className="flex flex-col items-center justify-center py-8 space-y-4">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cuan-cyan" />
+                <p className="text-sm font-medium text-slate-600">Memverifikasi token akses portal...</p>
+              </div>
+            ) : session?.user?.email && !isLoggedInViaToken() ? (
               <div className="space-y-4">
                 <div className="text-center bg-slate-50 rounded-lg p-3">
                   <p className="text-xs text-slate-500">

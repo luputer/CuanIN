@@ -32,7 +32,6 @@ export const purchasesRouter = createTRPCRouter({
               startDate: true,
               endDate: true,
               duration: true,
-              link: true,
               links: true,
               notes: true,
               portalEnabled: true,
@@ -98,7 +97,6 @@ export const purchasesRouter = createTRPCRouter({
           name: true,
           price: true,
           discountPrice: true,
-          link: true,
           links: true,
           notes: true,
           portalEnabled: true,
@@ -283,7 +281,24 @@ export const purchasesRouter = createTRPCRouter({
 
           // Point to new unified portal login page
           if (product.portalEnabled) {
-            portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/login`;
+            const portalToken = nanoid(16);
+            const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+            await tx.portalAccess.upsert({
+              where: {
+                buyerEmail_creatorId: {
+                  buyerEmail: input.buyerEmail,
+                  creatorId: product.userId,
+                },
+              },
+              update: { token: portalToken, expiresAt },
+              create: {
+                token: portalToken,
+                buyerEmail: input.buyerEmail,
+                creatorId: product.userId,
+                expiresAt,
+              },
+            });
+            portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/login?token=${portalToken}`;
           }
 
           // Kirim notifikasi ke creator
@@ -298,12 +313,14 @@ export const purchasesRouter = createTRPCRouter({
           return newPurchase;
         });
 
-        if (product.link) {
+        const productLinks = Array.isArray(product.links) ? (product.links as string[]) : [];
+        const primaryLink = productLinks[0];
+        if (primaryLink) {
           void sendProductEmail({
             buyerEmail: input.buyerEmail,
             productName: product.name,
-            productLink: product.link,
-            links: product.links as string[] | null,
+            productLink: primaryLink,
+            links: productLinks,
             creatorName: product.user?.name ?? "Tim CuanIN",
             notes: product.notes,
             portalUrl,
@@ -911,7 +928,6 @@ export const purchasesRouter = createTRPCRouter({
             select: {
               name: true,
               image: true,
-              link: true,
               links: true,
               notes: true,
               contentType: true,
@@ -1009,7 +1025,7 @@ export const purchasesRouter = createTRPCRouter({
         },
       });
 
-      const portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/login`;
+      const portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/login?token=${token}`;
       const buyerName = purchases[0]!.buyerName;
 
       void sendPortalLinkEmail({
@@ -1151,7 +1167,6 @@ export const purchasesRouter = createTRPCRouter({
               image: true,
               type: true,
               slug: true,
-              link: true,
               links: true,
               notes: true,
               price: true,
@@ -1208,7 +1223,6 @@ export const purchasesRouter = createTRPCRouter({
               image: true,
               type: true,
               slug: true,
-              link: true,
               links: true,
               notes: true,
               price: true,

@@ -28,7 +28,6 @@ model Product {
   type             ProductType   @default(WEBINAR)
   startDate        DateTime?
   endDate          DateTime?
-  link             String?
   status           String        @default("published")
   userId           String
   createdAt        DateTime      @default(now())
@@ -39,7 +38,7 @@ model Product {
   discountPrice    Decimal?
   slug             String?       @unique @default(cuid())
   benefit          Json?
-  links            Json?
+  links            Json?         @default("[]")
   dateDeadline     DateTime?
   contentType      String?
   capacity         Int?
@@ -187,15 +186,15 @@ model VerificationToken {
 }
 
 model Catalog {
-  id        String        @id @default(uuid())
-  slug      String        @unique
-  userId    String        @unique
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id                String        @id @default(uuid())
+  slug              String        @unique
+  userId            String        @unique
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
   lastSlugUpdatedAt DateTime?
   slugChangeCount   Int           @default(0)
   user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  views     CatalogView[]
+  views             CatalogView[]
 }
 
 model CatalogView {

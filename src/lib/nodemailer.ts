@@ -43,11 +43,17 @@ export const sendProductEmail = async ({
   notes,
   portalUrl,
 }: SendProductEmailParams) => {
+  const allLinks = [
+    productLink,
+    ...(Array.isArray(links)
+      ? links.filter((l): l is string => typeof l === "string" && l.length > 0 && l !== productLink)
+      : [])
+  ];
+
   const html = await render(
     React.createElement(ProductAccessEmail, {
       productName,
-      productLink,
-      links,
+      links: allLinks,
       notes,
       portalUrl,
       year: new Date().getFullYear(),
@@ -55,7 +61,8 @@ export const sendProductEmail = async ({
   );
 
   try {
-    const linksText = links && links.length > 0 ? `\n\nLink Tambahan:\n${links.map((l, i) => `${i + 1}. ${l}`).join("\n")}` : "";
+    const additionalLinks = allLinks.slice(1);
+    const linksText = additionalLinks.length > 0 ? `\n\nLink Tambahan:\n${additionalLinks.map((l, i) => `${i + 1}. ${l}`).join("\n")}` : "";
     const textContent = portalUrl
       ? `Terima kasih atas pembelian Anda!\n\nBuka portal akses pribadi Anda:\n${portalUrl}\n\nLink produk: ${productLink}${linksText}${notes ? `\n\nCatatan Tambahan:\n${notes}` : ''}\n\nSalam,\nTim CuanIN`
       : `Terima kasih atas pembelian Anda!\n\nBerikut adalah link untuk mengakses produk Anda:\n${productLink}${linksText}${notes ? `\n\nCatatan Tambahan:\n${notes}` : ''}\n\nSalam,\nTim CuanIN`;

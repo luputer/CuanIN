@@ -30,18 +30,18 @@ export default function CreateProdukDigitalPage() {
                 customFields={state.customFields}
                 setCustomFields={state.setCustomFields}
             >
-                <BasicInfoSection 
-                    form={form} 
+                <BasicInfoSection
+                    form={form}
                     title="Informasi Produk"
                     namePlaceholder="Masukkan nama produk"
                     shortDescPlaceholder="Masukkan ringkasan tentang produk ini"
                     longDescPlaceholder="Masukkan deskripsi lengkap tentang produk ini"
                 />
-                
-                <PricingSection 
-                    form={form} 
-                    onAdjustPrice={handlers.handlePriceAdjust} 
-                    onAdjustDiscount={handlers.handleDiscountPriceAdjust} 
+
+                <PricingSection
+                    form={form}
+                    onAdjustPrice={handlers.handlePriceAdjust}
+                    onAdjustDiscount={handlers.handleDiscountPriceAdjust}
                 />
 
                 <div className="pt-8">
@@ -53,9 +53,9 @@ export default function CreateProdukDigitalPage() {
                             <FormInput placeholder="https://..." {...register("link")} />
                         </FormRow>
 
-                        <QuotaSection 
-                            form={form} 
-                            onAdjustQuota={handlers.handleQuotaAdjust} 
+                        <QuotaSection
+                            form={form}
+                            onAdjustQuota={handlers.handleQuotaAdjust}
                             label="Batasi Stok"
                             placeholder="Masukkan batas stok"
                         />

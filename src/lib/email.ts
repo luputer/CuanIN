@@ -76,9 +76,12 @@ export const sendProductEmail = async ({
   notes,
   portalUrl,
 }: SendProductEmailParams) => {
-  const links = Array.isArray(rawLinks)
-    ? rawLinks.filter((l): l is string => typeof l === "string" && l.length > 0)
-    : [];
+  const allLinks = [
+    productLink,
+    ...(Array.isArray(rawLinks)
+      ? rawLinks.filter((l): l is string => typeof l === "string" && l.length > 0 && l !== productLink)
+      : [])
+  ];
 
   try {
     if (env.NODE_ENV === "development" && !env.RESEND_API_KEY.startsWith("re_")) {
@@ -90,9 +93,9 @@ export const sendProductEmail = async ({
       if (portalUrl) {
         console.log(`Portal: ${portalUrl}`);
       }
-      console.log(`Links data:`, JSON.stringify(links));
-      if (links && links.length > 0) {
-        links.forEach((l, i) => console.log(`Link ${i + 1}: ${l}`));
+      console.log(`Links data:`, JSON.stringify(allLinks));
+      if (allLinks && allLinks.length > 0) {
+        allLinks.forEach((l, i) => console.log(`Link ${i + 1}: ${l}`));
       }
       console.log("─────────────────────────────────────────");
       return { success: true, messageId: "local-dev-id" };
@@ -103,13 +106,12 @@ export const sendProductEmail = async ({
       to: buyerEmail,
       subject: `Akses Produk Anda: ${productName}`,
       text: portalUrl
-        ? `Terima kasih atas pembelian Anda!\n\nBuka portal akses pribadi Anda:\n${portalUrl}\n\nLink produk: ${productLink}${links && links.length > 0 ? `\n\nLink Tambahan:\n${links.map((l, i) => `${i + 1}. ${l}`).join("\n")}` : ""}${notes ? `\n\nCatatan:\n${notes}` : ""}`
-        : `Terima kasih atas pembelian Anda!\n\nLink akses produk:\n${productLink}${links && links.length > 0 ? `\n\nLink Tambahan:\n${links.map((l, i) => `${i + 1}. ${l}`).join("\n")}` : ""}${notes ? `\n\nCatatan:\n${notes}` : ""}`,
+        ? `Terima kasih atas pembelian Anda!\n\nBuka portal akses pribadi Anda:\n${portalUrl}\n\nLink produk: ${productLink}${allLinks.slice(1).length > 0 ? `\n\nLink Tambahan:\n${allLinks.slice(1).map((l, i) => `${i + 1}. ${l}`).join("\n")}` : ""}${notes ? `\n\nCatatan:\n${notes}` : ""}`
+        : `Terima kasih atas pembelian Anda!\n\nLink akses produk:\n${productLink}${allLinks.slice(1).length > 0 ? `\n\nLink Tambahan:\n${allLinks.slice(1).map((l, i) => `${i + 1}. ${l}`).join("\n")}` : ""}${notes ? `\n\nCatatan:\n${notes}` : ""}`,
       html: await render(
         React.createElement(ProductAccessEmail, {
           productName,
-          productLink,
-          links,
+          links: allLinks,
           notes,
           portalUrl,
           year: new Date().getFullYear(),

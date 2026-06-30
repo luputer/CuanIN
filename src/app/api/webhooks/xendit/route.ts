@@ -6,6 +6,7 @@ import { sendProductEmail, sendWithdrawalEmail } from "~/lib/email";
 import { createNotification } from "~/lib/notification";
 import { env } from "~/env";
 import { WithdrawalStatus } from "../../../../../prisma/generated/prisma";
+import { nanoid } from "nanoid";
 
 export async function POST(req: NextRequest) {
   const token = req.headers.get("x-callback-token");
@@ -229,10 +230,10 @@ export async function POST(req: NextRequest) {
       product: {
         select: {
           name: true,
-          link: true,
           links: true,
           notes: true,
           userId: true,
+          portalEnabled: true,
           user: {
             select: { name: true },
           },
@@ -248,6 +249,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  let portalUrl: string | null = null;
   try {
     await db.$transaction(async (tx) => {
       // Atomic Update: Hanya update jika status masih pending
@@ -274,6 +276,28 @@ export async function POST(req: NextRequest) {
         },
       });
 
+      // Point to new unified portal login page
+      if (purchase.product.portalEnabled) {
+        const portalToken = nanoid(16);
+        const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+        await tx.portalAccess.upsert({
+          where: {
+            buyerEmail_creatorId: {
+              buyerEmail: purchase.buyerEmail,
+              creatorId: purchase.product.userId,
+            },
+          },
+          update: { token: portalToken, expiresAt },
+          create: {
+            token: portalToken,
+            buyerEmail: purchase.buyerEmail,
+            creatorId: purchase.product.userId,
+            expiresAt,
+          },
+        });
+        portalUrl = `${env.NEXT_PUBLIC_APP_URL}/portal/login?token=${portalToken}`;
+      }
+
       // Kirim notifikasi ke creator
       try {
         await createNotification(tx, {
@@ -293,15 +317,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Already processed" });
   }
 
-  if (purchase.product.link) {
+  const productLinks = Array.isArray(purchase.product.links) ? (purchase.product.links as string[]) : [];
+  const primaryLink = productLinks[0];
+  if (primaryLink) {
     try {
       await sendProductEmail({
         buyerEmail: purchase.buyerEmail,
         productName: purchase.product.name,
-        productLink: purchase.product.link,
-        links: purchase.product.links as string[] | null,
+        productLink: primaryLink,
+        links: productLinks,
         creatorName: purchase.product.user?.name ?? "Tim CuanIN",
         notes: purchase.product.notes,
+        portalUrl: portalUrl ?? undefined,
       });
     } catch (err) {
       console.error("📧 Failed to send product email:", err);

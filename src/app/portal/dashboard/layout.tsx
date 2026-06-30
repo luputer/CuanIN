@@ -43,28 +43,25 @@ function PortalDashboardLayoutContent({ children }: { children: React.ReactNode 
     if (status === "loading") return;
 
     const authorizedEmail = getCookie("history_authorized_email");
-    const decodedEmail = authorizedEmail ? decodeURIComponent(authorizedEmail) : null;
     const savedToken = localStorage.getItem("history_access_token");
 
-    // Jika user login via Next-Auth (Creator/User utama)
-    if (session?.user?.email) {
-      // Jika email token tamu tidak sama dengan email Next-Auth, bersihkan token tamu agar tidak bentrok
-      if (decodedEmail && decodedEmail.toLowerCase() !== session.user.email.toLowerCase()) {
-        localStorage.removeItem("history_access_token");
-        deleteCookie("history_authorized_email");
-      }
-      setEmail(session.user.email);
-      setIsInitializing(false);
-    }
-    // Jika tidak login via Next-Auth, tapi ada token tamu (Guest)
-    else if (decodedEmail && savedToken) {
+    // 1. CEK TOKEN TAMU DULU (Prioritas Utama untuk Testing)
+    if (authorizedEmail && savedToken) {
+      const decodedEmail = decodeURIComponent(authorizedEmail);
       setEmail(decodedEmail);
       setIsInitializing(false);
+      return; // Berhenti di sini, jangan lanjut cek session
     }
-    // Jika tidak ada dua-duanya, arahkan ke login portal
-    else {
-      router.replace("/portal/login");
+
+    // 2. JIKA TIDAK ADA TOKEN TAMU, BARU CEK SESSION CREATOR
+    if (session?.user?.email) {
+      setEmail(session.user.email);
+      setIsInitializing(false);
+      return;
     }
+
+    // 3. JIKA KEDUANYA TIDAK ADA
+    router.replace("/portal/login");
   }, [session, status, router]);
 
   const handleLogout = async () => {

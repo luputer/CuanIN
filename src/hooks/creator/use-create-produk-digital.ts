@@ -84,7 +84,7 @@ export function useCreateProdukDigital() {
                         id: f.id,
                         label: f.label,
                         type: f.type,
-                        options: f.options || [],
+                        options: (f.options || []).filter((o) => o.trim() !== ""),
                         required: f.required,
                         order: i,
                     })),

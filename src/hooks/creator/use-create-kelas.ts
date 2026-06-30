@@ -120,7 +120,7 @@ export function useCreateKelas() {
                             label: f.label.trim() || "Pertanyaan Tanpa Judul",
                             type: f.type,
                             required: f.required,
-                            options: f.options,
+                            options: (f.options || []).filter((o) => o.trim() !== ""),
                             order: index,
                         })),
                     });

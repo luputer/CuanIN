@@ -63,6 +63,8 @@ function SortableFieldItem({
   removeOption: (id: string, i: number) => void;
   addOption: (id: string) => void;
 }) {
+  const labelEmpty = field.label.trim() === "";
+
   const {
     attributes,
     listeners,
@@ -97,15 +99,20 @@ function SortableFieldItem({
 
       <div className="flex-1 space-y-3 sm:space-y-4">
         <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center md:gap-4">
-          <div className="w-full flex-1 border-b border-slate-300 md:max-w-[60%]">
-            <input
-              type="text"
-              placeholder="Masukkan Pertanyaan"
-              aria-label="Pertanyaan"
-              value={field.label}
-              onChange={(e) => updateField(field.id, { label: e.target.value })}
-              className="w-full bg-transparent py-1.5 text-[15px] font-medium text-slate-700 focus:outline-none"
-            />
+          <div className="flex-1 md:max-w-[60%]">
+            <div className={`border-b ${labelEmpty ? "border-red-500" : "border-slate-300"}`}>
+              <input
+                type="text"
+                placeholder="Masukkan Pertanyaan"
+                aria-label="Pertanyaan"
+                value={field.label}
+                onChange={(e) => updateField(field.id, { label: e.target.value })}
+                className="w-full bg-transparent py-1.5 text-[15px] font-medium text-slate-700 focus:outline-none"
+              />
+            </div>
+            {labelEmpty && (
+              <p className="text-xs text-red-500 mt-0.5">Pertanyaan tidak boleh kosong</p>
+            )}
           </div>
           <div className="flex items-center gap-3 w-full md:w-auto">
             <div className="group relative flex-1 md:flex-initial">
@@ -298,7 +305,7 @@ export function FormCustomizer({ productId, value, onChange }: FormCustomizerPro
       label: f.label.trim() || "Pertanyaan Tanpa Judul",
       type: f.type,
       required: f.required,
-      options: f.options,
+      options: f.options?.filter((o) => o.trim() !== ""),
       order: index,
     }));
 

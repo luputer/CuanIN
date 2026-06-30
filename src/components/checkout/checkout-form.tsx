@@ -266,7 +266,11 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
       {formFields.length > 0 && (
         <div className="space-y-4 border-t border-slate-200 pt-4">
-          {formFields.map((field) => (
+          {formFields.filter((field) => {
+            const opts = Array.isArray(field.options) ? field.options : [];
+            if (opts.length === 0 && (field.type === "MULTIPLE_CHOICE" || field.type === "CHECKBOX" || field.type === "DROPDOWN")) return false;
+            return true;
+          }).map((field) => (
             <div key={field.id} className="flex flex-col gap-2">
               <label className="text-sm text-slate-700">
                 {field.label}

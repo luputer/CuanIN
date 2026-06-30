@@ -98,13 +98,20 @@ export default function AdminProductDetailPage() {
                     actions={
                         product.slug && product.user?.catalog?.slug && (
                             <a
-                                href={`/${product.user.catalog.slug}/${product.slug}`}
+                                href={product.status === "published" ? `/${product.user.catalog.slug}/${product.slug}` : undefined}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-cuan-cyan hover:bg-cuan-cyan/10 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
+                                onClick={product.status !== "published" ? (e) => e.preventDefault() : undefined}
+                                className={cn(
+                                    "flex-1 sm:flex-none flex items-center justify-center gap-2 h-10 px-4 rounded-lg transition-all cursor-pointer",
+                                    product.status === "published"
+                                        ? "bg-white border border-cuan-cyan hover:bg-cuan-cyan/10 hover:shadow-sm"
+                                        : "bg-white border border-slate-300 text-slate-400 hover:bg-white hover:shadow-none cursor-not-allowed"
+                                )}
+                                title={product.status !== "published" ? "Produk belum dipublikasikan" : undefined}
                             >
-                                <ArrowSquareOutIcon className="w-4 h-4 text-cuan-cyan" />
-                                <span className="text-sm font-regular text-cuan-cyan whitespace-nowrap">
+                                <ArrowSquareOutIcon className={cn("w-4 h-4", product.status === "published" ? "text-cuan-cyan" : "text-slate-400")} />
+                                <span className={cn("text-sm font-regular whitespace-nowrap", product.status === "published" ? "text-cuan-cyan" : "text-slate-400")}>
                                     Lihat Katalog Produk
                                 </span>
                             </a>

@@ -208,6 +208,18 @@ export const authRouter = createTRPCRouter({
       return { success: true };
     }),
 
+  checkEmailVerified: publicProcedure
+    .input(z.object({ email: z.string().email() }))
+    .query(async ({ ctx, input }) => {
+      const email = input.email.toLowerCase();
+      const user = await ctx.db.user.findUnique({
+        where: { email },
+        select: { emailVerified: true },
+      });
+      if (!user) return { exists: false, verified: false };
+      return { exists: true, verified: !!user.emailVerified };
+    }),
+
   checkResetToken: publicProcedure
     .input(z.object({ token: z.string() }))
     .query(async ({ ctx, input }) => {

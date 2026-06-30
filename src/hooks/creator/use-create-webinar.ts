@@ -17,7 +17,7 @@ export function useCreateWebinar() {
     const utils = api.useUtils();
     
     const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-    const [createdProduct, setCreatedProduct] = useState<{name: string, slug: string} | null>(null);
+    const [createdProduct, setCreatedProduct] = useState<{name: string, slug: string, status: string} | null>(null);
 
     // Form Customizer State (controlled)
     const [customFields, setCustomFields] = useState<FormField[]>([]);
@@ -128,7 +128,8 @@ export function useCreateWebinar() {
             void utils.products.getAll.invalidate();
             setCreatedProduct({
                 name: product.name,
-                slug: product.slug ?? product.id
+                slug: product.slug ?? product.id,
+                status: product.status,
             });
             setSuccessDialogOpen(true);
         },

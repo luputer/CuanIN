@@ -34,6 +34,7 @@ import ButtonSave from "~/components/shared/button-save";
 import { DetailHeader } from "~/components/shared/detail-header";
 import { AdminCreatorDetailSkeleton } from "~/components/shared/detail-skeletons";
 import { useImageDrop } from "~/hooks/shared/use-image-drop";
+import DeleteConfirmDialog from "~/components/shared/delete-confirm-dialog";
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -46,6 +47,7 @@ export default function CreatorDetailPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const bannerInputRef = useRef<HTMLInputElement>(null);
     const [showPassword, setShowPassword] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     const { data: creator, isLoading: isFetching } = api.creators.getById.useQuery(
         { id },
@@ -124,6 +126,18 @@ export default function CreatorDetailPage() {
         },
     });
 
+    const deleteCreator = api.creators.delete.useMutation({
+        onSuccess: () => {
+            void utils.creators.getAll.invalidate();
+            toast.success("Kreator berhasil dihapus");
+            router.push("/admin/kreator");
+        },
+        onError: (error) => {
+            toast.error(`Gagal menghapus kreator: ${error.message}`);
+            setShowDeleteConfirm(false);
+        },
+    });
+
     const onSubmit = (data: CreatorFormValues) => {
         updateCreator.mutate({
             id,
@@ -157,6 +171,7 @@ export default function CreatorDetailPage() {
     // ─── Render ────────────────────────────────────────────────────────────────
 
     return (
+        <>
         <div className="w-full max-w-7xl mx-auto">
             <div className="space-y-6">
                 {/* Header */}
@@ -165,14 +180,22 @@ export default function CreatorDetailPage() {
                     backLabel="Kembali ke Daftar Kreator"
                     title={creator.name}
                     actions={
-                        <button
-                            onClick={() => router.push(`/admin/kreator/${id}/produk`)}
-                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-cuan-cyan hover:bg-cuan-cyan/10 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
-                        >
-                            <span className="text-sm font-medium text-cuan-cyan whitespace-nowrap">
-                                Lihat Produk Kreator
-                            </span>
-                        </button>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => router.push(`/admin/kreator/${id}/produk`)}
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-cuan-cyan hover:bg-cuan-cyan/10 hover:shadow-sm h-10 px-4 rounded-lg transition-all cursor-pointer"
+                            >
+                                <span className="text-sm font-medium text-cuan-cyan whitespace-nowrap">
+                                    Lihat Produk Kreator
+                                </span>
+                            </button>
+                            <button
+                                onClick={() => setShowDeleteConfirm(true)}
+                                className="flex items-center justify-center h-10 w-10 bg-white border border-red-500 hover:bg-red-100 hover:shadow-sm rounded-lg transition-all cursor-pointer shrink-0"
+                            >
+                                <TrashIcon className="w-4 h-4 text-red-500" weight="bold" />
+                            </button>
+                        </div>
                     }
                 />
 
@@ -429,5 +452,15 @@ export default function CreatorDetailPage() {
                 </div>
             </div>
         </div>
+
+        <DeleteConfirmDialog
+            open={showDeleteConfirm}
+            onOpenChange={setShowDeleteConfirm}
+            title="Hapus Kreator?"
+            itemName={`kreator ${creator?.name || ""}`.trim()}
+            loading={deleteCreator.isPending}
+            onConfirm={() => deleteCreator.mutate({ id })}
+        />
+        </>
     );
 }

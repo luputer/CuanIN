@@ -17,7 +17,7 @@ import {
 } from "@phosphor-icons/react";
 
 import { api } from "~/trpc/react";
-import { creatorSchema, type CreatorFormValues } from "~/lib/validation";
+import { createCreatorFormSchema, type CreateCreatorFormValues } from "~/lib/validation";
 import { useImageUpload } from "~/hooks/shared/use-upload";
 import {
     SectionHeader,
@@ -44,8 +44,8 @@ export default function CreateCreatorPage() {
         handleSubmit,
         setValue,
         formState: { errors },
-    } = useForm<CreatorFormValues>({
-        resolver: zodResolver(creatorSchema),
+    } = useForm<CreateCreatorFormValues>({
+        resolver: zodResolver(createCreatorFormSchema),
         defaultValues: {
             name: "",
             email: "",
@@ -99,12 +99,12 @@ export default function CreateCreatorPage() {
         },
     });
 
-    const onSubmit = (data: CreatorFormValues) => {
+    const onSubmit = (data: CreateCreatorFormValues) => {
         createCreator.mutate({
             name: data.name,
             email: data.email,
             phoneNumber: data.phone,
-            password: data.password!,
+            password: data.password,
             image: data.image,
             banner: data.banner,
             bio: data.bio,
@@ -291,10 +291,10 @@ export default function CreateCreatorPage() {
                             <div className="pt-6">
                                 <SectionHeader title="Keamanan" />
                                 <div className="space-y-0 pt-6">
-                                    <FormRow label="Password Baru" error={errors.password?.message}>
+                                    <FormRow label="Password" error={errors.password?.message}>
                                         <FormInput
                                             type={showPassword ? "text" : "password"}
-                                            placeholder="Minimal 6 karakter"
+                                            placeholder="Minimal 8 karakter"
                                             {...register("password")}
                                             suffix={
                                                 <button

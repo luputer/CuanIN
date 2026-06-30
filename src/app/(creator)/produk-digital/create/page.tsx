@@ -71,6 +71,7 @@ export default function CreateProdukDigitalPage() {
                     productName={state.createdProduct.name}
                     productSlug={state.createdProduct.slug}
                     redirectUrl="/produk-digital"
+                    status={state.createdProduct.status}
                 />
             )}
         </>

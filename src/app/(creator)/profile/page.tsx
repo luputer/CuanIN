@@ -140,7 +140,36 @@ export default function ProfilePage() {
         e.target.value = "";
     };
 
+    const clearError = (field: string) => {
+        if (errors[field]) {
+            setErrors((prev) => {
+                const next = { ...prev };
+                delete next[field];
+                return next;
+            });
+        }
+    };
+
     const handleSave = () => {
+        const newErrors: Record<string, string[]> = {};
+
+        if (!name || name.trim().length < 2) {
+            newErrors.name = ["Nama minimal 2 karakter"];
+        }
+        if (!phoneNumber || phoneNumber.trim().length < 10) {
+            newErrors.phoneNumber = ["Nomor HP minimal 10 digit"];
+        } else if (!/^(\+62|62|0)8[1-9][0-9]{6,9}$/.test(phoneNumber.trim())) {
+            newErrors.phoneNumber = ["Format nomor HP tidak valid (contoh: 08123456789)"];
+        }
+        if (password && password.length < 8) {
+            newErrors.password = ["Password minimal 8 karakter"];
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
         updateProfile.mutate({
             name,
             phoneNumber,
@@ -400,7 +429,10 @@ export default function ProfilePage() {
                                 <FormInput
                                     id="name"
                                     value={name}
-                                    onChange={(e) => setName(e.target.value)}
+                                    onChange={(e) => {
+                                        setName(e.target.value);
+                                        clearError("name");
+                                    }}
                                     placeholder="Masukkan nama lengkap"
                                 />
                             </FormRow>
@@ -418,7 +450,10 @@ export default function ProfilePage() {
                                 <FormInput
                                     id="phoneNumber"
                                     value={phoneNumber}
-                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    onChange={(e) => {
+                                        setPhoneNumber(e.target.value);
+                                        clearError("phoneNumber");
+                                    }}
                                     placeholder="Masukkan nomor HP aktif"
                                 />
                             </FormRow>
@@ -464,8 +499,11 @@ export default function ProfilePage() {
                                         id="password"
                                         type={showPassword ? "text" : "password"}
                                         value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        placeholder="Biarkan kosong jika tidak ingin mengubah password"
+                                        onChange={(e) => {
+                                            setPassword(e.target.value);
+                                            clearError("password");
+                                        }}
+                                        placeholder="Kosongkan jika tidak ingin mengubah password"
                                         suffix={
                                             <button
                                                 type="button"

@@ -415,37 +415,41 @@ export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldV
                     {images.map((img: string, index: number) => (
                         <div
                             key={index}
-                            className="relative group shrink-0 w-24 aspect-square cursor-pointer overflow-hidden rounded-xl border border-slate-200"
-                            onClick={() => {
-                                setEditingImageIndex(index);
-                                const originalUrl = img.includes("/products/")
-                                    ? img.replace("/products/", "/products/original-")
-                                    : img;
-                                setSelectedImageSrc(originalUrl);
-                                setFileName(`thumbnail-${index + 1}.jpg`);
-                                setCropperOpen(true);
-                            }}
+                            className="relative group shrink-0 w-24 aspect-square"
                         >
-                            <Image
-                                src={img}
-                                alt={`Thumbnail ${index + 1}`}
-                                fill
-                                unoptimized
-                                className="object-cover transition-opacity group-hover:opacity-80"
-                            />
-                            {/* Edit Overlay */}
-                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/15">
-                                <div className="bg-white/90 px-1.5 py-0.5 rounded-full shadow-sm text-[10px] font-semibold text-slate-800 flex items-center gap-0.5">
-                                    <PencilSimpleIcon size={10} weight="bold" />
-                                    <span>Crop</span>
+                            <div
+                                className="relative w-full h-full overflow-hidden rounded-xl border border-slate-200 cursor-pointer"
+                                onClick={() => {
+                                    setEditingImageIndex(index);
+                                    const originalUrl = img.includes("/products/")
+                                        ? img.replace("/products/", "/products/original-")
+                                        : img;
+                                    setSelectedImageSrc(originalUrl);
+                                    setFileName(`thumbnail-${index + 1}.jpg`);
+                                    setCropperOpen(true);
+                                }}
+                            >
+                                <Image
+                                    src={img}
+                                    alt={`Thumbnail ${index + 1}`}
+                                    fill
+                                    unoptimized
+                                    className="object-cover transition-opacity group-hover:opacity-80"
+                                />
+                                {/* Edit Overlay */}
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/15">
+                                    <div className="bg-white/90 px-1.5 py-0.5 rounded-full shadow-sm text-[10px] font-semibold text-slate-800 flex items-center gap-0.5">
+                                        <PencilSimpleIcon size={10} weight="bold" />
+                                        <span>Crop</span>
+                                    </div>
                                 </div>
+                                {/* Specific Uploading Spinner */}
+                                {productImageUpload.uploading && editingImageIndex === index && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10">
+                                        <CircleNotchIcon className="animate-spin text-white" size={18} />
+                                    </div>
+                                )}
                             </div>
-                            {/* Specific Uploading Spinner */}
-                            {productImageUpload.uploading && editingImageIndex === index && (
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10">
-                                    <CircleNotchIcon className="animate-spin text-white" size={18} />
-                                </div>
-                            )}
                             <button
                                 type="button"
                                 onClick={(e) => {
@@ -614,7 +618,7 @@ export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldV
                         <div className="flex items-center justify-between">
                             <div className="flex flex-col">
                                 <label className="text-sm font-medium text-slate-700">Portal Akses</label>
-                                <span className="text-xs text-slate-400">Buyer bisa akses semua link via 1 halaman portal</span>
+                                <span className="text-xs text-slate-400">Pembeli bisa akses produk via 1 halaman portal</span>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
                                 <input

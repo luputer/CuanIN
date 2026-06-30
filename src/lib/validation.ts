@@ -320,6 +320,24 @@ export const creatorSchema = z.object({
 
 export type CreatorFormValues = z.infer<typeof creatorSchema>;
 
+export const createCreatorFormSchema = z.object({
+  name: z.string({ required_error: "Nama kreator wajib diisi" }).min(1, "Nama kreator wajib diisi"),
+  email: z.string({ required_error: "Email wajib diisi" }).email("Format email tidak valid"),
+  phone: z
+    .string({ required_error: "Nomor HP wajib diisi" })
+    .min(10, "Nomor HP minimal 10 digit")
+    .regex(
+      /^(\+62|62|0)8[1-9][0-9]{6,9}$/,
+      "Format nomor HP tidak valid (contoh: 08123456789)",
+    ),
+  password: z.string({ required_error: "Password wajib diisi" }).min(8, "Password minimal 8 karakter"),
+  image: z.string({ required_error: "Gambar wajib diunggah" }).optional().nullable(),
+  banner: z.string({ required_error: "Banner wajib diunggah" }).optional().nullable(),
+  bio: z.string({ required_error: "Bio wajib diisi" }).optional().nullable(),
+});
+
+export type CreateCreatorFormValues = z.infer<typeof createCreatorFormSchema>;
+
 export const voucherSchema = z.object({
   name: z.string({ required_error: "Nama voucher wajib diisi" }).min(1, "Nama voucher wajib diisi"),
   code: z.string({ required_error: "Kode voucher wajib diisi" })

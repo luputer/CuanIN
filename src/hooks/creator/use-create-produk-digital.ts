@@ -13,7 +13,7 @@ export function useCreateProdukDigital() {
     const utils = api.useUtils();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-    const [createdProduct, setCreatedProduct] = useState<{name: string, slug: string} | null>(null);
+    const [createdProduct, setCreatedProduct] = useState<{name: string, slug: string, status: string} | null>(null);
     const [customFields, setCustomFields] = useState<FormField[]>([]);
 
     const form = useForm<DigitalProductFormValues>({
@@ -93,7 +93,8 @@ export function useCreateProdukDigital() {
             toast.success("Produk Digital berhasil dibuat");
             setCreatedProduct({
                 name: product.name,
-                slug: product.slug ?? product.id
+                slug: product.slug ?? product.id,
+                status: product.status,
             });
             setSuccessDialogOpen(true);
         },

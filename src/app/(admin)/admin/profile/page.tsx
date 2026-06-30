@@ -34,6 +34,9 @@ export default function AdminProfilePage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [nameError, setNameError] = useState("");
+    const [phoneError, setPhoneError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
 
     const isInitializedRef = useRef(false);
 
@@ -47,6 +50,25 @@ export default function AdminProfilePage() {
     }, [user]);
 
     const handleSave = () => {
+        setNameError("");
+        setPhoneError("");
+        setPasswordError("");
+        if (!name || name.trim().length < 2) {
+            setNameError("Nama minimal 2 karakter");
+            return;
+        }
+        if (!phoneNumber || phoneNumber.trim().length < 10) {
+            setPhoneError("Nomor HP minimal 10 digit");
+            return;
+        }
+        if (!/^(\+62|62|0)8[1-9][0-9]{6,9}$/.test(phoneNumber.trim())) {
+            setPhoneError("Format nomor HP tidak valid (contoh: 08123456789)");
+            return;
+        }
+        if (password && password.length < 8) {
+            setPasswordError("Password minimal 8 karakter");
+            return;
+        }
         updateProfile.mutate({
             name,
             phoneNumber,
@@ -84,19 +106,25 @@ export default function AdminProfilePage() {
 
                         <div className="space-y-0 pt-6">
                             {/* Nama */}
-                            <FormRow label="Nama">
+                            <FormRow label="Nama" error={nameError}>
                                 <FormInput
                                     value={name}
-                                    onChange={(e) => setName(e.target.value)}
+                                    onChange={(e) => {
+                                        setName(e.target.value);
+                                        if (nameError) setNameError("");
+                                    }}
                                     placeholder="Masukkan nama lengkap"
                                 />
                             </FormRow>
 
                             {/* Nomor HP */}
-                            <FormRow label="Nomor HP">
+                            <FormRow label="Nomor HP" error={phoneError}>
                                 <FormInput
                                     value={phoneNumber}
-                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    onChange={(e) => {
+                                        setPhoneNumber(e.target.value);
+                                        if (phoneError) setPhoneError("");
+                                    }}
                                     placeholder="Masukkan nomor HP"
                                 />
                             </FormRow>
@@ -115,12 +143,15 @@ export default function AdminProfilePage() {
                         <div className="pt-6">
                             <SectionHeader title="Keamanan" />
                             <div className="space-y-0 pt-6">
-                                <FormRow label="Password Baru (Opsional)">
+                                <FormRow label="Password Baru (Opsional)" error={passwordError}>
                                     <FormInput
                                         type={showPassword ? "text" : "password"}
                                         value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        placeholder="Biarkan kosong jika tidak ingin mengubah password"
+                                        onChange={(e) => {
+                                            setPassword(e.target.value);
+                                            if (passwordError) setPasswordError("");
+                                        }}
+                                        placeholder="Kosongkan jika tidak ingin mengubah password"
                                         suffix={
                                             <button
                                                 type="button"

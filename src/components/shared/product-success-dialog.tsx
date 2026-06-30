@@ -20,6 +20,7 @@ type Props = {
     productName: string
     productSlug: string
     redirectUrl: string
+    status?: string
 }
 
 export function ProductSuccessDialog({
@@ -28,6 +29,7 @@ export function ProductSuccessDialog({
     productName,
     productSlug,
     redirectUrl,
+    status = "published",
 }: Props) {
     const router = useRouter()
     const { data: profile } = api.profile.get.useQuery(undefined, {
@@ -80,19 +82,25 @@ export function ProductSuccessDialog({
 
                 {/* DESCRIPTION */}
                 <AlertDialogDescription className="text-sm font-medium text-slate-600 leading-relaxed">
-                    <span className="text-slate-800 font-bold">&quot;{productName}&quot;</span> telah berhasil ditambahkan ke katalog Anda.
+                    {status === "unpublished" ? (
+                        <span><span className="text-slate-800 font-bold">&quot;{productName}&quot;</span> telah berhasil disimpan sebagai draf.</span>
+                    ) : (
+                        <span><span className="text-slate-800 font-bold">&quot;{productName}&quot;</span> telah berhasil ditambahkan ke katalog Anda.</span>
+                    )}
                 </AlertDialogDescription>
 
                 {/* BUTTONS */}
                 <div className="mt-6 flex flex-col gap-3">
-                    <button
-                        type="button"
-                        onClick={handleCopyLink}
-                        className={cn(baseBtnStyle, "w-full rounded-lg outline-none cursor-pointer", "bg-cuan-cyan text-white")}
-                    >
-                        <CopyIcon className="w-4 h-4 mr-2" weight="bold" />
-                        Salin Link
-                    </button>
+                    {status !== "unpublished" && (
+                        <button
+                            type="button"
+                            onClick={handleCopyLink}
+                            className={cn(baseBtnStyle, "w-full rounded-lg outline-none cursor-pointer", "bg-cuan-cyan text-white")}
+                        >
+                            <CopyIcon className="w-4 h-4 mr-2" weight="bold" />
+                            Salin Link
+                        </button>
+                    )}
 
                     <button
                         type="button"

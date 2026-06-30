@@ -120,6 +120,7 @@ export default function CreateWebinarPage() {
                     productName={state.createdProduct.name}
                     productSlug={state.createdProduct.slug}
                     redirectUrl="/webinar"
+                    status={state.createdProduct.status}
                 />
             )}
         </>

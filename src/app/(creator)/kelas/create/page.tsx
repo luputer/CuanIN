@@ -109,6 +109,7 @@ export default function CreateKelasPage() {
                     productName={state.createdProduct.name}
                     productSlug={state.createdProduct.slug}
                     redirectUrl="/kelas"
+                    status={state.createdProduct.status}
                 />
             )}
         </>

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, adminProcedure } from "~/server/api/trpc";
 
@@ -8,7 +9,7 @@ import { createTRPCRouter, adminProcedure } from "~/server/api/trpc";
 const createCreatorSchema = z.object({
   name: z.string().min(1),
   email: z.string().email(),
-  phoneNumber: z.string().min(1),
+  phoneNumber: z.string().min(1, "Nomor HP wajib diisi"),
   password: z.string().min(6),
   image: z.string().optional().nullable(),
   banner: z.string().optional().nullable(),
@@ -19,7 +20,7 @@ const updateCreatorSchema = z.object({
   id: z.string(),
   name: z.string().min(1),
   email: z.string().email(),
-  phoneNumber: z.string().min(1),
+  phoneNumber: z.string().min(1, "Nomor HP wajib diisi"),
   password: z.string().min(6).optional(),
   image: z.string().optional().nullable(),
   banner: z.string().optional().nullable(),
@@ -111,6 +112,14 @@ export const creatorsRouter = createTRPCRouter({
 
       const hashedPassword = await bcrypt.hash(input.password, 10);
 
+      const baseSlug = input.name
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .slice(0, 30) || "user";
+      const slug = `${baseSlug}-${crypto.randomBytes(4).toString("hex")}`;
+
       return ctx.db.user.create({
         data: {
           name: input.name,
@@ -119,12 +128,16 @@ export const creatorsRouter = createTRPCRouter({
           password: hashedPassword,
           role: "CREATOR",
           status: "active",
+          emailVerified: new Date(),
           image: input.image,
           profile: {
             create: {
               bio: input.bio ?? "",
               banner: input.banner ?? "",
             },
+          },
+          catalog: {
+            create: { slug },
           },
         },
       });

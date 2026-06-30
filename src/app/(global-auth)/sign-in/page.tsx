@@ -13,15 +13,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { LoginFormData } from "~/lib/validation";
 import { loginSchema } from "~/lib/validation";
+import { api } from "~/trpc/react";
 
 
 function LoginPageInner() {
   const searchParams = useSearchParams();
   const verified = searchParams.get("verified") === "1";
-  const notVerified = searchParams.get("error") === "email_not_verified";
-  const [serverError, setServerError] = useState<string | null>(
-    notVerified ? "Email belum diverifikasi. Silakan daftar lagi dan masukkan kode OTP" : null
-  );
+  const apiUtils = api.useUtils();
+  const [serverError, setServerError] = useState<string | null>(null);
 
 
   const {
@@ -41,11 +40,16 @@ function LoginPageInner() {
     });
 
     if (result?.error) {
-      if (result.error.toLowerCase().includes("email belum diverifikasi")) {
-        setServerError("Email belum diverifikasi. Silakan cek inbox Anda.");
-      } else {
-        setServerError("Email atau password salah. Silakan coba lagi.");
+      try {
+        const status = await apiUtils.auth.checkEmailVerified.fetch({ email: data.email });
+        if (status.exists && !status.verified) {
+          window.location.href = `/verify-otp?email=${encodeURIComponent(data.email)}&from=sso`;
+          return;
+        }
+      } catch {
+        // ignore fetch error
       }
+      setServerError("Email atau password salah. Silakan coba lagi.");
     } else {
       const session = await getSession();
       if (session?.user?.role === "ADMIN") {

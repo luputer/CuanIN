@@ -38,6 +38,48 @@ export async function POST(req: NextRequest) {
       payment_type: string;
     };
 
+    const vaNumbers = (body as any).va_numbers as Array<{ bank: string; va_number: string }> | undefined;
+    const bank = ((body as any).bank as string | undefined)
+      ?? vaNumbers?.[0]?.bank
+      ?? (payment_type === "echannel" ? "mandiri" : undefined);
+    const vaNumber = ((body as any).va_number as string | undefined)
+      ?? vaNumbers?.[0]?.va_number
+      ?? ((body as any).bill_key as string | undefined)
+      ?? undefined;
+
+    const bankLabelMap: Record<string, string> = {
+      bca: "BCA",
+      bni: "BNI",
+      bri: "BRI",
+      mandiri: "Mandiri",
+      permata: "Permata",
+      bsi: "BSI",
+      cimb: "CIMB",
+      danamon: "Danamon",
+      mega: "Mega",
+      bukopin: "Bukopin",
+      hanabank: "Hana",
+      akulaku: "Akulaku",
+      mybank: "MyBank",
+      uob: "UOB",
+    };
+
+    function buildPaymentLabel() {
+      if (payment_type === "bank_transfer" && bank) {
+        return bankLabelMap[bank] ?? bank.toUpperCase();
+      }
+      if (payment_type === "echannel") {
+        return "Mandiri";
+      }
+      if (payment_type === "credit_card") {
+        return "Kartu Kredit";
+      }
+      if (payment_type === "gopay") return "GoPay";
+      if (payment_type === "shopeepay") return "ShopeePay";
+      if (payment_type === "qris") return "QRIS";
+      return payment_type;
+    }
+
     if (!signature_key || !order_id) {
       console.log("[Midtrans Webhook] Ping detected (no signature or order_id)");
       return NextResponse.json({ message: "Ping received" }, { status: 200 });
@@ -109,7 +151,12 @@ export async function POST(req: NextRequest) {
           data: {
             status: "completed",
             paidAt: new Date(),
-            paymentMethod: `Midtrans: ${payment_type}`,
+            paymentMethod: buildPaymentLabel(),
+            paymentDetails: {
+              paymentType: payment_type,
+              bank: bank ?? null,
+              vaNumber: vaNumber ?? null,
+            },
           },
         });
 

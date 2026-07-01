@@ -203,7 +203,7 @@ export default function PortalDetailRiwayatPage() {
                     <div className="flex justify-between items-center">
                       <span className="text-slate-600">Metode</span>
                       <span className="font-medium text-slate-800">
-                        {details?.paymentType ?? "—"}
+                        {p.paymentMethod ?? details?.paymentType ?? "—"}
                       </span>
                     </div>
                     {details?.vaNumber && (

@@ -4,12 +4,13 @@ import { api } from "~/trpc/react";
 import {
     SpinnerIcon,
 } from "@phosphor-icons/react";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { PaymentBrandHeader } from "~/components/payment/payment-brand-header";
 import { PaymentStatusSection } from "~/components/payment/payment-status-section";
 import { CheckCircleIcon, EnvelopeIcon } from "@phosphor-icons/react"; // Import here for direct use in icon and children props
 import { TransactionDetailsCard } from "~/components/payment/transaction-details-card";
 import { PaymentActionAndSecurity } from "~/components/payment/payment-action-and-security";
+import { signOut } from "next-auth/react";
 
 const TYPE_MAP: Record<string, string> = {
     WEBINAR: "Webinar",
@@ -25,6 +26,16 @@ function PaymentSuccessContent() {
         { id },
         { enabled: !!id }
     );
+
+    useEffect(() => {
+        // 1. Hapus cookie penanda checkout
+        document.cookie = "checkout_google_sso=; Max-Age=0; path=/; SameSite=Lax";
+
+        // 2. Logout dari NextAuth agar sesi Google dihapus dari browser
+        // redirect: false supaya user tetap di halaman ini untuk melihat pesan sukses
+        signOut({ redirect: false });
+    }, []);
+
 
     if (isLoading) {
         return (

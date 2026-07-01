@@ -38,10 +38,11 @@ export const authRouter = createTRPCRouter({
               name,
               phoneNumber: phone,
               password: hashed,
+              role: "CREATOR",
             },
           });
           // Proceed to send OTP outside this block
-        } 
+        }
         // Google SSO user completing profile (phoneNumber not set yet)
         else if (!existingUser.phoneNumber) {
           const hashed = await bcrypt.hash(password, 12);
@@ -57,7 +58,7 @@ export const authRouter = createTRPCRouter({
           });
 
           return { success: true };
-        } 
+        }
         // Otherwise, they are fully registered and verified
         else {
           throw new TRPCError({
@@ -329,7 +330,7 @@ export const authRouter = createTRPCRouter({
       await ctx.db.$transaction([
         ctx.db.user.update({
           where: { id: user.id },
-          data: { 
+          data: {
             password: hashed,
             emailVerified: new Date(), // Auto verify on password reset
           },
@@ -342,5 +343,5 @@ export const authRouter = createTRPCRouter({
 
       return { success: true };
     }),
-  });
+});
 

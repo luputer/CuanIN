@@ -43,8 +43,8 @@ export const vouchersRouter = createTRPCRouter({
                 sortBy === "code"
                     ? { code: sortOrder }
                     : sortBy === "startDate"
-                    ? { startDate: sortOrder }
-                    : { createdAt: sortOrder };
+                        ? { startDate: sortOrder }
+                        : { createdAt: sortOrder };
 
             const [items, total] = await Promise.all([
                 ctx.db.voucher.findMany({
@@ -129,14 +129,14 @@ export const vouchersRouter = createTRPCRouter({
                 });
             } catch (error: any) {
                 if (error instanceof TRPCError) throw error;
-                
+
                 if (error.code === "P2002") {
                     throw new TRPCError({
                         code: "CONFLICT",
                         message: "Kode voucher sudah digunakan"
                     });
                 }
-                
+
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",
                     message: "Terjadi kesalahan saat memproses data voucher"
@@ -229,7 +229,7 @@ export const vouchersRouter = createTRPCRouter({
                         message: "Kode voucher sudah digunakan"
                     });
                 }
-                
+
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",
                     message: "Terjadi kesalahan saat memproses data voucher"
@@ -277,7 +277,7 @@ export const vouchersRouter = createTRPCRouter({
             }
 
             const voucher = await ctx.db.voucher.findFirst({
-                where: { 
+                where: {
                     code,
                     userId: product.userId
                 },

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "CuanIN",
   description:
     "Platform jual beli produk digital, webinar, dan kelas online. Buat toko online kamu dan mulai dapatkan penghasilan.",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/icon-cuanin.svg", type: "image/svg+xml" }],
   openGraph: {
     title: "CuanIN",
     description:

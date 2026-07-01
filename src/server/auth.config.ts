@@ -68,7 +68,7 @@ export const authConfig = {
                 nextUrl.pathname === "/";
 
             const isAdminPage = nextUrl.pathname.startsWith("/admin");
-            const isSetupPage = nextUrl.pathname.startsWith("/setup");
+            // const isSetupPage = nextUrl.pathname.startsWith("/setup");
             const isDashboardPage =
                 nextUrl.pathname.startsWith("/dashboard") ||
                 nextUrl.pathname.startsWith("/profile") ||

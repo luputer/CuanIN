@@ -17,7 +17,7 @@ export function useCreateKelas() {
     const utils = api.useUtils();
 
     const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-    const [createdProduct, setCreatedProduct] = useState<{name: string, slug: string, status: string} | null>(null);
+    const [createdProduct, setCreatedProduct] = useState<{ name: string, slug: string, status: string } | null>(null);
 
     // Form Customizer State
     const [customFields, setCustomFields] = useState<FormField[]>([]);

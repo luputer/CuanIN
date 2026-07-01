@@ -62,9 +62,6 @@ export const CheckoutProductCard: React.FC<CheckoutProductCardProps> = ({
         <h2 className="text-base font-bold break-words text-slate-800">
           {product.name}
         </h2>
-
-
-
         <div className="mt-1">
           {isGratis ? (
             <div className="text-lg font-semibold text-green-600">Gratis</div>

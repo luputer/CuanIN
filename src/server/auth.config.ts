@@ -68,7 +68,7 @@ export const authConfig = {
                 nextUrl.pathname === "/";
 
             const isAdminPage = nextUrl.pathname.startsWith("/admin");
-            const isSetupPage = nextUrl.pathname.startsWith("/setup");
+            // const isSetupPage = nextUrl.pathname.startsWith("/setup");
             const isDashboardPage =
                 nextUrl.pathname.startsWith("/dashboard") ||
                 nextUrl.pathname.startsWith("/profile") ||
@@ -114,10 +114,10 @@ export const authConfig = {
             }
 
             // 6. Sudah punya catalog → ga perlu ke /setup lagi
-            if (isSetupPage && isLoggedIn && hasCatalog === true) {
-                if (role === "USER") return true;
-                return Response.redirect(new URL("/dashboard", nextUrl));
-            }
+            // if (isSetupPage && isLoggedIn && hasCatalog === true) {
+            //     if (role === "USER") return true;
+            //     return Response.redirect(new URL("/dashboard", nextUrl));
+            // }
 
             return true;
         },

@@ -64,7 +64,7 @@ export const authConfig = {
             const role = auth?.user?.role;
             const hasCatalog = auth?.user?.hasCatalog;
 
-            const isPaymentSuccessPage = /^\/payment\/success/.test(nextUrl.pathname);
+            const isPaymentSuccessPage = nextUrl.pathname.startsWith("/payment/success");
 
             // ── 0. Paksa logout HANYA sesi checkout (role USER) ──
             // CREATOR/ADMIN yang kebetulan login normal tetap dibiarkan

@@ -72,7 +72,6 @@ export default function PortalDetailProdukPage() {
 
   const allLinks = Array.isArray(product.links) ? (product.links as string[]) : [];
 
-
   const infoRows: { label: string; value: string }[] = [];
 
   const formatTimeRange = (start: Date | string, end?: Date | string | null) => {

@@ -5,7 +5,8 @@ Dokumen ini merangkum seluruh perbaikan, peningkatan fitur, refaktorisasi kode, 
 ---
 
 ## 1. Alur Otentikasi & Login (Sign-In & OTP)
-* **File Terkait:** 
+
+* **File Terkait:**
   * [src/app/(global-auth)/sign-in/page.tsx](file:///home/luputer/Dokumen/TA/CuanIN/src/app/(global-auth)/sign-in/page.tsx)
   * [src/server/api/routers/auth.ts](file:///home/luputer/Dokumen/TA/CuanIN/src/server/api/routers/auth.ts)
 * **Perbaikan:**
@@ -15,6 +16,7 @@ Dokumen ini merangkum seluruh perbaikan, peningkatan fitur, refaktorisasi kode, 
 ---
 
 ## 2. Manajemen & Registrasi Kreator (Sisi Admin)
+
 * **File Terkait:**
   * [src/server/api/routers/creators.ts](file:///home/luputer/Dokumen/TA/CuanIN/src/server/api/routers/creators.ts)
   * [src/lib/validation.ts](file:///home/luputer/Dokumen/TA/CuanIN/src/lib/validation.ts)
@@ -26,6 +28,7 @@ Dokumen ini merangkum seluruh perbaikan, peningkatan fitur, refaktorisasi kode, 
 ---
 
 ## 3. Fitur Pemotongan Gambar (Image Cropper Dialog)
+
 * **File Terkait:**
   * [src/components/shared/image-cropper-dialog.tsx](file:///home/luputer/Dokumen/TA/CuanIN/src/components/shared/image-cropper-dialog.tsx)
 * **Perbaikan:**
@@ -35,6 +38,7 @@ Dokumen ini merangkum seluruh perbaikan, peningkatan fitur, refaktorisasi kode, 
 ---
 
 ## 4. Manajemen & Detail Voucher (Refactoring)
+
 * **File Terkait:**
   * [src/app/(creator)/voucher/[id]/page.tsx](file:///home/luputer/Dokumen/TA/CuanIN/src/app/(creator)/voucher/[id]/page.tsx)
   * [src/components/creator/voucher-sidebar-metadata.tsx](file:///home/luputer/Dokumen/TA/CuanIN/src/components/creator/voucher-sidebar-metadata.tsx)
@@ -45,6 +49,7 @@ Dokumen ini merangkum seluruh perbaikan, peningkatan fitur, refaktorisasi kode, 
 ---
 
 ## 5. Dialog Sukses Produk (Draf vs Publikasi)
+
 * **File Terkait:**
   * [src/components/shared/product-success-dialog.tsx](file:///home/luputer/Dokumen/TA/CuanIN/src/components/shared/product-success-dialog.tsx)
 * **Perbaikan:**
@@ -53,7 +58,9 @@ Dokumen ini merangkum seluruh perbaikan, peningkatan fitur, refaktorisasi kode, 
 ---
 
 ## 6. Peningkatan UX pada Pengeditan Gambar Produk
+
 * **File Terkait:**
   * [src/components/creator/product-form-sections.tsx](file:///home/luputer/Dokumen/TA/CuanIN/src/components/creator/product-form-sections.tsx)
 * **Perbaikan:**
   * **Crop Langsung dari Thumbnail:** Menambahkan efek hover pada gambar produk yang sudah diunggah. Ketika di-hover, gambar akan meredup dan menampilkan tombol overlay **Crop** dengan ikon pensil, memungkinkan pengguna memotong ulang gambar dengan cepat.
+

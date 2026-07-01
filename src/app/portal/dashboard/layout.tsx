@@ -38,19 +38,21 @@ function PortalDashboardLayoutContent({ children }: { children: React.ReactNode 
     const ref = searchParams.get("ref");
     setBackHref(ref ? (ref.startsWith("/") ? ref : `/${ref}`) : "/");
   }, [searchParams]);
+
   useEffect(() => {
     if (status === "loading") return;
 
-    const token = localStorage.getItem("history_access_token");
-    const email = getCookie("history_authorized_email");
+    const savedToken = localStorage.getItem("history_access_token");
 
-    // Prioritaskan token dulu, baru fallback session — konsisten sama layout
-    if (token && email) {
-      setAccessToken(token);
+    if (savedToken) {
+      setIsInitializing(false);
       return;
     }
 
-    if (!session?.user) {
+    if (session?.user?.email) {
+      setEmail(session.user.email);
+      setIsInitializing(false);
+    } else {
       router.replace("/portal/login");
     }
   }, [session, status, router]);

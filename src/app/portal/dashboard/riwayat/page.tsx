@@ -46,7 +46,6 @@ function PortalRiwayatPageInner() {
   }, [session, status, router]);
 
 
-
   const { data: historyData, isLoading: isLoadingGuest, error: historyError } =
     api.purchases.getPurchaseHistoryByToken.useQuery(
       { accessToken: accessToken!, mode: "riwayat" },

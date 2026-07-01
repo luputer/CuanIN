@@ -26,7 +26,7 @@ import {
 
 export type ProductAccessEmailProps = {
   productName: string;
-  links: string[]; // Sekarang hanya menerima array
+  links: string[];
   notes?: string | null;
   portalUrl?: string | null;
   year: number;

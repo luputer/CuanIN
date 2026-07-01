@@ -128,12 +128,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       });
 
       if (isCheckoutSignIn) {
-        const checkoutOrigin = cookieStore.get("checkout_origin")?.value ?? "/";
-        const params = new URLSearchParams({
-          google_email: user.email ?? "",
-          google_name: user.name ?? "",
-        });
-        return `${checkoutOrigin}${checkoutOrigin.includes("?") ? "&" : "?"}${params.toString()}`;
+        if (dbUser) {
+          user.role = dbUser.role;
+        } else {
+          user.role = "USER";
+        }
+        return true;
       }
 
       if (!dbUser?.phoneNumber) {

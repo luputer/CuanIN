@@ -96,35 +96,6 @@ export function useCheckout() {
     prevEmailRef.current = watchedEmail;
   }, [watchedEmail, appliedVoucher]);
 
-  // 1. Autofill dari Google SSO yang memantul melalui URL query params (tanpa membuat session)
-  React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const searchParams = new URLSearchParams(window.location.search);
-      const googleEmail = searchParams.get("google_email");
-      const googleName = searchParams.get("google_name");
-
-      if (googleEmail && !getValues("email")) {
-        setValue("email", googleEmail, { shouldValidate: true });
-      }
-
-      if (googleName && !getValues("name")) {
-        setValue("name", googleName, { shouldValidate: true });
-      }
-
-      if (googleEmail || googleName) {
-        document.cookie = "checkout_google_sso=; Max-Age=0; path=/; SameSite=Lax";
-        document.cookie = "checkout_origin=; Max-Age=0; path=/; SameSite=Lax";
-
-        const newParams = new URLSearchParams(window.location.search);
-        newParams.delete("google_email");
-        newParams.delete("google_name");
-        
-        const queryString = newParams.toString();
-        const newUrl = window.location.pathname + (queryString ? `?${queryString}` : "");
-        window.history.replaceState({}, "", newUrl);
-      }
-    }
-  }, [getValues, setValue]);
 
   // 2. Autofill dari session aktif (jika pengguna memang sudah dalam status login, misalnya Kreator)
   React.useEffect(() => {

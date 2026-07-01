@@ -262,10 +262,28 @@ export const purchasesRouter = createTRPCRouter({
             });
           }
 
-          if (ctx.session?.user.id) {
+          const buyerEmailLower = input.buyerEmail.toLowerCase();
+          const existingUser = await tx.user.findUnique({
+            where: { email: buyerEmailLower },
+            select: { id: true, role: true },
+          });
+
+          if (existingUser) {
             await tx.user.update({
-              where: { id: ctx.session.user.id },
-              data: { phoneNumber: input.buyerPhone },
+              where: { id: existingUser.id },
+              data: {
+                name: input.buyerName,
+                phoneNumber: input.buyerPhone,
+              },
+            });
+          } else {
+            await tx.user.create({
+              data: {
+                email: buyerEmailLower,
+                name: input.buyerName,
+                phoneNumber: input.buyerPhone,
+                role: "USER",
+              },
             });
           }
 
@@ -354,10 +372,28 @@ export const purchasesRouter = createTRPCRouter({
           });
         }
 
-        if (ctx.session?.user.id) {
+        const buyerEmailLower = input.buyerEmail.toLowerCase();
+        const existingUser = await tx.user.findUnique({
+          where: { email: buyerEmailLower },
+          select: { id: true, role: true },
+        });
+
+        if (existingUser) {
           await tx.user.update({
-            where: { id: ctx.session.user.id },
-            data: { phoneNumber: input.buyerPhone },
+            where: { id: existingUser.id },
+            data: {
+              name: input.buyerName,
+              phoneNumber: input.buyerPhone,
+            },
+          });
+        } else {
+          await tx.user.create({
+            data: {
+              email: buyerEmailLower,
+              name: input.buyerName,
+              phoneNumber: input.buyerPhone,
+              role: "USER",
+            },
           });
         }
 

@@ -64,11 +64,14 @@ export function useCheckout() {
 
     const customShape: Record<string, z.ZodTypeAny> = {};
     formFields.forEach((f) => {
-      if (f.required) {
-        customShape[f.id] = z.string().min(1, `${f.label} wajib diisi`);
-      } else {
-        customShape[f.id] = z.string().optional();
-      }
+      const stringSchema = f.required
+        ? z.string().min(1, `${f.label} wajib diisi`)
+        : z.string().optional();
+
+      customShape[f.id] = z.preprocess(
+        (val) => (val === null || val === undefined ? "" : String(val as string | number | boolean)),
+        stringSchema
+      );
     });
 
     return z.object({ ...base, custom: z.object(customShape).optional() });
@@ -93,6 +96,37 @@ export function useCheckout() {
     prevEmailRef.current = watchedEmail;
   }, [watchedEmail, appliedVoucher]);
 
+  // 1. Autofill dari Google SSO yang memantul melalui URL query params (tanpa membuat session)
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      const googleEmail = searchParams.get("google_email");
+      const googleName = searchParams.get("google_name");
+
+      if (googleEmail && !getValues("email")) {
+        setValue("email", googleEmail, { shouldValidate: true });
+      }
+
+      if (googleName && !getValues("name")) {
+        setValue("name", googleName, { shouldValidate: true });
+      }
+
+      if (googleEmail || googleName) {
+        document.cookie = "checkout_google_sso=; Max-Age=0; path=/; SameSite=Lax";
+        document.cookie = "checkout_origin=; Max-Age=0; path=/; SameSite=Lax";
+
+        const newParams = new URLSearchParams(window.location.search);
+        newParams.delete("google_email");
+        newParams.delete("google_name");
+        
+        const queryString = newParams.toString();
+        const newUrl = window.location.pathname + (queryString ? `?${queryString}` : "");
+        window.history.replaceState({}, "", newUrl);
+      }
+    }
+  }, [getValues, setValue]);
+
+  // 2. Autofill dari session aktif (jika pengguna memang sudah dalam status login, misalnya Kreator)
   React.useEffect(() => {
     if (status !== "authenticated") return;
 
@@ -175,7 +209,7 @@ export function useCheckout() {
 
     const answers = Object.entries(data.custom ?? {}).map(([id, value]) => ({
       formFieldId: id,
-      answer: value,
+      answer: value ? String(value) : "",
     }));
 
     purchaseMutation.mutate({

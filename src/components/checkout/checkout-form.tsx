@@ -46,11 +46,11 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const handleGoogleCheckoutSignIn = async () => {
     setIsGoogleLoading(true);
     document.cookie = "checkout_google_sso=1; Max-Age=600; path=/; SameSite=Lax";
+    const originUrl = window.location.pathname + window.location.search;
+    document.cookie = `checkout_origin=${originUrl}; Max-Age=600; path=/; SameSite=Lax`;
 
     try {
-      await signIn("google", {
-        callbackUrl: window.location.pathname + window.location.search,
-      });
+      await signIn("google");
     } catch {
       setIsGoogleLoading(false);
       toast.error("Gagal login dengan Google");
@@ -219,7 +219,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   fill="#EA4335"
                 />
               </svg>
-              Lanjutkan dengan Google
+              Isi Otomatis dengan Google
             </>
           )}
         </button>

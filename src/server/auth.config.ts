@@ -83,6 +83,9 @@ export const authConfig = {
                 if (role === "ADMIN") {
                     return Response.redirect(new URL("/admin/dashboard", nextUrl));
                 }
+                if (role === "USER") {
+                    return true; // Jangan di-redirect ke mana-mana
+                }
                 return Response.redirect(new URL("/dashboard", nextUrl));
             }
 
@@ -90,6 +93,7 @@ export const authConfig = {
             if (isAdminPage) {
                 if (!isLoggedIn) return false;
                 if (role !== "ADMIN") {
+                    if (role === "USER") return false;
                     return Response.redirect(new URL("/dashboard", nextUrl));
                 }
             }
@@ -105,12 +109,13 @@ export const authConfig = {
             }
 
             // 5. Belum punya catalog → wajib setup dulu
-            if (isDashboardPage && isLoggedIn && role !== "ADMIN" && hasCatalog === false) {
+            if (isDashboardPage && isLoggedIn && role === "CREATOR" && hasCatalog === false) {
                 return Response.redirect(new URL("/setup", nextUrl));
             }
 
             // 6. Sudah punya catalog → ga perlu ke /setup lagi
             if (isSetupPage && isLoggedIn && hasCatalog === true) {
+                if (role === "USER") return true;
                 return Response.redirect(new URL("/dashboard", nextUrl));
             }
 

@@ -49,8 +49,6 @@ function PortalDashboardLayoutContent({ children }: { children: React.ReactNode 
     const ref = searchParams.get("ref");
     const isFromDashboard = ref === "/dashboard" || ref === "dashboard" || ref?.startsWith("/dashboard") || ref?.startsWith("dashboard");
 
-    // Jika datang dari dashboard creator, dan sedang login via Next-Auth:
-    // Hapus token tamu agar langsung masuk menggunakan akun creatornya
     if (isFromDashboard && session?.user?.email) {
       localStorage.removeItem("history_access_token");
       deleteCookie("history_authorized_email");

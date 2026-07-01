@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, Suspense } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import { ReceiptIcon, Funnel } from "@phosphor-icons/react";
 import { getCookie } from "~/app/portal/dashboard/layout";
@@ -28,9 +28,19 @@ function PortalRiwayatPageInner() {
 
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (status === "loading") return;
+
+    const ref = searchParams.get("ref");
+    const isFromDashboard = ref === "/dashboard" || ref === "dashboard" || ref?.startsWith("/dashboard") || ref?.startsWith("dashboard");
+
+    if (isFromDashboard && session?.user?.email) {
+      localStorage.removeItem("history_access_token");
+      setAccessToken(null);
+      return;
+    }
 
     const token = localStorage.getItem("history_access_token");
     const email = getCookie("history_authorized_email");
@@ -43,7 +53,7 @@ function PortalRiwayatPageInner() {
     if (!session?.user) {
       router.replace("/portal/login");
     }
-  }, [session, status, router]);
+  }, [session, status, router, searchParams]);
 
 
   const { data: historyData, isLoading: isLoadingGuest, error: historyError } =

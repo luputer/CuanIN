@@ -132,15 +132,17 @@ function PortalDashboardLayoutContent({ children }: { children: React.ReactNode 
       </main>
 
       <footer className="text-center py-6 border-t border-slate-200 mt-auto bg-white">
-        <div className="flex items-center justify-center gap-4 text-xs text-slate-400 font-bold uppercase tracking-wider">
-          <LockIcon size={12} weight="fill" />
-          <span>Powered by</span>
+        <div className="flex items-center justify-center gap-3 text-xs text-slate-400 font-bold uppercase tracking-wider">
+          <div className="flex items-center gap-1.5">
+            <LockIcon size={12} weight="fill" />
+            <span>Powered by</span>
+          </div>
           <Image
             src="/logo-cuanin.svg"
             alt="CuanIN"
             width={60}
             height={18}
-            className="h-4 w-auto object-contain"
+            className="h-5 w-auto object-contain"
           />
         </div>
       </footer>

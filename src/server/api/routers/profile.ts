@@ -46,7 +46,12 @@ export const profileRouter = createTRPCRouter({
         banner: z.string().optional().nullable(),
         password: z.string().optional().nullable(),
         bio: z.string().optional().nullable(),
-        slug: z.string().optional().nullable(), // ← tambah ini
+        slug: z.string()
+          .min(3, "Link minimal 3 karakter")
+          .max(50, "Link maksimal 50 karakter")
+          .regex(/^[a-z0-9-]+$/, "Link hanya boleh huruf kecil, angka, dan tanda hubung (-)")
+          .optional()
+          .nullable(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -60,10 +65,6 @@ export const profileRouter = createTRPCRouter({
 
       // Validasi slug kalau diisi
       if (slug) {
-        const slugRegex = /^[a-z0-9-]+$/;
-        if (!slugRegex.test(slug)) {
-          throw new Error("Link hanya boleh huruf kecil, angka, dan tanda hubung (-)");
-        }
 
         // Cek slug sudah dipakai orang lain
         const existing = await ctx.db.catalog.findFirst({

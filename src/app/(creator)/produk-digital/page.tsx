@@ -230,6 +230,8 @@ export default function DigitalProductPage() {
                             ) : (
                                 products?.map((item, index) => {
                                     const priceNum = Number(item.price);
+                                    const discountNum = item.discountPrice != null ? Number(item.discountPrice) : null;
+                                    const displayPrice = discountNum !== null && discountNum < priceNum ? discountNum : priceNum;
                                     const rowNumber = (page - 1) * limit + index + 1;
                                     return (
                                         <TableRow key={item.id} data-type="body">
@@ -262,8 +264,15 @@ export default function DigitalProductPage() {
                                             </TableCell>
 
                                             <TableCell className="whitespace-nowrap">
-                                                <div className="flex items-center min-h-[48px]">
-                                                    {priceNum === 0 ? "Rp 0" : `Rp ${priceNum.toLocaleString("id-ID")}`}
+                                                <div className="flex flex-col justify-center min-h-[48px] gap-0.5">
+                                                    {displayPrice === 0 ? (
+                                                        <span>Gratis</span>
+                                                    ) : (
+                                                        <span className="font-medium">{`Rp ${displayPrice.toLocaleString("id-ID")}`}</span>
+                                                    )}
+                                                    {discountNum !== null && discountNum < priceNum && (
+                                                        <span className="text-xs text-slate-400 line-through">{`Rp ${priceNum.toLocaleString("id-ID")}`}</span>
+                                                    )}
                                                 </div>
                                             </TableCell>
 

@@ -21,6 +21,8 @@ interface AdminProductTableRowProps {
 
 export function AdminProductTableRow({ item, index, page, limit, showCreatorColumn, viewHref }: AdminProductTableRowProps) {
     const priceNum = Number(item.price);
+    const discountNum = item.discountPrice != null ? Number(item.discountPrice) : null;
+    const displayPrice = discountNum !== null && discountNum < priceNum ? discountNum : priceNum;
     const rowNumber = (page - 1) * limit + index + 1;
     const isFinished = item.status === "archived" || (item.endDate && new Date() > new Date(item.endDate));
     const currentStatus = isFinished ? "selesai" : (item.status || "unpublished");
@@ -64,8 +66,15 @@ export function AdminProductTableRow({ item, index, page, limit, showCreatorColu
             </TableCell>
 
             <TableCell className="whitespace-nowrap">
-                <div className="flex items-center min-h-[48px]">
-                    {priceNum === 0 ? "Gratis" : `Rp ${priceNum.toLocaleString("id-ID")}`}
+                <div className="flex flex-col justify-center min-h-[48px] gap-0.5">
+                    {displayPrice === 0 ? (
+                        <span>Gratis</span>
+                    ) : (
+                        <span className="font-medium">{`Rp ${displayPrice.toLocaleString("id-ID")}`}</span>
+                    )}
+                    {discountNum !== null && discountNum < priceNum && (
+                        <span className="text-xs text-slate-400 line-through">{`Rp ${priceNum.toLocaleString("id-ID")}`}</span>
+                    )}
                 </div>
             </TableCell>
 
@@ -99,6 +108,8 @@ interface AdminProductMobileCardProps {
 
 export function AdminProductMobileCard({ item, showCreatorColumn, viewHref }: AdminProductMobileCardProps) {
     const priceNum = Number(item.price);
+    const discountNum = item.discountPrice != null ? Number(item.discountPrice) : null;
+    const displayPrice = discountNum !== null && discountNum < priceNum ? discountNum : priceNum;
     const isFinished = item.status === "archived" || (item.endDate && new Date() > new Date(item.endDate));
     const currentStatus = isFinished ? "selesai" : (item.status || "unpublished");
 
@@ -129,9 +140,14 @@ export function AdminProductMobileCard({ item, showCreatorColumn, viewHref }: Ad
             <div className="flex flex-col gap-3 rounded-lg bg-slate-50 border border-slate-100 p-3">
                 <div className="flex justify-between items-center text-xs">
                     <span className="font-medium text-slate-400">Harga: </span>
-                    <span className="font-semibold text-slate-800">
-                        {priceNum === 0 ? "Gratis" : `Rp ${priceNum.toLocaleString("id-ID")}`}
-                    </span>
+                    <div className="flex flex-col items-end gap-0.5">
+                        <span className="font-semibold text-slate-800">
+                            {displayPrice === 0 ? "Gratis" : `Rp ${displayPrice.toLocaleString("id-ID")}`}
+                        </span>
+                        {discountNum !== null && discountNum < priceNum && (
+                            <span className="text-[10px] text-slate-400 line-through">{`Rp ${priceNum.toLocaleString("id-ID")}`}</span>
+                        )}
+                    </div>
                 </div>
 
                 <div className="flex justify-between items-center text-xs border-t border-slate-200/60 pt-2">

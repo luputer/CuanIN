@@ -230,6 +230,8 @@ export default function KelasOnlinePage() {
                             ) : (
                                 products?.map((item, index) => {
                                     const priceNum = Number(item.price);
+                                    const discountNum = item.discountPrice != null ? Number(item.discountPrice) : null;
+                                    const displayPrice = discountNum !== null && discountNum < priceNum ? discountNum : priceNum;
                                     const rowNumber = (page - 1) * limit + index + 1;
                                     return (
                                         <TableRow key={item.id} data-type="body">
@@ -262,8 +264,15 @@ export default function KelasOnlinePage() {
                                             </TableCell>
 
                                             <TableCell className="whitespace-nowrap">
-                                                <div className="flex items-center min-h-[48px]">
-                                                    {priceNum === 0 ? "Rp 0" : `Rp ${priceNum.toLocaleString("id-ID")}`}
+                                                <div className="flex flex-col justify-center min-h-[48px] gap-0.5">
+                                                    {displayPrice === 0 ? (
+                                                        <span>Gratis</span>
+                                                    ) : (
+                                                        <span className="font-medium">{`Rp ${displayPrice.toLocaleString("id-ID")}`}</span>
+                                                    )}
+                                                    {discountNum !== null && discountNum < priceNum && (
+                                                        <span className="text-xs text-slate-400 line-through">{`Rp ${priceNum.toLocaleString("id-ID")}`}</span>
+                                                    )}
                                                 </div>
                                             </TableCell>
 
@@ -324,6 +333,8 @@ export default function KelasOnlinePage() {
                     ) : (
                         products?.map((item, index) => {
                             const priceNum = Number(item.price);
+                            const discountNum = item.discountPrice != null ? Number(item.discountPrice) : null;
+                            const displayPrice = discountNum !== null && discountNum < priceNum ? discountNum : priceNum;
                             const rowNumber = (page - 1) * limit + index + 1;
                             const statusKey = item.status || "draft";
 
@@ -352,8 +363,11 @@ export default function KelasOnlinePage() {
                                                 <div>
                                                     <span className="font-medium text-slate-400">Harga: </span>
                                                     <span className="font-semibold text-slate-700">
-                                                        {priceNum === 0 ? "Gratis" : `Rp ${priceNum.toLocaleString("id-ID")}`}
+                                                        {displayPrice === 0 ? "Gratis" : `Rp ${displayPrice.toLocaleString("id-ID")}`}
                                                     </span>
+                                                    {discountNum !== null && discountNum < priceNum && (
+                                                        <span className="text-[10px] text-slate-400 line-through ml-1">{`Rp ${priceNum.toLocaleString("id-ID")}`}</span>
+                                                    )}
                                                 </div>
 
                                                 <div>

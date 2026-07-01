@@ -48,6 +48,7 @@ export const creatorsRouter = createTRPCRouter({
       orderBy: { createdAt: "desc" },
       include: {
         _count: { select: { products: true } },
+        catalog: { select: { slug: true } },
       },
     });
   }),

@@ -11,6 +11,9 @@ export interface AdminCreatorType {
   _count: {
     products: number;
   };
+  catalog?: {
+    slug: string;
+  } | null;
 }
 
 export interface AdminProductType {
@@ -18,6 +21,7 @@ export interface AdminProductType {
   name: string;
   type: string;
   price: number | string | { toNumber: () => number };
+  discountPrice: number | string | { toNumber: () => number } | null;
   status: string;
   userId: string;
   startDate: Date | string | null;

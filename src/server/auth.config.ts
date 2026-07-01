@@ -2,6 +2,7 @@ import type { NextAuthConfig, DefaultSession } from "next-auth";
 import { type JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { NextResponse } from "next/server";
 import { env } from "~/env";
 
 declare module "next-auth" {
@@ -57,10 +58,29 @@ export const authConfig = {
         CredentialsProvider({}),
     ],
     callbacks: {
-        authorized({ auth, request: { nextUrl } }) {
+        authorized({ auth, request }) {
+            const { nextUrl } = request;
             const isLoggedIn = !!auth;
             const role = auth?.user?.role;
             const hasCatalog = auth?.user?.hasCatalog;
+
+            const isPaymentSuccessPage = /^\/payment\/success/.test(nextUrl.pathname);
+
+            // ── 0. Paksa logout HANYA sesi checkout (role USER) ──
+            // CREATOR/ADMIN yang kebetulan login normal tetap dibiarkan
+            if (
+                isPaymentSuccessPage &&
+                isLoggedIn &&
+                role !== "CREATOR" &&
+                role !== "ADMIN"
+            ) {
+                const res = NextResponse.next();
+                res.cookies.delete("authjs.session-token");
+                res.cookies.delete("__Secure-authjs.session-token");
+                res.cookies.delete("checkout_google_sso");
+                res.cookies.delete("checkout_origin");
+                return res;
+            }
 
             const isAuthPage =
                 nextUrl.pathname.startsWith("/sign-in") ||
@@ -68,7 +88,6 @@ export const authConfig = {
                 nextUrl.pathname === "/";
 
             const isAdminPage = nextUrl.pathname.startsWith("/admin");
-            // const isSetupPage = nextUrl.pathname.startsWith("/setup");
             const isDashboardPage =
                 nextUrl.pathname.startsWith("/dashboard") ||
                 nextUrl.pathname.startsWith("/profile") ||
@@ -112,7 +131,6 @@ export const authConfig = {
             if (isDashboardPage && isLoggedIn && role === "CREATOR" && hasCatalog === false) {
                 return Response.redirect(new URL("/setup", nextUrl));
             }
-
 
             return true;
         },

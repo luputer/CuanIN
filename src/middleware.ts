@@ -17,6 +17,7 @@ export const config = {
         "/admin/:path*",
         "/sign-in",
         "/sign-up",
-        "/"
+        "/",
+        "/payment/success", // ← tambahin
     ],
 };

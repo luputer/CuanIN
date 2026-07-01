@@ -51,7 +51,7 @@ function ProductDetailSkeleton() {
             </div>
 
             {/* Image Placeholder (Mobile only) */}
-            <div className="aspect-4/3 w-full rounded-2xl bg-slate-200 lg:hidden" />
+            <div className="aspect-square w-full rounded-xl bg-slate-200 lg:hidden" />
 
             {/* Description card */}
             <div className="rounded-xl border border-slate-200 bg-white p-6">
@@ -69,7 +69,7 @@ function ProductDetailSkeleton() {
 
           {/* RIGHT */}
           <div className="flex flex-col gap-6 lg:col-span-2">
-            <div className="hidden lg:block aspect-square w-full rounded-2xl bg-slate-200" />
+            <div className="hidden lg:block aspect-square w-full rounded-xl bg-slate-200" />
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
               <div className="mb-4 h-5 w-3/4 rounded-full bg-slate-200" />
               <div className="mb-4 rounded-xl border border-slate-100 bg-slate-50 p-4 space-y-2">
@@ -254,7 +254,7 @@ export default function ProductDetailPage() {
 
             {/* IMAGE & CAROUSEL (Mobile only - visible above description) */}
             <div className="flex flex-col gap-2.5 lg:hidden">
-              <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-slate-300 bg-slate-100 shadow-sm">
+              <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-slate-100">
                 {currentImage ? (
                   <Image
                     src={currentImage}
@@ -264,9 +264,7 @@ export default function ProductDetailPage() {
                     className="object-cover transition-all duration-300"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-slate-400">
-                    <ImagesIcon className="h-12 w-12 text-slate-300" />
-                  </div>
+                  <ImagesIcon className="h-10 w-10 text-slate-300" strokeWidth={1.2} />
                 )}
               </div>
 
@@ -312,7 +310,7 @@ export default function ProductDetailPage() {
           <div className="flex flex-col gap-6 lg:col-span-2 lg:sticky lg:top-24 ">
             {/* IMAGE & CAROUSEL (Desktop only) */}
             <div className="hidden lg:flex lg:flex-col lg:gap-2.5">
-              <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-slate-300 bg-slate-100 shadow-sm lg:aspect-square lg:max-h-95">
+              <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-slate-100">
                 {currentImage ? (
                   <Image
                     src={currentImage}
@@ -322,9 +320,7 @@ export default function ProductDetailPage() {
                     className="object-cover transition-all duration-300"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-slate-400">
-                    <ImagesIcon className="h-12 w-12 text-slate-300" />
-                  </div>
+                  <ImagesIcon className="h-10 w-10 text-slate-300" strokeWidth={1.2} />
                 )}
               </div>
 

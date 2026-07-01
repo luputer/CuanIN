@@ -46,6 +46,18 @@ function PortalDashboardLayoutContent({ children }: { children: React.ReactNode 
     if (status === "loading") return;
 
     const savedToken = localStorage.getItem("history_access_token");
+    const ref = searchParams.get("ref");
+    const isFromDashboard = ref === "/dashboard" || ref === "dashboard" || ref?.startsWith("/dashboard") || ref?.startsWith("dashboard");
+
+    // Jika datang dari dashboard creator, dan sedang login via Next-Auth:
+    // Hapus token tamu agar langsung masuk menggunakan akun creatornya
+    if (isFromDashboard && session?.user?.email) {
+      localStorage.removeItem("history_access_token");
+      deleteCookie("history_authorized_email");
+      setEmail(session.user.email);
+      setIsInitializing(false);
+      return;
+    }
 
     if (savedToken) {
       const savedEmail = getCookie("history_authorized_email");
@@ -60,7 +72,7 @@ function PortalDashboardLayoutContent({ children }: { children: React.ReactNode 
     } else {
       router.replace("/portal/login");
     }
-  }, [session, status, router]);
+  }, [session, status, router, searchParams]);
 
   const handleLogout = async () => {
     deleteCookie("history_authorized_email");

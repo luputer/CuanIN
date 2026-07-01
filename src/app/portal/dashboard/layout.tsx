@@ -45,6 +45,8 @@ function PortalDashboardLayoutContent({ children }: { children: React.ReactNode 
     const savedToken = localStorage.getItem("history_access_token");
 
     if (savedToken) {
+      const savedEmail = getCookie("history_authorized_email");
+      setEmail(savedEmail ?? "");
       setIsInitializing(false);
       return;
     }

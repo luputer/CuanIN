@@ -16,7 +16,7 @@ export function useCheckout() {
   const params = useParams();
   const router = useRouter();
   const { data: session, status } = useSession();
-  
+
   const [isGoogleLoading, setIsGoogleLoading] = React.useState(false);
   const [appliedVoucher, setAppliedVoucher] = React.useState<AppliedVoucher | null>(null);
   const [isValidatingVoucher, setIsValidatingVoucher] = React.useState(false);
@@ -114,13 +114,13 @@ export function useCheckout() {
   const handleApplyVoucher = async () => {
     const promoValue = form.getValues("promo");
     const email = form.getValues("email");
-    
+
     // Validate email presence and format
     const emailResult = z.string().email().safeParse(email);
     if (!emailResult.success) {
-        setVoucherError("Silakan isi Email dengan benar terlebih dahulu untuk menggunakan voucher");
-        form.setError("email", { message: "Email wajib diisi untuk menggunakan voucher" });
-        return;
+      setVoucherError("Silakan isi Email dengan benar terlebih dahulu untuk menggunakan voucher");
+      form.setError("email", { message: "Email wajib diisi untuk menggunakan voucher" });
+      return;
     }
 
     if (!promoValue?.trim()) {

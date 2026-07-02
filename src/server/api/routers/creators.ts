@@ -271,6 +271,16 @@ export const creatorsRouter = createTRPCRouter({
       const [items, total] = await Promise.all([
         ctx.db.product.findMany({
           where,
+          include: {
+            user: {
+              select: {
+                name: true,
+                email: true,
+                image: true,
+                catalog: { select: { slug: true } },
+              },
+            },
+          },
           orderBy: { [input.sortBy]: input.sortOrder },
           skip,
           take: input.limit,

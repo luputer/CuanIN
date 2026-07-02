@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { CATEGORY_STYLE, CATEGORY_STYLE_DEFAULT, PRODUCT_TYPE_MAP } from "~/lib/constants";
 import {
   ImagesIcon,
-  NoteIcon,
   DownloadSimpleIcon,
   EyeIcon,
   CircleNotchIcon,

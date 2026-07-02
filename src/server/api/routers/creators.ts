@@ -9,7 +9,9 @@ import { createTRPCRouter, adminProcedure } from "~/server/api/trpc";
 const createCreatorSchema = z.object({
   name: z.string().min(1),
   email: z.string().email(),
-  phoneNumber: z.string().min(1, "Nomor HP wajib diisi"),
+  phoneNumber: z.string()
+    .min(10, "Nomor HP minimal 10 digit")
+    .regex(/^(\+62|62|0)8[1-9][0-9]{6,9}$/, "Format nomor HP tidak valid"),
   password: z.string().min(6),
   image: z.string().optional().nullable(),
   banner: z.string().optional().nullable(),
@@ -20,7 +22,9 @@ const updateCreatorSchema = z.object({
   id: z.string(),
   name: z.string().min(1),
   email: z.string().email(),
-  phoneNumber: z.string().min(1, "Nomor HP wajib diisi"),
+  phoneNumber: z.string()
+    .min(10, "Nomor HP minimal 10 digit")
+    .regex(/^(\+62|62|0)8[1-9][0-9]{6,9}$/, "Format nomor HP tidak valid"),
   password: z.string().min(6).optional(),
   image: z.string().optional().nullable(),
   banner: z.string().optional().nullable(),

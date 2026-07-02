@@ -254,13 +254,24 @@ export default function ProfilePage() {
                                         className={`relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer transition-transform ${avatarDrop.isDragging ? "scale-105" : ""}`}
                                         onClick={() => {
                                             if (avatarUpload.previewUrl) {
-                                                const originalUrl = avatarUpload.previewUrl.includes("/avatars/")
-                                                    ? avatarUpload.previewUrl.replace("/avatars/", "/avatars/original-")
-                                                    : avatarUpload.previewUrl;
-                                                setSelectedImageSrc(originalUrl);
-                                                setFileName("avatar.jpg");
-                                                setCropperMode("avatar");
-                                                setCropperOpen(true);
+                                                if (originalAvatarFile) {
+                                                    const reader = new FileReader();
+                                                    reader.onload = () => {
+                                                        setSelectedImageSrc(reader.result as string);
+                                                        setFileName(originalAvatarFile.name);
+                                                        setCropperMode("avatar");
+                                                        setCropperOpen(true);
+                                                    };
+                                                    reader.readAsDataURL(originalAvatarFile);
+                                                } else {
+                                                    const originalUrl = avatarUpload.previewUrl.includes("/avatars/")
+                                                        ? avatarUpload.previewUrl.replace("/avatars/", "/avatars/original-")
+                                                        : avatarUpload.previewUrl;
+                                                    setSelectedImageSrc(originalUrl);
+                                                    setFileName("avatar.jpg");
+                                                    setCropperMode("avatar");
+                                                    setCropperOpen(true);
+                                                }
                                             } else {
                                                 fileInputRef.current?.click();
                                             }
@@ -343,13 +354,24 @@ export default function ProfilePage() {
                                         className={`relative group w-full aspect-[4/1] md:max-h-[240px] max-h-[160px] cursor-pointer transition-transform ${bannerDrop.isDragging ? "scale-[1.02]" : ""}`}
                                         onClick={() => {
                                             if (bannerUpload.previewUrl) {
-                                                const originalUrl = bannerUpload.previewUrl.includes("/banners/")
-                                                    ? bannerUpload.previewUrl.replace("/banners/", "/banners/original-")
-                                                    : bannerUpload.previewUrl;
-                                                setSelectedImageSrc(originalUrl);
-                                                setFileName("banner.jpg");
-                                                setCropperMode("banner");
-                                                setCropperOpen(true);
+                                                if (originalBannerFile) {
+                                                    const reader = new FileReader();
+                                                    reader.onload = () => {
+                                                        setSelectedImageSrc(reader.result as string);
+                                                        setFileName(originalBannerFile.name);
+                                                        setCropperMode("banner");
+                                                        setCropperOpen(true);
+                                                    };
+                                                    reader.readAsDataURL(originalBannerFile);
+                                                } else {
+                                                    const originalUrl = bannerUpload.previewUrl.includes("/banners/")
+                                                        ? bannerUpload.previewUrl.replace("/banners/", "/banners/original-")
+                                                        : bannerUpload.previewUrl;
+                                                    setSelectedImageSrc(originalUrl);
+                                                    setFileName("banner.jpg");
+                                                    setCropperMode("banner");
+                                                    setCropperOpen(true);
+                                                }
                                             } else {
                                                 bannerInputRef.current?.click();
                                             }

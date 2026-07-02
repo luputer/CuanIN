@@ -421,12 +421,23 @@ export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldV
                                 className="relative w-full h-full overflow-hidden rounded-xl border border-slate-200 cursor-pointer"
                                 onClick={() => {
                                     setEditingImageIndex(index);
-                                    const originalUrl = img.includes("/products/")
-                                        ? img.replace("/products/", "/products/original-")
-                                        : img;
-                                    setSelectedImageSrc(originalUrl);
-                                    setFileName(`thumbnail-${index + 1}.jpg`);
-                                    setCropperOpen(true);
+                                    const localOriginalFile = originalProductFiles[index];
+                                    if (localOriginalFile) {
+                                        const reader = new FileReader();
+                                        reader.onload = () => {
+                                            setSelectedImageSrc(reader.result as string);
+                                            setFileName(localOriginalFile.name);
+                                            setCropperOpen(true);
+                                        };
+                                        reader.readAsDataURL(localOriginalFile);
+                                    } else {
+                                        const originalUrl = img.includes("/products/")
+                                            ? img.replace("/products/", "/products/original-")
+                                            : img;
+                                        setSelectedImageSrc(originalUrl);
+                                        setFileName(`thumbnail-${index + 1}.jpg`);
+                                        setCropperOpen(true);
+                                    }
                                 }}
                             >
                                 <Image
@@ -483,7 +494,7 @@ export const SidebarMetadataSection = <TFieldValues extends FieldValues = FieldV
                             {...thumbnailDrop.dragHandlers}
                         >
                             <div className={`w-full h-full bg-white border-2 border-dashed rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors ${thumbnailDrop.isDragging ? "border-cuan-cyan bg-cuan-cyan/10" : "border-slate-300 group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10"}`}>
-                                {uploading || productImageUpload.uploading ? (
+                                {uploading || (productImageUpload.uploading && editingImageIndex === null) ? (
                                     <CircleNotchIcon className="animate-spin text-cuan-cyan" size={24} />
                                 ) : (
                                     <div className="flex flex-col items-center gap-1 text-slate-400">

@@ -29,6 +29,7 @@ import ButtonSave from "~/components/shared/button-save";
 import ButtonCancel from "~/components/shared/button-cancel";
 import { DetailHeader } from "~/components/shared/detail-header";
 import { useImageDrop } from "~/hooks/shared/use-image-drop";
+import { ImageCropperDialog } from "~/components/shared/image-cropper-dialog";
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -60,33 +61,46 @@ export default function CreateCreatorPage() {
     const avatarUpload = useImageUpload("avatars");
     const bannerUpload = useImageUpload("banners");
 
-    const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const url = await avatarUpload.handleFileUpload(e);
-        if (url) {
-            setValue("image", url, { shouldValidate: true });
+    const [originalAvatarFile, setOriginalAvatarFile] = useState<File | null>(null);
+    const [originalBannerFile, setOriginalBannerFile] = useState<File | null>(null);
+
+    const [cropperOpen, setCropperOpen] = useState(false);
+    const [cropperMode, setCropperMode] = useState<"avatar" | "banner" | null>(null);
+    const [selectedImageSrc, setSelectedImageSrc] = useState("");
+    const [fileName, setFileName] = useState("");
+
+    const openCropperWithFile = useCallback((file: File, mode: "avatar" | "banner") => {
+        if (mode === "avatar") {
+            setOriginalAvatarFile(file);
+        } else {
+            setOriginalBannerFile(file);
         }
+        const reader = new FileReader();
+        reader.onload = () => {
+            setSelectedImageSrc(reader.result as string);
+            setFileName(file.name);
+            setCropperMode(mode);
+            setCropperOpen(true);
+        };
+        reader.readAsDataURL(file);
+    }, []);
+
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        openCropperWithFile(file, "avatar");
+        e.target.value = "";
     };
 
-    const handleBannerChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const url = await bannerUpload.handleFileUpload(e);
-        if (url) {
-            setValue("banner", url, { shouldValidate: true });
-        }
+    const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        openCropperWithFile(file, "banner");
+        e.target.value = "";
     };
 
-    const avatarDrop = useImageDrop(useCallback((file: File) => {
-        void (async () => {
-            const url = await avatarUpload.handleFileUpload(file);
-            if (url) setValue("image", url, { shouldValidate: true });
-        })();
-    }, [avatarUpload, setValue]));
-
-    const bannerDrop = useImageDrop(useCallback((file: File) => {
-        void (async () => {
-            const url = await bannerUpload.handleFileUpload(file);
-            if (url) setValue("banner", url, { shouldValidate: true });
-        })();
-    }, [bannerUpload, setValue]));
+    const avatarDrop = useImageDrop(useCallback((file: File) => openCropperWithFile(file, "avatar"), [openCropperWithFile]));
+    const bannerDrop = useImageDrop(useCallback((file: File) => openCropperWithFile(file, "banner"), [openCropperWithFile]));
 
     const createCreator = api.creators.create.useMutation({
         onSuccess: () => {
@@ -136,7 +150,30 @@ export default function CreateCreatorPage() {
                                     <div className="flex flex-col gap-3">
                                         <div
                                             className={`relative group shrink-0 w-24 h-24 sm:w-32 sm:h-32 cursor-pointer transition-transform ${avatarDrop.isDragging ? "scale-105" : ""}`}
-                                            onClick={() => fileInputRef.current?.click()}
+                                            onClick={() => {
+                                                if (avatarUpload.previewUrl) {
+                                                    if (originalAvatarFile) {
+                                                        const reader = new FileReader();
+                                                        reader.onload = () => {
+                                                            setSelectedImageSrc(reader.result as string);
+                                                            setFileName(originalAvatarFile.name);
+                                                            setCropperMode("avatar");
+                                                            setCropperOpen(true);
+                                                        };
+                                                        reader.readAsDataURL(originalAvatarFile);
+                                                    } else {
+                                                        const originalUrl = avatarUpload.previewUrl.includes("/avatars/")
+                                                            ? avatarUpload.previewUrl.replace("/avatars/", "/avatars/original-")
+                                                            : avatarUpload.previewUrl;
+                                                        setSelectedImageSrc(originalUrl);
+                                                        setFileName("avatar.jpg");
+                                                        setCropperMode("avatar");
+                                                        setCropperOpen(true);
+                                                    }
+                                                } else {
+                                                    fileInputRef.current?.click();
+                                                }
+                                            }}
                                             {...avatarDrop.dragHandlers}
                                         >
                                             <div className={`w-full h-full bg-white border-2 border-dashed rounded-full flex flex-col items-center justify-center overflow-hidden transition-colors relative ${avatarDrop.isDragging ? "border-cuan-cyan bg-cuan-cyan/10" : "border-slate-300 group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10"}`}>
@@ -149,9 +186,10 @@ export default function CreateCreatorPage() {
                                                             className="object-cover transition-opacity group-hover:opacity-80"
                                                             unoptimized
                                                         />
-                                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10">
-                                                            <div className="bg-white/90 p-1.5 rounded-full shadow-md text-slate-800">
-                                                                <PencilSimpleIcon size={18} weight="bold" />
+                                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/15">
+                                                            <div className="bg-white/90 px-2 py-1 rounded-full shadow-md text-xs font-semibold text-slate-800 flex items-center gap-1">
+                                                                <PencilSimpleIcon size={14} weight="bold" />
+                                                                <span>Atur Crop</span>
                                                             </div>
                                                         </div>
                                                     </>
@@ -176,17 +214,33 @@ export default function CreateCreatorPage() {
                                             />
                                         </div>
                                         {avatarUpload.previewUrl && (
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    avatarUpload.setPreviewUrl(null);
-                                                    setValue("image", "", { shouldDirty: true });
-                                                }}
-                                                className="flex items-center gap-1.5 text-red-500 hover:text-red-700 text-xs font-semibold transition-colors w-fit cursor-pointer"
-                                            >
-                                                <TrashIcon size={14} weight="bold" />
-                                                <span>Hapus Foto</span>
-                                            </button>
+                                            <div className="flex items-center gap-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        fileInputRef.current?.click();
+                                                    }}
+                                                    className="flex items-center gap-1 text-cuan-cyan hover:text-cuan-cyan/85 text-xs font-semibold transition-colors cursor-pointer"
+                                                >
+                                                    <PencilSimpleIcon size={14} weight="bold" />
+                                                    <span>Ganti Foto</span>
+                                                </button>
+                                                <span className="text-slate-300 text-xs">|</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        avatarUpload.setPreviewUrl(null);
+                                                        setOriginalAvatarFile(null);
+                                                        setValue("image", "", { shouldDirty: true });
+                                                    }}
+                                                    className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs font-semibold transition-colors cursor-pointer"
+                                                >
+                                                    <TrashIcon size={14} weight="bold" />
+                                                    <span>Hapus Foto</span>
+                                                </button>
+                                            </div>
                                         )}
                                         <p className="text-[11px] text-slate-400 italic">Disarankan rasio 1:1 (square)</p>
                                     </div>
@@ -197,7 +251,30 @@ export default function CreateCreatorPage() {
                                     <div className="flex flex-col gap-3">
                                         <div
                                             className={`relative group w-full aspect-[4/1] md:max-h-[240px] max-h-[160px] cursor-pointer transition-transform ${bannerDrop.isDragging ? "scale-[1.02]" : ""}`}
-                                            onClick={() => bannerInputRef.current?.click()}
+                                            onClick={() => {
+                                                if (bannerUpload.previewUrl) {
+                                                    if (originalBannerFile) {
+                                                        const reader = new FileReader();
+                                                        reader.onload = () => {
+                                                            setSelectedImageSrc(reader.result as string);
+                                                            setFileName(originalBannerFile.name);
+                                                            setCropperMode("banner");
+                                                            setCropperOpen(true);
+                                                        };
+                                                        reader.readAsDataURL(originalBannerFile);
+                                                    } else {
+                                                        const originalUrl = bannerUpload.previewUrl.includes("/banners/")
+                                                            ? bannerUpload.previewUrl.replace("/banners/", "/banners/original-")
+                                                            : bannerUpload.previewUrl;
+                                                        setSelectedImageSrc(originalUrl);
+                                                        setFileName("banner.jpg");
+                                                        setCropperMode("banner");
+                                                        setCropperOpen(true);
+                                                    }
+                                                } else {
+                                                    bannerInputRef.current?.click();
+                                                }
+                                            }}
                                             {...bannerDrop.dragHandlers}
                                         >
                                             <div className={`w-full h-full bg-white border-2 border-dashed rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors relative ${bannerDrop.isDragging ? "border-cuan-cyan bg-cuan-cyan/10" : "border-slate-300 group-hover:border-cuan-cyan/100 group-hover:bg-cuan-cyan/10"}`}>
@@ -210,9 +287,10 @@ export default function CreateCreatorPage() {
                                                             className="object-cover transition-opacity group-hover:opacity-80"
                                                             unoptimized
                                                         />
-                                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10">
-                                                            <div className="bg-white/90 p-1.5 rounded-full shadow-md text-slate-800">
-                                                                <PencilSimpleIcon size={18} weight="bold" />
+                                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/15">
+                                                            <div className="bg-white/90 px-3 py-1.5 rounded-full shadow-md text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+                                                                <PencilSimpleIcon size={14} weight="bold" />
+                                                                <span>Atur Crop Banner</span>
                                                             </div>
                                                         </div>
                                                     </>
@@ -237,17 +315,33 @@ export default function CreateCreatorPage() {
                                             />
                                         </div>
                                         {bannerUpload.previewUrl && (
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    bannerUpload.setPreviewUrl(null);
-                                                    setValue("banner", "", { shouldDirty: true });
-                                                }}
-                                                className="flex items-center gap-1.5 text-red-500 hover:text-red-700 text-xs font-semibold transition-colors w-fit cursor-pointer"
-                                            >
-                                                <TrashIcon size={14} weight="bold" />
-                                                <span>Hapus Banner</span>
-                                            </button>
+                                            <div className="flex items-center gap-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        bannerInputRef.current?.click();
+                                                    }}
+                                                    className="flex items-center gap-1 text-cuan-cyan hover:text-cuan-cyan/85 text-xs font-semibold transition-colors cursor-pointer"
+                                                >
+                                                    <PencilSimpleIcon size={14} weight="bold" />
+                                                    <span>Ganti Banner</span>
+                                                </button>
+                                                <span className="text-slate-300 text-xs">|</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        bannerUpload.setPreviewUrl(null);
+                                                        setOriginalBannerFile(null);
+                                                        setValue("banner", "", { shouldDirty: true });
+                                                    }}
+                                                    className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs font-semibold transition-colors cursor-pointer"
+                                                >
+                                                    <TrashIcon size={14} weight="bold" />
+                                                    <span>Hapus Banner</span>
+                                                </button>
+                                            </div>
                                         )}
                                         <p className="text-[11px] text-slate-400 italic">Disarankan rasio 6:1 atau 8:1 (Tipis/Ceper)</p>
                                     </div>
@@ -333,6 +427,34 @@ export default function CreateCreatorPage() {
                     </div>
                 </div>
             </div>
+
+            <ImageCropperDialog
+                isOpen={cropperOpen}
+                imageSrc={selectedImageSrc}
+                fileName={fileName}
+                onClose={() => {
+                    setCropperOpen(false);
+                    setCropperMode(null);
+                }}
+                onCrop={async (croppedFile) => {
+                    if (cropperMode === "avatar") {
+                        const url = await avatarUpload.handleFileUpload(croppedFile, originalAvatarFile as File);
+                        if (url) {
+                            setValue("image", url, { shouldValidate: true });
+                        }
+                    } else if (cropperMode === "banner") {
+                        const url = await bannerUpload.handleFileUpload(croppedFile, originalBannerFile as File);
+                        if (url) {
+                            setValue("banner", url, { shouldValidate: true });
+                        }
+                    }
+                }}
+                cropShape={cropperMode === "avatar" ? "circle" : "rect"}
+                cropWidth={cropperMode === "avatar" ? 300 : 640}
+                cropHeight={cropperMode === "avatar" ? 300 : 160}
+                outputWidth={cropperMode === "avatar" ? 400 : 1600}
+                outputHeight={cropperMode === "avatar" ? 400 : 400}
+            />
         </div>
     );
 }

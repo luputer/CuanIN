@@ -2,7 +2,6 @@ import type { NextAuthConfig, DefaultSession } from "next-auth";
 import { type JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { NextResponse } from "next/server";
 import { env } from "~/env";
 
 declare module "next-auth" {

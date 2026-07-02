@@ -64,23 +64,27 @@ export const authConfig = {
             const role = auth?.user?.role;
             const hasCatalog = auth?.user?.hasCatalog;
 
-            const isPaymentSuccessPage = nextUrl.pathname.startsWith("/payment/success");
 
+
+
+            // hide aja mdileware dulu bisa jalan pakai useEFECT
+            // const isPaymentSuccessPage = nextUrl.pathname.startsWith("/payment/success");
             // ── 0. Paksa logout HANYA sesi checkout (role USER) ──
             // CREATOR/ADMIN yang kebetulan login normal tetap dibiarkan
-            if (
-                isPaymentSuccessPage &&
-                isLoggedIn &&
-                role !== "CREATOR" &&
-                role !== "ADMIN"
-            ) {
-                const res = NextResponse.next();
-                res.cookies.delete("authjs.session-token");
-                res.cookies.delete("__Secure-authjs.session-token");
-                res.cookies.delete("checkout_google_sso");
-                res.cookies.delete("checkout_origin");
-                return res;
-            }
+            // if (
+            //     isPaymentSuccessPage &&
+            //     isLoggedIn &&
+            //     role !== "CREATOR" &&
+            //     role !== "ADMIN"
+            // ) {
+            //     const res = NextResponse.next();
+            //     res.cookies.delete("authjs.session-token");
+            //     res.cookies.delete("__Secure-authjs.session-token");
+            //     res.cookies.delete("checkout_google_sso");
+            //     res.cookies.delete("checkout_origin");
+            //     return res;
+            // }
+
 
             const isAuthPage =
                 nextUrl.pathname.startsWith("/sign-in") ||

@@ -353,17 +353,17 @@ export const voucherSchema = z.object({
   isLimitPerUser: z.boolean(),
   productIds: z.array(z.string()),
 })
-.refine((data) => startOfDay(data.endDate) >= startOfDay(data.startDate), {
-  message: "Tanggal berakhir harus setelah atau sama dengan tanggal mulai",
-  path: ["endDate"],
-})
-.refine((data) => {
-  if (data.type === "PERSEN") {
-    return data.discount <= 100;
-  }
-  return true;
-}, {
-  message: "Diskon persen tidak boleh lebih dari 100%",
-  path: ["discount"],
-});
+  .refine((data) => startOfDay(data.endDate) >= startOfDay(data.startDate), {
+    message: "Tanggal berakhir harus setelah atau sama dengan tanggal mulai",
+    path: ["endDate"],
+  })
+  .refine((data) => {
+    if (data.type === "PERSEN") {
+      return data.discount <= 100;
+    }
+    return true;
+  }, {
+    message: "Diskon persen tidak boleh lebih dari 100%",
+    path: ["discount"],
+  });
 

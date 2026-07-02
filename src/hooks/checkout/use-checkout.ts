@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { number, z } from "zod";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 
@@ -58,7 +58,10 @@ export function useCheckout() {
     const base = {
       name: z.string().min(1, "Nama wajib diisi"),
       email: z.string().email("Email wajib diisi"),
-      phone: z.string().min(1, "Nomor HP wajib diisi"),
+      phone: z.string()
+        .regex(/^\d+$/, "Nomor HP harus berupa angka saja")
+        .min(9, "Nomor HP terlalu pendek")
+        .max(14, "Nomor HP terlalu panjang"),
       promo: z.string().optional(),
     };
 
@@ -79,7 +82,13 @@ export function useCheckout() {
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", email: "", phone: "", promo: "", custom: {} },
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      promo: "",
+      custom: {}
+    },
   });
 
   const { getValues, setValue, watch } = form;

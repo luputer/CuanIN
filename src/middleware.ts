@@ -18,6 +18,7 @@ export const config = {
         "/sign-in",
         "/sign-up",
         "/",
-        "/payment/success", // ← tambahin
+        // hide midware buat ini 
+        // "/payment/success", // ← tambahin
     ],
 };

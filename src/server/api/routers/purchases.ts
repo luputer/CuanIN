@@ -77,7 +77,10 @@ export const purchasesRouter = createTRPCRouter({
         productId: z.string(),
         buyerName: z.string().min(1, "Nama wajib diisi"),
         buyerEmail: z.string().email("Email tidak valid"),
-        buyerPhone: z.string().min(1, "Nomor telepon wajib diisi"),
+        buyerPhone: z.string()
+          .min(9, "Nomor telepon terlalu pendek")
+          .max(14, "Nomor telepon terlalu panjang")
+          .regex(/^\d+$/, "Nomor telepon harus berupa angka saja"),
         promoCode: z.string().optional(),
         answers: z
           .array(

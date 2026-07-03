@@ -492,6 +492,64 @@ export const purchasesRouter = createTRPCRouter({
       };
     }),
 
+  // ─── EXPORT BUYERS ──────────────────────────────────────────────────────────
+  exportBuyers: protectedProcedure
+    .input(
+      z.object({
+        productId: z.string(),
+        search: z.string().optional(),
+        status: z.string().optional().default("ALL"),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const product = await ctx.db.product.findUnique({
+        where: { id: input.productId, userId: ctx.session.user.id },
+        select: { 
+          id: true, 
+          name: true,
+          formFields: {
+            select: { id: true, label: true },
+            orderBy: { order: "asc" },
+          }
+        },
+      });
+      if (!product)
+        throw new Error("Produk tidak ditemukan atau bukan milikmu");
+
+      const where = {
+        productId: input.productId,
+        ...(input.search
+          ? {
+            buyerName: {
+              contains: input.search,
+              mode: "insensitive" as const,
+            },
+          }
+          : {}),
+        ...(input.status && input.status !== "ALL"
+          ? { status: input.status }
+          : {}),
+      };
+
+      const items = await ctx.db.purchase.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        include: {
+          answers: {
+            include: {
+              formField: true,
+            },
+          },
+        },
+      });
+
+      return {
+        productName: product.name,
+        formFields: product.formFields,
+        items
+      };
+    }),
+
 
   // ─── GET DETAIL (creator dashboard) ────────────────────────────────────────
   getDetail: protectedProcedure

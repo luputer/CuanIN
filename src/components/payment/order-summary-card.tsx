@@ -53,7 +53,7 @@ export function OrderSummaryCard({
       <button
         onClick={handlePay}
         disabled={isPending}
-        className="mt-6 w-full cursor-pointer rounded-xl bg-cuan-cyan py-3 text-lg font-semibold text-white shadow-sm hover:bg-007EA5 transition disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-6 w-full cursor-pointer rounded-xl bg-cuan-cyan py-3 text-lg font-semibold text-white shadow-sm hover:bg-[#008BB5] transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isPending ? "Memproses..." : "Bayar Sekarang"}
       </button>

@@ -43,6 +43,15 @@ export function ProductAccessEmail({
   const primaryLink = links[0];
   const additionalLinks = links.slice(1);
 
+  const notesNode = notes ? (
+    <>
+      <Text style={{ ...heading, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>Catatan Tambahan</Text>
+      <Text style={{ ...paragraph, backgroundColor: "#f8fafc", padding: "16px", borderRadius: "8px", whiteSpace: "pre-wrap" }}>
+        {notes}
+      </Text>
+    </>
+  ) : null;
+
   return (
     <Html>
       <Head />
@@ -58,11 +67,32 @@ export function ProductAccessEmail({
 
           {portalUrl ? (
             <>
-              <Text style={paragraph}>
-                Akses semua link, catatan, dan materi produk kamu melalui portal pribadi:
+              {primaryLink && (
+                <>
+                  <Text style={paragraph}>
+                    Kamu dapat mengakses produk melalui tombol di bawah ini:
+                  </Text>
+                  <Section style={actionSection}>
+                    <Button href={primaryLink} style={button}>
+                      Masuk ke Produk Kamu
+                    </Button>
+                  </Section>
+                  <Text style={paragraph}>
+                    Atau copy dan paste link berikut ke browser kamu:
+                  </Text>
+                  <Text style={linkText}>
+                    <Link href={primaryLink} style={linkText}>{primaryLink}</Link>
+                  </Text>
+                </>
+              )}
+
+              {notesNode}
+
+              <Text style={{ ...paragraph, marginTop: "24px" }}>
+                Kamu juga bisa mengakses semua produk yang sudah dibeli melalui portal pribadi:
               </Text>
               <Section style={actionSection}>
-                <Button href={portalUrl} style={button}>
+                <Button href={portalUrl} style={{ ...button, backgroundColor: "#64748b" }}>
                   Buka Portal Akses
                 </Button>
               </Section>
@@ -72,17 +102,6 @@ export function ProductAccessEmail({
               <Text style={{ ...paragraph, fontSize: "13px", color: "#64748b" }}>
                 Link portal berlaku selama 24 jam.
               </Text>
-
-              {primaryLink && (
-                <>
-                  <Text style={{ ...paragraph, fontSize: "13px", color: "#64748b" }}>
-                    Atau akses langsung link produk utama:
-                  </Text>
-                  <Text style={linkText}>
-                    <Link href={primaryLink} style={linkText}>{primaryLink}</Link>
-                  </Text>
-                </>
-              )}
             </>
           ) : (
             <>
@@ -98,6 +117,8 @@ export function ProductAccessEmail({
                 Atau copy dan paste link berikut ke browser kamu:
               </Text>
               <Text style={linkText}>{primaryLink}</Text>
+
+              {notesNode}
             </>
           )}
 
@@ -115,15 +136,6 @@ export function ProductAccessEmail({
                   </Text>
                 ))}
               </Section>
-            </>
-          )}
-
-          {notes && (
-            <>
-              <Text style={heading}>Catatan Tambahan</Text>
-              <Text style={{ ...paragraph, backgroundColor: "#f8fafc", padding: "16px", borderRadius: "8px", whiteSpace: "pre-wrap" }}>
-                {notes}
-              </Text>
             </>
           )}
 

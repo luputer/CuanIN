@@ -128,6 +128,8 @@ export default function CatalogSlugPage() {
       .slice(0, 2)
     : "??";
 
+  const totalSold = products.reduce((acc, p) => acc + (p._count?.purchases ?? 0), 0);
+
   // ── Filter + Sort ──
   const filtered = products
     .filter((p) => {
@@ -208,7 +210,7 @@ export default function CatalogSlugPage() {
 
             <span className="flex items-center gap-2 md:gap-3">
               <span className="text-lg md:text-xl font-semibold text-cuan-cyan">
-                {products.length}
+                {totalSold}
               </span>
               <span className="text-slate-600">Terjual</span>
             </span>

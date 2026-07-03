@@ -18,6 +18,7 @@ export interface AdminCreatorType {
 
 export interface AdminProductType {
   id: string;
+  slug: string | null;
   name: string;
   type: string;
   price: number | string | { toNumber: () => number };
@@ -32,6 +33,9 @@ export interface AdminProductType {
     name: string | null;
     image: string | null;
     email?: string | null;
+    catalog?: {
+      slug: string;
+    } | null;
   } | null;
 }
 

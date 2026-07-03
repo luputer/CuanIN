@@ -2,7 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { EyeIcon, UserCircleIcon } from "@phosphor-icons/react";
+import { toast } from "sonner";
+import { EyeIcon, UserCircleIcon, Copy as CopyIcon } from "@phosphor-icons/react";
 import { TableRow, TableCell } from "~/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { StatusBadge } from "~/components/ui/status-badge";
@@ -20,6 +21,16 @@ interface AdminProductTableRowProps {
 }
 
 export function AdminProductTableRow({ item, index, page, limit, showCreatorColumn, viewHref }: AdminProductTableRowProps) {
+    const handleCopyLink = () => {
+        if (!item.user?.catalog?.slug || !item.slug) {
+            toast.error("Gagal menyalin: Data katalog atau produk tidak lengkap!");
+            return;
+        }
+        const url = `${window.location.origin}/${item.user.catalog.slug}/${item.slug}`;
+        navigator.clipboard.writeText(url)
+            .then(() => toast.success("Link produk berhasil disalin!"))
+            .catch(() => toast.error("Gagal menyalin link"));
+    };
     const priceNum = Number(item.price);
     const discountNum = item.discountPrice != null ? Number(item.discountPrice) : null;
     const displayPrice = discountNum !== null && discountNum < priceNum ? discountNum : priceNum;
@@ -94,6 +105,17 @@ export function AdminProductTableRow({ item, index, page, limit, showCreatorColu
                         </TooltipTrigger>
                         <TooltipContent>Lihat Detail</TooltipContent>
                     </Tooltip>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <button
+                                onClick={handleCopyLink}
+                                disabled={!item.user?.catalog?.slug}
+                            >
+                                <CopyIcon className={`w-[22px] h-[22px] cursor-pointer ${!item.user?.catalog?.slug ? "text-slate-300 cursor-not-allowed" : "text-yellow-500 hover:text-yellow-600"}`} />
+                            </button>
+                        </TooltipTrigger>
+                        <TooltipContent>{!item.user?.catalog?.slug ? "Kreator belum memiliki katalog" : "Salin Link Produk"}</TooltipContent>
+                    </Tooltip>
                 </div>
             </TableCell>
         </TableRow>
@@ -107,6 +129,16 @@ interface AdminProductMobileCardProps {
 }
 
 export function AdminProductMobileCard({ item, showCreatorColumn, viewHref }: AdminProductMobileCardProps) {
+    const handleCopyLink = () => {
+        if (!item.user?.catalog?.slug || !item.slug) {
+            toast.error("Gagal menyalin: Data katalog atau produk tidak lengkap!");
+            return;
+        }
+        const url = `${window.location.origin}/${item.user.catalog.slug}/${item.slug}`;
+        navigator.clipboard.writeText(url)
+            .then(() => toast.success("Link produk berhasil disalin!"))
+            .catch(() => toast.error("Gagal menyalin link"));
+    };
     const priceNum = Number(item.price);
     const discountNum = item.discountPrice != null ? Number(item.discountPrice) : null;
     const displayPrice = discountNum !== null && discountNum < priceNum ? discountNum : priceNum;
@@ -163,13 +195,24 @@ export function AdminProductMobileCard({ item, showCreatorColumn, viewHref }: Ad
                 </div>
             </div>
 
-            <Link
-                href={viewHref}
-                className="w-full py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-cuan-cyan transition-colors flex items-center justify-center gap-2"
-            >
-                <EyeIcon className="w-4 h-4" />
-                Lihat Detail
-            </Link>
+            <div className="flex items-center gap-2">
+                <button
+                    onClick={handleCopyLink}
+                    disabled={!item.user?.catalog?.slug}
+                    className={`flex-1 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${!item.user?.catalog?.slug ? "text-slate-300 cursor-not-allowed" : "text-yellow-600 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-200 cursor-pointer"}`}
+                >
+                    <CopyIcon className="w-4 h-4" />
+                    Salin Link
+                </button>
+
+                <Link
+                    href={viewHref}
+                    className="flex-1 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-cuan-cyan transition-colors flex items-center justify-center gap-2"
+                >
+                    <EyeIcon className="w-4 h-4" />
+                    Lihat Detail
+                </Link>
+            </div>
         </div>
     );
 }

@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { CATEGORY_STYLE, CATEGORY_STYLE_DEFAULT, PRODUCT_TYPE_MAP } from "~/lib/constants";
 import {
   ImagesIcon,
-  NoteIcon,
   DownloadSimpleIcon,
   EyeIcon,
   CircleNotchIcon,
@@ -78,15 +77,6 @@ export function PortalPurchaseCard({ purchase, isHistoryTab }: { purchase: Porta
             </div>
           )}
 
-          {/* Catatan dari Kreator (hanya untuk Tab Produk) */}
-          {!isHistoryTab && product.notes && (
-            <div className="mt-3 p-2 rounded-lg bg-amber-50 border border-amber-200">
-              <p className="text-xs font-bold text-amber-700 mb-0.5 flex items-center gap-1">
-                <NoteIcon size={10} weight="bold" /> Catatan Kreator
-              </p>
-              <p className="text-xs text-slate-600 line-clamp-3 whitespace-pre-wrap">{product.notes}</p>
-            </div>
-          )}
         </div>
 
         <div className="mt-4 flex flex-col gap-2.5">

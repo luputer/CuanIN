@@ -191,6 +191,11 @@ export const productsRouter = createTRPCRouter({
                                     name: true,
                                     email: true,
                                     image: true,
+                                    catalog: {
+                                        select: {
+                                            slug: true
+                                        }
+                                    }
                                 },
                             },
                         },

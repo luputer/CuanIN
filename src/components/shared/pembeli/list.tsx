@@ -2,10 +2,15 @@
 
 import {
     EyeIcon,
+    FileXls,
+    CircleNotch,
 } from "@phosphor-icons/react";
+import { toast } from "sonner";
+import ExcelJS from "exceljs";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
+import { cn } from "~/lib/utils";
 import DetailPembeli from "./detail";
 import { api } from "~/trpc/react";
 import {
@@ -51,8 +56,10 @@ const getStatusLabel = (status: string) => {
 };
 
 export default function Pembeli({ productId }: { productId: string }) {
+    const utils = api.useUtils();
     const [view, setView] = useState<"list" | "detail">("list");
     const [selectedPurchaseId, setSelectedPurchaseId] = useState<string | null>(null);
+    const [isExporting, setIsExporting] = useState(false);
 
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -89,6 +96,83 @@ export default function Pembeli({ productId }: { productId: string }) {
         );
     }
 
+    const handleExportExcel = async () => {
+        try {
+            setIsExporting(true);
+            const data = await utils.purchases.exportBuyers.fetch({
+                productId,
+                search: debouncedSearch,
+                status: statusFilter
+            });
+
+            if (!data || data.items.length === 0) {
+                toast.error("Tidak ada data pembeli untuk diekspor");
+                return;
+            }
+
+            // Create Excel workbook and worksheet
+            const formFields = data.formFields || [];
+            const headers = ["Nama Pembeli", "Email", "Nomor Hp", ...formFields.map(f => f.label)];
+
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet("Data Pembeli");
+
+            // Add Header Row
+            const headerRow = worksheet.addRow(headers);
+            headerRow.font = { bold: true };
+            headerRow.eachCell((cell) => {
+                cell.fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FFF3F4F6' } // Light gray background
+                };
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' }
+                };
+            });
+
+            // Add Data Rows
+            for (const item of data.items) {
+                const rowData = [
+                    item.buyerName,
+                    item.buyerEmail,
+                    item.buyerPhone || "-",
+                    ...formFields.map(field => {
+                        return item.answers?.find((a: any) => a.formFieldId === field.id)?.answer || "-";
+                    })
+                ];
+                worksheet.addRow(rowData);
+            }
+
+            // Adjust column widths
+            worksheet.columns.forEach(column => {
+                if (column) column.width = 25;
+            });
+
+            // Generate buffer and download
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `Data_Pembeli_${data.productName.replace(/\s+/g, '_')}_${format(new Date(), "yyyyMMdd")}.xlsx`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            toast.success("Berhasil mengekspor data pembeli");
+        } catch (error) {
+            console.error("Export error:", error);
+            toast.error("Gagal mengekspor data pembeli");
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
     return (
         <TooltipProvider>
             <div className="bg-white space-y-6 p-4 sm:p-6">
@@ -102,21 +186,39 @@ export default function Pembeli({ productId }: { productId: string }) {
                         className="w-full sm:flex-1 min-w-[280px]"
                     />
 
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <ButtonFilter
-                                label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "completed" ? "Sudah Bayar" : statusFilter === "pending" ? "Pending" : statusFilter}`}
-                                className="w-full sm:w-auto flex-none"
-                            />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-40">
-                            <DropdownMenuRadioGroup value={statusFilter} onValueChange={setStatusFilter}>
-                                <DropdownMenuRadioItem value="ALL">Semua Status</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="completed">Sudah Bayar</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="pending">Pending</DropdownMenuRadioItem>
-                            </DropdownMenuRadioGroup>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap sm:flex-nowrap">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <ButtonFilter
+                                    label={`Status: ${statusFilter === "ALL" ? "Semua" : statusFilter === "completed" ? "Sudah Bayar" : statusFilter === "pending" ? "Pending" : statusFilter}`}
+                                    className="w-full sm:w-auto flex-none"
+                                />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-40">
+                                <DropdownMenuRadioGroup value={statusFilter} onValueChange={setStatusFilter}>
+                                    <DropdownMenuRadioItem value="ALL">Semua Status</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="completed">Sudah Bayar</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="pending">Pending</DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        <button
+                            onClick={handleExportExcel}
+                            disabled={isExporting}
+                            className={cn(
+                                "w-full sm:w-fit h-10 flex items-center justify-center gap-2 whitespace-nowrap",
+                                "px-3 sm:px-6 border rounded-lg transition-all duration-200 ease-out",
+                                "text-sm font-semibold text-white bg-emerald-500 border-slate-800 shadow-[1.5px_1.5px_0px_#000]",
+                                "hover:translate-x-px hover:translate-y-px hover:shadow-none",
+                                "disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 cursor-pointer"
+                            )}
+                        >
+                            {isExporting ? <CircleNotch className="size-5 animate-spin" /> : <FileXls className="size-5" weight="fill" />}
+                            <span className="hidden sm:inline">Export Excel</span>
+                            <span className="sm:hidden">Export</span>
+                        </button>
+                    </div>
                 </div>
 
                 {/* Table (Desktop/Tablet) */}

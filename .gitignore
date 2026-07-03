@@ -56,3 +56,5 @@ yarn-error.log*
 
 # agnet
 .agnet
+.agents
+/scripts

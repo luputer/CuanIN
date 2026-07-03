@@ -48,8 +48,9 @@ function PaymentSuccessContent() {
                 <div className="w-full max-w-md space-y-4">
                     {/* BRAND SKELETON */}
                     <div className="flex items-center justify-start gap-3 mb-4">
-                        <div className="h-10 w-10 rounded-full bg-slate-200" />
-                        <div className="h-7 w-24 rounded-xl bg-slate-200" />
+                        <div className="h-8 w-8 rounded-full bg-slate-200 shrink-0" />
+                        <div className="h-10 w-10 rounded-full bg-slate-200 shrink-0" />
+                        <div className="h-7 w-32 rounded-xl bg-slate-200" />
                     </div>
 
                     {/* SUCCESS ICON SKELETON */}
@@ -100,6 +101,7 @@ function PaymentSuccessContent() {
                 <PaymentBrandHeader
                     userImage={purchase?.product?.user?.image}
                     userName={purchase?.product?.user?.name}
+                    backUrl={purchase?.product?.user?.catalog?.slug ? `/${purchase.product.user.catalog.slug}` : undefined}
                 />
 
                 {/* SUCCESS ICON */}
@@ -139,7 +141,10 @@ function PaymentSuccessContent() {
                     />
                 )}
 
-                <PaymentActionAndSecurity isFree={isFree} />
+                <PaymentActionAndSecurity 
+                    purchaseId={purchase?.id}
+                    isFree={isFree} 
+                />
 
             </div>
         </div>

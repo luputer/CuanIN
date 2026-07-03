@@ -212,13 +212,12 @@ export const analyticsRouter = createTRPCRouter({
       }),
       ctx.db.purchase.groupBy({
         by: ["buyerEmail"],
-        where: { productId: { in: productIds }, status: "completed" },
+        where: { productId: { in: productIds } },
       }).then((res) => res.length),
       ctx.db.purchase.groupBy({
         by: ["buyerEmail"],
         where: {
           productId: { in: productIds },
-          status: "completed",
           createdAt: { gte: thirtyDaysAgo },
         },
       }).then((res) => res.length),
@@ -226,7 +225,6 @@ export const analyticsRouter = createTRPCRouter({
         by: ["buyerEmail"],
         where: {
           productId: { in: productIds },
-          status: "completed",
           createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo },
         },
       }).then((res) => res.length),

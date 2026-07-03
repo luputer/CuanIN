@@ -37,6 +37,8 @@ export function AdminProductTableRow({ item, index, page, limit, showCreatorColu
     const rowNumber = (page - 1) * limit + index + 1;
     const isFinished = item.status === "archived" || (item.endDate && new Date() > new Date(item.endDate));
     const currentStatus = isFinished ? "selesai" : (item.status || "unpublished");
+    const isUnpublished = item.status === "unpublished" || !item.status;
+    const canCopy = !!item.user?.catalog?.slug && !isUnpublished;
 
     return (
         <TableRow data-type="body">
@@ -109,12 +111,18 @@ export function AdminProductTableRow({ item, index, page, limit, showCreatorColu
                         <TooltipTrigger asChild>
                             <button
                                 onClick={handleCopyLink}
-                                disabled={!item.user?.catalog?.slug}
+                                disabled={!canCopy}
                             >
-                                <CopyIcon className={`w-[22px] h-[22px] cursor-pointer ${!item.user?.catalog?.slug ? "text-slate-300 cursor-not-allowed" : "text-yellow-500 hover:text-yellow-600"}`} />
+                                <CopyIcon className={`w-[22px] h-[22px] ${!canCopy ? "text-slate-300 cursor-not-allowed" : "text-yellow-500 hover:text-yellow-600 cursor-pointer"}`} />
                             </button>
                         </TooltipTrigger>
-                        <TooltipContent>{!item.user?.catalog?.slug ? "Kreator belum memiliki katalog" : "Salin Link Produk"}</TooltipContent>
+                        <TooltipContent>
+                            {!item.user?.catalog?.slug 
+                                ? "Kreator belum memiliki katalog" 
+                                : isUnpublished 
+                                    ? "Produk belum dipublikasi" 
+                                    : "Salin Link Produk"}
+                        </TooltipContent>
                     </Tooltip>
                 </div>
             </TableCell>
@@ -144,6 +152,8 @@ export function AdminProductMobileCard({ item, showCreatorColumn, viewHref }: Ad
     const displayPrice = discountNum !== null && discountNum < priceNum ? discountNum : priceNum;
     const isFinished = item.status === "archived" || (item.endDate && new Date() > new Date(item.endDate));
     const currentStatus = isFinished ? "selesai" : (item.status || "unpublished");
+    const isUnpublished = item.status === "unpublished" || !item.status;
+    const canCopy = !!item.user?.catalog?.slug && !isUnpublished;
 
     return (
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-3 shadow-sm flex flex-col gap-4">
@@ -198,8 +208,9 @@ export function AdminProductMobileCard({ item, showCreatorColumn, viewHref }: Ad
             <div className="flex items-center gap-2">
                 <button
                     onClick={handleCopyLink}
-                    disabled={!item.user?.catalog?.slug}
-                    className={`flex-1 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${!item.user?.catalog?.slug ? "text-slate-300 cursor-not-allowed" : "text-yellow-600 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-200 cursor-pointer"}`}
+                    disabled={!canCopy}
+                    className={`flex-1 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${!canCopy ? "text-slate-300 cursor-not-allowed" : "text-yellow-600 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-200 cursor-pointer"}`}
+                    title={!item.user?.catalog?.slug ? "Kreator belum memiliki katalog" : isUnpublished ? "Produk belum dipublikasi" : "Salin Link Produk"}
                 >
                     <CopyIcon className="w-4 h-4" />
                     Salin Link

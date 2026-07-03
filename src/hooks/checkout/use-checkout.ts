@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -24,6 +24,12 @@ export function useCheckout() {
 
   const slug = params.slug as string;
   const productSlug = params.productSlug as string;
+
+  const isSubmittedRef = React.useRef(false);
+  const sessionRef = React.useRef(session);
+  React.useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
 
   const { data: product, isLoading } = api.catalog.getProductById.useQuery({
     slug,
@@ -121,9 +127,38 @@ export function useCheckout() {
     if (session?.user?.phone && !getValues("phone")) {
       setValue("phone", session.user.phone, { shouldValidate: true });
     }
-
-    document.cookie = "checkout_google_sso=; Max-Age=0; path=/; SameSite=Lax";
   }, [getValues, session, setValue, status]);
+
+
+  React.useEffect(() => {
+    const handleCleanup = () => {
+      if (isSubmittedRef.current) return;
+
+      const currentSession = sessionRef.current;
+      const role = currentSession?.user?.role;
+      const isNotAdminOrCreator = role && role !== "ADMIN" && role !== "CREATOR";
+      const hasCheckoutCookie = document.cookie.includes("checkout_google_sso=");
+
+      if (isNotAdminOrCreator && hasCheckoutCookie) {
+        document.cookie = "checkout_google_sso=; Max-Age=0; path=/; SameSite=Lax";
+
+        // Panggil endpoint logout dengan keepalive: true agar request tetap terkirim meskipun tab ditutup
+        fetch("/api/checkout/logout", {
+          method: "POST",
+          keepalive: true,
+        }).catch((err) => console.error("Logout API gagal:", err));
+
+        signOut({ redirect: false }).catch((err) => console.error("Logout gagal:", err));
+      }
+    };
+
+    window.addEventListener("beforeunload", handleCleanup);
+    return () => {
+      window.removeEventListener("beforeunload", handleCleanup);
+      handleCleanup();
+    };
+  }, []);
+
 
   const handleApplyVoucher = async () => {
     const promoValue = form.getValues("promo");
@@ -171,6 +206,9 @@ export function useCheckout() {
 
   const purchaseMutation = api.purchases.create.useMutation({
     onSuccess: (data) => {
+      isSubmittedRef.current = true;
+      document.cookie = "checkout_google_sso=; Max-Age=0; path=/; SameSite=Lax";
+
       if (data.status === "free") {
         toast.success("Berhasil daftar!");
         router.push(`/payment/success?id=${data.purchase.id}`);

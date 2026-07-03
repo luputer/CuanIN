@@ -10,8 +10,9 @@ const createCreatorSchema = z.object({
   name: z.string().min(1),
   email: z.string().email(),
   phoneNumber: z.string()
-    .min(10, "Nomor HP minimal 10 digit")
-    .regex(/^(\+62|62|0)8[1-9][0-9]{6,9}$/, "Format nomor HP tidak valid"),
+    .min(9, "Nomor telepon terlalu pendek")
+    .max(14, "Nomor telepon terlalu panjang")
+    .regex(/^\d+$/, "Nomor telepon harus berupa angka saja"),
   password: z.string().min(6),
   image: z.string().optional().nullable(),
   banner: z.string().optional().nullable(),
@@ -23,8 +24,9 @@ const updateCreatorSchema = z.object({
   name: z.string().min(1),
   email: z.string().email(),
   phoneNumber: z.string()
-    .min(10, "Nomor HP minimal 10 digit")
-    .regex(/^(\+62|62|0)8[1-9][0-9]{6,9}$/, "Format nomor HP tidak valid"),
+    .min(9, "Nomor telepon terlalu pendek")
+    .max(14, "Nomor telepon terlalu panjang")
+    .regex(/^\d+$/, "Nomor telepon harus berupa angka saja"),
   password: z.string().min(6).optional(),
   image: z.string().optional().nullable(),
   banner: z.string().optional().nullable(),
@@ -229,7 +231,7 @@ export const creatorsRouter = createTRPCRouter({
       const andClauses: any[] = [{ userId: input.creatorId }];
 
       if (input.type) andClauses.push({ type: input.type });
-      
+
       if (input.search) {
         andClauses.push({
           name: { contains: input.search, mode: "insensitive" as const },

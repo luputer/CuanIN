@@ -95,9 +95,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const isValid = await bcrypt.compare(password, user.password);
         if (!isValid) return null;
 
-        if (user.role === "USER") {
-          throw new Error("Akun Anda terdaftar sebagai Pembeli. Silakan daftar sebagai Kreator terlebih dahulu.");
-        }
+
 
         if (!user.emailVerified) {
           // Password sudah terbukti benar di titik ini, jadi ini

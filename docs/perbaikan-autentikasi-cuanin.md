@@ -16,12 +16,22 @@ Dokumen ini menjelaskan rangkaian perbaikan keamanan dan perbaikan bug alur regi
 
 ---
 
-### B. Pembersihan Akun & Token Spammer (Joni Warta)
-* **Masalah**: Spammer menggunakan nama "Joni Warta" dan domain email palsu `gmailmail.com` mengirim ratusan pendaftaran sampah dan mengotori database.
+### B. Pembersihan Akun & Token Spammer (Joni Warta & Pentest/RL Spam)
+* **Masalah**: 
+  * Spammer Batch 1 menggunakan nama "Joni Warta" dan domain email palsu `gmailmail.com` mengirim ratusan pendaftaran sampah dan mengotori database.
+  * Spammer Batch 2 (dan Bot Pemindai Celah) mendaftarkan nama-nama berawalan `RL` (seperti `RL1` s.d `RL15`, `rl_1` s.d `rl_5`, `rlf_1` s.d `rlf_5`, `rlr_1` s.d `rlr_5`) dan email dengan domain `test.com`, `breach.test`, serta `nip.io` (percobaan bypass OTP dan SSRF).
 * **Solusi**:
-  * Membuat script pembersih database di [scripts/delete-joni-warta.ts](file:///home/luputer/Dokumen/TA/CuanIN/scripts/delete-joni-warta.ts).
-  * Menghapus **278 akun spammer** Joni Warta secara bersih (menggunakan fitur `onDelete: Cascade` pada skema Prisma sehingga data relasi ikut terhapus).
-  * Menghapus **363 token verifikasi sampah** yang tertinggal di tabel `VerificationToken` yang menggunakan domain palsu `gmailmail.com`.
+  * Menjalankan script pembersih database yang dibuat di folder `scratch` eksternal.
+  * Menghapus seluruh akun spammer dan token palsunya secara permanen dari database.
+
+#### 📊 Tabel Ringkasan Pembersihan Data Spam:
+
+| Kategori Spam | Deskripsi Ciri / Domain | Jumlah Akun Dihapus | Jumlah Token Dihapus | Status Database |
+| :--- | :--- | :---: | :---: | :---: |
+| **Batch 1 (Joni Warta)** | Nama mengandung "Joni Warta" atau email domain `@gmailmail.com` | **278 akun** | **363 token** | Bersih (Cleaned) |
+| **Batch 2 (RL & Pentest)** | Nama awalan `RL`/`rl`/`rlf`/`rlr` atau email domain `@test.com`, `@breach.test`, `@nip.io` | **60 akun** | **62 token** | Bersih (Cleaned) |
+| **Total Akun Dihapus** | - | **338 akun** | - | Bersih (Cleaned) |
+| **Total Token Dihapus** | - | - | **425 token** | Bersih (Cleaned) |
 
 ---
 

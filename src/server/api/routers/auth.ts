@@ -9,6 +9,7 @@ import {
   assertResendCooldown,
   clearOtpOwnership,
   setOtpOwnership,
+  incrementResendCount,
 } from "~/server/lib/otp-session";
 
 export const authRouter = createTRPCRouter({
@@ -150,6 +151,7 @@ export const authRouter = createTRPCRouter({
 
       await sendVerificationEmail({ email, name, otp });
       await setOtpOwnership(email);
+      await incrementResendCount(ctx.db, email);
 
       return { success: true };
     }),
@@ -214,7 +216,9 @@ export const authRouter = createTRPCRouter({
       });
 
       await ctx.db.verificationToken.deleteMany({
-        where: { identifier: email },
+        where: {
+          identifier: { in: [email, `LIMIT:${email}`] },
+        },
       });
 
       await clearOtpOwnership();
@@ -266,6 +270,7 @@ export const authRouter = createTRPCRouter({
 
       await sendVerificationEmail({ email, name: user.name ?? "User", otp });
       await setOtpOwnership(email);
+      await incrementResendCount(ctx.db, email);
 
       return { success: true };
     }),

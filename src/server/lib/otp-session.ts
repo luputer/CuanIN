@@ -3,38 +3,77 @@ import { TRPCError } from "@trpc/server";
 
 export const OTP_COOKIE = "otp_authorized_email";
 export const OTP_TTL_MS = 10 * 60 * 1000; // 10 menit, samain sama expires OTP
-export const RESEND_COOLDOWN_MS = 60 * 1000; // 60 detik, samain sama timer di UI
 
-/** Cegah spam: cek kapan token terakhir dibuat (derive dari expires - TTL). */
-export async function assertResendCooldown(
-    db: { verificationToken: { findFirst: (args: any) => Promise<{ expires: Date } | null> } },
-    email: string,
-) {
+export function getCooldownDuration(resendCount: number): number {
+    if (resendCount <= 1) return 60 * 1000; // 60 detik
+    if (resendCount === 2) return 5 * 60 * 1000; // 5 menit
+    if (resendCount === 3) return 15 * 60 * 1000; // 15 menit
+    return 60 * 60 * 1000; // 1 jam
+}
+
+/** Cegah spam: cek progressive cooldown di database */
+export async function assertResendCooldown(db: any, email: string) {
+    const limitIdentifier = `LIMIT:${email.toLowerCase()}`;
     const existing = await db.verificationToken.findFirst({
-        where: { identifier: email },
+        where: { identifier: limitIdentifier },
     });
     if (existing) {
-        const createdAt = existing.expires.getTime() - OTP_TTL_MS;
-        const elapsed = Date.now() - createdAt;
-        if (elapsed < RESEND_COOLDOWN_MS) {
-            const wait = Math.ceil((RESEND_COOLDOWN_MS - elapsed) / 1000);
+        const now = Date.now();
+        const expiresTime = existing.expires.getTime();
+        if (now < expiresTime) {
+            const waitMs = expiresTime - now;
+            const waitSec = Math.ceil(waitMs / 1000);
+            let waitMessage = "";
+            if (waitSec >= 3600) {
+                waitMessage = `${Math.ceil(waitSec / 3600)} jam`;
+            } else if (waitSec >= 60) {
+                waitMessage = `${Math.ceil(waitSec / 60)} menit`;
+            } else {
+                waitMessage = `${waitSec} detik`;
+            }
             throw new TRPCError({
                 code: "TOO_MANY_REQUESTS",
-                message: `Mohon tunggu ${wait} detik sebelum meminta kode baru.`,
+                message: `Batas pengiriman OTP tercapai. Silakan coba lagi dalam ${waitMessage}.`,
             });
         }
     }
 }
 
-/**
- * Set cookie httpOnly = bukti kepemilikan flow OTP ini.
- * Panggil di SETIAP titik yang punya alasan sah untuk percaya request ini
- * benar-benar datang dari pemilik email tsb:
- *  - setelah register kirim OTP
- *  - setelah resendOtp kirim OTP
- *  - setelah Google OAuth berhasil konfirmasi kepemilikan email (signIn callback)
- *  - setelah password credentials terverifikasi benar (authorize(), sebelum throw unverified)
- */
+/** Increment resend count dan set cooldown baru */
+export async function incrementResendCount(db: any, email: string) {
+    const limitIdentifier = `LIMIT:${email.toLowerCase()}`;
+    const existing = await db.verificationToken.findFirst({
+        where: { identifier: limitIdentifier },
+    });
+    const now = Date.now();
+    if (existing) {
+        const timeSinceExpiry = now - existing.expires.getTime();
+        let newCount = existing.attempts + 1;
+        // Jika sudah lewat 24 jam sejak cooldown berakhir, reset hitungan
+        if (timeSinceExpiry > 24 * 60 * 60 * 1000) {
+            newCount = 1;
+        }
+        const cooldown = getCooldownDuration(newCount);
+        await db.verificationToken.update({
+            where: { token: limitIdentifier },
+            data: {
+                attempts: newCount,
+                expires: new Date(now + cooldown),
+            },
+        });
+    } else {
+        const cooldown = getCooldownDuration(1);
+        await db.verificationToken.create({
+            data: {
+                identifier: limitIdentifier,
+                token: limitIdentifier,
+                expires: new Date(now + cooldown),
+                attempts: 1,
+            },
+        });
+    }
+}
+
 export async function setOtpOwnership(email: string) {
     const cookieStore = await cookies();
     cookieStore.set(OTP_COOKIE, email, {
@@ -46,7 +85,6 @@ export async function setOtpOwnership(email: string) {
     });
 }
 
-/** Dicek di SERVER (bukan di client) -> ini yang nutup celah ganti email di URL. */
 export async function assertOtpOwnership(email: string) {
     const cookieStore = await cookies();
     const authorizedEmail = cookieStore.get(OTP_COOKIE)?.value;

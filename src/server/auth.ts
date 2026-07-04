@@ -9,6 +9,7 @@ import { cookies } from "next/headers";
 import { env } from "~/env";
 import { db } from "~/server/db";
 import { authConfig } from "./auth.config";
+import { setOtpOwnership } from "~/server/lib/otp-session";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -94,7 +95,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const isValid = await bcrypt.compare(password, user.password);
         if (!isValid) return null;
 
+        if (user.role === "USER") {
+          throw new Error("Akun Anda terdaftar sebagai Pembeli. Silakan daftar sebagai Kreator terlebih dahulu.");
+        }
+
         if (!user.emailVerified) {
+          // Password sudah terbukti benar di titik ini, jadi ini
+          // adalah bukti kepemilikan yang sah -> boleh set cookie
+          // ownership supaya user bisa lanjut ke /verify-otp
+          await setOtpOwnership(email);
           throw new Error("Email belum diverifikasi. Silakan cek email Anda.");
         }
 
@@ -136,6 +145,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return true;
       }
 
+      if (dbUser?.role === "USER") {
+        const params = new URLSearchParams({
+          name: user.name ?? "",
+          email: user.email ?? "",
+          fromGoogle: "1",
+        });
+        return `/sign-up?${params.toString()}`;
+      }
+
       if (!dbUser?.phoneNumber) {
         const params = new URLSearchParams({
           name: user.name ?? "",
@@ -146,6 +164,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
 
       if (!dbUser.emailVerified) {
+        // Google udah konfirmasi kepemilikan email ini via OAuth,
+        // jadi ini bukti kepemilikan yang sah -> boleh set cookie ownership
+        await setOtpOwnership(user.email!);
         return `/verify-otp?email=${encodeURIComponent(user.email!)}&from=sso`;
       }
 

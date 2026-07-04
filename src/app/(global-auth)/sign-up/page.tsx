@@ -23,7 +23,7 @@ function SignupPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
 
   const fromGoogle =
     searchParams.get("fromGoogle") === "1" || !!session?.user;
@@ -58,9 +58,15 @@ function SignupPageInner() {
   // ✅ tRPC mutation
   const registerMutation = api.auth.register.useMutation({
     onSuccess: async (_result, variables) => {
-      // Set temporary cookie for OTP access (expires in 15 mins)
-      document.cookie = `otp_authorized_email=${variables.email}; Max-Age=900; path=/; SameSite=Lax`;
-      router.push(`/verify-otp?email=${variables.email}`);
+      if (fromGoogle) {
+        // Panggil update() untuk memicu JWT callback di server membaca role "CREATOR" baru dari DB
+        await update();
+        router.push("/dashboard");
+      } else {
+        // Set temporary cookie for OTP access (expires in 15 mins)
+        document.cookie = `otp_authorized_email=${variables.email}; Max-Age=900; path=/; SameSite=Lax`;
+        router.push(`/verify-otp?email=${variables.email}`);
+      }
     },
   });
 
@@ -70,6 +76,7 @@ function SignupPageInner() {
       email: data.email,
       phone: data.phone,
       password: data.password,
+      fromGoogle,
     });
   };
 

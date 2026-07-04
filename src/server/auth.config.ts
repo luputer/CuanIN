@@ -63,9 +63,6 @@ export const authConfig = {
             const role = auth?.user?.role;
             const hasCatalog = auth?.user?.hasCatalog;
 
-
-
-
             // hide aja mdileware dulu bisa jalan pakai useEFECT
             // const isPaymentSuccessPage = nextUrl.pathname.startsWith("/payment/success");
             // ── 0. Paksa logout HANYA sesi checkout (role USER) ──
@@ -83,8 +80,6 @@ export const authConfig = {
             //     res.cookies.delete("checkout_origin");
             //     return res;
             // }
-
-
             const isAuthPage =
                 nextUrl.pathname.startsWith("/sign-in") ||
                 nextUrl.pathname.startsWith("/sign-up") ||

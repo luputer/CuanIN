@@ -4,6 +4,12 @@ import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { sendVerificationEmail, sendPasswordResetEmail } from "~/lib/email";
 import crypto from "crypto";
+import {
+  assertOtpOwnership,
+  assertResendCooldown,
+  clearOtpOwnership,
+  setOtpOwnership,
+} from "~/server/lib/otp-session";
 
 export const authRouter = createTRPCRouter({
   register: publicProcedure
@@ -19,18 +25,58 @@ export const authRouter = createTRPCRouter({
             "Format nomor HP tidak valid (contoh: 08123456789)",
           ),
         password: z.string().min(8, "Password minimal 8 karakter"),
+        fromGoogle: z.boolean().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { name, phone, password } = input;
+      const { name, phone, password, fromGoogle } = input;
       const email = input.email.toLowerCase();
 
       const existingUser = await ctx.db.user.findUnique({ where: { email } });
 
       if (existingUser) {
-        // If email is not verified yet, it means they abandoned the OTP step previously.
-        // We can just update their info and resend the OTP.
-        if (!existingUser.emailVerified) {
+        if (existingUser.role === "ADMIN") {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Email ini terdaftar sebagai Admin.",
+          });
+        }
+
+        // Case 1: Akun pembeli/checkout (USER) ingin mendaftar sebagai CREATOR
+        if (existingUser.role === "USER") {
+          const hashed = await bcrypt.hash(password, 12);
+          
+          if (fromGoogle) {
+            await ctx.db.user.update({
+              where: { email },
+              data: {
+                name,
+                phoneNumber: phone,
+                password: hashed,
+                role: "CREATOR",
+                emailVerified: new Date(),
+              },
+            });
+            return { success: true };
+          } else {
+            await assertResendCooldown(ctx.db, email);
+            await ctx.db.user.update({
+              where: { email },
+              data: {
+                name,
+                phoneNumber: phone,
+                password: hashed,
+                role: "CREATOR",
+                emailVerified: null, // Reset agar mereka wajib verifikasi OTP
+              },
+            });
+            // Lanjut kirim OTP di luar block
+          }
+        }
+        // Case 2: Email belum terverifikasi (pendaftaran terputus)
+        else if (!existingUser.emailVerified) {
+          await assertResendCooldown(ctx.db, email);
+
           const hashed = await bcrypt.hash(password, 12);
           await ctx.db.user.update({
             where: { email },
@@ -41,9 +87,9 @@ export const authRouter = createTRPCRouter({
               role: "CREATOR",
             },
           });
-          // Proceed to send OTP outside this block
+          // Lanjut kirim OTP di luar block
         }
-        // Google SSO user completing profile (phoneNumber not set yet)
+        // Case 3: Google SSO user completing profile (phoneNumber belum di-set)
         else if (!existingUser.phoneNumber) {
           const hashed = await bcrypt.hash(password, 12);
           await ctx.db.user.update({
@@ -52,14 +98,14 @@ export const authRouter = createTRPCRouter({
               name,
               phoneNumber: phone,
               password: hashed,
-              role: existingUser.role === "ADMIN" ? "ADMIN" : "CREATOR",
+              role: "CREATOR",
               emailVerified: new Date(),
             },
           });
 
           return { success: true };
         }
-        // Otherwise, they are fully registered and verified
+        // Case 4: Sudah terverifikasi & lengkap
         else {
           throw new TRPCError({
             code: "CONFLICT",
@@ -67,6 +113,7 @@ export const authRouter = createTRPCRouter({
           });
         }
       } else {
+        // User baru murni
         const hashed = await bcrypt.hash(password, 12);
         await ctx.db.user.create({
           data: {
@@ -75,8 +122,13 @@ export const authRouter = createTRPCRouter({
             phoneNumber: phone,
             password: hashed,
             role: "CREATOR",
+            emailVerified: fromGoogle ? new Date() : null,
           },
         });
+
+        if (fromGoogle) {
+          return { success: true };
+        }
       }
 
       // Generate 6-digit OTP
@@ -97,6 +149,7 @@ export const authRouter = createTRPCRouter({
       });
 
       await sendVerificationEmail({ email, name, otp });
+      await setOtpOwnership(email);
 
       return { success: true };
     }),
@@ -111,6 +164,8 @@ export const authRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { otp } = input;
       const email = input.email.toLowerCase();
+
+      await assertOtpOwnership(email);
 
       const verificationToken = await ctx.db.verificationToken.findFirst({
         where: {
@@ -162,6 +217,8 @@ export const authRouter = createTRPCRouter({
         where: { identifier: email },
       });
 
+      await clearOtpOwnership();
+
       return { success: true };
     }),
 
@@ -169,6 +226,9 @@ export const authRouter = createTRPCRouter({
     .input(z.object({ email: z.string().email() }))
     .mutation(async ({ ctx, input }) => {
       const email = input.email.toLowerCase();
+
+      await assertOtpOwnership(email);
+      await assertResendCooldown(ctx.db, email);
 
       const user = await ctx.db.user.findUnique({
         where: { email },
@@ -205,6 +265,7 @@ export const authRouter = createTRPCRouter({
       });
 
       await sendVerificationEmail({ email, name: user.name ?? "User", otp });
+      await setOtpOwnership(email);
 
       return { success: true };
     }),
@@ -344,4 +405,3 @@ export const authRouter = createTRPCRouter({
       return { success: true };
     }),
 });
-

@@ -30,28 +30,12 @@ function VerifyOtpInner() {
   const [error, setError] = useState<string | null>(null);
   const [resendTimer, setResendTimer] = useState(0);
 
-  const fromSSO = searchParams.get("from") === "sso";
-
   useEffect(() => {
-    // Security check: verify if the email in URL matches the cookie set during signup
-    const getCookie = (name: string) => {
-      if (typeof document === "undefined") return null;
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop()?.split(";").shift();
-    };
-
-    const authorizedEmail = getCookie("otp_authorized_email");
-
     if (!email) {
       router.push("/sign-up");
       return;
     }
-
-    if (!fromSSO && authorizedEmail !== email) {
-      router.push("/sign-up");
-    }
-  }, [email, fromSSO, router]);
+  }, [email, router]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;

@@ -13,6 +13,8 @@ type CheckoutSummaryProps = {
   handleApplyVoucher: () => void;
   handleRemoveVoucher: () => void;
   isBuyingOwnProduct: boolean;
+  isLoggedInAsOwner?: boolean;
+  isEmailMatchedOwner?: boolean;
   price: number;
   originalPrice: number;
   hasDiscount: boolean;
@@ -30,6 +32,8 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
   handleApplyVoucher,
   handleRemoveVoucher,
   isBuyingOwnProduct,
+  isLoggedInAsOwner,
+  isEmailMatchedOwner,
   price,
   originalPrice,
   hasDiscount,
@@ -115,7 +119,9 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
             <div className="space-y-1 leading-relaxed">
               <p className="font-medium">Tidak dapat melakukan pembelian</p>
               <p className="text-amber-700/80">
-                Kamu sedang login sebagai pemilik produk ini. Gunakan akun pembeli atau logout untuk mencoba checkout.
+                {isLoggedInAsOwner
+                  ? "Kamu sedang login sebagai pemilik produk ini. Gunakan akun pembeli atau logout untuk mencoba checkout."
+                  : "Email yang dimasukkan adalah email pemilik produk ini. Silakan gunakan email pembeli lain."}
               </p>
             </div>
           </div>

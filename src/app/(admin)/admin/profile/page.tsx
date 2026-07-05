@@ -57,12 +57,16 @@ export default function AdminProfilePage() {
             setNameError("Nama minimal 2 karakter");
             return;
         }
-        if (!phoneNumber || phoneNumber.trim().length < 10) {
-            setPhoneError("Nomor HP minimal 10 digit");
+        if (!phoneNumber || phoneNumber.trim().length < 9) {
+            setPhoneError("Nomor HP terlalu pendek");
             return;
         }
-        if (!/^(\+62|62|0)8[1-9][0-9]{6,9}$/.test(phoneNumber.trim())) {
-            setPhoneError("Format nomor HP tidak valid (contoh: 08123456789)");
+        if (phoneNumber.trim().length > 14) {
+            setPhoneError("Nomor HP terlalu panjang");
+            return;
+        }
+        if (!/^\d+$/.test(phoneNumber.trim())) {
+            setPhoneError("Nomor HP harus berupa angka saja");
             return;
         }
         if (password && password.length < 8) {

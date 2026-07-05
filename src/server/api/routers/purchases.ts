@@ -11,6 +11,7 @@ import { getCreatorBalance } from "~/lib/balance";
 import { createNotification } from "~/lib/notification";
 import { generateHistoryToken, verifyHistoryToken } from "~/lib/purchase-history-token";
 import crypto from "crypto";
+import { phoneSchema } from "~/lib/validation";
 
 export const purchasesRouter = createTRPCRouter({
   // ─── GET BY ID (public) ──────────────────────────────────────────────────────
@@ -77,10 +78,7 @@ export const purchasesRouter = createTRPCRouter({
         productId: z.string(),
         buyerName: z.string().min(1, "Nama wajib diisi"),
         buyerEmail: z.string().email("Email tidak valid"),
-        buyerPhone: z.string()
-          .min(9, "Nomor telepon terlalu pendek")
-          .max(14, "Nomor telepon terlalu panjang")
-          .regex(/^\d+$/, "Nomor telepon harus berupa angka saja"),
+        buyerPhone: phoneSchema,
         promoCode: z.string().optional(),
         answers: z
           .array(

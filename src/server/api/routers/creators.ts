@@ -3,16 +3,14 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, adminProcedure } from "~/server/api/trpc";
+import { phoneSchema } from "~/lib/validation";
 
 // ─── Schemas ────────────────────────────────────────────────────────────────
 
 const createCreatorSchema = z.object({
   name: z.string().min(1),
   email: z.string().email(),
-  phoneNumber: z.string()
-    .min(9, "Nomor telepon terlalu pendek")
-    .max(14, "Nomor telepon terlalu panjang")
-    .regex(/^\d+$/, "Nomor telepon harus berupa angka saja"),
+  phoneNumber: phoneSchema,
   password: z.string().min(6),
   image: z.string().optional().nullable(),
   banner: z.string().optional().nullable(),
@@ -23,10 +21,7 @@ const updateCreatorSchema = z.object({
   id: z.string(),
   name: z.string().min(1),
   email: z.string().email(),
-  phoneNumber: z.string()
-    .min(9, "Nomor telepon terlalu pendek")
-    .max(14, "Nomor telepon terlalu panjang")
-    .regex(/^\d+$/, "Nomor telepon harus berupa angka saja"),
+  phoneNumber: phoneSchema,
   password: z.string().min(6).optional(),
   image: z.string().optional().nullable(),
   banner: z.string().optional().nullable(),

@@ -156,10 +156,12 @@ export default function ProfilePage() {
         if (!name || name.trim().length < 2) {
             newErrors.name = ["Nama minimal 2 karakter"];
         }
-        if (!phoneNumber || phoneNumber.trim().length < 10) {
-            newErrors.phoneNumber = ["Nomor HP minimal 10 digit"];
-        } else if (!/^(\+62|62|0)8[1-9][0-9]{6,9}$/.test(phoneNumber.trim())) {
-            newErrors.phoneNumber = ["Format nomor HP tidak valid (contoh: 08123456789)"];
+        if (!phoneNumber || phoneNumber.trim().length < 9) {
+            newErrors.phoneNumber = ["Nomor HP terlalu pendek"];
+        } else if (phoneNumber.trim().length > 14) {
+            newErrors.phoneNumber = ["Nomor HP terlalu panjang"];
+        } else if (!/^\d+$/.test(phoneNumber.trim())) {
+            newErrors.phoneNumber = ["Nomor HP harus berupa angka saja"];
         }
         if (password && password.length < 8) {
             newErrors.password = ["Password minimal 8 karakter"];

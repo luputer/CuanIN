@@ -1,6 +1,7 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { phoneSchema } from "~/lib/validation";
 
 export const profileRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -41,7 +42,7 @@ export const profileRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().min(2, "Nama minimal 2 karakter"),
-        phoneNumber: z.string().min(10, "Nomor HP minimal 10 digit").regex(/^(\+62|62|0)8[1-9][0-9]{6,9}$/, "Format nomor HP tidak valid").optional().nullable(),
+        phoneNumber: phoneSchema.optional().nullable(),
         image: z.string().optional().nullable(),
         banner: z.string().optional().nullable(),
         password: z.string().optional().nullable(),

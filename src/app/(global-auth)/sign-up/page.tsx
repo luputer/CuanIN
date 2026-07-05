@@ -146,6 +146,10 @@ function SignupPageInner() {
           placeholder="Masukkan No Telepon/HP Anda"
           icon={<PhoneIcon size={24} />}
           registration={register("phone")}
+          onInput={(e) => {
+            const target = e.target as HTMLInputElement;
+            target.value = target.value.replace(/[^0-9]/g, "");
+          }}
           error={errors.phone}
         />
 

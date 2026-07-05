@@ -65,9 +65,10 @@ export function useCheckout() {
       name: z.string().min(1, "Nama wajib diisi"),
       email: z.string().email("Email wajib diisi"),
       phone: z.string()
-        .regex(/^\d+$/, "Nomor HP harus berupa angka saja")
+        .min(1, "Nomor HP wajib diisi")
         .min(9, "Nomor HP terlalu pendek")
-        .max(14, "Nomor HP terlalu panjang"),
+        .max(14, "Nomor HP terlalu panjang")
+        .regex(/^\d+$/, "Nomor HP harus berupa angka saja"),
       promo: z.string().optional(),
     };
 

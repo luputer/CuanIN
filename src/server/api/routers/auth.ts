@@ -18,13 +18,10 @@ export const authRouter = createTRPCRouter({
       z.object({
         name: z.string().min(2, "Nama minimal 2 karakter"),
         email: z.string().email("Format email tidak valid"),
-        phone: z
-          .string()
-          .min(10, "Nomor HP minimal 10 digit")
-          .regex(
-            /^(\+62|62|0)8[1-9][0-9]{6,9}$/,
-            "Format nomor HP tidak valid (contoh: 08123456789)",
-          ),
+        phone: z.string()
+          .regex(/^\d+$/, "Nomor HP harus berupa angka saja")
+          .min(9, "Nomor HP terlalu pendek")
+          .max(14, "Nomor HP terlalu panjang"),
         password: z.string().min(8, "Password minimal 8 karakter"),
         fromGoogle: z.boolean().optional(),
       }),
@@ -46,7 +43,7 @@ export const authRouter = createTRPCRouter({
         // Case 1: Akun pembeli/checkout (USER) ingin mendaftar sebagai CREATOR
         if (existingUser.role === "USER") {
           const hashed = await bcrypt.hash(password, 12);
-          
+
           if (fromGoogle) {
             await ctx.db.user.update({
               where: { email },

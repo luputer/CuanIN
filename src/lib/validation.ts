@@ -7,12 +7,13 @@ export const signupSchema = z
     email: z.string({ required_error: "Email wajib diisi" }).email("Format email tidak valid"),
     phone: z
       .string({ required_error: "Nomor HP wajib diisi" })
-      .min(10, "Nomor HP minimal 10 digit")
-      .regex(
-        /^(\+62|62|0)8[1-9][0-9]{6,9}$/,
-        "Format nomor HP tidak valid (contoh: 08123456789)",
-      ),
-    password: z.string({ required_error: "Password wajib diisi" }).min(8, "Password minimal 8 karakter"),
+      .min(1, "Nomor HP wajib diisi")
+      .min(9, "Nomor HP terlalu pendek")
+      .max(14, "Nomor HP terlalu panjang")
+      .regex(/^\d+$/, "Nomor HP harus berupa angka saja"),
+    password: z.string({ required_error: "Password wajib diisi" })
+      .min(1, "Password wajib diisi")
+      .min(8, "Password minimal 8 karakter"),
     confirmPassword: z.string({ required_error: "Konfirmasi password wajib diisi" }),
   })
   .refine((data) => data.password === data.confirmPassword, {

@@ -106,6 +106,7 @@ export const purchasesRouter = createTRPCRouter({
           user: {
             select: {
               name: true,
+              email: true,
               catalog: {
                 select: { slug: true },
               },
@@ -135,7 +136,10 @@ export const purchasesRouter = createTRPCRouter({
         });
       }
 
-      if (ctx.session?.user.id === product.userId) {
+      if (
+        (ctx.session?.user && ctx.session.user.id === product.userId) ||
+        (input.buyerEmail && product.user?.email && input.buyerEmail.toLowerCase().trim() === product.user.email.toLowerCase().trim())
+      ) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Kamu tidak bisa membeli produk milik sendiri.",

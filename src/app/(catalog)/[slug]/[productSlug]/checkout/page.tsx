@@ -30,6 +30,8 @@ export default function CheckoutPage() {
     finalPrice,
     isGratis,
     isBuyingOwnProduct,
+    isLoggedInAsOwner,
+    isEmailMatchedOwner,
     formFields,
     slug,
     productSlug,
@@ -102,6 +104,8 @@ export default function CheckoutPage() {
               handleApplyVoucher={handleApplyVoucher}
               handleRemoveVoucher={handleRemoveVoucher}
               isBuyingOwnProduct={isBuyingOwnProduct}
+              isLoggedInAsOwner={isLoggedInAsOwner}
+              isEmailMatchedOwner={isEmailMatchedOwner}
               price={price}
               originalPrice={originalPrice}
               hasDiscount={hasDiscount}

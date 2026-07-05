@@ -58,8 +58,6 @@ export function useCheckout() {
 
   const finalPrice = Math.max(0, price - discountAmount);
   const isGratis = finalPrice === 0;
-  const isBuyingOwnProduct =
-    status === "authenticated" && session.user.id === product?.userId;
 
   const schema = React.useMemo(() => {
     const base = {
@@ -97,6 +95,12 @@ export function useCheckout() {
 
   const { getValues, setValue, watch } = form;
   const watchedEmail = watch("email");
+  const isLoggedInAsOwner = status === "authenticated" && session?.user?.id === product?.userId;
+  const isEmailMatchedOwner =
+    !!watchedEmail &&
+    !!product?.user?.email &&
+    watchedEmail.toLowerCase().trim() === product.user.email.toLowerCase().trim();
+  const isBuyingOwnProduct = isLoggedInAsOwner || isEmailMatchedOwner;
   const prevEmailRef = React.useRef(watchedEmail);
 
   React.useEffect(() => {
@@ -261,6 +265,8 @@ export function useCheckout() {
     finalPrice,
     isGratis,
     isBuyingOwnProduct,
+    isLoggedInAsOwner,
+    isEmailMatchedOwner,
     formFields,
     slug,
     productSlug

@@ -33,7 +33,6 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
   handleRemoveVoucher,
   isBuyingOwnProduct,
   isLoggedInAsOwner,
-  isEmailMatchedOwner,
   price,
   originalPrice,
   hasDiscount,

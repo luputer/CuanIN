@@ -259,6 +259,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
           {...register("phone")}
           className={inputClass(!!errors.phone)}
           placeholder="contoh: 081234567890"
+          onInput={(e) => {
+            const target = e.target as HTMLInputElement;
+            target.value = target.value.replace(/[^0-9]/g, "");
+          }}
           readOnly={status === "authenticated" && !!session?.user?.phone}
         />
         {errors.phone && <p className="text-xs text-red-500">{errors.phone.message}</p>}

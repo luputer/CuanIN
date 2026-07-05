@@ -3,18 +3,26 @@ import { startOfDay } from "date-fns";
 
 export const signupSchema = z
   .object({
-    name: z.string({ required_error: "Nama wajib diisi" }).min(2, "Nama wajib diisi"),
-    email: z.string({ required_error: "Email wajib diisi" }).email("Format email tidak valid"),
-    phone: z
-      .string({ required_error: "Nomor HP wajib diisi" })
-      .min(1, "Nomor HP wajib diisi")
-      .min(9, "Nomor HP terlalu pendek")
-      .max(14, "Nomor HP terlalu panjang")
-      .regex(/^\d+$/, "Nomor HP harus berupa angka saja"),
+    name: z.string({ required_error: "Nama wajib diisi" })
+      .min(1, "Nama tidak boleh kosong")
+      .min(2, "Nama minimal 2 karakter"),
+
+    email: z.string({ required_error: "Email wajib diisi" })
+      .min(1, "Email tidak boleh kosong")
+      .email("Format email tidak valid"),
+
+    phone: z.string({ required_error: "Nomor HP wajib diisi" })
+      .min(1, "Nomor HP tidak boleh kosong")
+      .regex(/^\d+$/, "Nomor HP harus berupa angka saja")
+      .refine((val) => val.length >= 9, { message: "Nomor HP terlalu pendek" })
+      .refine((val) => val.length <= 14, { message: "Nomor HP terlalu panjang" }),
+
     password: z.string({ required_error: "Password wajib diisi" })
-      .min(1, "Password wajib diisi")
+      .min(1, "Password tidak boleh kosong")
       .min(8, "Password minimal 8 karakter"),
-    confirmPassword: z.string({ required_error: "Konfirmasi password wajib diisi" }),
+
+    confirmPassword: z.string({ required_error: "Konfirmasi password wajib diisi" })
+      .min(1, "Konfirmasi password wajib diisi"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Password dan konfirmasi password tidak sama",

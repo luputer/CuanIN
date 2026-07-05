@@ -1,24 +1,45 @@
 import { z } from "zod";
 import { startOfDay } from "date-fns";
 
+
+
+// link schema
+const urlSchema = z
+  .string({ required_error: "Link wajib diisi" })
+  .min(1, "Link wajib diisi")
+  .url("Link tidak valid")
+  .refine((val) => /^https?:\/\/.+\..+/.test(val), {
+    message: "Link harus menyertakan domain yang valid",
+  });
+
+// phone schema
+export const phoneSchema = z.string({ required_error: "Nomor HP wajib diisi" })
+  .min(1, "Nomor HP wajib diisi")
+  .min(9, "Nomor HP terlalu pendek")
+  .max(14, "Nomor HP terlalu panjang")
+  .regex(/^\d+$/, "Nomor HP harus berupa angka saja");
+
+
+// profils schema
+export const profileSchema = z.object({
+  name: z.string({ required_error: "Nama wajib diisi" }).min(1, "Nama wajib diisi"),
+  email: z.string({ required_error: "Email wajib diisi" }).email("Format email tidak valid"),
+  phone: phoneSchema,
+})
+
 export const signupSchema = z
   .object({
     name: z.string({ required_error: "Nama wajib diisi" })
-      .min(1, "Nama tidak boleh kosong")
+      .min(1, "Nama wajib diisi")
       .min(2, "Nama minimal 2 karakter"),
 
     email: z.string({ required_error: "Email wajib diisi" })
-      .min(1, "Email tidak boleh kosong")
+      .min(1, "Email wajib diisi")
       .email("Format email tidak valid"),
 
-    phone: z.string({ required_error: "Nomor HP wajib diisi" })
-      .min(1, "Nomor HP tidak boleh kosong")
-      .regex(/^\d+$/, "Nomor HP harus berupa angka saja")
-      .refine((val) => val.length >= 9, { message: "Nomor HP terlalu pendek" })
-      .refine((val) => val.length <= 14, { message: "Nomor HP terlalu panjang" }),
-
+    phone: phoneSchema,
     password: z.string({ required_error: "Password wajib diisi" })
-      .min(1, "Password tidak boleh kosong")
+      .min(1, "Password wajib diisi")
       .min(8, "Password minimal 8 karakter"),
 
     confirmPassword: z.string({ required_error: "Konfirmasi password wajib diisi" })
@@ -32,11 +53,12 @@ export const signupSchema = z
 export type SignupFormData = z.infer<typeof signupSchema>;
 
 export const loginSchema = z.object({
-  email: z.string({ required_error: "Email wajib diisi" }).min(1, "Email tidak boleh kosong"),
-  password: z.string({ required_error: "Password wajib diisi" }).min(1, "Password tidak boleh kosong"),
+  email: z.string({ required_error: "Email wajib diisi" }).min(1, "Email wajib diisi"),
+  password: z.string({ required_error: "Password wajib diisi" }).min(1, "Password wajib diisi"),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
+
 
 export const webinarSchema = z
   .object({
@@ -49,10 +71,7 @@ export const webinarSchema = z
     price: z.number({ required_error: "Harga wajib diisi", invalid_type_error: "Harga tidak valid" }).min(0, "Harga tidak boleh negatif").optional(),
     contentType: z.string({ required_error: "Platform wajib dipilih" }).min(1, "Platform wajib dipilih"),
     platformCustom: z.string({ required_error: "Platform kustom wajib diisi" }).optional(),
-    link: z
-      .string({ required_error: "Link wajib diisi" })
-      .min(1, "Link wajib diisi")
-      .url("Link tidak valid, pastikan format URL benar (https://...)"),
+    link: urlSchema,
     notes: z.string({ required_error: "Catatan wajib diisi" }).optional(),
     status: z.string({ required_error: "Status wajib dipilih" }).min(1, "Status wajib dipilih"),
     dateStart: z.date({ required_error: "Jadwal mulai wajib diisi", invalid_type_error: "Tanggal tidak valid" }),
@@ -143,10 +162,7 @@ export const baseProductDigitalSchema = z.object({
     .max(200, "Ringkasan maksimal 200 karakter"),
   description: z.string({ required_error: "Deskripsi wajib diisi" }).min(1, "Deskripsi wajib diisi"),
   price: z.number({ required_error: "Harga wajib diisi", invalid_type_error: "Harga tidak valid" }).min(0, "Harga tidak boleh negatif").optional(),
-  link: z
-    .string({ required_error: "Link wajib diisi" })
-    .min(1, "Link wajib diisi")
-    .url("Link tidak valid, pastikan format URL benar (https://...)"),
+  link: urlSchema,
   contentType: z.string({ required_error: "Tipe konten wajib dipilih" }).min(1, "Tipe konten wajib dipilih"),
   platformCustom: z.string({ required_error: "Platform kustom wajib diisi" }).optional(),
   duration: z.string({ required_error: "Durasi wajib diisi" }).optional(),
@@ -216,10 +232,7 @@ export const productKelasOnlineSchema = z
       .max(200, "Ringkasan maksimal 200 karakter"),
     description: z.string({ required_error: "Deskripsi wajib diisi" }).min(1, "Deskripsi wajib diisi"),
     price: z.number({ required_error: "Harga wajib diisi", invalid_type_error: "Harga tidak valid" }).min(0, "Harga tidak boleh negatif").optional(),
-    link: z
-      .string({ required_error: "Link wajib diisi" })
-      .min(1, "Link wajib diisi")
-      .url("Link tidak valid, pastikan format URL benar (https://...)"),
+    link: urlSchema,
     contentType: z.string({ required_error: "Platform wajib dipilih" }).min(1, "Platform wajib dipilih"),
     platformCustom: z.string({ required_error: "Platform kustom wajib diisi" }).optional(),
     duration: z.string({ required_error: "Durasi wajib diisi" }).min(1, "Durasi wajib diisi"),
@@ -314,13 +327,7 @@ export type WithdrawalFormData = z.infer<typeof withdrawalSchema>;
 export const creatorSchema = z.object({
   name: z.string({ required_error: "Nama kreator wajib diisi" }).min(1, "Nama kreator wajib diisi"),
   email: z.string({ required_error: "Email wajib diisi" }).email("Format email tidak valid"),
-  phone: z
-    .string({ required_error: "Nomor HP wajib diisi" })
-    .min(10, "Nomor HP minimal 10 digit")
-    .regex(
-      /^(\+62|62|0)8[1-9][0-9]{6,9}$/,
-      "Format nomor HP tidak valid (contoh: 08123456789)",
-    ),
+  phone: phoneSchema,
   password: z.string({ required_error: "Password wajib diisi" }).min(8, "Password minimal 8 karakter").optional().or(z.literal("")),
   image: z.string({ required_error: "Gambar wajib diunggah" }).optional().nullable(),
   banner: z.string({ required_error: "Banner wajib diunggah" }).optional().nullable(),
@@ -332,13 +339,7 @@ export type CreatorFormValues = z.infer<typeof creatorSchema>;
 export const createCreatorFormSchema = z.object({
   name: z.string({ required_error: "Nama kreator wajib diisi" }).min(1, "Nama kreator wajib diisi"),
   email: z.string({ required_error: "Email wajib diisi" }).email("Format email tidak valid"),
-  phone: z
-    .string({ required_error: "Nomor HP wajib diisi" })
-    .min(10, "Nomor HP minimal 10 digit")
-    .regex(
-      /^(\+62|62|0)8[1-9][0-9]{6,9}$/,
-      "Format nomor HP tidak valid (contoh: 08123456789)",
-    ),
+  phone: phoneSchema,
   password: z.string({ required_error: "Password wajib diisi" }).min(8, "Password minimal 8 karakter"),
   image: z.string({ required_error: "Gambar wajib diunggah" }).optional().nullable(),
   banner: z.string({ required_error: "Banner wajib diunggah" }).optional().nullable(),

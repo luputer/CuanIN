@@ -11,6 +11,7 @@ import {
   setOtpOwnership,
   incrementResendCount,
 } from "~/server/lib/otp-session";
+import { phoneSchema } from "~/lib/validation";
 
 export const authRouter = createTRPCRouter({
   register: publicProcedure
@@ -18,10 +19,7 @@ export const authRouter = createTRPCRouter({
       z.object({
         name: z.string().min(2, "Nama minimal 2 karakter"),
         email: z.string().email("Format email tidak valid"),
-        phone: z.string()
-          .regex(/^\d+$/, "Nomor HP harus berupa angka saja")
-          .min(9, "Nomor HP terlalu pendek")
-          .max(14, "Nomor HP terlalu panjang"),
+        phone: phoneSchema,
         password: z.string().min(8, "Password minimal 8 karakter"),
         fromGoogle: z.boolean().optional(),
       }),

@@ -10,6 +10,7 @@ import { api } from "~/trpc/react";
 import { toast } from "sonner";
 
 import type { FormFieldData, CheckoutFormValues, AppliedVoucher } from "~/types/form";
+import { phoneSchema } from "~/lib/validation";
 
 
 export function useCheckout() {
@@ -64,11 +65,7 @@ export function useCheckout() {
     const base = {
       name: z.string().min(1, "Nama wajib diisi"),
       email: z.string().email("Email wajib diisi"),
-      phone: z.string()
-        .min(1, "Nomor HP wajib diisi")
-        .min(9, "Nomor HP terlalu pendek")
-        .max(14, "Nomor HP terlalu panjang")
-        .regex(/^\d+$/, "Nomor HP harus berupa angka saja"),
+      phone: phoneSchema,
       promo: z.string().optional(),
     };
 

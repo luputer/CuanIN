@@ -181,6 +181,7 @@ model VerificationToken {
   token      String   @unique
   expires    DateTime
   attempts   Int      @default(0)
+  ipAddress  String?
 
   @@unique([identifier, token])
 }

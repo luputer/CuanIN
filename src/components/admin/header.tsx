@@ -1,29 +1,27 @@
 "use client";
-import { CaretDownIcon, UserIcon, SignOutIcon, ListIcon, BellIcon, CheckIcon, ArrowRightIcon } from "@phosphor-icons/react";
-import { useState } from "react";
-import { useSession, signOut } from "next-auth/react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useRef, useEffect } from "react";
-import Link from "next/link";
-import { api } from "~/trpc/react";
+import { ArrowRightIcon, BellIcon, CaretDownIcon, CheckIcon, ListIcon, SignOutIcon, UserIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
+import Link from "next/link";
 import PusherClient from "pusher-js";
+import { useEffect, useRef, useState } from "react";
 import { useNotificationSound } from "~/hooks/shared/useNotificationSound";
+import { api } from "~/trpc/react";
 
 function formatTimeAgo(date: Date | string) {
-  const now = new Date();
-  const d = new Date(date);
-  const diff = now.getTime() - d.getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "Baru saja";
-  if (mins < 60) return `${mins} menit lalu`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours} jam lalu`;
-  const days = Math.floor(hours / 24);
-  if (days < 7) return `${days} hari lalu`;
-  return format(d, "d MMM yyyy", { locale: id });
+    const now = new Date();
+    const d = new Date(date);
+    const diff = now.getTime() - d.getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return "Baru saja";
+    if (mins < 60) return `${mins} menit lalu`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours} jam lalu`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days} hari lalu`;
+    return format(d, "d MMM yyyy", { locale: id });
 }
 
 export default function HeaderAdmin({
@@ -52,7 +50,6 @@ export default function HeaderAdmin({
 
     const user = userProfile ?? session?.user;
 
-    const router = useRouter();
     const dropdownRef = useRef<HTMLDivElement>(null);
     const notifRef = useRef<HTMLDivElement>(null);
 
@@ -236,13 +233,14 @@ export default function HeaderAdmin({
                         <div className="absolute left-1/2 top-14 -translate-x-1/2 w-56 bg-white border border-slate-800 rounded-xl shadow-[0px_1.5px_0px_#000] py-2 px-3">
 
                             {/* Akun Saya */}
-                            <button
-                                onClick={() => router.push('/admin/profile')}
+                            <Link
+                                href="/admin/profile"
+                                onClick={() => setOpen(false)}
                                 className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cuan-blue/10 hover:text-cuan-blue transition cursor-pointer"
                             >
                                 <UserIcon size={20} />
                                 <span>Akun Saya</span>
-                            </button>
+                            </Link>
 
                             {/* Divider */}
                             <div className="my-2 border-t border-slate-400"></div>

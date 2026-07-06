@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { ArrowLeftIcon, CopyIcon, ShareNetworkIcon } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
@@ -74,24 +75,25 @@ export function CatalogNavHeader({ backHref, shareData }: CatalogNavHeaderProps)
     }
   };
 
-  const handleBack = () => {
-    if (backHref) {
-      router.push(backHref);
-    } else {
-      router.back();
-    }
-  };
-
   return (
     <div className="sticky top-0 z-10 border-b border-slate-200 bg-white">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         {/* Back button — selalu muncul, fallback ke history.back() */}
-        <button
-          onClick={handleBack}
-          className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
-        >
-          <ArrowLeftIcon className="h-5 w-5 text-slate-600" />
-        </button>
+        {backHref ? (
+          <Link
+            href={backHref}
+            className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+          >
+            <ArrowLeftIcon className="h-5 w-5 text-slate-600" />
+          </Link>
+        ) : (
+          <button
+            onClick={() => router.back()}
+            className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+          >
+            <ArrowLeftIcon className="h-5 w-5 text-slate-600" />
+          </button>
+        )}
 
         {/* Share button — hanya tampil jika shareData disediakan */}
         {shareData && (

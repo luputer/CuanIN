@@ -112,7 +112,7 @@ export default function Pembeli({ productId }: { productId: string }) {
 
             // Create Excel workbook and worksheet
             const formFields = data.formFields || [];
-            const headers = ["Nama Pembeli", "Email", "Nomor Hp", ...formFields.map(f => f.label)];
+            const headers = ["Nama Pembeli", "Email", "Nomor Hp", "Tanggal Beli", "Status", ...formFields.map(f => f.label)];
 
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet("Data Pembeli");
@@ -136,10 +136,14 @@ export default function Pembeli({ productId }: { productId: string }) {
 
             // Add Data Rows
             for (const item of data.items) {
+                const formattedDate = format(new Date(item.createdAt), "dd MMMM yyyy HH:mm", { locale: idLocale });
+                const statusLabel = getStatusLabel(item.status);
                 const rowData = [
                     item.buyerName,
                     item.buyerEmail,
                     item.buyerPhone || "-",
+                    formattedDate,
+                    statusLabel,
                     ...formFields.map(field => {
                         return item.answers?.find((a: any) => a.formFieldId === field.id)?.answer || "-";
                     })
@@ -157,9 +161,10 @@ export default function Pembeli({ productId }: { productId: string }) {
             const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
             const url = URL.createObjectURL(blob);
 
+            const statusSuffix = statusFilter === "completed" ? "_Sudah_Bayar" : statusFilter === "pending" ? "_Pending" : "";
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", `Data_Pembeli_${data.productName.replace(/\s+/g, '_')}_${format(new Date(), "yyyyMMdd")}.xlsx`);
+            link.setAttribute("download", `Data_Pembeli_${data.productName.replace(/\s+/g, '_')}${statusSuffix}_${format(new Date(), "yyyyMMdd")}.xlsx`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);

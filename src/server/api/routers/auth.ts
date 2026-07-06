@@ -13,6 +13,12 @@ import {
 } from "~/server/lib/otp-session";
 import { phoneSchema } from "~/lib/validation";
 
+
+const getIp = (ctx: any) => (ctx.req?.headers.get("x-forwarded-for")?.split(",")[0] || "unknown").trim();
+
+
+
+
 export const authRouter = createTRPCRouter({
   register: publicProcedure
     .input(
@@ -27,8 +33,18 @@ export const authRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { name, phone, password, fromGoogle } = input;
       const email = input.email.toLowerCase();
+      const ip = getIp(ctx);
 
       const existingUser = await ctx.db.user.findUnique({ where: { email } });
+
+
+      // Proteksi IP: Limit pendaftaran
+      const ipRequestCount = await ctx.db.verificationToken.count({
+        where: { ipAddress: ip, expires: { gt: new Date() } }
+      });
+      if (ipRequestCount >= 5) {
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "Terlalu banyak permintaan dari jaringan ini." });
+      }
 
       if (existingUser) {
         if (existingUser.role === "ADMIN") {
@@ -141,6 +157,7 @@ export const authRouter = createTRPCRouter({
           identifier: email,
           token: otp,
           expires,
+          ipAddress: ip,
         },
       });
 
@@ -225,14 +242,29 @@ export const authRouter = createTRPCRouter({
     .input(z.object({ email: z.string().email() }))
     .mutation(async ({ ctx, input }) => {
       const email = input.email.toLowerCase();
+      const ip = getIp(ctx);
 
       await assertOtpOwnership(email);
       await assertResendCooldown(ctx.db, email);
+
+      const lastToken = await ctx.db.verificationToken.findFirst({
+        where: { ipAddress: ip },
+        orderBy: { expires: 'desc' }
+      });
+
+      if (lastToken && lastToken.expires > new Date()) {
+        const waitMin = Math.ceil((lastToken.expires.getTime() - Date.now()) / 60000);
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: `Terlalu banyak permintaan. Silakan coba lagi dalam ${waitMin} menit.`
+        });
+      }
 
       const user = await ctx.db.user.findUnique({
         where: { email },
         select: { name: true, emailVerified: true },
       });
+
 
       if (!user) {
         throw new TRPCError({
@@ -240,6 +272,11 @@ export const authRouter = createTRPCRouter({
           message: "User tidak ditemukan",
         });
       }
+
+      // proteksi IP resend
+      const ipRequestCount = await ctx.db.verificationToken.count({ where: { ipAddress: ip, expires: { gt: new Date() } } });
+      if (ipRequestCount >= 5) throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "Terlalu banyak permintaan." });
+
 
       if (user.emailVerified) {
         throw new TRPCError({
@@ -260,6 +297,7 @@ export const authRouter = createTRPCRouter({
           identifier: email,
           token: otp,
           expires,
+          ipAddress: ip,
         },
       });
 
@@ -307,6 +345,12 @@ export const authRouter = createTRPCRouter({
     .input(z.object({ email: z.string().email() }))
     .mutation(async ({ ctx, input }) => {
       const email = input.email.toLowerCase();
+      const ip = getIp(ctx); // Ambil IP
+
+      const ipRequestCount = await ctx.db.verificationToken.count({
+        where: { ipAddress: ip, expires: { gt: new Date() } }
+      });
+      if (ipRequestCount >= 5) throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "Terlalu banyak permintaan." });
 
       const user = await ctx.db.user.findUnique({
         where: { email },
@@ -326,11 +370,13 @@ export const authRouter = createTRPCRouter({
         where: { identifier },
       });
 
+
       await ctx.db.verificationToken.create({
         data: {
           identifier,
           token,
           expires,
+          ipAddress: ip
         },
       });
 
@@ -404,4 +450,7 @@ export const authRouter = createTRPCRouter({
 
       return { success: true };
     }),
+
 });
+
+

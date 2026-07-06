@@ -28,12 +28,14 @@ const config = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self';",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://*.midtrans.com https://app.midtrans.com https://snap-assets.midtrans.com https://api.midtrans.com https://pay.google.com https://gwk.gopayapi.com https://js.xendit.co;",
+              // Tambahkan domain widget ke script-src
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://*.midtrans.com https://app.midtrans.com https://snap-assets.midtrans.com https://api.midtrans.com https://pay.google.com https://gwk.gopayapi.com https://js.xendit.co https://auxilium-widget.vercel.app;",
               "style-src 'self' 'unsafe-inline';",
               "img-src 'self' blob: data: https:;",
               "font-src 'self' data:;",
-              "connect-src 'self' https: https://*.midtrans.com https://api.midtrans.com https://api.sandbox.midtrans.com;",
-              "frame-src 'self' https://*.midtrans.com https://app.midtrans.com https://js.xendit.co;",
+              // Tambahkan juga ke connect-src agar widget bisa berkomunikasi dengan servernya
+              "connect-src 'self' https: https://*.midtrans.com https://api.midtrans.com https://api.sandbox.midtrans.com https://auxilium-widget.vercel.app;",
+              "frame-src 'self' https://*.midtrans.com https://app.midtrans.com https://js.xendit.co https://auxilium-widget.vercel.app;",
               "child-src 'self' https://*.midtrans.com https://app.midtrans.com;",
               "worker-src 'self' blob:;",
               "frame-ancestors 'self';"

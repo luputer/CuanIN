@@ -6,6 +6,7 @@ import { TRPCReactProvider } from "~/trpc/provider";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "CuanIN",
@@ -47,6 +48,12 @@ export default function RootLayout({
     <html lang="id" className={poppins.variable}>
       <body className="font-sans">
         <Toaster position="top-right" />
+        {/* TODO: ganti org id cuanin */}
+        <Script
+          data-organization-id="org_3G6qOeO0PL2iueIN5RpVbpMh00a"
+          src="https://auxilium-widget.vercel.app/widget.js"
+          strategy="lazyOnload"
+        />
         <TRPCReactProvider>
           {children}
           <Analytics />

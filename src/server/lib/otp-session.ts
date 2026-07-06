@@ -86,7 +86,6 @@ export async function setOtpOwnership(email: string) {
 }
 
 export async function assertOtpOwnership(email: string) {
-    1
     const cookieStore = await cookies();
     const authorizedEmail = cookieStore.get(OTP_COOKIE)?.value;
     if (authorizedEmail !== email) {

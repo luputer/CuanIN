@@ -60,8 +60,8 @@ export function CatalogSetupContent() {
             toast.success("Catalog berhasil dibuat!");
 
             await update({ hasCatalog: true });
-            router.refresh();
-            router.push("/dashboard");
+            // router.push("/dashboard");
+            window.location.href = "/dashboard";
         } catch (err) {
             toast.error(err instanceof Error ? err.message : "Terjadi kesalahan");
         }

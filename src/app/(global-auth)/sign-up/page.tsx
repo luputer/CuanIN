@@ -22,7 +22,7 @@ function SignupPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const fromGoogle =
     searchParams.get("fromGoogle") === "1" || !!session?.user;
@@ -54,7 +54,6 @@ function SignupPageInner() {
     if (googleEmail) setValue("email", googleEmail);
   }, [googleName, googleEmail, setValue]);
 
-  // ✅ tRPC mutation
   const registerMutation = api.auth.register.useMutation({
     onSuccess: async (_result, variables) => {
       if (fromGoogle) {

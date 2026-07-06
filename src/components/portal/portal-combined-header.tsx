@@ -39,7 +39,7 @@ export function PortalCombinedHeader({ backHref, email, handleLogout }: PortalCo
               Login sebagai: <span className="font-semibold text-slate-700">{email}</span>
             </p>
           </div>
-        </div>router
+        </div>
         <button
           onClick={handleLogout}
           className="flex items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 cursor-pointer"

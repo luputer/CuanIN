@@ -1,29 +1,28 @@
 "use client";
 
-import { Suspense } from "react";
-import Link from "next/link";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  UserIcon,
   EnvelopeIcon,
   LockKeyIcon,
   PhoneIcon,
+  UserIcon,
 } from "@phosphor-icons/react";
-import { AuthInput, GoogleAuthButton, AuthDivider } from "~/components/auth/auth-components";
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { api } from "~/trpc/react";
+import { AuthDivider, AuthInput, GoogleAuthButton } from "~/components/auth/auth-components";
 import type { SignupFormData } from "~/lib/validation";
 import { signupSchema } from "~/lib/validation";
+import { api } from "~/trpc/react";
 
 
 function SignupPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const { data: session, status, update } = useSession();
+  const { data: session } = useSession();
 
   const fromGoogle =
     searchParams.get("fromGoogle") === "1" || !!session?.user;
@@ -59,11 +58,22 @@ function SignupPageInner() {
   const registerMutation = api.auth.register.useMutation({
     onSuccess: async (_result, variables) => {
       if (fromGoogle) {
-        // Panggil update() untuk memicu JWT callback di server membaca role "CREATOR" baru dari DB
-        await update();
+        const result = await signIn("credentials", {
+          redirect: false, // ⬅️ kunci: biar kita yang handle redirect manual
+          email: variables.email,
+          password: variables.password,
+        });
+
+        if (result?.error) {
+          // Fallback kalau credentials sign-in gagal (harusnya jarang terjadi
+          // karena password baru aja kita set sendiri di step register)
+          setServerErrorFallback("Gagal masuk otomatis. Silakan login manual.");
+          router.push("/sign-in");
+          return;
+        }
+
         router.push("/dashboard");
       } else {
-        // Set temporary cookie for OTP access (expires in 15 mins)
         document.cookie = `otp_authorized_email=${variables.email}; Max-Age=900; path=/; SameSite=Lax`;
         router.push(`/verify-otp?email=${variables.email}`);
       }

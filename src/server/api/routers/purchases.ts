@@ -12,6 +12,13 @@ import { createNotification } from "~/lib/notification";
 import { generateHistoryToken, verifyHistoryToken } from "~/lib/purchase-history-token";
 import crypto from "crypto";
 import { phoneSchema } from "~/lib/validation";
+import {
+  assertOtpOwnership,
+  assertResendCooldown,
+  clearOtpOwnership,
+  setOtpOwnership,
+  incrementResendCount,
+} from "~/server/lib/otp-session";
 
 export const purchasesRouter = createTRPCRouter({
   // ─── GET BY ID (public) ──────────────────────────────────────────────────────
@@ -1141,7 +1148,29 @@ export const purchasesRouter = createTRPCRouter({
   sendPurchaseHistoryOtp: publicProcedure
     .input(z.object({ email: z.string().email("Format email tidak valid") }))
     .mutation(async ({ ctx, input }) => {
+      // 1. Ambil IP dari header request
+      // Ubah baris ini:
+      const ip = (ctx.req?.headers.get("x-forwarded-for")?.split(",")[0] || "unknown").trim();
       const email = input.email.toLowerCase();
+
+      // 2. RATE LIMIT BERBASIS IP (Mencegah ganti-ganti email dari 1 IP)
+      // Cek apakah IP ini sudah membuat lebih dari 5 token dalam 10 menit terakhir
+      const ipRequestCount = await ctx.db.verificationToken.count({
+        where: {
+          ipAddress: ip,
+          expires: { gt: new Date() }, // Token yang belum expired
+        },
+      });
+
+      if (ipRequestCount >= 5) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Terlalu banyak permintaan dari jaringan Anda. Tunggu beberapa saat.",
+        });
+      }
+
+      // 3. Cek cooldown spam berbasis email (sudah ada di kode Anda)
+      await assertResendCooldown(ctx.db, email);
 
       const existingPurchase = await ctx.db.purchase.findFirst({
         where: {
@@ -1166,11 +1195,20 @@ export const purchasesRouter = createTRPCRouter({
         where: { identifier },
       });
 
+      // 4. SIMPAN IP KE DATABASE saat buat token
       await ctx.db.verificationToken.create({
-        data: { identifier, token: otp, expires },
+        data: {
+          identifier,
+          token: otp,
+          expires,
+          ipAddress: ip // Simpan IP di sini
+        },
       });
 
       await sendPurchaseHistoryOtpEmail({ email, otp });
+
+      await setOtpOwnership(email);
+      await incrementResendCount(ctx.db, email);
 
       return { success: true };
     }),
@@ -1185,6 +1223,10 @@ export const purchasesRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const email = input.email.toLowerCase();
+
+      // Cek kepemilikan cookie OTP
+      await assertOtpOwnership(email);
+
       const identifier = `HISTORY:${email}`;
 
       const verificationToken = await ctx.db.verificationToken.findFirst({
@@ -1226,7 +1268,15 @@ export const purchasesRouter = createTRPCRouter({
         });
       }
 
-      await ctx.db.verificationToken.deleteMany({ where: { identifier } });
+      // Hapus token OTP dan cooldown LIMIT setelah verifikasi berhasil
+      await ctx.db.verificationToken.deleteMany({
+        where: {
+          identifier: { in: [identifier, `LIMIT:${email}`] },
+        },
+      });
+
+      // Bersihkan cookie ownership
+      await clearOtpOwnership();
 
       const accessToken = generateHistoryToken(email);
       return { success: true, accessToken };
@@ -1369,3 +1419,10 @@ export const purchasesRouter = createTRPCRouter({
       return { success: true, email: portalAccess.buyerEmail, accessToken };
     }),
 });
+
+// Jalankan ini secara berkala atau buat cron job di Vercel
+export async function cleanupExpiredTokens(db: any) {
+  await db.verificationToken.deleteMany({
+    where: { expires: { lt: new Date() } }
+  });
+}

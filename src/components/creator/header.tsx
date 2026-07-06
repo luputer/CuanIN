@@ -1,13 +1,12 @@
 "use client";
-import { CaretDownIcon, UserIcon, SignOutIcon, ListIcon, ShoppingBagIcon, BellIcon, CheckIcon, ArrowRightIcon } from "@phosphor-icons/react";
-import { useState, useRef, useEffect } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { ArrowRightIcon, BellIcon, CaretDownIcon, CheckIcon, ListIcon, ShoppingBagIcon, SignOutIcon, UserIcon } from "@phosphor-icons/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { api } from "~/trpc/react";
-import { useNotificationSound } from "~/hooks/shared/useNotificationSound";
 import PusherClient from "pusher-js";
+import { useEffect, useRef, useState } from "react";
+import { useNotificationSound } from "~/hooks/shared/useNotificationSound";
+import { api } from "~/trpc/react";
 
 export default function HeaderKreator({
     onMenuClick,
@@ -37,7 +36,6 @@ export default function HeaderKreator({
     const unreadCount = notifData?.unreadCount ?? 0;
 
     const user = userProfile ?? session?.user;
-    const router = useRouter();
     const dropdownRef = useRef<HTMLDivElement>(null);
     const notifRef = useRef<HTMLDivElement>(null);
 
@@ -222,23 +220,24 @@ export default function HeaderKreator({
 
                     {open && (
                         <div className="absolute left-1/2 top-14 -translate-x-1/2 w-56 bg-white border border-slate-800 rounded-xl shadow-[0px_1.5px_0px_#000] py-2 px-3 z-50">
-                            <button
-                                type="button"
-                                onClick={() => router.push('/profile')}
+                            <Link
+                                href="/profile"
+                                onClick={() => setOpen(false)}
                                 className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cuan-blue/10 hover:text-cuan-blue transition cursor-pointer"
                             >
                                 <UserIcon size={20} />
                                 <span>Akun Saya</span>
-                            </button>
+                            </Link>
 
                             {/* Portal Pelanggan */}
-                            <button type="button"
-                                onClick={() => router.push('/portal/dashboard?ref=/dashboard')}
+                            <Link
+                                href="/portal/dashboard?ref=/dashboard"
+                                onClick={() => setOpen(false)}
                                 className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-cuan-blue/10 hover:text-cuan-blue transition cursor-pointer"
                             >
                                 <ShoppingBagIcon size={20} />
                                 <span>Portal Pelanggan</span>
-                            </button>
+                            </Link>
                             <div className="my-2 border-t border-slate-400" />
                             <button
                                 type="button"

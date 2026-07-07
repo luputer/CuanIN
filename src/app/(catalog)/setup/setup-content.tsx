@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { CheckCircleIcon, LinkIcon, SpinnerIcon, StorefrontIcon, ArrowRightIcon, XCircleIcon, CheckIcon, XIcon } from "@phosphor-icons/react";
 import { Label } from "~/components/ui/label";
 import { api } from "~/trpc/react";
@@ -10,7 +9,6 @@ import { useSession } from "next-auth/react";
 
 
 export function CatalogSetupContent() {
-    const router = useRouter();
     const utils = api.useUtils();
     const { update } = useSession();
 

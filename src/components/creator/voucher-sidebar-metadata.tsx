@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import type { UseFormReturn, FieldValues, Path, PathValue } from "react-hook-form";
 import { FormSelect, FormInput } from "~/components/shared/form-layout";
 import { CaretDownIcon, CaretUpIcon } from "@phosphor-icons/react";
@@ -13,12 +14,22 @@ export function VoucherSidebarMetadata<TFieldValues extends FieldValues = FieldV
 }: VoucherSidebarMetadataProps<TFieldValues>) {
     const { register, watch, setValue } = form;
     const usageLimit = watch("usageLimit" as Path<TFieldValues>) as number | null | undefined;
-    const isLimitEnabled = usageLimit !== undefined && usageLimit !== null;
     const isLimitPerUser = watch("isLimitPerUser" as Path<TFieldValues>) as boolean | undefined;
+
+    // langsung derive dari value form, REAKTIF -> otomatis benar begitu reset() dari fetch selesai
+    const isLimitEnabled = usageLimit !== undefined && usageLimit !== null;
+
+    // teks yang lagi diketik user, terpisah dari value form asli
+    const [rawInput, setRawInput] = useState(usageLimit != null ? String(usageLimit) : "");
+
+    // sync ulang tampilan tiap kali usageLimit berubah dari LUAR
+    // (voucher kelar di-fetch & reset(), toggle diklik, tombol +/- dipencet)
+    useEffect(() => {
+        setRawInput(usageLimit != null ? String(usageLimit) : "");
+    }, [usageLimit]);
 
     return (
         <div className="shrink-0 w-full lg:w-[400px] space-y-6">
-            {/* Total Digunakan (Hanya muncul jika ada usageCount) */}
             {usageCount !== undefined && (
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <p className="text-slate-700 text-sm font-semibold mb-1">Total Digunakan</p>
@@ -31,7 +42,6 @@ export function VoucherSidebarMetadata<TFieldValues extends FieldValues = FieldV
                 </div>
             )}
 
-            {/* Status */}
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <p className="text-slate-700 text-sm font-semibold mb-3">Status</p>
                 <FormSelect {...register("status" as Path<TFieldValues>)}>
@@ -41,7 +51,6 @@ export function VoucherSidebarMetadata<TFieldValues extends FieldValues = FieldV
                 </FormSelect>
             </div>
 
-            {/* Batasan */}
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <p className="text-slate-700 text-sm font-semibold mb-3">Batasan</p>
                 <div className="space-y-4 pt-2">
@@ -70,10 +79,23 @@ export function VoucherSidebarMetadata<TFieldValues extends FieldValues = FieldV
                                 <FormInput
                                     type="text"
                                     inputMode="numeric"
-                                    value={usageLimit ?? ""}
+                                    value={rawInput}
                                     onChange={(event) => {
                                         const val = event.target.value.replace(/[^0-9]/g, "");
-                                        setValue("usageLimit" as Path<TFieldValues>, (val ? Number(val) : null) as PathValue<TFieldValues, Path<TFieldValues>>, { shouldValidate: true, shouldDirty: true });
+                                        setRawInput(val);
+                                        // cuma commit ke form kalau ada angka valid
+                                        // -> usageLimit di form ga pernah sempet null pas lagi diketik ulang
+                                        if (val) {
+                                            setValue("usageLimit" as Path<TFieldValues>, Number(val) as PathValue<TFieldValues, Path<TFieldValues>>, { shouldValidate: true, shouldDirty: true });
+                                        }
+                                    }}
+                                    onBlur={() => {
+                                        // kalau ditinggal kosong, balikin ke value form terakhir yg valid
+                                        if (!rawInput) {
+                                            const fallback = usageLimit ?? 1;
+                                            setRawInput(String(fallback));
+                                            setValue("usageLimit" as Path<TFieldValues>, fallback as PathValue<TFieldValues, Path<TFieldValues>>, { shouldValidate: true, shouldDirty: true });
+                                        }
                                     }}
                                     placeholder="Masukkan batas kuota voucher"
                                     suffix={

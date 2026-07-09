@@ -6,6 +6,7 @@ export function ProductMainInfoCard({
   categoryStyle,
   name,
   creatorName,
+  creatorImage,
   description,
   infoItems,
 }: {
@@ -13,6 +14,7 @@ export function ProductMainInfoCard({
   categoryStyle: string;
   name: string;
   creatorName: string;
+  creatorImage?: string | null;
   description: string;
   infoItems: React.ReactNode[];
 }) {
@@ -27,8 +29,13 @@ export function ProductMainInfoCard({
       </h1>
 
       <div className="flex items-center gap-2 mt-4">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow-200 text-xs font-bold">
-          {creatorName?.charAt(0).toUpperCase()}
+        <div className="flex h-8 w-8 shrink-0 overflow-hidden rounded-full items-center justify-center bg-yellow-200 text-xs font-bold">
+          {creatorImage ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={creatorImage} alt={creatorName} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+          ) : (
+            creatorName?.charAt(0).toUpperCase()
+          )}
         </div>
         <p className="text-sm font-medium text-slate-700">{creatorName}</p>
       </div>

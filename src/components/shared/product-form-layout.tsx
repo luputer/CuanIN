@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { FormProvider, type UseFormReturn, type FieldValues } from "react-hook-form";
 import { ProductDetailTabs, ProductDetailTabContent } from "~/components/shared/product-detail-tabs";
 import { DetailHeader } from "~/components/shared/detail-header";
@@ -72,6 +73,9 @@ export function ProductFormLayout<TFieldValues extends FieldValues = FieldValues
     setCustomFields
 }: ProductFormLayoutProps<TFieldValues>) {
     const { formState: { isDirty } } = form;
+    const searchParams = useSearchParams();
+    const tabFromUrl = searchParams.get("tab");
+    const defaultTab = (isEdit && tabFromUrl === "user") ? "user" : "detail";
 
     // Peringatan jika user mencoba keluar dengan perubahan yang belum disimpan
     useEffect(() => {
@@ -99,7 +103,7 @@ export function ProductFormLayout<TFieldValues extends FieldValues = FieldValues
 
                 <div className="rounded-xl border border-slate-800 overflow-hidden">
                     <ProductDetailTabs 
-                        defaultTab="detail" 
+                        defaultTab={defaultTab} 
                         buyerCount={buyerCount} 
                         hidePembeli={!isEdit}
                     >

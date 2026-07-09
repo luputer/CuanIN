@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, notFound } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { api } from "~/trpc/react";
 import Link from "next/link";
 import SearchInput from "~/components/ui/search";
@@ -185,12 +184,21 @@ export default function CatalogSlugPage() {
       <div className="mx-auto max-w-6xl px-4">
         {/* ── Profile ── */}
         <div className="relative z-10 -mt-12 flex flex-col items-center text-center md:-mt-16">
-          <Avatar className="h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-white p-1 shadow-md md:h-32 md:w-32">
-            <AvatarImage src={creator.image ?? ""} alt={creator.name ?? ""} />
-            <AvatarFallback className="bg-cuan-cyan/10 text-2xl font-bold text-cuan-cyan">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+          <div className="h-24 w-24 md:h-32 md:w-32 overflow-hidden rounded-full border-4 border-white bg-white shadow-md shrink-0 flex items-center justify-center">
+            {creator.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={creator.image}
+                alt={creator.name ?? ""}
+                className="h-full w-full object-cover rounded-full"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <span className="bg-cuan-cyan/10 text-2xl font-bold text-cuan-cyan h-full w-full flex items-center justify-center rounded-full">
+                {initials}
+              </span>
+            )}
+          </div>
 
           <h1 className="mt-1 text-md md:text-lg font-semibold text-slate-800">
             {creator.name ?? slug}

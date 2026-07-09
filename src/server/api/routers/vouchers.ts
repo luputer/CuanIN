@@ -68,10 +68,18 @@ export const vouchersRouter = createTRPCRouter({
             ]);
 
             return {
-                items: items.map(item => ({
-                    ...item,
-                    usageCount: item._count.purchases
-                })),
+                items: items.map(item => {
+                    const now = new Date();
+                    const endDate = new Date(item.endDate);
+                    const effectiveStatus = item.status === "aktif" && endDate < now
+                        ? "expired"
+                        : item.status;
+                    return {
+                        ...item,
+                        status: effectiveStatus,
+                        usageCount: item._count.purchases
+                    };
+                }),
                 total,
                 totalPages: Math.ceil(total / limit) || 1,
             };

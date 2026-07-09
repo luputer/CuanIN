@@ -89,11 +89,13 @@ export default function HeaderKreator({
 
     function formatTimeAgo(date: Date): string {
         const diff = Date.now() - date.getTime();
+        const minutes = Math.floor(diff / (1000 * 60));
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const days = Math.floor(hours / 24);
-        if (days > 0) return `${days} days ago`;
-        if (hours > 0) return `${hours} hours ago`;
-        return "Just now";
+        if (days > 0) return `${days} hari lalu`;
+        if (hours > 0) return `${hours} jam lalu`;
+        if (minutes > 0) return `${minutes} mnt lalu`;
+        return "Baru saja";
     }
 
     return (
@@ -126,7 +128,7 @@ export default function HeaderKreator({
 
                     {/* Notification Dropdown */}
                     {notifOpen && (
-                        <div className="absolute right-0 top-12 w-[340px] bg-white border border-slate-800 rounded-xl shadow-[0px_1.5px_0px_#000] overflow-hidden z-50">
+                        <div className="fixed sm:absolute right-2 sm:right-0 top-[60px] sm:top-12 w-[calc(100vw-1rem)] sm:w-[340px] bg-white border border-slate-800 rounded-xl shadow-[0px_1.5px_0px_#000] overflow-hidden z-50">
                             {/* Header */}
                             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200">
                                 <span className="font-semibold text-sm text-slate-800">Notifikasi Terbaru</span>

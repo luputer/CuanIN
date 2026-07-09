@@ -13,6 +13,12 @@ export interface PortalPurchaseType {
   paidAt: Date | string | null;
   paymentMethod: string | null;
   paymentDetails: any;
+  voucher?: {
+    id: string;
+    code: string;
+    discount: number | string | { toNumber: () => number };
+    type: string;
+  } | null;
   product: {
     id: string;
     name: string;
@@ -23,6 +29,7 @@ export interface PortalPurchaseType {
     links: any;
     notes: string | null;
     price: number | string | { toNumber: () => number };
+    discountPrice?: number | string | { toNumber: () => number } | null;
     contentType: string | null;
     startDate: Date | null;
     endDate: Date | null;

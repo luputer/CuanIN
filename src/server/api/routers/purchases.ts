@@ -35,6 +35,7 @@ export const purchasesRouter = createTRPCRouter({
               image: true,
               type: true,
               price: true,
+              discountPrice: true,
               slug: true,
               contentType: true,
               startDate: true,
@@ -53,6 +54,9 @@ export const purchasesRouter = createTRPCRouter({
                 },
               },
             },
+          },
+          voucher: {
+            select: { id: true, code: true, discount: true, type: true },
           },
         },
       });
@@ -1039,6 +1043,7 @@ export const purchasesRouter = createTRPCRouter({
               contentType: true,
               type: true,
               price: true,
+              discountPrice: true,
               user: {
                 select: {
                   name: true,
@@ -1048,6 +1053,9 @@ export const purchasesRouter = createTRPCRouter({
                 },
               },
             },
+          },
+          voucher: {
+            select: { id: true, code: true, discount: true, type: true },
           },
         },
         orderBy: { createdAt: "desc" },
@@ -1319,6 +1327,7 @@ export const purchasesRouter = createTRPCRouter({
               links: true,
               notes: true,
               price: true,
+              discountPrice: true,
               contentType: true,
               startDate: true,
               endDate: true,
@@ -1330,6 +1339,9 @@ export const purchasesRouter = createTRPCRouter({
                 },
               },
             },
+          },
+          voucher: {
+            select: { id: true, code: true, discount: true, type: true },
           },
         },
         orderBy: { createdAt: "desc" },
@@ -1375,6 +1387,7 @@ export const purchasesRouter = createTRPCRouter({
               links: true,
               notes: true,
               price: true,
+              discountPrice: true,
               contentType: true,
               startDate: true,
               endDate: true,
@@ -1386,6 +1399,9 @@ export const purchasesRouter = createTRPCRouter({
                 },
               },
             },
+          },
+          voucher: {
+            select: { id: true, code: true, discount: true, type: true },
           },
         },
         orderBy: { createdAt: "desc" },

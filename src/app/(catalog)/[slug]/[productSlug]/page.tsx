@@ -185,6 +185,7 @@ export default function ProductDetailPage() {
               categoryStyle={CATEGORY_STYLE[product.type] ?? CATEGORY_STYLE_DEFAULT}
               name={product.name}
               creatorName={product.user.name ?? ""}
+              creatorImage={product.user.image}
               description={product.shortDescription ?? ""}
               infoItems={[
                 ...(metaLabel

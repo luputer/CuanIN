@@ -211,6 +211,37 @@ export async function generateInvoicePDF(data: InvoiceData) {
   doc.line(margin, y, pageWidth - margin, y);
   y += 8;
 
+  // ─── DISCOUNT ─────────────────────────────────────────────────────────
+  let totalDiscount = 0;
+  let discountLabel = "";
+  
+  if (data.voucher) {
+    const voucherDiscount = typeof data.voucher.discount === "object" && data.voucher.discount !== null && "toNumber" in data.voucher.discount ? data.voucher.discount.toNumber() : Number(data.voucher.discount);
+    if (data.voucher.type === "PERSEN") {
+      totalDiscount = (productPrice * voucherDiscount) / 100;
+      discountLabel = `Diskon Voucher (${voucherDiscount}%)`;
+    } else {
+      totalDiscount = voucherDiscount;
+      discountLabel = `Diskon Voucher`;
+    }
+  } else if (data.product.discountPrice) {
+    const dPrice = typeof data.product.discountPrice === "object" && data.product.discountPrice !== null && "toNumber" in data.product.discountPrice ? data.product.discountPrice.toNumber() : Number(data.product.discountPrice);
+    if (dPrice < productPrice) {
+      totalDiscount = productPrice - dPrice;
+      discountLabel = "Diskon Produk";
+    }
+  }
+
+  if (totalDiscount > 0) {
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 116, 139);
+    doc.text(discountLabel, margin + 90, y);
+    doc.setTextColor(239, 68, 68); // red-500
+    doc.text(`-${formatIDR(totalDiscount)}`, pageWidth - margin - 4, y, { align: "right" });
+    y += 10;
+  }
+
   // ─── TOTAL ────────────────────────────────────────────────────────────
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");

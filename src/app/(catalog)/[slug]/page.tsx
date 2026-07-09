@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, notFound } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { api } from "~/trpc/react";
 import Link from "next/link";
 import SearchInput from "~/components/ui/search";

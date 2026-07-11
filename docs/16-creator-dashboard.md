@@ -16,8 +16,8 @@ sequenceDiagram
     DB-->>Server: Return metrics
     Server-->>Client: Return dashboard metrics
     Client->>Creator: Tampilkan rangkuman statistik penjualan, saldo, & chart Recharts
+
 ```
 
 ### Detail Langkah / Deskripsi Alur:
-
 Kreator membuka dasbor analitik penjualan untuk melihat grafik keuntungan dan jumlah pembeli.

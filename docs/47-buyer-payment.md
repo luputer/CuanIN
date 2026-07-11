@@ -16,9 +16,9 @@ sequenceDiagram
     Server->>Midtrans: Call createSnapTransaction(orderId, totalAmount, details)
     Midtrans-->>Server: Return Snap Token
     Server-->>Client: Return Snap Token
-    Client->>Client: Munculkan popup pembayaran Midtrans Snap
+    Client->>Client: Tampilkan popup Midtrans Snap
     Buyer->>Client: Pilih metode & selesaikan pembayaran
-  
+    
     %% Webhook
     Midtrans->>Webhook: HTTP POST Webhook (settlement callback)
     Webhook->>Webhook: Verifikasi signature SHA-512
@@ -27,8 +27,8 @@ sequenceDiagram
         DB-->>Webhook: Transaksi DB sukses
         Webhook-->>Midtrans: Return HTTP 200 (OK)
     end
+
 ```
 
 ### Detail Langkah / Deskripsi Alur:
-
 Pembeli membayar tagihan via Midtrans Snap, memicu pembaruan status transaksi & saldo kreator via webhook.

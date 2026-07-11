@@ -6,18 +6,28 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-38: **Daftar / Check
 sequenceDiagram
     autonumber
     actor Creator as "Kreator (Creator)"
-    participant Client as "Next.js Client (Checkout Simulation)"
+    participant Client as "Next.js Client (Checkout Page)"
     participant Server as "tRPC Purchases Router (purchases.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Creator->>Client: Membeli produk sendiri untuk testing, isi data checkout
-    Client->>Server: Call purchases.create(productId, buyerEmail, etc.)
-    Server->>Server: Cegah pembelian jika email pembeli === email kreator pemilik
-    Note over Server: Validasi: Tidak boleh beli produk milik sendiri!
-    Server-->>Client: Error: Tidak bisa membeli produk sendiri
-    Client->>Creator: Tampilkan larangan beli produk sendiri
+    alt Kasus A: Kreator membeli produk MILIKNYA SENDIRI
+        Creator->>Client: Lengkapi form checkout & klik Beli
+        Client->>Server: Call purchases.create(productId, buyerEmail=email_sendiri)
+        Server->>Server: Cek apakah email_pembeli === email_pemilik_produk
+        Note over Server: Validasi gagal!
+        Server-->>Client: Error: Tidak bisa membeli produk sendiri
+        Client->>Creator: Tampilkan pesan error "Tidak bisa membeli produk sendiri"
+    else Kasus B: Kreator membeli produk KREATOR LAIN
+        Creator->>Client: Lengkapi form checkout & klik Beli
+        Client->>Server: Call purchases.create(productId, buyerEmail=email_kreator)
+        Server->>Server: Cek apakah email_pembeli === email_pemilik_produk (berbeda)
+        Server->>DB: Buat Purchase baru dengan status: PENDING
+        DB-->>Server: Simpan sukses
+        Server-->>Client: Return { status: 'pending', purchaseId }
+        Client->>Creator: Lanjutkan ke pembayaran (Redirect ke Midtrans Snap)
+    end
 
 ```
 
 ### Detail Langkah / Deskripsi Alur:
-Kreator mensimulasikan pembelian produk (sistem melarang pembelian jika email pembeli sama dengan email pemilik produk).
+Kreator mensimulasikan pembelian produk (sistem melarang pembelian jika membeli produk sendiri, namun memperbolehkan jika membeli produk milik kreator lain).

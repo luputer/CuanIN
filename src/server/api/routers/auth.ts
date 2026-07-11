@@ -17,8 +17,6 @@ import { phoneSchema } from "~/lib/validation";
 const getIp = (ctx: any) => (ctx.req?.headers.get("x-forwarded-for")?.split(",")[0] || "unknown").trim();
 
 
-
-
 export const authRouter = createTRPCRouter({
   register: publicProcedure
     .input(

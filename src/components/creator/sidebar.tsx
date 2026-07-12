@@ -175,7 +175,7 @@ export default function SidebarKreator({
                 <div className={`mt-6 w-full flex flex-col items-center rounded-lg bg-white border-1 border-cuan-cyan shadow-[0px_2px_0px_#00B8F1] transition duration-200 ease-out hover:translate-y-[2px] hover:shadow-none`}>
                     <SidebarItem
                         icon={<StorefrontIcon size={20} weight="fill" />}
-                        label="Katalog Saya"
+                        label="Kunjungi Toko"
                         href={catalogHref}
                         iconClassName="text-cuan-cyan"
                         textClassName="text-cuan-cyan font-semibold text-base"

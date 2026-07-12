@@ -56,7 +56,7 @@ flowchart LR
             c19([Hapus Voucher])
             c20([Edit Profil Kreator])
             c21([Lihat Notifikasi Kreator])
-            
+          
             %% Shared with Buyer but scoped
             c22([Lihat Katalog Kreator])
             c23([Lihat Detail Katalog])
@@ -83,7 +83,7 @@ flowchart LR
 
     %% Actor to Use Case Relationships
     Admin === a1 & a2 & a3 & a4 & a5 & a6 & a7 & a8 & a9 & a10 & a11 & a12 & a13 & a14
-    
+  
     Creator === c1 & c2 & c3 & c4 & c5 & c6 & c7 & c8 & c9 & c10 & c11 & c12 & c13 & c14 & c15 & c16 & c17 & c18 & c19 & c20 & c21 & c22 & c23 & c24 & c25 & c26 & c27 & c28 & c29
 
     Buyer === b1 & b2 & b3 & b4 & b5 & b6 & b7 & b8
@@ -99,7 +99,9 @@ flowchart LR
 ## Daftar Lengkap Kasus Penggunaan (51 Use Cases)
 
 ### 1. Aktor: Admin (14 Use Cases)
+
 Admin bertanggung jawab penuh atas pengawasan platform, manajemen kreator, peninjauan produk, pelacakan transaksi global, dan persetujuan pengiriman saldo (Xendit Payout).
+
 1. **Lihat Dashboard**: Melihat rangkuman analitik platform global (total pendapatan platform fee, saldo kas, total transaksi).
 2. **Lihat Daftar Kreator**: Melihat semua daftar akun pengguna yang memiliki role `CREATOR`.
 3. **Tambah Kreator**: Mendaftarkan akun kreator baru secara langsung dari dashboard admin.
@@ -118,7 +120,9 @@ Admin bertanggung jawab penuh atas pengawasan platform, manajemen kreator, penin
 ---
 
 ### 2. Aktor: Kreator / Penjual (29 Use Cases)
+
 Kreator adalah pengguna yang menjual produk digital, webinar, atau kelas online, mengelola voucher diskon, dan menarik pendapatan mereka.
+
 1. **Registrasi Akun**: Mendaftarkan diri menjadi Kreator baru melalui kredensial/Google SSO.
 2. **Lihat Dashboard**: Memantau analitik penjualan, pengunjung katalog, os/browser pengunjung, rasio konversi, dan saldo aktif.
 3. **Lihat Daftar Produk**: Mengakses semua produk digital, kelas online, dan webinar yang telah dibuat.
@@ -152,7 +156,9 @@ Kreator adalah pengguna yang menjual produk digital, webinar, atau kelas online,
 ---
 
 ### 3. Aktor: User / Pembeli (8 Use Cases)
+
 User adalah pelanggan akhir (buyer) yang membeli produk dari kreator melalui katalog.
+
 1. **Lihat Katalog**: Mengunjungi halaman katalog publik kreator (`/catalog/[username]`) untuk melihat produk.
 2. **Lihat Detail Katalog**: Membuka detail informasi produk sebelum membelinya.
 3. **Daftar (Checkout)**: Mengisi form checkout (nama, email, nomor HP, voucher, dan jawaban form kustom).

@@ -20,4 +20,5 @@ sequenceDiagram
 ```
 
 ### Detail Langkah / Deskripsi Alur:
+
 Kreator mengubah parameter status voucher (aktif/tidak aktif) atau menambah limit kuota voucher.

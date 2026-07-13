@@ -223,7 +223,7 @@ export default function AdminCreatorsPage() {
                                                                 <CopyIcon className={`w-[22px] h-[22px] cursor-pointer ${!item.catalog?.slug ? "text-slate-300 cursor-not-allowed" : "text-yellow-500 hover:text-yellow-600"}`} />
                                                             </button>
                                                         </TooltipTrigger>
-                                                        <TooltipContent>{!item.catalog?.slug ? "Kreator belum memiliki katalog" : "Salin Link Katalog"}</TooltipContent>
+                                                        <TooltipContent>{!item.catalog?.slug ? "Kreator belum memiliki toko" : "Salin Link Toko"}</TooltipContent>
                                                     </Tooltip>
                                                 </div>
                                             </TableCell>
@@ -310,15 +310,14 @@ export default function AdminCreatorsPage() {
                                         <button
                                             onClick={() => handleCopyKatalog(item)}
                                             disabled={!item.catalog?.slug}
-                                            className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border rounded-lg transition cursor-pointer ${
-                                                !item.catalog?.slug
-                                                    ? "text-slate-400 border-slate-200 bg-slate-50 cursor-not-allowed"
-                                                    : "text-yellow-600 border-yellow-600 hover:bg-yellow-50"
-                                            }`}
-                                            title="Salin Link Katalog"
+                                            className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border rounded-lg transition cursor-pointer ${!item.catalog?.slug
+                                                ? "text-slate-400 border-slate-200 bg-slate-50 cursor-not-allowed"
+                                                : "text-yellow-600 border-yellow-600 hover:bg-yellow-50"
+                                                }`}
+                                            title="Salin Link Toko"
                                         >
                                             <CopyIcon className="w-4 h-4" />
-                                            <span>{!item.catalog?.slug ? "Tidak tersedia" : "Salin Link Katalog"}</span>
+                                            <span>{!item.catalog?.slug ? "Tidak tersedia" : "Salin Link Toko"}</span>
                                         </button>
                                     </div>
                                 </div>

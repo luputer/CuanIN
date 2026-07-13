@@ -55,7 +55,7 @@ export function CatalogSetupContent() {
             });
 
             await utils.catalog.getMine.invalidate();
-            toast.success("Catalog berhasil dibuat!");
+            toast.success("Toko berhasil dibuat!");
 
             await update({ hasCatalog: true });
             // router.push("/dashboard");
@@ -94,9 +94,9 @@ export function CatalogSetupContent() {
                     <div className="inline-flex items-center justify-center size-20 bg-cuan-blue/10 rounded-full mb-4">
                         <StorefrontIcon className="size-10 text-cuan-blue" />
                     </div>
-                    <h1 className="pb-3 text-2xl font-semibold text-cuan-blue">Buat Halaman Katalog</h1>
+                    <h1 className="pb-3 text-2xl font-semibold text-cuan-blue">Buat Halaman Toko</h1>
                     <p className="text-base text-slate-800">
-                        Buat halaman katalog untuk menampilkan produkmu.
+                        Buat halaman toko untuk menampilkan produkmu.
                     </p>
                 </div>
 
@@ -104,7 +104,7 @@ export function CatalogSetupContent() {
                     {/* Slug */}
                     <div className="space-y-1.5">
                         <Label htmlFor="catalog-url" className="text-sm font-medium text-slate-800">
-                            URL Katalog <span className="text-red-500">*</span>
+                            URL Toko <span className="text-red-500">*</span>
                         </Label>
                         <div
                             className={`flex items-center rounded-lg border py-1 px-2 text-sm transition-all outline-none placeholder:text-sm placeholder:text-slate-400

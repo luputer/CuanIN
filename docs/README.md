@@ -4,6 +4,14 @@
 
 Dokumentasi ini disusun sebagai panduan teknis dan referensi untuk laporan Tugas Akhir. Dokumen ini memuat arsitektur sistem, analisis pustaka (library) yang digunakan, kamus data database, serta pemodelan sistem menggunakan diagram (ERD, Class Diagram, Sequence Diagram, dan Flowchart).
 
+### Panduan & Dokumentasi Tambahan
+*   **[Konsep Multi-Tenant & Peran](file:///home/luputer/Dokumen/TA/CuanIN/docs/README-multi-tenant.md)** — Penjelasan rinci arsitektur multi-tenant dan role-based access control (CREATOR, USER, ADMIN).
+*   **[Portal Akses Pembeli](file:///home/luputer/Dokumen/TA/CuanIN/docs/portal-akses.md)** — Dokumentasi mengenai cara kerja portal akses bagi pembeli.
+*   **[Perbaikan Autentikasi](file:///home/luputer/Dokumen/TA/CuanIN/docs/perbaikan-autentikasi-cuanin.md)** — Dokumentasi mengenai flow login, register, dan reset password.
+*   **[Best Practice Navigasi](file:///home/luputer/Dokumen/TA/CuanIN/docs/best-practice-navigasi.md)** — Aturan navigasi dan layouting.
+*   **[Panduan Next.js Rendering](file:///home/luputer/Dokumen/TA/CuanIN/docs/panduan-nextjs-rendering.md)** — Penggunaan SSR/CSR di Next.js.
+*   **[Panduan Rate Limit Vercel](file:///home/luputer/Dokumen/TA/CuanIN/docs/panduan-rate-limit-vercel.md)** — Keamanan & pembatasan request.
+
 ---
 
 ## 1. Pendahuluan & Arsitektur Sistem

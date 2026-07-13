@@ -22,7 +22,6 @@ function LoginPageInner() {
   const apiUtils = api.useUtils();
   const [serverError, setServerError] = useState<string | null>(null);
 
-
   const {
     register,
     handleSubmit,

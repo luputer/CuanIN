@@ -28,4 +28,5 @@ sequenceDiagram
 ```
 
 ### Detail Langkah / Deskripsi Alur:
+
 Admin mengupdate kredensial profil login dan password administratifnya.

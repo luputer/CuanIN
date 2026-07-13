@@ -2,8 +2,10 @@ import { TRPCError } from "@trpc/server";
 import { withdrawalSchema } from "~/lib/validation";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { getCreatorBalance, getAdminBalance } from "~/lib/balance";
-import { sendWithdrawalPendingEmail } from "~/lib/email";
+import { sendWithdrawalPendingEmail, sendWithdrawalOtpEmail } from "~/lib/email";
 import { createNotification } from "~/lib/notification";
+import crypto from "crypto";
+import { z } from "zod";
 
 const BANK_OPTIONS = {
   bca: { name: "BCA", channelCode: "ID_BCA" },
@@ -24,11 +26,64 @@ export const withdrawalsRouter = createTRPCRouter({
       const transferFee = 4000;
       const totalDeduction = payoutAmount + platformFee + transferFee;
 
-      if (payoutAmount < 10000) {
+      if (payoutAmount < 5000) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Nominal penarikan minimal Rp10.000.",
+          message: "Nominal penarikan minimal Rp5.000.",
         });
+      }
+
+      // OTP Verification (only for Creator/Non-Admin)
+      if (!isAdmin) {
+        if (!input.otp) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "OTP penarikan wajib diisi.",
+          });
+        }
+
+        const identifier = `WITHDRAWAL:${ctx.session.user.id}`;
+        const verificationToken = await ctx.db.verificationToken.findFirst({
+          where: { identifier },
+        });
+
+        if (!verificationToken) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Kode OTP tidak ditemukan. Silakan kirim ulang.",
+          });
+        }
+
+        if (new Date() > verificationToken.expires) {
+          await ctx.db.verificationToken.deleteMany({ where: { identifier } });
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Kode OTP sudah kedaluwarsa. Silakan minta kode baru.",
+          });
+        }
+
+        if (verificationToken.token !== input.otp) {
+          const updatedToken = await ctx.db.verificationToken.update({
+            where: { token: verificationToken.token },
+            data: { attempts: { increment: 1 } },
+          });
+
+          if (updatedToken.attempts >= 3) {
+            await ctx.db.verificationToken.deleteMany({ where: { identifier } });
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "Terlalu banyak percobaan salah. Silakan minta kode OTP baru.",
+            });
+          }
+
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Kode OTP salah. Sisa percobaan: ${3 - updatedToken.attempts}`,
+          });
+        }
+
+        // Delete token after successful verification
+        await ctx.db.verificationToken.deleteMany({ where: { identifier } });
       }
 
       const bank = BANK_OPTIONS[input.bank];
@@ -78,22 +133,6 @@ export const withdrawalsRouter = createTRPCRouter({
           },
         });
 
-        // Platform fee ke admin (hanya untuk creator)
-        if (!isAdmin && platformFee > 0) {
-          const admin = await tx.user.findFirst({ where: { role: "ADMIN" } });
-          if (admin) {
-            await tx.balanceEntry.create({
-              data: {
-                userId: admin.id,
-                amount: platformFee,
-                type: "PLATFORM_FEE_EARNED",
-                refId: newWithdrawal.id,
-                note: `Platform fee (2%) dari penarikan ${ctx.session.user.name ?? "creator"} (${newWithdrawal.id})`,
-              },
-            });
-          }
-        }
-
         // Kirim notifikasi ke creator
         try {
           await createNotification(tx, {
@@ -140,5 +179,77 @@ export const withdrawalsRouter = createTRPCRouter({
       });
 
       return withdrawal;
+    }),
+
+  sendWithdrawalOtp: protectedProcedure
+    .input(z.object({ amount: z.number().int().positive() }))
+    .mutation(async ({ ctx, input }) => {
+      const email = ctx.session.user.email;
+      if (!email) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Email pengguna tidak ditemukan.",
+        });
+      }
+
+      const isAdmin = ctx.session.user.role === "ADMIN";
+      const payoutAmount = input.amount;
+      const platformFee = isAdmin ? 0 : Math.round(payoutAmount * 0.02);
+      const transferFee = 4000;
+      const totalDeduction = payoutAmount + platformFee + transferFee;
+
+      if (payoutAmount < 5000) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Nominal penarikan minimal Rp5.000.",
+        });
+      }
+
+      // Check balance
+      let balanceAvailable = 0;
+      if (isAdmin) {
+        const adminBalance = await getAdminBalance(ctx.db);
+        balanceAvailable = adminBalance.balance;
+      } else {
+        const balance = await getCreatorBalance(ctx.db, ctx.session.user.id);
+        balanceAvailable = balance.balance;
+      }
+
+      if (totalDeduction > balanceAvailable) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Saldo tidak cukup. Total yang dibutuhkan: Rp${totalDeduction.toLocaleString("id-ID")}`,
+        });
+      }
+
+      // Generate 6-digit OTP
+      const otp = crypto.randomInt(100000, 999999).toString();
+      const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+      const identifier = `WITHDRAWAL:${ctx.session.user.id}`;
+
+      // Cleanup existing withdrawal tokens for this user
+      await ctx.db.verificationToken.deleteMany({
+        where: { identifier },
+      });
+
+      // Save token to DB
+      await ctx.db.verificationToken.create({
+        data: {
+          identifier,
+          token: otp,
+          expires,
+        },
+      });
+
+      // Send email
+      const name = ctx.session.user.name ?? "Kreator";
+      await sendWithdrawalOtpEmail({
+        email,
+        name,
+        amount: payoutAmount,
+        otp,
+      });
+
+      return { success: true };
     }),
 });

@@ -10,6 +10,7 @@ import { VerifyEmail } from "~/emails/verify-email";
 import { ResetPasswordEmail } from "~/emails/reset-password-email";
 import { PortalLinkEmail } from "~/emails/portal-link-email";
 import { PurchaseHistoryOtpEmail } from "~/emails/purchase-history-otp-email";
+import { WithdrawalOtpEmail } from "~/emails/withdrawal-otp-email";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
@@ -349,3 +350,43 @@ export const sendPurchaseHistoryOtpEmail = async ({
     return { success: false, error };
   }
 };
+
+// ─── Withdrawal OTP Email ───────────────────────────────────────────────────
+
+type SendWithdrawalOtpParams = {
+  email: string;
+  name: string;
+  amount: number;
+  otp: string;
+};
+
+export const sendWithdrawalOtpEmail = async ({
+  email,
+  name,
+  amount,
+  otp,
+}: SendWithdrawalOtpParams) => {
+  const html = await render(
+    React.createElement(WithdrawalOtpEmail, {
+      otp,
+      name,
+      amount,
+      year: new Date().getFullYear(),
+    })
+  );
+
+  try {
+    const data = await resend.emails.send({
+      from: `"Tim CuanIN" <${env.SMTP_FROM}>`,
+      to: email,
+      subject: `Kode OTP Penarikan Saldo CuanIN 🔐`,
+      text: `Halo ${name}, kode OTP penarikan saldo Anda sebesar Rp${amount.toLocaleString("id-ID")} adalah ${otp}. Kode ini berlaku selama 10 menit.`,
+      html,
+    });
+    return { success: true, messageId: data.data?.id };
+  } catch (error) {
+    console.error("Error sending withdrawal OTP email:", error);
+    return { success: false, error };
+  }
+};
+

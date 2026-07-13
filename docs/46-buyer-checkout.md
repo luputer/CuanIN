@@ -10,7 +10,9 @@ sequenceDiagram
     participant Server as "tRPC Purchases Router (purchases.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    User->>Client: Lengkapi form checkout & voucher, klik "Beli Sekarang"
+    User->>Client: Klik tombol beli pada halaman detail produk
+    Client->>User: Arahkan ke halaman pendaftaran (checkout)
+    User->>Client: Lengkapi form pendaftaran & voucher, klik "Beli"
     Client->>Server: Call purchases.create(payload)
     Server->>DB: Cek kuota kapasitas produk (capacity)
     alt Kuota Tersedia
@@ -20,8 +22,8 @@ sequenceDiagram
         end
         Server->>DB: $transaction: Buat Purchase (PENDING), FormAnswer, & User (role: USER jika baru)
         DB-->>Server: Simpan sukses
-        Server-->>Client: Return { status: 'pending', purchaseId }
-        Client->>User: Arahkan ke inisialisasi pembayaran
+        Server-->>Client: Return purchaseId
+        Client->>User: Arahkan ke halaman pembayaran
     else Kuota penuh
         Server-->>Client: Error: Kuota sudah penuh
         Client->>User: Tampilkan notifikasi kuota habis

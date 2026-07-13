@@ -15,7 +15,7 @@ sequenceDiagram
     Server->>DB: Query Product detail & relasi kreator
     DB-->>Server: Return data produk
     Server-->>Client: Return detail produk
-    Client->>Admin: Tampilkan detail deskripsi, harga, & aset dari produk kreator
+    Client->>Admin: Tampilkan detail dari produk tersebut
 
 ```
 

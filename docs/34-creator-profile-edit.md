@@ -13,15 +13,18 @@ sequenceDiagram
     participant DB as "Database (PostgreSQL/Prisma)"
     participant NextAuth as "NextAuth Session Provider"
 
+    Creator->>Client: Klik menu profil
+    Client->>Creator: Tampilkan halaman edit profil
+
     alt Ganti Banner Katalog / Foto
-        Creator->>Client: Pilih berkas gambar banner baru
+        Creator->>Client: Pilih berkas gambar banner/foto baru
         Client->>S3Router: Call s3.getUploadPresignedUrl(key, fileType)
         S3Router-->>Client: Return Presigned URL
-        Client->>R2: HTTP PUT Upload biner banner ke R2
+        Client->>R2: HTTP PUT Upload biner banner/foto ke R2
         R2-->>Client: Upload sukses
     end
 
-    Creator->>Client: Klik Edit Profil, ubah data, lalu klik "simpan"
+    Creator->>Client: Ubah data profil, lalu klik "Simpan"
     Client->>ProfRouter: Call profile.update(name, bio, banner, password)
     ProfRouter->>DB: Update tabel User & Profile
     DB-->>ProfRouter: Simpan sukses

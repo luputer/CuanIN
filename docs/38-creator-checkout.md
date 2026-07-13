@@ -10,21 +10,24 @@ sequenceDiagram
     participant Server as "tRPC Purchases Router (purchases.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
+    Creator->>Client: Klik tombol beli pada halaman detail produk
+    Client->>Creator: Arahkan ke halaman pendaftaran (checkout)
+
     alt Kasus A: Kreator membeli produk MILIKNYA SENDIRI
-        Creator->>Client: Lengkapi form checkout & klik Beli
+        Creator->>Client: Lengkapi form pendaftaran & klik "Beli"
         Client->>Server: Call purchases.create(productId, buyerEmail=email_sendiri)
         Server->>Server: Cek apakah email_pembeli === email_pemilik_produk
         Note over Server: Validasi gagal!
         Server-->>Client: Error: Tidak bisa membeli produk sendiri
         Client->>Creator: Tampilkan notifikasi "Tidak bisa membeli produk sendiri"
     else Kasus B: Kreator membeli produk KREATOR LAIN
-        Creator->>Client: Lengkapi form checkout & klik Beli
+        Creator->>Client: Lengkapi form pendaftaran & klik "Beli"
         Client->>Server: Call purchases.create(productId, buyerEmail=email_kreator)
         Server->>Server: Cek apakah email_pembeli === email_pemilik_produk (berbeda)
         Server->>DB: Buat Purchase baru dengan status: PENDING
         DB-->>Server: Simpan sukses
-        Server-->>Client: Return { status: 'pending', purchaseId }
-        Client->>Creator: Lanjutkan ke pembayaran (Redirect ke Midtrans Snap)
+        Server-->>Client: Return purchaseId
+        Client->>Creator: Arahkan ke halaman pembayaran
     end
 
 ```

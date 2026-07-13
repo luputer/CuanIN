@@ -11,7 +11,9 @@ sequenceDiagram
     participant DB as "Database (PostgreSQL/Prisma)"
     participant NextAuth as "NextAuth Session Manager"
 
-    Admin->>Client: Ubah data profil/password & Klik Simpan
+    Admin->>Client: Klik menu profil
+    Client->>Admin: Tampilkan halaman edit profil
+    Admin->>Client: Ubah data profil/password & Klik "Simpan"
     Client->>Server: Call profile.update(name, email, password)
     alt Password diubah
         Server->>Server: Enkripsi password via Bcrypt

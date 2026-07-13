@@ -15,7 +15,7 @@ sequenceDiagram
     Server->>DB: Query tabel Product dengan filter userId = creatorId
     DB-->>Server: Return daftar produk kreator
     Server-->>Client: Return list produk
-    Client->>Admin: Tampilkan katalog produk milik kreator tersebut
+    Client->>Admin: Tampilkan daftar produk milik kreator tersebut
 
 ```
 

@@ -11,7 +11,9 @@ sequenceDiagram
     participant DB as "Database (PostgreSQL/Prisma)"
     participant SMTP as "SMTP / Email Service"
 
-    Creator->>Client: Isi nominal & data bank, klik "Tarik Saldo"
+    Creator->>Client: Klik tombol "Tarik Saldo"
+    Client->>Creator: Tampilkan form tarik saldo (modal)
+    Creator->>Client: Isi data penarikan, klik "Konfirmasi"
     Client->>Server: Call withdrawals.create(amount, bank, accountNumber, accountHolderName)
     Server->>DB: Hitung sisa saldo aktif Kreator di ledger DB (getCreatorBalance)
     alt Saldo cukup

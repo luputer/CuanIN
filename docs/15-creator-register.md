@@ -5,7 +5,7 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-15: **Registrasi Aku
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Creator as "Kreator (Creator)"
+    actor Creator as "Kreator"
     participant Client as "Next.js Client (Sign-Up / Verify Page)"
     participant Server as "tRPC Auth Router (auth.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
@@ -13,7 +13,7 @@ sequenceDiagram
 
     %% Bagian 1: Registrasi Akun
     Note over Creator, SMTP: Bagian 1: Registrasi & Pengiriman OTP
-    Creator->>Client: Lengkapi form registrasi & submit
+    Creator->>Client: Isi registrasi, lalu klik "Daftar"
     Client->>Server: Call auth.register(name, email, phone, password)
     Server->>DB: Cek ketersediaan email
     alt Email unik
@@ -25,7 +25,7 @@ sequenceDiagram
         Client->>Creator: Redirect ke /verify-otp?email={email}
     else Email terdaftar
         Server-->>Client: Error: Email sudah digunakan
-        Client->>Creator: Tampilkan alert gagal registrasi
+        Client->>Creator: Tampilkan notifikasi gagal registrasi
     end
 
     %% Bagian 2: Verifikasi OTP
@@ -42,7 +42,7 @@ sequenceDiagram
         Client->>Creator: Redirect ke /sign-in dengan pesan sukses verifikasi
     else OTP Salah / Expired
         Server-->>Client: Error: Kode OTP tidak valid / kedaluwarsa
-        Client->>Creator: Tampilkan pesan error di form & sisa percobaan
+        Client->>Creator: Tampilkan notifikasi di form & sisa percobaan
     end
 ```
 

@@ -5,12 +5,12 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-46: **Daftar / Check
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Buyer as "User / Pembeli (Buyer)"
+    actor User as "User"
     participant Client as "Next.js Client (Checkout Page)"
     participant Server as "tRPC Purchases Router (purchases.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Buyer->>Client: Lengkapi form checkout & voucher, klik "Beli Sekarang"
+    User->>Client: Lengkapi form checkout & voucher, klik "Beli Sekarang"
     Client->>Server: Call purchases.create(payload)
     Server->>DB: Cek kuota kapasitas produk (capacity)
     alt Kuota Tersedia
@@ -21,13 +21,13 @@ sequenceDiagram
         Server->>DB: $transaction: Buat Purchase (PENDING), FormAnswer, & User (role: USER jika baru)
         DB-->>Server: Simpan sukses
         Server-->>Client: Return { status: 'pending', purchaseId }
-        Client->>Buyer: Arahkan ke inisialisasi pembayaran
+        Client->>User: Arahkan ke inisialisasi pembayaran
     else Kuota penuh
         Server-->>Client: Error: Kuota sudah penuh
-        Client->>Buyer: Tampilkan pesan kuota habis
+        Client->>User: Tampilkan notifikasi kuota habis
     end
 
 ```
 
 ### Detail Langkah / Deskripsi Alur:
-Pembeli mengisi informasi nama, email, kuesioner kustom, voucher diskon, dan mengajukan checkout pesanan.
+User mengisi informasi nama, email, kuesioner kustom, voucher diskon, dan mengajukan checkout pesanan.

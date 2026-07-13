@@ -5,20 +5,20 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-12: **Konfirmasi Tar
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Admin as "Admin CuanIN"
+    actor Admin as "Admin"
     participant Client as "Next.js Client (Withdrawal Review)"
     participant Server as "tRPC Admin Router (admin.ts)"
     participant Xendit as "Xendit Payouts API"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Admin->>Client: Klik "Proses Payout / Setujui"
+    Admin->>Client: Klik "Setujui/Tolak"
     Client->>Server: Call admin.adminWithdraw(withdrawalId)
     Server->>Xendit: Call createPayout(referenceId, amount, details)
-    Xendit-->>Server: Return status: ACCEPTED / REQUESTED
-    Server->>DB: Update status Withdrawal ke ACCEPTED / REQUESTED
+    Xendit-->>Server: Return status: ACCEPTED / REJECTED
+    Server->>DB: Update status Withdrawal ke ACCEPTED / REJECTED
     DB-->>Server: Update sukses
-    Server-->>Client: Return status disetujui
-    Client->>Admin: Ubah badge status penarikan di dashboard admin
+    Server-->>Client: Return status disetujui/ditolak
+    Client->>Admin: Ubah badge status penarikan di daftar transaksi
 
 ```
 

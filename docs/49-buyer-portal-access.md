@@ -5,28 +5,34 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-49: **Akses Produk L
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Buyer as "User / Pembeli (Buyer)"
+    actor User as "User"
     participant Client as "Next.js Client (/portal/[token])"
     participant Server as "tRPC Purchases Router (purchases.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
-    participant R2 as "Cloudflare R2 Object Storage"
 
-    Buyer->>Client: Klik tautan portal di email (/portal/login?token={portalToken})
+    User->>Client: Klik tautan portal di email (/portal/login?token={portalToken})
     Client->>Server: Call purchases.loginWithPortalToken({ token })
     Server-->>Client: Return { email, accessToken }
-    Client->>Server: Call purchases.getPurchaseHistoryByToken({ accessToken: accessToken, mode: 'produk' })
-    Server->>DB: Query PortalAccess & Purchase terasosiasi (cek kedaluwarsa 30 hari)
-    DB-->>Server: Return detail produk & links
-    Server-->>Client: Return data lengkap
-    Client->>Buyer: Tampilkan halaman portal akses berisi file & catatan kreator
-    
-    alt Pembeli klik "Download File"
-        Buyer->>Client: Klik unduh berkas digital
-        Client->>R2: HTTP GET unduh berkas menggunakan URL R2 publik
-        R2-->>Buyer: Berkas tersimpan di lokal komputer
-    end
-
+    Client->>User: Arahkan ke halaman portal
+    User->>Client: Klik menu "Produk Saya"
+    Client->>Server: Call purchases.getPurchaseHistoryByToken({ accessToken, mode: 'produk' })
+    Server->>DB: Query PortalAccess & Purchase
+    DB-->>Server: Return data produk
+    Server-->>Client: Return detail produk
+    Client->>User: Tampilkan produk yang dapat diakses
 ```
 
 ### Detail Langkah / Deskripsi Alur:
-Pembeli masuk ke portal akses terpusat untuk melihat tautan file dan mengunduhnya langsung dari R2.
+
+**User Akses Produk Lewat Portal**
+- **Aktor:** User
+- **Kondisi Awal:**
+  1. User sudah melakukan pembayaran dan menerima email.
+  2. Portal akses diaktifkan oleh Kreator/pemilik produk.
+  3. User berada di halaman toko (akses lewat tautan portal di email).
+- **Kondisi Akhir:** User berhasil mengakses produk melalui portal.
+
+**Skenario Utama:**
+1. Jika lewat email/token, User dapat klik tautan portal pada email tersebut.
+2. Setelahnya User akan diarahkan ke halaman portal.
+3. User dapat mengakses produk melalui menu Produk Saya.

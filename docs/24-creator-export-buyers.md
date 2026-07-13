@@ -5,7 +5,7 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-24: **Export Data Pe
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Creator as "Kreator (Creator)"
+    actor Creator as "Kreator"
     participant Client as "Next.js Client (Buyers Page)"
     participant Server as "tRPC Purchases Router (purchases.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"

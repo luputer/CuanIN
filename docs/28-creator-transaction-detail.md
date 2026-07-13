@@ -5,17 +5,17 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-28: **Lihat Detail T
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Creator as "Kreator (Creator)"
+    actor Creator as "Kreator"
     participant Client as "Next.js Client (Transaction Detail Modal)"
     participant Server as "tRPC Purchases Router (purchases.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Creator->>Client: Klik rincian salah satu transaksi masuk
+    Creator->>Client: Klik Lihat Detail pada salah satu transaksi
     Client->>Server: Call purchases.getById({ id })
     Server->>DB: Query detail Purchase & product details
     DB-->>Server: Return data
     Server-->>Client: Return detail transaksi
-    Client->>Creator: Tampilkan nominal kotor, platform fee (2%), & dana bersih masuk ke ledger
+    Client->>Creator: Tampilkan informasi detail transaksi
 
 ```
 

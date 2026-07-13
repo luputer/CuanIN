@@ -5,17 +5,17 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-35: **Lihat Notifika
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Creator as "Kreator (Creator)"
+    actor Creator as "Kreator"
     participant Client as "Next.js Client (Notification Dropdown)"
     participant Server as "tRPC Notification Router (notification.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Creator->>Client: Buka Panel Notifikasi
+    Creator->>Client: Klik menu "Notifikasi"
     Client->>Server: Call notification.list()
     Server->>DB: Query Notification (userId = creatorId, isRead = false)
     DB-->>Server: Return list notifikasi
     Server-->>Client: Return unread notifications
-    Client->>Creator: Render list notifikasi (pembelian baru, transfer sukses)
+    Client->>Creator: Tampilkan list notifikasi
 
 ```
 

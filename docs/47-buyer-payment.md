@@ -5,7 +5,7 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-47: **Bayar (Pembeli
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Buyer as "User / Pembeli (Buyer)"
+    actor User as "User"
     participant Client as "Next.js Client (Payment Window)"
     participant Server as "tRPC Purchases Router (purchases.ts)"
     participant Midtrans as "Midtrans Snap API"
@@ -17,7 +17,7 @@ sequenceDiagram
     Midtrans-->>Server: Return Snap Token
     Server-->>Client: Return Snap Token
     Client->>Client: Tampilkan popup Midtrans Snap
-    Buyer->>Client: Pilih metode & selesaikan pembayaran
+    User->>Client: Pilih metode & selesaikan pembayaran
     
     %% Webhook
     Midtrans->>Webhook: HTTP POST Webhook (settlement callback)
@@ -31,4 +31,4 @@ sequenceDiagram
 ```
 
 ### Detail Langkah / Deskripsi Alur:
-Pembeli membayar tagihan via Midtrans Snap, memicu pembaruan status transaksi & saldo kreator via webhook.
+User membayar tagihan via Midtrans Snap, memicu pembaruan status transaksi & saldo kreator via webhook.

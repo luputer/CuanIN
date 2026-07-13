@@ -5,7 +5,7 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-6: **Lihat Daftar Pr
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Admin as "Admin CuanIN"
+    actor Admin as "Admin"
     participant Client as "Next.js Client (Creator Products Page)"
     participant Server as "tRPC Creators Router (creators.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"

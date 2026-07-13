@@ -5,17 +5,17 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-22: **Lihat Daftar P
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Creator as "Kreator (Creator)"
+    actor Creator as "Kreator"
     participant Client as "Next.js Client (Buyers Page)"
     participant Server as "tRPC Purchases Router (purchases.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Creator->>Client: Membuka menu Pembeli (Peserta)
+    Creator->>Client: Klik menu "Pembeli" pada salah satu produk
     Client->>Server: Call purchases.getAllParticipants({ page: 1, limit: 10 })
     Server->>DB: Query Purchase (status: completed) terkait produk milik Kreator
     DB-->>Server: Return data pembeli
     Server-->>Client: Return list pembeli
-    Client->>Creator: Tampilkan tabel berisi daftar pelanggan toko (Peserta)
+    Client->>Creator: Tampilkan daftar seluruh pembeli produknya
 
 ```
 

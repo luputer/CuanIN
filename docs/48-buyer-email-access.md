@@ -5,15 +5,27 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-48: **Akses Produk L
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Buyer as "User / Pembeli (Buyer)"
+    actor User as "User"
     participant Inbox as "Email Client (Pembeli)"
     participant System as "SMTP Email Sender (Nodemailer)"
 
     Note over System, Inbox: Dipicu pasca Webhook Midtrans Sukses
     System->>Inbox: Kirim email akses produk (sendProductEmail) dengan link materi & portalUrl
-    Inbox-->>Buyer: Pembeli menerima email & mengklik link akses produk digital / webinar
+    Inbox-->>User: User menerima email & mengklik tautan akses
+    User->>Inbox: Klik tautan akses produk di dalam email
+    Inbox->>User: Sistem mengarahkan User ke tautan akses produk
+    User->>User: User mengakses produk
 
 ```
 
 ### Detail Langkah / Deskripsi Alur:
-Pembeli mendapatkan surat elektronik berisi tautan materi produk digital atau tiket webinar secara otomatis.
+
+**User Akses Produk Lewat Email**
+- **Aktor:** User
+- **Kondisi Awal:** User sudah melakukan pembayaran dan menerima email.
+- **Kondisi Akhir:** User berhasil mengakses produk melalui email.
+
+**Skenario Utama:**
+1. User buka email dan klik tautan akses.
+2. Sistem mengarahkan User ke tautan akses produk.
+3. User mengakses produk.

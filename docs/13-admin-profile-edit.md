@@ -5,7 +5,7 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-13: **Edit Profil (A
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Admin as "Admin CuanIN"
+    actor Admin as "Admin"
     participant Client as "Next.js Client (Settings Page)"
     participant Server as "tRPC Profile Router (profile.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"

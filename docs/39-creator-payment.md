@@ -5,7 +5,7 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-39: **Bayar (Kreator
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Creator as "Kreator (Creator)"
+    actor Creator as "Kreator"
     participant Client as "Next.js Client (Payment Window)"
     participant Server as "tRPC Purchases Router (purchases.ts)"
     participant Midtrans as "Midtrans Snap API"

@@ -5,17 +5,17 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-32: **Edit Voucher (
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Creator as "Kreator (Creator)"
+    actor Creator as "Kreator"
     participant Client as "Next.js Client (Edit Voucher Page)"
     participant Server as "tRPC Vouchers Router (vouchers.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Creator->>Client: Ubah status / limit voucher & klik simpan
+    Creator->>Client: Klik Edit, ubah status data voucher, lalu klik simpan
     Client->>Server: Call vouchers.update(payload)
     Server->>DB: Update data Voucher di PostgreSQL
     DB-->>Server: Update sukses
     Server-->>Client: Return updated Voucher
-    Client->>Creator: Tampilkan pesan voucher berhasil diperbarui
+    Client->>Creator: Tampilkan notifikasi voucher berhasil diperbarui
 
 ```
 

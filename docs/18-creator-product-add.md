@@ -5,7 +5,7 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-18: **Tambah Produk 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Creator as "Kreator (Creator)"
+    actor Creator as "Kreator"
     participant Client as "Next.js Client (Add Product Page)"
     participant S3Router as "tRPC S3 Router (s3.ts)"
     participant ProdRouter as "tRPC Products Router (products.ts)"
@@ -24,7 +24,7 @@ sequenceDiagram
     ProdRouter->>DB: Insert record Product baru ke DB
     DB-->>ProdRouter: Simpan sukses
     ProdRouter-->>Client: Return created Product
-    Client->>Creator: Tampilkan modal produk berhasil diterbitkan
+    Client->>Creator: Tampilkan notifikasi produk berhasil ditambahkan
 
 ```
 

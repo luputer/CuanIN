@@ -5,17 +5,17 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-10: **Lihat Daftar T
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Admin as "Admin CuanIN"
+    actor Admin as "Admin"
     participant Client as "Next.js Client (Transactions List Page)"
     participant Server as "tRPC Admin Router (admin.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Admin->>Client: Membuka Menu "Kelola Transaksi" (Penarikan)
+    Admin->>Client: Klik menu "Transaksi"
     Client->>Server: Call admin.getWithdrawals(page, limit, search, status)
     Server->>DB: Query data tabel Withdrawal global beserta relasi User/Kreator
     DB-->>Server: Return data penarikan & pagination
     Server-->>Client: Return list penarikan
-    Client->>Admin: Tampilkan seluruh riwayat penarikan (transaksi) platform
+    Client->>Admin: Tampilkan daftar seluruh transaksi
 
 ```
 

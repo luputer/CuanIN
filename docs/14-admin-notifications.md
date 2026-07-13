@@ -5,12 +5,12 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-14: **Lihat Notifika
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Admin as "Admin CuanIN"
+    actor Admin as "Admin"
     participant Client as "Next.js Client (Notification Panel)"
     participant Server as "tRPC Notification Router (notification.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Admin->>Client: Buka Panel Notifikasi Admin
+    Admin->>Client: Klik menu "Notifikasi"
     Client->>Server: Call notification.list()
     Server->>DB: Query Notification dengan filter userId = Admin & isRead = false
     DB-->>Server: Return list notifikasi

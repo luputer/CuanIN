@@ -5,12 +5,12 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-19: **Edit Produk (K
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Creator as "Kreator (Creator)"
+    actor Creator as "Kreator"
     participant Client as "Next.js Client (Edit Product Page)"
     participant ProdRouter as "tRPC Products Router (products.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Creator->>Client: Ubah deskripsi / harga produk & klik simpan
+    Creator->>Client: Ubah data produk & klik simpan
     Client->>ProdRouter: Call products.update(id, payload)
     ProdRouter->>DB: Update record Product di Database
     DB-->>ProdRouter: Update sukses

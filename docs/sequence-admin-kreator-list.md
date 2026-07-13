@@ -10,12 +10,12 @@ sequenceDiagram
     participant Server as "tRPC Admin Router (admin.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Admin->>Client: Buka halaman Daftar Kreator
+    Admin->>Client: Klik menu "Daftar Kreator"
     Client->>Server: Call admin.getCreatorsList(page, search)
     Server->>DB: Query semua User dengan role: CREATOR
     DB-->>Server: Return data kreator & count
     Server-->>Client: Return list kreator & pagination
-    Client->>Admin: Rangkum dan tampilkan daftar kreator di tabel
+    Client->>Admin: Tampilkan daftar seluruh kreator di tabel
 ```
 
 ### Detail Langkah / Deskripsi Alur:

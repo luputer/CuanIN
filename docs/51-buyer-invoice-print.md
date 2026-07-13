@@ -5,17 +5,17 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-51: **Cetak Invoice 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Buyer as "User / Pembeli (Buyer)"
+    actor User as "User"
     participant Client as "Next.js Client (Portal Page / History)"
     participant jsPDF as "jsPDF Library (Client)"
 
-    Buyer->>Client: Klik tombol "Cetak Invoice / Unduh PDF"
+    User->>Client: Klik tombol "Cetak Invoice / Unduh PDF"
     Client->>Client: Ambil detail transaksi ter-cache (ID, Item, Harga, Metode Bayar)
     Client->>jsPDF: new jsPDF() & gambar desain layout invoice resmi CuanIN
     jsPDF-->>Client: Buffer file PDF siap
-    Client->>Buyer: Unduh invoice PDF resmi ke folder download lokal
+    Client->>User: Unduh invoice PDF resmi ke folder download lokal
 
 ```
 
 ### Detail Langkah / Deskripsi Alur:
-Pembeli mencetak / mengunduh dokumen invoice digital berformat PDF sebagai tanda bukti lunas.
+User mencetak / mengunduh dokumen invoice digital berformat PDF sebagai tanda bukti lunas.

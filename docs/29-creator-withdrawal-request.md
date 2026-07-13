@@ -5,7 +5,7 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-29: **Tarik Saldo (K
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Creator as "Kreator (Creator)"
+    actor Creator as "Kreator"
     participant Client as "Next.js Client (Balance Page)"
     participant Server as "tRPC Withdrawals Router (withdrawals.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
@@ -22,7 +22,7 @@ sequenceDiagram
         Client->>Creator: Tampilkan pemberitahuan tarik saldo sedang diproses
     else Saldo kurang
         Server-->>Client: Error: Saldo tidak cukup
-        Client->>Creator: Tampilkan alert gagal
+        Client->>Creator: Tampilkan notifikasi gagal
     end
 
 ```

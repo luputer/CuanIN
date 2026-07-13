@@ -5,17 +5,17 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-2: **Lihat Daftar Kr
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Admin as "Admin CuanIN"
+    actor Admin as "Admin"
     participant Client as "Next.js Client (Creators List Page)"
     participant Server as "tRPC Creators Router (creators.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Admin->>Client: Buka halaman Daftar Kreator
+    Admin->>Client: Klik menu "Kreator"
     Client->>Server: Call creators.getAll()
     Server->>DB: Query semua User dengan role: CREATOR
     DB-->>Server: Return data kreator & count
     Server-->>Client: Return list kreator
-    Client->>Admin: Rangkum dan tampilkan daftar kreator di tabel
+    Client->>Admin: Tampilkan daftar seluruh kreator di tabel
 
 ```
 

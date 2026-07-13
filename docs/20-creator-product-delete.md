@@ -5,14 +5,14 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-20: **Hapus Produk (
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Creator as "Kreator (Creator)"
+    actor Creator as "Kreator"
     participant Client as "Next.js Client (Products List)"
     participant ProdRouter as "tRPC Products Router (products.ts)"
     participant S3Router as "tRPC S3 Router (s3.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
     participant R2 as "Cloudflare R2 Storage"
 
-    Creator->>Client: Klik "Hapus"
+    Creator->>Client: Klik "Hapus" pada salah satu produk
     Client->>ProdRouter: Call products.delete(id)
     ProdRouter->>DB: Query detail product (ambil key R2)
     DB-->>ProdRouter: Return data produk

@@ -5,12 +5,12 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-1: **Lihat Dashboard
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Admin as "Admin CuanIN"
+    actor Admin as "Admin"
     participant Client as "Next.js Client (Admin Panel)"
     participant Server as "tRPC Analytics Router (analytics.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Admin->>Client: Membuka Dashboard Admin
+    Admin->>Client: Klik menu "Dashboard"
     Client->>Server: Call analytics.adminGetStats()
     Server->>DB: Query total user (creators/buyers), total transaksi, platform fee, views, & data grafis mingguan/bulanan
     DB-->>Server: Return data analitik dashboard

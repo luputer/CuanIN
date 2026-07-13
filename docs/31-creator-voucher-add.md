@@ -5,12 +5,12 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-31: **Tambah Voucher
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Creator as "Kreator (Creator)"
+    actor Creator as "Kreator"
     participant Client as "Next.js Client (Voucher Form)"
     participant Server as "tRPC Vouchers Router (vouchers.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Creator->>Client: Isi form voucher & klik simpan
+    Creator->>Client: Klik "Tambah Voucher", lalu isi form & klik "Simpan"
     Client->>Server: Call vouchers.create(payload)
     Server->>DB: Validasi kode voucher unik per akun Kreator
     alt Kode unik
@@ -20,7 +20,7 @@ sequenceDiagram
         Client->>Creator: Notifikasi voucher sukses dibuat & reload daftar
     else Kode duplikat
         Server-->>Client: Error: Voucher sudah digunakan
-        Client->>Creator: Tampilkan pesan error
+        Client->>Creator: Tampilkan notifikasi
     end
 
 ```

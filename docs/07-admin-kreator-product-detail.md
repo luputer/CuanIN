@@ -5,12 +5,12 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-7: **Lihat Detail Pr
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Admin as "Admin CuanIN"
+    actor Admin as "Admin"
     participant Client as "Next.js Client (Product Detail Page)"
     participant Server as "tRPC Products Router (products.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
 
-    Admin->>Client: Buka salah satu detail produk kreator
+    Admin->>Client: Klik Lihat Detail pada salah satu produk
     Client->>Server: Call products.adminGetById(productId)
     Server->>DB: Query Product detail & relasi kreator
     DB-->>Server: Return data produk

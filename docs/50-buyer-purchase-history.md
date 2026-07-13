@@ -5,30 +5,33 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-50: **Lihat Riwayat 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Buyer as "User / Pembeli (Buyer)"
+    actor User as "User"
     participant Client as "Next.js Client (History /riwayat)"
     participant Server as "tRPC Purchases Router (purchases.ts)"
     participant DB as "Database (PostgreSQL/Prisma)"
     participant SMTP as "SMTP / Email Service"
 
-    Buyer->>Client: Masukkan email untuk melihat riwayat belanja
-    Client->>Server: Call purchases.sendPurchaseHistoryOtp({ email })
-    Server->>DB: Cari user pembeli & pastikan ada
-    Server->>Server: Generate OTP 6-Digit
-    Server->>DB: Simpan OTP ke VerificationToken
-    Server->>SMTP: Kirim OTP ke email pembeli
-    Client->>Buyer: Tampilkan form input OTP
-    
-    Buyer->>Client: Input OTP dari email & submit
-    Client->>Server: Call purchases.verifyPurchaseHistoryOtp({ email, otp })
-    Server->>DB: Cocokkan OTP & terbitkan historyToken
-    Client->>Server: Call purchases.getPurchaseHistoryByToken({ accessToken: historyToken, mode: 'riwayat' })
-    Server->>DB: Query Purchase (status: completed) terkait email
-    DB-->>Server: Return list pembelian historis
-    Server-->>Client: Return list pembelian
-    Client->>Buyer: Tampilkan semua daftar produk yang pernah dibeli
-
+    User->>Client: Pilih menu "Riwayat Pembelian"
+    Client->>User: Arahkan ke halaman riwayat pembelian
+    Client->>Server: Call purchases.getPurchaseHistory()
+    Server->>DB: Query data riwayat pembelian
+    DB-->>Server: Return daftar riwayat
+    Server-->>Client: Return list riwayat pembelian
+    Client->>User: Tampilkan seluruh riwayat pembelian
+    User->>Client: Klik salah satu riwayat pembelian
+    Client->>User: Tampilkan detail riwayat tersebut
 ```
 
 ### Detail Langkah / Deskripsi Alur:
-Pembeli melihat log riwayat seluruh transaksi pembelanjaan sukses miliknya diamankan verifikasi OTP.
+
+**User Lihat Riwayat Pembelian**
+- **Aktor:** User
+- **Kondisi Awal:**
+  1. User sudah melakukan pembelian.
+  2. User sudah berada di halaman portal pelanggan.
+- **Kondisi Akhir:** User berhasil melihat riwayat pembelian.
+
+**Skenario Utama:**
+1. User memilih "riwayat pembelian" pada menu.
+2. Sistem mengarahkan User ke halaman riwayat pembelian.
+3. User dapat melihat seluruh riwayat pembelian dan dapat melihat detailnya.

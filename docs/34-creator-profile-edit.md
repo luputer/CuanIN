@@ -5,7 +5,7 @@ Diagram ini menjelaskan alur kasus penggunaan (use case) ke-34: **Edit Profil (K
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Creator as "Kreator (Creator)"
+    actor Creator as "Kreator"
     participant Client as "Next.js Client (Profile Settings)"
     participant S3Router as "tRPC S3 Router (s3.ts)"
     participant ProfRouter as "tRPC Profile Router (profile.ts)"
@@ -21,7 +21,7 @@ sequenceDiagram
         R2-->>Client: Upload sukses
     end
 
-    Creator->>Client: Lengkapi form bio/nama & klik simpan
+    Creator->>Client: Klik Edit Profil, ubah data, lalu klik "simpan"
     Client->>ProfRouter: Call profile.update(name, bio, banner, password)
     ProfRouter->>DB: Update tabel User & Profile
     DB-->>ProfRouter: Simpan sukses

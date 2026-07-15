@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { CheckCircleIcon, CreditCardIcon, XCircleIcon, XIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
+import { toast } from "sonner";
+import { api } from "~/trpc/react";
 
 import {
     Dialog,
@@ -90,8 +92,30 @@ export function WithdrawalDialog({
         bank: "",
         accountNumber: "",
         accountHolderName: "",
+        otp: "",
     });
     const [withdrawErrors, setWithdrawErrors] = useState<Partial<Record<keyof WithdrawalFormData, string>>>({});
+    const [otpSent, setOtpSent] = useState(false);
+    const [cooldown, setCooldown] = useState(0);
+
+    const sendOtp = api.withdrawals.sendWithdrawalOtp.useMutation({
+        onSuccess: () => {
+            setOtpSent(true);
+            setCooldown(60);
+            toast.success("Kode OTP telah dikirim ke email Anda.");
+        },
+        onError: (err) => {
+            toast.error(err.message);
+        },
+    });
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (cooldown > 0) {
+            timer = setTimeout(() => setCooldown((c) => c - 1), 1000);
+        }
+        return () => clearTimeout(timer);
+    }, [cooldown]);
 
     const handleOpenChange = (isOpen: boolean) => {
         if (!isOpen) {
@@ -101,7 +125,10 @@ export function WithdrawalDialog({
                 bank: "",
                 accountNumber: "",
                 accountHolderName: "",
+                otp: "",
             });
+            setOtpSent(false);
+            setCooldown(0);
         }
         onOpenChange(isOpen);
     };
@@ -117,7 +144,7 @@ export function WithdrawalDialog({
     const errorFieldClassName = "border-red-500 focus:ring-red-500/30 focus:border-red-500";
 
     const updateWithdrawField = (field: keyof typeof withdrawForm, value: string) => {
-        const nextValue = (field === "amount" || field === "accountNumber") ? value.replace(/\D/g, "") : value;
+        const nextValue = (field === "amount" || field === "accountNumber" || field === "otp") ? value.replace(/\D/g, "") : value;
         setWithdrawForm((current) => ({ ...current, [field]: nextValue }));
         setWithdrawErrors((current) => {
             if (!current[field]) return current;
@@ -127,9 +154,9 @@ export function WithdrawalDialog({
         });
     };
 
-    const handleWithdrawalSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const result = withdrawalSchema.safeParse(withdrawForm);
+    const handleSendOtp = () => {
+        // Validate fields before sending OTP
+        const result = withdrawalSchema.safeParse({ ...withdrawForm, otp: "123456" }); // pass dummy otp to satisfy validator
         if (!result.success) {
             const fieldErrors = result.error.flatten().fieldErrors;
             setWithdrawErrors({
@@ -138,8 +165,41 @@ export function WithdrawalDialog({
                 accountNumber: fieldErrors.accountNumber?.[0],
                 accountHolderName: fieldErrors.accountHolderName?.[0],
             });
+            return false;
+        }
+        setWithdrawErrors({});
+        sendOtp.mutate({ amount: Number(withdrawForm.amount) });
+        return true;
+    };
+
+    const handleWithdrawalSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        
+        const validationData = !isAdmin && !otpSent ? { ...withdrawForm, otp: "123456" } : withdrawForm;
+        const result = withdrawalSchema.safeParse(validationData);
+        if (!result.success) {
+            const fieldErrors = result.error.flatten().fieldErrors;
+            setWithdrawErrors({
+                amount: fieldErrors.amount?.[0],
+                bank: fieldErrors.bank?.[0],
+                accountNumber: fieldErrors.accountNumber?.[0],
+                accountHolderName: fieldErrors.accountHolderName?.[0],
+                otp: fieldErrors.otp?.[0],
+            });
             return;
         }
+
+        if (!isAdmin) {
+            if (!otpSent) {
+                handleSendOtp();
+                return;
+            }
+            if (!withdrawForm.otp) {
+                setWithdrawErrors((prev) => ({ ...prev, otp: "OTP penarikan wajib diisi" }));
+                return;
+            }
+        }
+
         setWithdrawErrors({});
         onSubmit(result.data);
     };
@@ -173,6 +233,7 @@ export function WithdrawalDialog({
                                         className={withdrawErrors.amount ? errorFieldClassName : ""}
                                         onChange={(event) => updateWithdrawField("amount", event.target.value)}
                                         placeholder="Contoh: 500000"
+                                        disabled={(!isAdmin && otpSent) || isPending || sendOtp.isPending}
                                     />
                                 </FormGroup>
 
@@ -181,6 +242,7 @@ export function WithdrawalDialog({
                                         value={withdrawForm.bank}
                                         className={withdrawErrors.bank ? errorFieldClassName : ""}
                                         onChange={(e) => updateWithdrawField("bank", e.target.value)}
+                                        disabled={(!isAdmin && otpSent) || isPending || sendOtp.isPending}
                                     >
                                         <option value="" disabled>Pilih salah satu</option>
                                         {bankOptions.map((bank) => (
@@ -195,6 +257,7 @@ export function WithdrawalDialog({
                                         className={withdrawErrors.accountHolderName ? errorFieldClassName : ""}
                                         onChange={(event) => updateWithdrawField("accountHolderName", event.target.value)}
                                         placeholder="Masukkan nama pemilik rekening"
+                                        disabled={(!isAdmin && otpSent) || isPending || sendOtp.isPending}
                                     />
                                 </FormGroup>
 
@@ -205,8 +268,43 @@ export function WithdrawalDialog({
                                         className={withdrawErrors.accountNumber ? errorFieldClassName : ""}
                                         onChange={(event) => updateWithdrawField("accountNumber", event.target.value)}
                                         placeholder="Masukkan nomor rekening anda"
+                                        disabled={(!isAdmin && otpSent) || isPending || sendOtp.isPending}
                                     />
                                 </FormGroup>
+
+                                {!isAdmin && otpSent && (
+                                    <div className="pt-4 space-y-2 !mt-1">
+                                        <FormGroup label="Masukkan Kode OTP" layout="vertical" error={withdrawErrors.otp}>
+                                            <FormInput
+                                                type="text"
+                                                inputMode="numeric"
+                                                maxLength={6}
+                                                value={withdrawForm.otp}
+                                                className={`font-mono text-center tracking-[0.5em] text-lg ${
+                                                    withdrawErrors.otp ? errorFieldClassName : ""
+                                                }`}
+                                                onChange={(event) => updateWithdrawField("otp", event.target.value)}
+                                                placeholder="------"
+                                                disabled={isPending}
+                                            />
+                                        </FormGroup>
+                                        <div className="flex justify-between items-center text-xs px-1">
+                                            <span className="text-slate-500">Tidak menerima kode?</span>
+                                            {cooldown > 0 ? (
+                                                <span className="font-semibold text-cuan-cyan">Kirim ulang ({cooldown}s)</span>
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    onClick={handleSendOtp}
+                                                    disabled={sendOtp.isPending}
+                                                    className="font-semibold text-cuan-cyan hover:underline cursor-pointer"
+                                                >
+                                                    {sendOtp.isPending ? "Mengirim..." : "Kirim Ulang"}
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="space-y-4 pt-6">
@@ -236,9 +334,9 @@ export function WithdrawalDialog({
                                             * Kamu akan menerima bersih <strong>Rp{formatNumberInput(amountVal.toString())}</strong>.
                                             Total saldo akun yang akan terpotong adalah <strong>Rp{formatNumberInput(totalDeduction.toString())}</strong>.
                                         </p>
-                                        {amountVal < 10000 && (
+                                        {amountVal < 5000 && (
                                             <p className="text-red-500 text-xs pt-2 mt-1 border-t border-red-100 text-center font-medium">
-                                                Minimal penarikan adalah Rp10.000.
+                                                Minimal penarikan adalah Rp5.000.
                                             </p>
                                         )}
                                     </div>
@@ -257,8 +355,8 @@ export function WithdrawalDialog({
                         </DialogClose>
                         <ButtonSave
                             type="submit"
-                            isLoading={isPending}
-                            label="Konfirmasi"
+                            isLoading={isPending || sendOtp.isPending}
+                            label={!isAdmin && !otpSent ? "Minta Kode OTP" : "Konfirmasi"}
                             icon={null}
                             className="text-sm h-12 w-full sm:w-auto"
                         />

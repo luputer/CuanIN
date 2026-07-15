@@ -320,6 +320,7 @@ export const withdrawalSchema = z.object({
     .min(2, "Nama pemilik rekening wajib diisi")
     .max(100, "Nama terlalu panjang"),
   email: z.string({ required_error: "Email wajib diisi" }).email("Format email tidak valid").optional(),
+  otp: z.string().length(6, "OTP harus 6 digit").optional(),
 });
 
 export type WithdrawalFormData = z.infer<typeof withdrawalSchema>;

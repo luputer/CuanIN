@@ -73,11 +73,19 @@ export const adminRouter = createTRPCRouter({
         getAdminBalance(ctx.db),
         ctx.db.withdrawal.count(),
         ctx.db.balanceEntry.aggregate({
-          where: { user: { role: "ADMIN" }, type: "PLATFORM_FEE_EARNED", createdAt: { gte: thirtyDaysAgo } },
+          where: { 
+            user: { role: "ADMIN" }, 
+            type: { in: ["PLATFORM_FEE_EARNED", "WITHDRAWAL_REVERSED"] }, 
+            createdAt: { gte: thirtyDaysAgo } 
+          },
           _sum: { amount: true },
         }),
         ctx.db.balanceEntry.aggregate({
-          where: { user: { role: "ADMIN" }, type: "PLATFORM_FEE_EARNED", createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } },
+          where: { 
+            user: { role: "ADMIN" }, 
+            type: { in: ["PLATFORM_FEE_EARNED", "WITHDRAWAL_REVERSED"] }, 
+            createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } 
+          },
           _sum: { amount: true },
         }),
         ctx.db.withdrawal.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
@@ -237,12 +245,32 @@ export const adminRouter = createTRPCRouter({
         throw new TRPCError({ code: "BAD_REQUEST", message: "Withdrawal sudah ditandai berhasil" });
       }
 
-      const updated = await ctx.db.withdrawal.update({
-        where: { id: input.withdrawalId },
-        data: {
-          status: WithdrawalStatus.SUCCEEDED,
-          paidAt: new Date(), // tambah field ini ke schema Prisma juga
-        },
+      const updated = await ctx.db.$transaction(async (tx) => {
+        const updatedWd = await tx.withdrawal.update({
+          where: { id: input.withdrawalId },
+          data: {
+            status: WithdrawalStatus.SUCCEEDED,
+            paidAt: new Date(),
+          },
+        });
+
+        const platformFee = Number(withdrawal.feeAmount ?? 0);
+        if (platformFee > 0) {
+          const admin = await tx.user.findFirst({ where: { role: "ADMIN" } });
+          if (admin) {
+            await tx.balanceEntry.create({
+              data: {
+                userId: admin.id,
+                amount: platformFee,
+                type: "PLATFORM_FEE_EARNED",
+                refId: withdrawal.id,
+                note: `Platform fee untuk penarikan ${withdrawal.id}`,
+              },
+            });
+          }
+        }
+
+        return updatedWd;
       });
 
       // Kirim notifikasi ke creator
@@ -320,22 +348,6 @@ export const adminRouter = createTRPCRouter({
           message: `Penarilan saldo sebesar Rp${Number(withdrawal.amount).toLocaleString("id-ID")} ditolak. Saldo telah dikembalikan.`,
           refId: withdrawal.id,
         });
-
-        // Jika ada feeAmount, maka fee tersebut gagal masuk ke admin, kita kembalikan saldo admin
-        if (Number(withdrawal.feeAmount ?? 0) > 0) {
-          const admin = await tx.user.findFirst({ where: { role: "ADMIN" } });
-          if (admin) {
-            await tx.balanceEntry.create({
-              data: {
-                userId: admin.id,
-                amount: -Number(withdrawal.feeAmount), // Tarik balik fee dari admin
-                type: "WITHDRAWAL_REVERSED",
-                refId: withdrawal.id,
-                note: `Pembatalan platform fee karena penarikan gagal (${withdrawal.id})`,
-              },
-            });
-          }
-        }
 
         return updatedWd;
       });

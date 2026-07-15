@@ -527,8 +527,7 @@ export const analyticsRouter = createTRPCRouter({
       ctx.db.balanceEntry.aggregate({
         where: {
           user: { role: "ADMIN" },
-          type: "PLATFORM_FEE_EARNED",
-          amount: { gt: 0 },
+          type: { in: ["PLATFORM_FEE_EARNED", "WITHDRAWAL_REVERSED"] },
           createdAt: { gte: thirtyDaysAgo },
         },
         _sum: { amount: true },
@@ -536,8 +535,7 @@ export const analyticsRouter = createTRPCRouter({
       ctx.db.balanceEntry.aggregate({
         where: {
           user: { role: "ADMIN" },
-          type: "PLATFORM_FEE_EARNED",
-          amount: { gt: 0 },
+          type: { in: ["PLATFORM_FEE_EARNED", "WITHDRAWAL_REVERSED"] },
           createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo },
         },
         _sum: { amount: true },

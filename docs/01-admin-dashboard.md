@@ -16,8 +16,8 @@ sequenceDiagram
     DB-->>Server: Return data analitik dashboard
     Server-->>Client: Return dashboard stats
     Client->>Admin: Tampilkan widget analitik global platform (Recharts charts)
-
 ```
 
 ### Detail Langkah / Deskripsi Alur:
+
 Admin meminta data ringkasan analitik statistik global platform (total user, transaksi sukses, platform fee masuk, traffic views, kategori produk) menggunakan analytics.adminGetStats.

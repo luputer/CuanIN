@@ -4,6 +4,20 @@ CuanIN is an all-in-one platform for Indonesian creators to sell digital product
 
 ---
 
+## Technical Documentation
+
+This repository contains extensive technical documentation and system designs compiled for the Tugas Akhir (TA) report. Access the detailed guides and diagrams below:
+
+- **[System Overview &amp; Architecture (Dokumentasi Sistem)](file:///home/luputer/Dokumen/TA/CuanIN/docs/README.md)**: Main Indonesian documentation covering the system architecture, ERD, and class diagrams.
+- **[Multi-Tenant &amp; Role Management](file:///home/luputer/Dokumen/TA/CuanIN/docs/README-multi-tenant.md)**: Details on the multi-tenant architecture and access controls (CREATOR, USER, ADMIN).
+- **[Payment &amp; Transaction Security](file:///home/luputer/Dokumen/TA/CuanIN/docs/keamanan-sistem-pembayaran.md)**: Explains the safety mechanisms for Midtrans integration and Xendit payout processing.
+- **[System Flowcharts](file:///home/luputer/Dokumen/TA/CuanIN/docs/flowchart-sistem-penting.md)**: Core functional flowcharts for key platform paths (e.g. checkout, payment settlement, and payout).
+- **[Use Case Diagrams](file:///home/luputer/Dokumen/TA/CuanIN/docs/use-case.md)**: Structural boundaries, users, and actions map.
+- **[Access Portal Workflow](file:///home/luputer/Dokumen/TA/CuanIN/docs/portal-akses.md)**: Details the customer access portal (`/portal/[token]`) mechanism.
+- **[System Improvements Log](file:///home/luputer/Dokumen/TA/CuanIN/README_PERBAIKAN.md)**: Logs recent security, performance, and UX fixes.
+
+---
+
 ## Tech Stack
 
 - **Framework:** [Next.js 15 (App Router)](https://nextjs.org) with Turbopack (`next dev --turbo`)
@@ -28,17 +42,21 @@ CuanIN is an all-in-one platform for Indonesian creators to sell digital product
 - **Authentication & Security:**
   - OTP email verification, magic link password reset, Google SSO.
   - Brute-force protection, email normalization, and global session invalidation on password change.
+  - *New:* Automatic verification status checking with automatic OTP redirection for unverified logins.
 - **Creator Dashboard & Analytics:**
-  - Neo-brutalist custom dashboards with visitor analytics, Os/Browser tracking, conversion metrics, and visual charts (Recharts).
-  - Balance & Ledger system tracking product purchases, platform fees, requested payouts, and payment completions.
+  - Neo-brutalist custom dashboards with visitor analytics, OS/Browser tracking, conversion metrics, and visual charts (Recharts).
+  - Balance & Ledger system tracking product purchases, platform fees (transaction-based processing), requested payouts, and payment completions.
 - **Product Management:**
   - **Webinars:** Sell tickets, schedule events, distribute meeting links.
   - **Digital Products:** Upload files with Cloudflare R2 presigned URLs, offering single or multi-link product deliveries.
   - **Online Classes (Kelas):** Chapter organization, modules, materials upload, and participant progression tracking.
+  - Supports drafts/unpublished status with success confirmation dialogs.
 - **Custom Checkout Forms:** Add dynamic fields (short text, long text, dropdowns, checkboxes) to gather required customer info during purchase.
-- **Discount Vouchers:** Persen (percentage) and Nominal (fixed value) discounts, selective product restriction, and usage limits per checkout or per user.
+- **Discount Vouchers:** Persen (percentage) and Nominal (fixed value) discounts, selective product restriction, and usage limits per checkout or per user. Refactored settings to a dedicated metadata sidebar (`VoucherSidebarMetadata`) for modularity.
+- **Toko / Storefront:** Customizable public profile page `/[username]` (referred to as **Toko**) with listing templates.
 - **Portal Akses (Access Portal):** Optional buyer page (`/portal/[token]`) showing purchased items, accessible links, instructions, and invoice downloads. Enabled per product via the creator settings. (For details, see [portal-akses.md](file:///home/luputer/Dokumen/TA/CuanIN/docs/portal-akses.md)).
-- **Admin Moderation Panel:** Review earnings, moderate products, verify/decline payout requests, track user logs, and modify platform fee percentages.
+- **Admin Moderation Panel & Security:** Review earnings, moderate products, verify/decline payout requests (secured with OTP withdrawal verification), track user logs, and modify platform fee percentages.
+- **Image Cropper & Upload UX:** Integrated standard Dialog components with premium neo-brutalist custom styling and direct thumbnail re-cropping UX.
 
 ---
 
@@ -47,7 +65,7 @@ CuanIN is an all-in-one platform for Indonesian creators to sell digital product
 - `src/app`: Next.js App Router directories:
   - `(admin)`: Management dashboard, user control, withdrawals overview.
   - `(creator)`: Creator-scoped workspaces (products, webinars, online classes, ledger payouts).
-  - `(catalog)`: Customizable public profile page `/catalog/[username]` with listing templates.
+  - `(catalog)`: Customizable public profile page `/[username]` (referred to as **Toko**) with listing templates.
   - `(global-auth)`: Clean credential sign-in, signup, OTP, and password reset procedures.
   - `portal/[token]`: Dedicated single access portal for customers.
   - `api`: Endpoint integrations (Midtrans & Xendit webhook handlers, tRPC router client gateway).
